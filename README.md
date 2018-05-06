@@ -23,4 +23,3 @@ To install `pilisp` run
 ```
 ninja install
 ```
-
