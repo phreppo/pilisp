@@ -1,5 +1,5 @@
 # pilisp
-[![Build Status](https://travis-ci.com/parof/pilisp.png?branch=master)](https://travis-ci.com/parof/pilisp)
+[![Build Status](https://travis-ci.com/parof/pilisp.png)](https://travis-ci.com/parof/pilisp)
 
 * [Installation](Installation)
 

@@ -6,7 +6,7 @@ before_install:
 - sudo apt-get install python3
 - sudo apt-get install python3-pip
 - sudo apt-get install ninja-build
-- sudo pip3 install meson
+- pip3 install meson
 script:
 - meson build && cd build
 - ninja
