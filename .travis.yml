@@ -1,5 +1,17 @@
 sudo: required
 language: c
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise
+    packages:
+    - gcc-5
+    - g++-5
+    - clang-3.8
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install ninja python-pip python-dev build-essential gcc
