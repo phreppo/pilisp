@@ -2,9 +2,9 @@ sudo: required
 language: c
 before_install:
 - sudo apt-get install gcc
-- apt-get install ninja-build
+- sudo apt-get install ninja-build
 - sudo apt-get install python3-pip
-- pip3 install meson
+- sudo pip3 install meson
 script:
 - meson build && cd build
 - ninja
