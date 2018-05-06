@@ -1,5 +1,12 @@
 sudo: required
 language: c
+addons:
+  apt:
+    packages:
+    - cmake
+    - time
+    - ninja
+    - ninja-build
 before_install:
 - sudo apt-key update
 - sudo apt-get update -q
@@ -10,6 +17,7 @@ before_install:
 - sudo apt-get install gcc
 - sudo apt-get install python3
 - sudo apt-get install python3-pip
+- sudo apt-get install ninja-build
 - sudo apt-get install ninja-build
 - sudo pip3 install meson==0.44.0
 script:
