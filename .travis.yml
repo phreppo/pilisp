@@ -17,7 +17,7 @@ before_install:
 - sudo apt-get install gcc
 - sudo apt-get install python3
 - sudo apt-get install python3-pip
-- sudo apt-get install ninja-build=1.7.2
+- sudo apt-get install ninja-build=1.7.2-3
 - sudo pip3 install meson==0.44.0
 script:
 - meson build && cd build
