@@ -12,15 +12,15 @@
 * [Ninja](https://ninja-build.org/) (version 1.5 or newer)
 
 ### Installing with Meson
-This commands should run on any OS. To build the `ninja.build` file run 
+These commands should run on any OS. To build the `ninja.build` file run 
 ```
-meson build && cd build
+meson build
 ```
-To build the executable run 
+To build the executable in the `build` directory run
 ```
-ninja
+ninja -C build
 ```
-To install `pilisp` run 
+To install `pilisp` run with root permissions
 ```
-ninja install
+ninja install -C build
 ```
