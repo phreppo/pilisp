@@ -2,32 +2,32 @@ sudo: required
 language: c
 notifications:
   email: false
-addons:
-  apt:
-    packages:
-    - cmake
-    - time
+# addons:
+#   apt:
+#     packages:
+    # - cmake
+    # - time
     # - ninja
-    - ninja-build
+    # - ninja-build
 before_install:
-- sudo apt-key update
+# - sudo apt-key update
 - sudo apt-get update -qq
 # - sudo apt-get upgrade
 
 # - sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-- sudo apt-get -y install build-essential
-- sudo apt-get -y --force-yes install linux-headers-`uname -r`
-- sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
+# - sudo apt-get -y install build-essential
+# - sudo apt-get -y --force-yes install linux-headers-`uname -r`
+# - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
 - sudo apt-get install gcc
 - sudo apt-get install python3
 - sudo apt-get install python3-pip
-
+# NINJA
 - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
 - sudo unzip ninja-linux.zip -d /usr/local/bin/
 - sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 --force 
-
-# - sudo apt-get install ninja-build=1.7.2-3
+# MESON
 - sudo pip3 install meson==0.44.0
+
 script:
 - meson build && cd build
 - ninja
