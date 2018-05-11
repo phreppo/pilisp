@@ -1,6 +1,9 @@
 # Build dir
 build/
 
+# Coverage files
+*.gcov
+
 # IDE
 .vscode
 
