@@ -14,3 +14,13 @@ testSqrt = executable(
 test('sqrt(25)', testSqrt, args : ['25', '5'])
 test('sqrt(9)', testSqrt, args : ['9', '3'])
 test('sqrt(4)', testSqrt, args : ['4', '2'])
+
+# Test 2
+testZero = executable(
+    'testZero', 'testZero.c',
+    include_directories : inc,
+    link_with : pilisplib,
+    # TODO: learn how to use gcovr. Install package gcovr and run 'gcovr -r .', but for now it has 0%
+    # link_args : coverage_arguments
+)
+test('zero', testZero)
