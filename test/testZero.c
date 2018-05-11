@@ -1,3 +1,3 @@
 int main(int argc, char *argv[]){
-    return !(zero());
+    return (zero());
 }
