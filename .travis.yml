@@ -20,4 +20,4 @@ script:
   - ninja -C build                              # build project
   - ninja test -C build                         # run tests
   - gcovr -r .                                  # report coverage
-  - gcov build/src/src@@pilisp@sha/pilisp.c.o   # report with gcov
+  # - gcov build/src/src@@pilisp@sha/pilisp.c.o   # report with gcov
