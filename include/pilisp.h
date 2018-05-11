@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
+
 int zero();
 
 double radiceQuadrata(double d);
