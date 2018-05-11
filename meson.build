@@ -10,6 +10,8 @@ project(
 
 # Compiler
 cc = meson.get_compiler('c')
+coverage_arguments = ['--coverage', '-fprofile-arcs', '-ftest-coverage', '-fPIC', '-O0']
+add_global_arguments(coverage_arguments, language : 'c')
 
 # Dependencies
 thread_dep = dependency('threads')                # pthreads
@@ -28,4 +30,9 @@ subdir('src')
 subdir('test')
 
 # Main executable
-executable('pilisp', 'main.c', link_with : pilisplib)
+executable(
+  'pilisp', 
+  'main.c', 
+  link_args: coverage_arguments,
+  link_with : pilisplib
+)

@@ -6,7 +6,9 @@
 testSqrt = executable(
     'testSqrt', 'testRadiceQuadrata.c',
     include_directories : inc,
-    link_with : pilisplib
+    link_with : pilisplib,
+    # TODO: learn how to use gcovr. Install package gcovr and run 'gcovr -r .', but for now it has 0%
+    link_args : coverage_arguments
 )
 # Test 1 cases
 test('sqrt(25)', testSqrt, args : ['25', '5'])

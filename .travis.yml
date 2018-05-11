@@ -5,6 +5,7 @@ notifications:
 before_install:
 - sudo apt-get update -qq
 - sudo apt-get install gcc
+- sudo apt-get install gcovr
 - sudo apt-get install python3
 - sudo apt-get install python3-pip
 - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
@@ -12,6 +13,7 @@ before_install:
 - sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 --force 
 - sudo pip3 install meson==0.44.0
 script:
-- meson build
+- meson build -Db_coverage=true
 - ninja -C build
 - ninja test -C build
+- gcovr -r .

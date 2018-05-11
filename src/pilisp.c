@@ -5,6 +5,14 @@ int zero(){
 }
 
 double radiceQuadrata(double d){
+    if(0){
+        return 0;
+    }
+    if (d<0){
+        printf("we");
+    } else {
+        printf("zio");
+    }
     return sqrt(d);
 }
 
