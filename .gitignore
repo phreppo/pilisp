@@ -1,6 +1,9 @@
 # Build dir
 build/
 
+# npm
+node_modules/
+
 # Coverage files
 *.gcov
 

@@ -3,6 +3,18 @@
 [![Build Status](https://travis-ci.com/parof/pilisp.svg?token=tdfVkJVdJvEzUpskJRQE&branch=master)](https://travis-ci.com/parof/pilisp) [![Documentation Status](https://readthedocs.org/projects/pilisp/badge/?version=latest)](http://pilisp.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/parof/pilisp/branch/master/graph/badge.svg)](https://codecov.io/gh/parof/pilisp)
 
 * [Installation](#installation)
+* [Generate Documentation](#generatedocumentation)
+
+## Generate Documentation ##
+
+Install `doxygen` and `moxygen`, then run 
+```
+doxygen 
+```
+
+```
+moxygen --anchors --modules --output docs/markdown/api.md docs/xml
+```
 
 ## Installation ##
 
@@ -29,3 +41,7 @@ To install `pilisp` run with root permissions
 ```
 ninja install -C build
 ```
+
+## TODO ##
+
+* Learn how to output moxygen in multiple files. (something related to "groups")

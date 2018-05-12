@@ -1,4 +1,11 @@
-/*! Test di valore zero
+ /**
+  * \defgroup test
+  * 
+  * 
+  */
+
+/*!  \addtogroup test
+    Test di valore zero
 
     A more detailed class description.
 */
