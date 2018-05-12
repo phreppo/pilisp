@@ -4,6 +4,11 @@ build/
 # Coverage files
 *.gcov
 
+# Doxygen documentation
+docs/html/
+docs/latex/
+docs/xml/
+
 # IDE
 .vscode
 
