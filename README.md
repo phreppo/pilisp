@@ -46,3 +46,4 @@ ninja install -C build
 
 * Learn how to output moxygen in multiple files. (something related to "groups")
 * Learn and use breathe to convert doxygen to Sphinx documentation
+* Learn to use the stack "doxygen breathe shpinx readthedocs"
