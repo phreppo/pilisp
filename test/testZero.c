@@ -1,14 +1,19 @@
- /**
-  * \defgroup test
-  * 
-  * 
-  */
+/** @defgroup Tests
+ *
+ * This module contains tests
+ *
+ */
 
-/*!  \addtogroup test
-    Test di valore zero
-
-    A more detailed class description.
-*/
+/** @addtogroup Pilisp */
+/*@{*/
+/**
+ * @brief Tests the functionality of the zero
+ * 
+ * @param argc don t use
+ * @param argv  don t use
+ * @return int oky?
+ */
 int main(int argc, char *argv[]){
     return (zero());
 }
+/*@}*/

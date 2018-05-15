@@ -1,8 +1,11 @@
-/*! \file structcmd.h
-    \brief A Documented file.
-    
-    Details.
-*/
+/** @defgroup Pilisp
+ *
+ * This module does yada yada yada
+ *
+ */
+
+/** @addtogroup Pilisp */
+/*@{*/
 #ifndef PILISP
 #define PILISP
 #include <math.h>
@@ -23,6 +26,14 @@ int zero();
  */
 double radiceQuadrata(double d);
 
+/**
+ * @brief Stampa delle cose
+ * 
+ * Non è molto utile effettivamente
+ * 
+ */
 void stampaQualcosa();
 
 #endif // !PILISP
+
+/*@}*/
