@@ -48,10 +48,7 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_parsers = {
-   '.md': 'recommonmark.parser.CommonMarkParser',
-}
-source_suffix = '.md'
+source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -66,7 +63,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
