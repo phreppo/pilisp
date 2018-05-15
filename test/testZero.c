@@ -4,7 +4,8 @@
  *
  */
 
-/** @addtogroup Pilisp */
+/** @addtogroup Tests */
+
 /*@{*/
 /**
  * @brief Tests the functionality of the zero
