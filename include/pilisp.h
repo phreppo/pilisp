@@ -15,6 +15,12 @@
  */
 int zero();
 
+/**
+ * @brief SQRT calculator
+ * 
+ * @param d 
+ * @return double 
+ */
 double radiceQuadrata(double d);
 
 void stampaQualcosa();
