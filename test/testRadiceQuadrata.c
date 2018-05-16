@@ -1,5 +1,5 @@
 /**
- * \addtogroup test
+ * @addtogroup Tests
  */
 int main(int argc, char *argv[]){
     double numero = atof(argv[1]);
