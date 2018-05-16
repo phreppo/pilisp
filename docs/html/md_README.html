@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>pilisp: Wellcome to Pilisp!</title>
+<title>pilisp: pilisp</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -43,7 +43,6 @@ $(function() {
 });
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -58,17 +57,36 @@ $(function() {
 </iframe>
 </div>
 
+</div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">Wellcome to Pilisp! </div>  </div>
+<div class="title">pilisp </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2>What is?</h2>
-<p>A lightweigth LISP interpreter</p>
-<h2>Why is?</h2>
-<p>For necessity.</p>
-<h2>Next?</h2>
-<p><a href="group__Pilisp.html">go here</a> </p>
+<div class="textblock"><p><a href="https://travis-ci.com/parof/pilisp"></a> <a href="https://codecov.io/gh/parof/pilisp"></a></p>
+<ul>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#generatedocumentation">Generate Documentation</a></li>
+</ul>
+<h2>Documentation</h2>
+<p>Full code documentation can be found here <a href="https://parof.github.io/pilisp/html/index.html">https://parof.github.io/pilisp/html/index.html</a>. It is automatically generated using <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a>.</p>
+<h2>Generate Documentation</h2>
+<p>Install <code>doxygen</code> and <code>moxygen</code>, then run </p><div class="fragment"><div class="line">doxygen </div></div><!-- fragment --><div class="fragment"><div class="line">moxygen --groups --output=./docs/api-%s.md docs/xml</div></div><!-- fragment --><h2>Installation</h2>
+<h3>Prerequisites</h3>
+<ul>
+<li><a href="http://mesonbuild.com/">Meson</a></li>
+<li><a href="https://www.python.org/">Python</a> (version 3.5 or newer)</li>
+<li><a href="https://ninja-build.org/">Ninja</a> (version 1.5 or newer)</li>
+</ul>
+<h3>Installing with Meson</h3>
+<p>These commands should run on any OS. To build the <code>ninja.build</code> file run</p>
+<div class="fragment"><div class="line">meson build</div></div><!-- fragment --><p>To build the executable in the <code>build</code> directory run </p><div class="fragment"><div class="line">ninja -C build</div></div><!-- fragment --><p>To install <code>pilisp</code> run with root permissions </p><div class="fragment"><div class="line">ninja install -C build</div></div><!-- fragment --><h2>TODO</h2>
+<ul>
+<li>Learn how to output moxygen in multiple files. (something related to "groups")</li>
+<li>Learn and use breathe to convert doxygen to Sphinx documentation</li>
+<li>Learn to use the stack "doxygen breathe shpinx readthedocs" </li>
+</ul>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
