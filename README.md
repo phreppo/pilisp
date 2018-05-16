@@ -14,7 +14,7 @@ doxygen
 ```
 
 ```
-moxygen --anchors --modules --output docs/markdown/api.md docs/xml
+moxygen --groups --output=./docs/api-%s.md docs/xml
 ```
 
 ## Installation ##
