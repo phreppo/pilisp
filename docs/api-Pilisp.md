@@ -1,37 +1,37 @@
-# group `pilisp` {#group__pilisp}
+# group `Pilisp` 
 
-this module does yada yada yada
+This module does yada yada yada
 
-## summary
+## Summary
 
- members                        | descriptions                                
+ Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`public int `[`zero`](#group__pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()`            | returns zero.
-`public double `[`radicequadrata`](#group__pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)`            | sqrt calculator.
-`public void `[`stampaqualcosa`](#group__pilisp_1gad0d8f4d1556f3b28a514935159726868)`()`            | stampa delle cose.
+`public int `[`zero`](#group__Pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()`            | Returns zero.
+`public double `[`radiceQuadrata`](#group__Pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)`            | SQRT calculator.
+`public void `[`stampaQualcosa`](#group__Pilisp_1gad0d8f4d1556f3b28a514935159726868)`()`            | Stampa delle cose.
 
-## members
+## Members
 
-#### `public int `[`zero`](#group__pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()` {#group__pilisp_1gaa4499b8b4be64f9d9f64298d563b9551}
+#### `public int `[`zero`](#group__Pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()` 
 
-returns zero.
+Returns zero.
 
-#### returns
+#### Returns
 int zero value
 
-#### `public double `[`radicequadrata`](#group__pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)` {#group__pilisp_1gaddfb114eefcff57327a033c721c7e02f}
+#### `public double `[`radiceQuadrata`](#group__Pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)` 
 
-sqrt calculator.
+SQRT calculator.
 
-#### parameters
+#### Parameters
 * `d` 
 
-#### returns
+#### Returns
 double
 
-#### `public void `[`stampaqualcosa`](#group__pilisp_1gad0d8f4d1556f3b28a514935159726868)`()` {#group__pilisp_1gad0d8f4d1556f3b28a514935159726868}
+#### `public void `[`stampaQualcosa`](#group__Pilisp_1gad0d8f4d1556f3b28a514935159726868)`()` 
 
-stampa delle cose.
+Stampa delle cose.
 
-non è molto utile effettivamente
+Non è molto utile effettivamente
 

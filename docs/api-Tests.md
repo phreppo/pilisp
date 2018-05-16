@@ -1,4 +1,4 @@
-# group `Tests` {#group__Tests}
+# group `Tests` 
 
 This module contains tests
 
@@ -10,7 +10,7 @@ This module contains tests
 
 ## Members
 
-#### `public int `[`main`](#group__Tests_1ga0ddf1224851353fc92bfbff6f499fa97)`(int argc,char * argv)` {#group__Tests_1ga0ddf1224851353fc92bfbff6f499fa97}
+#### `public int `[`main`](#group__Tests_1ga0ddf1224851353fc92bfbff6f499fa97)`(int argc,char * argv)` 
 
 Tests the functionality of the zero.
 
