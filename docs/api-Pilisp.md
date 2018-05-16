@@ -12,14 +12,14 @@ This module does yada yada yada
 
 ## Members
 
-#### `public int `[`zero`](#group__Pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()`
+#### `public int `[`zero`](#group__Pilisp_1gaa4499b8b4be64f9d9f64298d563b9551)`()` {#group__Pilisp_1gaa4499b8b4be64f9d9f64298d563b9551}
 
 Returns zero.
 
 #### Returns
 int zero value
 
-#### `public double `[`radiceQuadrata`](#group__Pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)` 
+#### `public double `[`radiceQuadrata`](#group__Pilisp_1gaddfb114eefcff57327a033c721c7e02f)`(double d)` {#group__Pilisp_1gaddfb114eefcff57327a033c721c7e02f}
 
 SQRT calculator.
 
@@ -29,7 +29,7 @@ SQRT calculator.
 #### Returns
 double
 
-#### `public void `[`stampaQualcosa`](#group__Pilisp_1gad0d8f4d1556f3b28a514935159726868)`()` 
+#### `public void `[`stampaQualcosa`](#group__Pilisp_1gad0d8f4d1556f3b28a514935159726868)`()` {#group__Pilisp_1gad0d8f4d1556f3b28a514935159726868}
 
 Stampa delle cose.
 
