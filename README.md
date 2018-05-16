@@ -1,7 +1,7 @@
 # pilisp #
 
 
-[![Build Status](https://travis-ci.com/parof/pilisp.svg?token=tdfVkJVdJvEzUpskJRQE&branch=master)](https://travis-ci.com/parof/pilisp) [![codecov](https://codecov.io/gh/parof/pilisp/branch/master/graph/badge.svg)](https://codecov.io/gh/parof/pilisp)
+[![Build Status](https://travis-ci.com/parof/pilisp.svg?token=tdfVkJVdJvEzUpskJRQE&branch=master)](https://travis-ci.com/parof/pilisp) [![codecov](https://codecov.io/gh/parof/pilisp/branch/master/graph/badge.svg)](https://codecov.io/gh/parof/pilisp) [![Generic badge](https://img.shields.io/badge/docs-ghpages-brightgreen.svg)](https://parof.github.io/pilisp/html/index.html)
 
 * [Documentation](#documentation)
 * [Installation](#installation)
