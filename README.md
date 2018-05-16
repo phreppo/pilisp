@@ -3,8 +3,12 @@
 
 [![Build Status](https://travis-ci.com/parof/pilisp.svg?token=tdfVkJVdJvEzUpskJRQE&branch=master)](https://travis-ci.com/parof/pilisp) [![Documentation Status](https://readthedocs.org/projects/pilisp/badge/?version=latest)](http://pilisp.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/parof/pilisp/branch/master/graph/badge.svg)](https://codecov.io/gh/parof/pilisp)
 
+* [Documentation](#documentation)
 * [Installation](#installation)
 * [Generate Documentation](#generatedocumentation)
+
+## Documentation ##
+Full code documentation can be found here [https://parof.github.io/pilisp/html/index.html](https://parof.github.io/pilisp/html/index.html). It is automatically generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen/).
 
 ## Generate Documentation ##
 
