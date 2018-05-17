@@ -27,17 +27,24 @@ before_deploy:
   - git config --local user.name "parof"
   - git config --local user.email "parolini.francesco.1@gmail.com"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-deploy:
-  # auto updates the documentation
+# deploy:
+#   # auto updates the documentation
 
-  provider: releases
-  api_key: 
-    secure: f895d0653acc430df0a37256ab922943b8c07247
-  file_glob: true
-  file: docs/*
-  skip_cleanup: true
-  overwrite: true
+#   provider: releases
+#   api_key: 
+#     secure: f895d0653acc430df0a37256ab922943b8c07247
+#   file_glob: true
+#   file: docs/*
+#   skip_cleanup: true
+#   overwrite: true
+#   on:
+#     repo: parof/pilisp
+#     tags: true
+#     all_branches: true
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: f895d0653acc430df0a37256ab922943b8c07247  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
   on:
-    repo: parof/pilisp
-    tags: true
-    all_branches: true
+    branch: master
