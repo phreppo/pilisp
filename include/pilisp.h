@@ -19,7 +19,7 @@
 int zero();
 
 /**
- * @brief SQRT calculator
+ * @brief Square root calculator, using math.h function
  * 
  * @param d 
  * @return double 
