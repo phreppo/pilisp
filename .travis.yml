@@ -22,6 +22,7 @@ script:
   - ninja test -C build                         # run tests
   - gcovr -r .                                  # report coverage
   - doxygen                                     # auto generate documentation
+  - mv img/ftv2doc.png docs/html/
 before_deploy:
   - git config --local user.name "parof"
   - git config --local user.email "parolini.francesco.1@gmail.com"
