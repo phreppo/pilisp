@@ -13,7 +13,7 @@
 Why pilisp? beacuse the world needs heroes...
 
 ## Documentation ##
-Full code documentation can be found here [https://parof.github.io/pilisp/](https://parof.github.io/pilisp/). It is automatically generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen/), with [Bootstrap](https://getbootstrap.com/) CSS (using [this](https://github.com/Velron/doxygen-bootstrapped) guide). The code documentation is generated every push with [Travis CI](https://travis-ci.org/), so it should be always up to date.
+Full code documentation can be found here [https://parof.github.io/pilisp/] (https://parof.github.io/pilisp/). It is automatically generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen/), with [Bootstrap](https://getbootstrap.com/) CSS (using [this](https://github.com/Velron/doxygen-bootstrapped) guide). The code documentation is generated every push with [Travis CI](https://travis-ci.org/), so it should be always up to date.
 
 ## Installation ##
 
@@ -32,11 +32,13 @@ meson build
 ```
 
 To build the executable in the `build` directory run
+
 ```
 ninja -C build
 ```
 
 To install `pilisp` run with root permissions
+
 ```
 ninja install -C build
 ```
