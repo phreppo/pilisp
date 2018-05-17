@@ -21,13 +21,14 @@ script:
   - ninja -C build                              # build project
   - ninja test -C build                         # run tests
   - gcovr -r .                                  # report coverage
-
+  - doxygen                                     # auto generate documentation
 before_deploy:
   # Set up git user name and tag this commit
   - git config --local user.name "parof"
   - git config --local user.email "parolini.francesco.1@gmail.com"
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
+  # auto updates the documentation
   provider: releases
   api_key: 
     secure: f895d0653acc430df0a37256ab922943b8c07247
