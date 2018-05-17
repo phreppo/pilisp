@@ -13,6 +13,7 @@ before_install:
   - sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 --force 
   - sudo pip3 install meson==0.44.0
   - sudo pip install codecov
+  - sudo apt-get install doxygen
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 script:
