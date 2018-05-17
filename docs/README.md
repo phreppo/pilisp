@@ -11,4 +11,4 @@ For necessity.
 
 ## Next?
 
-[go here](https://parof.github.io/pilisp/docs/html/group__Tests.html)
+[go here](https://parof.github.io/pilisp/group__Pilisp.html)
