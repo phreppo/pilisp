@@ -44,6 +44,9 @@ before_deploy:
 deploy:
   provider: pages
   skip-cleanup: true
+  file_glob: true
+  file: docs/*
+  overwrite: true
   github-token: f895d0653acc430df0a37256ab922943b8c07247  # Set in the settings page of your repository, as a secure variable
   keep-history: true
   on:
