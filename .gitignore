@@ -13,7 +13,7 @@ docs/latex/
 docs/xml/
 
 # IDE
-.vscode
+.vscode/
 
 # Prerequisites
 *.d

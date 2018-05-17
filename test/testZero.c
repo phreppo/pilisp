@@ -11,7 +11,7 @@
  * @brief Tests the functionality of the zero
  * 
  * @param argc don t use pls
- * @param argv  don t use
+ * @param argv  don t use pls
  * @return int oky?
  */
 int main(int argc, char *argv[]){
