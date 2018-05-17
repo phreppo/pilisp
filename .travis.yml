@@ -43,6 +43,7 @@ before_deploy:
 #     all_branches: true
 deploy:
   provider: pages
+  local-dir: docs/html
   skip-cleanup: true
   file_glob: true
   file: docs/*
