@@ -8,7 +8,7 @@ node_modules/
 *.gcov
 
 # Doxygen documentation
-# docs/html/
+docs/html/
 docs/latex/
 docs/xml/
 
