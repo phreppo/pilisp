@@ -34,6 +34,6 @@ deploy:
   file: docs/*
   overwrite: true
   github-token: $GITHUB_TOKEN
-  keep-history: true
+  # keep-history: true
   on:
     branch: master
