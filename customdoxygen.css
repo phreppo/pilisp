@@ -368,3 +368,7 @@ span.SRScope {
 .page-header .label {
   font-size: 50%;
 }
+
+body{
+    max-width: 1025px;
+}
