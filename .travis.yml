@@ -22,7 +22,6 @@ script:
   - ninja test -C build                         # run tests
   - gcovr -r .                                  # report coverage
   - doxygen                                     # auto generate documentation
-  - doxygen -w html header.html footer.html customdoxygen.css
 before_deploy:
   - git config --local user.name "parof"
   - git config --local user.email "parolini.francesco.1@gmail.com"
@@ -35,6 +34,5 @@ deploy:
   file: docs/*
   overwrite: true
   github-token: $GITHUB_TOKEN
-  # keep-history: true
   on:
     branch: master
