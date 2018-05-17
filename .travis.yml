@@ -29,8 +29,6 @@ before_deploy:
   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 deploy:
   # auto updates the documentation
-  on:
-    branch: master
 
   provider: releases
   api_key: 
@@ -39,4 +37,7 @@ deploy:
   file: docs/*
   skip_cleanup: true
   overwrite: true
-
+  on:
+    repo: parof/pilisp
+    tags: true
+    all_branches: true
