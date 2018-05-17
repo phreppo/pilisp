@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 /**
- * @brief Returns zero
+ * @brief Returns zero, nothing more
  * 
  * @return int zero value
  */
