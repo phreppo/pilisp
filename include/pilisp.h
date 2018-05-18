@@ -27,7 +27,7 @@ int zero();
 double radiceQuadrata(double d);
 
 /**
- * @brief Stampa delle cose
+ * @brief Stampa delle cose utili
  * 
  * Non è molto utile effettivamente
  * 
