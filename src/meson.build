@@ -19,7 +19,7 @@ pilisplib = shared_library(
 
 # Main executable
 executable(
-    'pilisp', 
+    '../pilisp', 
     sources: sources,
     include_directories : inc,
     dependencies : dependencies,

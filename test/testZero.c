@@ -1,3 +1,7 @@
+#include "pilisp.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 /** @defgroup Tests
  *
  * This module contains tests

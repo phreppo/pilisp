@@ -1,4 +1,5 @@
 {
     "favorites.sortDirection": "ASC",
-    "favorites.groupsFirst": true
+    "favorites.groupsFirst": true,
+    "cSpell.enabled": false
 }

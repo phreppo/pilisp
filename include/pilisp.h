@@ -32,16 +32,6 @@ int zero();
  */
 int general_compare(int i, int j);
 
-/**
- * @brief sort alogorithm for generical array
- *
- * @param base base address
- * @param nmemb number of elements
- * @param size size of the elements
- * @param compar compare function
- */
-void qsort(void *base[], size_t nmemb, size_t size,
-           int (*compar)(const void *, const void *));
 
 /**
  * @brief Square root calculator, using math.h function
