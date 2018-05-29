@@ -1,0 +1,80 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "ninja",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "base":"$gcc",
+                "fileLocation" : ["relative", "${workspaceRoot}/build"]
+            }
+        },
+        {
+            "label": "Scan",
+            "type": "shell",
+            "command": "ninja -C build scan-build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "base":"$gcc",
+                "fileLocation" : ["relative", "${workspaceRoot}/build/meson-private/tmpsm350_09"]
+            }
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "command": "./build/pilisp",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "ninja && ninja test",
+            "problemMatcher":{
+                "base":"$gcc",
+                "fileLocation" : ["relative", "${workspaceRoot}/build"]
+            }
+        }
+    ]
+}
