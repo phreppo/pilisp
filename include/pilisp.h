@@ -11,6 +11,10 @@
 #include <math.h>
 #include <stdio.h>
 
+typedef struct ciccia{
+    int i;
+} tipo;
+
 /**
  *
  * @brief Returns zero, nothing more

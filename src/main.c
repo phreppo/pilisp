@@ -1,4 +1,4 @@
-// #include "pilisp.h"
+#include "pilisp.h"
 
 int main(){
     stampaQualcosa();

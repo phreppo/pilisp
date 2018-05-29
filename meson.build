@@ -29,11 +29,3 @@ inc = include_directories('include')
 subdir('include')
 subdir('src')
 subdir('test')
-
-# Main executable
-executable(
-  'pilisp', 
-  'main.c', 
-  # link_args: coverage_arguments,
-  link_with : pilisplib
-)

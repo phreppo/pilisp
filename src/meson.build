@@ -3,12 +3,25 @@
 ################################################################################
 
 # List of sources
-sources = ['pilisp.c']
+sources = [
+    'pilisp.c',
+    'main.c'
+]
 
-# Creation of static library
+# Creation of static library for testing
 pilisplib = shared_library(
-    'pilisp',
+    'pilisplib',
     sources,
     include_directories : inc,
     dependencies : dependencies,
-    install : true)
+    install : false
+)
+
+# Main executable
+executable(
+    'pilisp', 
+    sources: sources,
+    include_directories : inc,
+    dependencies : dependencies,
+    install: true
+)
