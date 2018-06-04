@@ -1,19 +1,18 @@
 #include "pilisp.h"
 
-
-
-int zero() { return 0; }
-
-double radiceQuadrata(double d) {
-  if (0) {
-    return 0;
+int prompt() {
+  while (1) {
+    printf("%s", PROMPT_STRING);
+    char* line = malloc(sizeof(char) * MAX_LINE_SIZE);
+    if(fgets(line,MAX_LINE_SIZE,stdin)){
+      printf("> You wrote %s",line);
+    } else {
+      return 1;
+    }
   }
-  if (d < 0) {
-    printf("we");
-  } else {
-    printf("zio");
-  }
-  return sqrt(d);
+  return 0;
 }
 
-void stampaQualcosa() { printf("ciaux\n"); }
+int parse_file(char* file_name){
+
+}

@@ -2,21 +2,21 @@
 #                                 TESTS                                        
 ################################################################################
 
-# Test 1
-testSqrt = executable(
-    'testSqrt', 'testRadiceQuadrata.c',
-    include_directories : inc,
-    link_with : pilisplib
-)
-# Test 1 cases
-test('sqrt(25)', testSqrt, args : ['25', '5'])
-test('sqrt(9)', testSqrt, args : ['9', '3'])
-test('sqrt(4)', testSqrt, args : ['4', '2'])
-
-# Test 2
-testZero = executable(
-    'testZero', 'testZero.c',
-    include_directories : inc,
-    link_with : pilisplib
-)
-test('zero', testZero)
+# # Test 1
+# testSqrt = executable(
+#     'testSqrt', 'testRadiceQuadrata.c',
+#     include_directories : inc,
+#     link_with : pilisplib
+# )
+# # Test 1 cases
+# test('sqrt(25)', testSqrt, args : ['25', '5'])
+# test('sqrt(9)', testSqrt, args : ['9', '3'])
+# test('sqrt(4)', testSqrt, args : ['4', '2'])
+# 
+# # Test 2
+# testZero = executable(
+#     'testZero', 'testZero.c',
+#     include_directories : inc,
+#     link_with : pilisplib
+# )
+# test('zero', testZero)
