@@ -13,10 +13,23 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <error.h>
+#include <errno.h>
 
+/**
+ * @brief Displays pilisp prompt
+ * 
+ * @return int 0 if no error occurred
+ */
 int prompt();
 
-int parse_file(char* file_name);
+/**
+ * @brief Interprets the LISP file
+ * 
+ * @param file_name The name of the file
+ * @return int 0 if no error occurred
+ */
+int interpret_file(char* file_name);
 
 #endif // !PILISP
 
