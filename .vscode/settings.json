@@ -1,5 +1,8 @@
 {
     "favorites.sortDirection": "ASC",
     "favorites.groupsFirst": true,
-    "cSpell.enabled": false
+    "cSpell.enabled": false,
+    "files.associations": {
+        "exception": "c"
+    }
 }

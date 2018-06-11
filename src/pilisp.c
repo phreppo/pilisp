@@ -3,14 +3,47 @@
 int prompt() {
   while (1) {
     printf("%s", PROMPT_STRING);
-    int token =
-        next_token(stdin); // note: int, not char, required to handle EOF
-    while (1) {            // standard C I/O file reading loop
-      print_token(token);
-      token = next_token(stdin);
-    }
+    parse_prompt();
   }
   return 0;
+}
+
+void parse_prompt() {
+  cell *root = read_sexpr(stdin);
+  print_sexpr(root);
+}
+
+void lexer_prompt() {
+  int token = next_token(stdin); // note: int, not char, required to handle EOF
+  while (1) {                    // standard C I/O file reading loop
+    print_token(token);
+    token = next_token(stdin);
+  }
+}
+
+cell *get_cell() { return (cell *)malloc(sizeof(cell)); }
+
+cell *mk_num(int n) {
+  cell *c = get_cell();
+  c->type = TYPE_NUM;
+  c->value = n;
+  return c;
+}
+
+cell *mk_str(const char *s) {
+  cell *c = get_cell();
+  c->type = TYPE_STR;
+  c->str = malloc(strlen(s) + 1);
+  strcpy(c->str, s);
+  return c;
+}
+
+cell *mk_sym(const char *symbol) {
+  cell *c = get_cell();
+  c->type = TYPE_SYM;
+  c->str = malloc(strlen(symbol) + 1);
+  strcpy(c->str, symbol);
+  return c;
 }
 
 int next_token(FILE *f) {
@@ -62,9 +95,6 @@ int next_token(FILE *f) {
       if (*e == '\0')
         // is effectively a number
         token = TOK_NUM;
-      else // the string is not a number, may be NILL
-          if (token_text_is_nill())
-        token = TOK_NONE;
     }
   }
   return token;
@@ -140,4 +170,68 @@ bool token_text_is_nill() {
       return false;
   }
   return true;
+}
+
+cell *read_sexpr(FILE *f) {
+  int tok = next_token(f);
+  if (tok != TOK_NONE)
+    return read_sexpr_tok(f, tok);
+  return 0;
+}
+
+cell *read_sexpr_tok(FILE *f, int tok) {
+  cell *c = 0;
+  switch (tok) {
+  case TOK_NUM:
+    c = mk_num(token_value);
+    break;
+  case TOK_STR:
+    c = mk_str(token_text);
+    break;
+  case TOK_SYM:
+    c = (token_text_is_nill() ? 0 : mk_sym(token_text));
+    break;
+  // case TOK_QUOTE:
+  //   tok=next_token(f);
+  //   return mk_cons(quote_atom,mk_cons(read_sexpr_tok(f,tok),0));
+  case TOK_OPEN:
+    tok = next_token(f);
+    read_sexpr_tok(f, tok);
+    tok = next_token(f);
+    if (tok != TOK_DOT)
+      exit(1);
+      // yl_lerror(LISP_ERROR, ". expected");
+    tok = next_token(f);
+    read_sexpr_tok(f, tok);
+    tok = next_token(f);
+    if (tok != TOK_CLOSE)
+      exit(1);
+      // yl_lerror(LISP_ERROR, ") expected");
+    return 0;
+  // default:
+  //   yl_lerror_s(LISP_ERROR, "unexpected %s",
+  //               (tok == TOK_CLOSE ? ")" : (tok == TOK_DOT ? "." : token_text)));
+  };
+  return c;
+}
+
+void print_sexpr(const cell *c) {
+  if (c) {
+
+    switch (c->type) {
+
+    case TYPE_NUM:
+      printf("%i\n", c->value);
+      break;
+    case TYPE_STR:
+      puts(c->str);
+      break;
+    case TYPE_SYM:
+      puts(c->sym);
+      break;
+
+    default:
+      break;
+    }
+  }
 }
