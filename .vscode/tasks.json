@@ -49,7 +49,7 @@
                 "focus": true,
                 "panel": "new"
             },
-            "command": "./build/pilisp",
+            "command": "ninja -C build && ./build/pilisp",
             "problemMatcher": [
                 "$gcc"
             ]
