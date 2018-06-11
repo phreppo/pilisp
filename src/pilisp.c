@@ -201,12 +201,16 @@ cell *read_sexpr_tok(FILE *f, int tok) {
       // () cell
       c = NULL;
     else {
+      // read head
       read_sexpr_tok(f, tok);
+
+      // read after head: we can have . || sexpr
       tok = next_token(f);
-      if (tok != TOK_DOT)
-        exit(1);
+      if (tok == TOK_DOT){
+        // uses the dot notation
+        tok = next_token(f);
+      }
       // yl_lerror(LISP_ERROR, ". expected");
-      tok = next_token(f);
       read_sexpr_tok(f, tok);
       tok = next_token(f);
       if (tok != TOK_CLOSE)
