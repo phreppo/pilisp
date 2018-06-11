@@ -203,7 +203,7 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     else {
       // read head
       read_sexpr_tok(f, tok);
-
+    // TODO (we) fa impallare
       // read after head: we can have . || sexpr
       tok = next_token(f);
       if (tok == TOK_DOT){
