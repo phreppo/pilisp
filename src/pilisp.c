@@ -195,26 +195,34 @@ cell *read_sexpr_tok(FILE *f, int tok) {
   //   tok=next_token(f);
   //   return mk_cons(quote_atom,mk_cons(read_sexpr_tok(f,tok),0));
   case TOK_OPEN:
+    // TODO now it does not creates cells
     tok = next_token(f);
-    read_sexpr_tok(f, tok);
-    tok = next_token(f);
-    if (tok != TOK_DOT)
-      exit(1);
+    if (tok == TOK_CLOSE)
+      // () cell
+      c = NULL;
+    else {
+      read_sexpr_tok(f, tok);
+      tok = next_token(f);
+      if (tok != TOK_DOT)
+        exit(1);
       // yl_lerror(LISP_ERROR, ". expected");
-    tok = next_token(f);
-    read_sexpr_tok(f, tok);
-    tok = next_token(f);
-    if (tok != TOK_CLOSE)
-      exit(1);
+      tok = next_token(f);
+      read_sexpr_tok(f, tok);
+      tok = next_token(f);
+      if (tok != TOK_CLOSE)
+        exit(1);
       // yl_lerror(LISP_ERROR, ") expected");
-    return 0;
-  // default:
-  //   yl_lerror_s(LISP_ERROR, "unexpected %s",
-  //               (tok == TOK_CLOSE ? ")" : (tok == TOK_DOT ? "." : token_text)));
+      c=0;
+    }
+    // default:
+    //   yl_lerror_s(LISP_ERROR, "unexpected %s",
+    //               (tok == TOK_CLOSE ? ")" : (tok == TOK_DOT ? "." :
+    //               token_text)));
   };
   return c;
 }
 
+// TODO incomplete
 void print_sexpr(const cell *c) {
   if (c) {
 
