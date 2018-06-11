@@ -3,8 +3,9 @@
 int prompt() {
   while (1) {
     printf("%s", PROMPT_STRING);
-    int token = next_token(stdin); // note: int, not char, required to handle EOF
-    while (1) {                   // standard C I/O file reading loop
+    int token =
+        next_token(stdin); // note: int, not char, required to handle EOF
+    while (1) {            // standard C I/O file reading loop
       print_token(token);
       token = next_token(stdin);
     }
@@ -55,17 +56,15 @@ int next_token(FILE *f) {
         }
       } while (!char_is_sym_terminal(c));
 
-      if (token_text[0] == '\"' && token_text[i - 1] == '\"') {
-        // is a string
-        token = TOK_STR;
-      } else {
-        // could be a number
-        char *e;
-        token_value = strtol(token_text, &e, 0);
-        if (*e == '\0')
-          // is effectively a number
-          token = TOK_NUM;
-      }
+      // could be a number
+      char *e;
+      token_value = strtol(token_text, &e, 0);
+      if (*e == '\0')
+        // is effectively a number
+        token = TOK_NUM;
+      else // the string is not a number, may be NILL
+          if (token_text_is_nill())
+        token = TOK_NONE;
     }
   }
   return token;
@@ -125,13 +124,20 @@ void print_token(int tok) {
     puts(token_text);
     break;
   default:
-    // error
+    // TODO error
     break;
   }
 }
 
-bool char_is_sym_terminal(char c) {
-  return c == ')' || c == ' ' || c == '\n';
-}
+bool char_is_sym_terminal(char c) { return c == ')' || c == ' ' || c == '\n'; }
 
 bool char_is_str_terminal(char c) { return c == '\"'; }
+
+bool token_text_is_nill() {
+  char *nillstr = "NILL";
+  for (int i = 0; i < 3; i++) {
+    if (token_text[i] != nillstr[i])
+      return false;
+  }
+  return true;
+}

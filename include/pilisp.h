@@ -15,6 +15,7 @@
 #include <error.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <string.h>
 
 /**
  * @brief Enum for identify the type of a token
@@ -95,6 +96,8 @@ bool char_is_sym_terminal(char c);
  * @return false otherwise
  */
 bool char_is_str_terminal(char c);
+
+bool token_text_is_nill();
 
 #endif // !PILISP
 
