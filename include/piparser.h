@@ -22,11 +22,12 @@ enum {
   TOK_OPEN,
   TOK_CLOSE,
   TOK_DOT,
-  TOK_QUOTE,
+  TOK_QUOTE, // TODO not handled
   TOK_SYM,
   TOK_NUM,
   TOK_STR
 };
+
 /**
  * @brief Defines the max number of chars for a token
  *
@@ -40,13 +41,13 @@ enum {
 char token_text[MAX_TOK_LEN];
 
 /**
- * @brief Value for numeric tokens
+ * @brief value for numeric tokens
  *
  */
 long token_value;
 
 /**
- * @brief Reads and returns the identifier of the next token in f
+ * @brief reads and returns the identifier of the next token in f
  *
  * @param f the input source
  * @return int the code of the token
@@ -54,7 +55,7 @@ long token_value;
 int next_token(FILE *f);
 
 /**
- * @brief Returns the next char in the input source. Skips the comments
+ * @brief returns the next char in the input source. Skips the comments
  *
  * @param f the input stream
  * @return char the next char
@@ -62,7 +63,7 @@ int next_token(FILE *f);
 char next_char(FILE *f);
 
 /**
- * @brief Prints in stdout one formatted token. The text of the token is stored
+ * @brief prints in stdout one formatted token. The text of the token is stored
  * inside the variable token_text
  *
  * @param tok the token
@@ -70,7 +71,7 @@ char next_char(FILE *f);
 void print_token(int tok);
 
 /**
- * @brief Returns true if a char can terminate a symbol (e.g. ), (space), \n)
+ * @brief returns true if a char can terminate a symbol (e.g. ), (space), \n)
  *
  * @param c the input char
  * @return true can terminate a symbol
@@ -79,7 +80,7 @@ void print_token(int tok);
 bool char_is_sym_terminal(char c);
 
 /**
- * @brief Returs true if a char terminates a strings (e.g. ")
+ * @brief returs true if a char terminates a strings (e.g. ")
  *
  * @param c the input char
  * @return true c can terminate a string
