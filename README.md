@@ -9,7 +9,7 @@
 
 ## Introduction ##
 
-Why pilisp? beacuse the world needs heroes...
+Pilisp aims to be a lightweight LISP interpreter. The focus is not on the total compatibility with other LISP versions, but on performance.
 
 ## Documentation ##
 
@@ -19,7 +19,7 @@ Full code documentation can be found here [https://parof.github.io/pilisp/] (htt
 
 ### Prerequisites ###
 
-* [Meson](http://mesonbuild.com/)
+* [Meson](http://mesonbuild.com/)   (version 0.44 or newer)
 * [Python](https://www.python.org/) (version 3.5 or newer)
 * [Ninja](https://ninja-build.org/) (version 1.5 or newer)
 
@@ -41,6 +41,11 @@ To install `pilisp` run with root permissions
 
 ```
 ninja install -C build
+```
+
+To run test run
+```
+ninja test -C build
 ```
 
 ## TODO ##

@@ -1,6 +1,7 @@
 /** @defgroup picell
  *
- * This module provides the data structures for LISP, like cells
+ *  @brief This module provides the data structures for LISP, like cells
+ * 
  *
  */
 
