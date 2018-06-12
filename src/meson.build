@@ -5,8 +5,8 @@
 # List of sources
 sources = [
     'pilisp.c',
-    'perror.c',
-    'ptestutils.c',
+    'pierror.c',
+    'pitestutils.c',
     'main.c'
 ]
 

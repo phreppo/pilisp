@@ -1,7 +1,7 @@
-#include "ptestutils.h"
+#include "pitestutils.h"
 
 void parse_prompt() {
-  printf("%sWellcome to the parser prompt, type sexpressions\n", PROMPT_STRING);
+  printf("%s Wellcome to the parser prompt, type sexpressions\n", PROMPT_STRING);
   while (1) {
     cell *root = read_sexpr(stdin);
     print_sexpr(root);
@@ -10,7 +10,7 @@ void parse_prompt() {
 
 void lexer_prompt() {
   while (1) {
-    printf("%sWellcome to the lexer prompt, type tokens\n", PROMPT_STRING);
+    printf("%s Wellcome to the lexer prompt, type tokens\n", PROMPT_STRING);
     int token =
         next_token(stdin); // note: int, not char, required to handle EOF
     while (1) {
@@ -18,7 +18,6 @@ void lexer_prompt() {
       token = next_token(stdin);
     }
   }
-  return 0;
 }
 
 int lexer_file(FILE *f) {

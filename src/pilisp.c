@@ -2,7 +2,7 @@
 
 int prompt() {
   while (1) {
-    printf("%s", PROMPT_STRING);
+    printf("%s ", PROMPT_STRING);
     parse_prompt();
   }
   return 0;

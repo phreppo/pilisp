@@ -3,8 +3,8 @@
 ################################################################################
 
 headers = [ 'pilisp.h',
-            'perror.h',
-            'ptestutils.h',
+            'pierror.h',
+            'pitestutils.h',
 ]
 
 install_headers(headers)

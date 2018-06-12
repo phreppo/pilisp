@@ -8,7 +8,7 @@
 /*@{*/
 #ifndef PILISP
 #define PILISP
-#define PROMPT_STRING "pi> "
+#define PROMPT_STRING "pi>"
 #include <ctype.h>
 #include <errno.h>
 #include <error.h>
@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "perror.h"
-#include "ptestutils.h"
+#include "pierror.h"
+#include "pitestutils.h" // ! REMOVE ON PRODUCTION
 
 enum {
   TYPE_CONS = 0,

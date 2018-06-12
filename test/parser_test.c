@@ -7,7 +7,7 @@ int parser_test(char * file_path_name) {
     printf("Error opening file\n");
     exit(1);
   }
-  bool ret = lexer_file(fp);
+  lexer_file(fp);
   fclose(fp);
   return 0;
 }

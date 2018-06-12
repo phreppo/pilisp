@@ -3,6 +3,7 @@
     "favorites.groupsFirst": true,
     "cSpell.enabled": false,
     "files.associations": {
-        "exception": "c"
+        "exception": "c",
+        "type_traits": "c"
     }
 }
