@@ -9,7 +9,7 @@
 
 ## Introduction ##
 
-Pilisp aims to be a lightweight LISP interpreter. The focus is not on the total compatibility with other LISP versions, but on performance.
+Pilisp aims to be a lightweight LISP interpreter.
 
 ## Documentation ##
 
