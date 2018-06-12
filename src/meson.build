@@ -8,6 +8,7 @@ sources = [
     'picell.c',
     'pierror.c',
     'pilisp.c',
+    'piparser.c',
     'pitestutils.c',
 ]
 
