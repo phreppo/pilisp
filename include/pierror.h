@@ -1,3 +1,11 @@
+/** @defgroup pierror
+ *
+ * This module proves error handling
+ *
+ */
+
+/** @addtogroup pierror */
+/*@{*/
 #ifndef PERROR
 #define PERROR
 #include <stdio.h>
@@ -10,3 +18,4 @@
 void pi_error(int CODE, const char* message);
 
 #endif // !PERROR
+/*@}*/

@@ -1,3 +1,12 @@
+/** @defgroup piparser
+ *
+ * This module provides lexer and parser
+ *
+ */
+
+/** @addtogroup piparser */
+/*@{*/
+
 #ifndef PIPARSER
 #define PIPARSER
 #include <stdio.h>
@@ -93,3 +102,4 @@ cell *read_sexpr_tok(FILE *f, int tok);
 void print_sexpr(const cell *c);
 
 #endif // !PIPARSER
+/*@}*/

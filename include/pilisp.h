@@ -1,10 +1,10 @@
-/** @defgroup Pilisp
+/** @defgroup pilisp
  *
- * This module does yada yada yada
+ * This module links the other modules of pilisp
  *
  */
 
-/** @addtogroup Pilisp */
+/** @addtogroup pilisp */
 /*@{*/
 #ifndef PILISP
 #define PILISP

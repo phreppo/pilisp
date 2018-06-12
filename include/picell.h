@@ -1,3 +1,12 @@
+/** @defgroup picell
+ *
+ * This module provides the data structures for LISP, like cells
+ *
+ */
+
+/** @addtogroup picell */
+/*@{*/
+
 #ifndef PICELL
 #define PICELL
 
@@ -45,3 +54,5 @@ cell *mk_sym(const char *symbol);
 
 
 #endif // !PICELL
+
+/*@}*/
