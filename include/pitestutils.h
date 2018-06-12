@@ -10,6 +10,7 @@
 #ifndef PTESTUTILS
 #define PTESTUTILS
 #include <stdio.h>
+#include <setjmp.h>
 #include "pilisp.h"
 
 void lexer_prompt();

@@ -16,9 +16,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <setjmp.h>
 #include "pierror.h"
 #include "picell.h"
 #include "piparser.h"
+
+int jmp_destination;
+jmp_buf env_buf;
 
 /**
  * @brief Displays pilisp prompt

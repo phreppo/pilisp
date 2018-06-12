@@ -4,6 +4,9 @@
     "cSpell.enabled": false,
     "files.associations": {
         "exception": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "pitestutils.h": "c",
+        "pilisp.h": "c",
+        "typeinfo": "c"
     }
 }

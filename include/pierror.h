@@ -12,9 +12,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pilisp.h"
-#define LISP_ERROR 1
+
+enum{
+    NO_ERROR = -1,
+    LISP_ERROR = 1
+};
+
+static int last_error=NO_ERROR;
 
 void pi_error(int CODE, const char* message);
+
+int get_last_error();
+
+bool had_error();
+
+void reset_error();
 
 #endif // !PERROR
 /*@}*/

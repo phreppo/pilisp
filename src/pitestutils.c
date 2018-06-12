@@ -1,10 +1,20 @@
 #include "pitestutils.h"
 
 void parse_prompt() {
-  printf("%s Wellcome to the parser prompt, type sexpressions\n", PROMPT_STRING);
+  printf("%s Wellcome to the parser prompt, type sexpressions\n",
+         PROMPT_STRING);
   while (1) {
+    // sets the destination for longjump here if errors were encountered during
+    // parsing
+    jmp_destination = setjmp(env_buf);
+    if (get_last_error() != NO_ERROR) {
+      puts("> You just had an error");
+      reset_error();
+    } else {
+      puts("> Everything was ok with last sexpr");
+    }
     cell *root = read_sexpr(stdin);
-    print_sexpr(root);
+    // print_sexpr(root);
   }
 }
 
