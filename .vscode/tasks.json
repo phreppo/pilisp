@@ -28,12 +28,12 @@
         {
             "label": "Scan",
             "type": "shell",
-            "command": "ninja -C build scan-build",
+            "command": "ninja -C build && ninja  scan-build -C build",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
                 "focus": true,
-                "panel": "shared"
+                "panel": "dedicated"
             },
             "problemMatcher": {
                 "base":"$gcc",
