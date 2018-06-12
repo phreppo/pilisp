@@ -4,10 +4,11 @@
 
 # List of sources
 sources = [
-    'pilisp.c',
+    'main.c',
+    'picell.c',
     'pierror.c',
+    'pilisp.c',
     'pitestutils.c',
-    'main.c'
 ]
 
 # Creation of static library for testing

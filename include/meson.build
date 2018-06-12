@@ -2,9 +2,11 @@
 #                                 HEADERS                                        
 ################################################################################
 
-headers = [ 'pilisp.h',
-            'pierror.h',
-            'pitestutils.h',
+headers = [ 
+        'picell.h',
+        'pierror.h',
+        'pilisp.h',
+        'pitestutils.h',
 ]
 
 install_headers(headers)
