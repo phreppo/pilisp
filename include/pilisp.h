@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "perror.h"
+#include "ptestutils.h"
 
 enum {
   TYPE_CONS = 0,
@@ -59,12 +61,6 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 
 cell *mk_sym(const char *symbol);
-
-cell *read_sexpr(FILE *f);
-
-cell *read_sexpr_tok(FILE *f, int tok);
-
-void print_sexpr(const cell *c);
 
 /**
  * @brief Enum for identify the type of a token
@@ -155,9 +151,14 @@ bool char_is_str_terminal(char c);
  */
 bool token_text_is_nill();
 
-// TODO: eliminate this on production, function to debug
-void lexer_prompt();
-void parse_prompt();
+cell *read_sexpr(FILE *f);
+
+cell *read_sexpr_tok(FILE *f, int tok);
+
+void print_sexpr(const cell *c);
+
+
+
 
 #endif // !PILISP
 

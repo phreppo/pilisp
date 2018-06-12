@@ -8,19 +8,6 @@ int prompt() {
   return 0;
 }
 
-void parse_prompt() {
-  cell *root = read_sexpr(stdin);
-  print_sexpr(root);
-}
-
-void lexer_prompt() {
-  int token = next_token(stdin); // note: int, not char, required to handle EOF
-  while (1) {                    // standard C I/O file reading loop
-    print_token(token);
-    token = next_token(stdin);
-  }
-}
-
 cell *get_cell() { return (cell *)malloc(sizeof(cell)); }
 
 cell *mk_num(int n) {
@@ -49,6 +36,8 @@ cell *mk_sym(const char *symbol) {
 int next_token(FILE *f) {
   int token = -1;
   char c = next_char(f);
+  if (c == 0 || feof(f))
+    return TOK_NONE;
   if (c == '(')
     token = TOK_OPEN;
   else if (c == ')')
@@ -77,9 +66,10 @@ int next_token(FILE *f) {
       } while (!char_is_str_terminal(c));
     } else {
       // is not a string: we suppose it is a symbol
+      // ! BUG
       do {
         c = (char)fgetc(f);
-        if (!char_is_sym_terminal(c))
+        if (feof(f) || !char_is_sym_terminal(c))
           token_text[i++] = c;
         else {
           token_text[i] = '\0';
@@ -88,6 +78,7 @@ int next_token(FILE *f) {
               f); // resets because he could have read something like 'symbol)'
         }
       } while (!char_is_sym_terminal(c));
+      // ! BUG
 
       // could be a number
       char *e;
@@ -103,6 +94,8 @@ int next_token(FILE *f) {
 char next_char(FILE *f) {
   char c;
   do {
+    if(!f || feof(f))
+      return 0;
     int ch = fgetc(f);
     if (ch == EOF)
       return 0;
@@ -159,7 +152,9 @@ void print_token(int tok) {
   }
 }
 
-bool char_is_sym_terminal(char c) { return c == ')' || c == ' ' || c == '\n'; }
+bool char_is_sym_terminal(char c) {
+  return c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1;
+}
 
 bool char_is_str_terminal(char c) { return c == '\"'; }
 
@@ -203,25 +198,30 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     else {
       // read head
       read_sexpr_tok(f, tok);
-    // TODO (we) fa impallare
       // read after head: we can have . || sexpr
       tok = next_token(f);
-      if (tok == TOK_DOT){
+      if (tok != TOK_DOT) {
         // uses the dot notation
-        tok = next_token(f);
+        pi_error(LISP_ERROR, ". expected");
       }
-      // yl_lerror(LISP_ERROR, ". expected");
+      tok = next_token(f);
       read_sexpr_tok(f, tok);
       tok = next_token(f);
-      if (tok != TOK_CLOSE)
-        exit(1);
-      // yl_lerror(LISP_ERROR, ") expected");
-      c=0;
+      if (tok != TOK_CLOSE) {
+        pi_error(LISP_ERROR, ") expected");
+      }
+      c = 0;
     }
-    // default:
-    //   yl_lerror_s(LISP_ERROR, "unexpected %s",
-    //               (tok == TOK_CLOSE ? ")" : (tok == TOK_DOT ? "." :
-    //               token_text)));
+    break;
+  case TOK_CLOSE:
+    pi_error(LISP_ERROR, "unexpected )");
+    break;
+  case TOK_DOT:
+    pi_error(LISP_ERROR, "unexpected .");
+    break;
+  default:
+    // error ?
+    break;
   };
   return c;
 }

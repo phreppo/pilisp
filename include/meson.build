@@ -2,4 +2,9 @@
 #                                 HEADERS                                        
 ################################################################################
 
-install_headers('pilisp.h')
+headers = [ 'pilisp.h',
+            'perror.h',
+            'ptestutils.h',
+]
+
+install_headers(headers)
