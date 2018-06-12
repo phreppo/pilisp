@@ -28,3 +28,4 @@ parser_rejected_strings_test = executable(
 test('Bad sexpression with closed par test', parser_rejected_strings_test, args : [bad_expressions_path+'badsexpr1.l'])
 test('Bad sexpression with dot test', parser_rejected_strings_test, args : [bad_expressions_path+'badsexpr2.l'])
 test('Incomplte sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'badsexpr3.l'])
+test('Complicate bad sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'badsexpr4.l'])
