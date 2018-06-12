@@ -8,3 +8,7 @@ int prompt() {
   }
   return 0;
 }
+
+void pi_message(const char * message){
+  printf("%s %s\n",PROMPT_STRING,message);
+}

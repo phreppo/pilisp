@@ -8,10 +8,10 @@ void parse_prompt() {
     // parsing
     jmp_destination = setjmp(env_buf);
     if (get_last_error() != NO_ERROR) {
-      puts("> You just had an error");
+      pi_message("you just had an error");
       reset_error();
     } else {
-      puts("> Everything was ok with last sexpr");
+      pi_message("everything was ok with last sexpr");
     }
     cell *root = read_sexpr(stdin);
     // print_sexpr(root);

@@ -31,6 +31,8 @@ jmp_buf env_buf;
  */
 int prompt();
 
+void pi_message(const char *);
+
 #endif // !PILISP
 
 /*@}*/

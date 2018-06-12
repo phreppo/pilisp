@@ -1,6 +1,6 @@
 /** @defgroup piparser
  *
- * @brief Provides lexer and parser
+ * @brief provides lexer and parser
  *
  */
 
@@ -14,7 +14,7 @@
 #include "pilisp.h"
 
 /**
- * @brief Enum for identify the type of a token
+ * @brief enum for identify the type of a token
  *
  */
 enum {
@@ -29,7 +29,7 @@ enum {
 };
 
 /**
- * @brief Defines the max number of chars for a token
+ * @brief defines the max number of chars for a token
  *
  */
 #define MAX_TOK_LEN 1024
