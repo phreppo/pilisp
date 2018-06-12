@@ -1,6 +1,6 @@
 /** @defgroup pitestutils
  *
- * This module provides tools like promts to test some functions of pilisp
+ * @brief Provides tools like prompts to test some functions of pilisp
  *
  */
 

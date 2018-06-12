@@ -1,6 +1,6 @@
 /** @defgroup piparser
  *
- * This module provides lexer and parser
+ * @brief Provides lexer and parser
  *
  */
 

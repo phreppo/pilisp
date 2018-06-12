@@ -1,7 +1,6 @@
 /** @defgroup picell
  *
- *  @brief This module provides the data structures for LISP, like cells
- * 
+ *  @brief Provides the data structures for LISP, like cells
  *
  */
 
@@ -10,6 +9,8 @@
 
 #ifndef PICELL
 #define PICELL
+#include <stdlib.h>
+#include <string.h>
 
 enum {
   TYPE_CONS = 0,

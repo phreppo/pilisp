@@ -1,6 +1,6 @@
 /** @defgroup pierror
  *
- * This module proves error handling
+ * @brief Provides errors handling
  *
  */
 

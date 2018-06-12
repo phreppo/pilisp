@@ -1,6 +1,6 @@
 /** @defgroup pilisp
  *
- * This module links the other modules of pilisp
+ * @brief Links the other modules of pilisp
  *
  */
 
@@ -12,7 +12,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <error.h>
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
