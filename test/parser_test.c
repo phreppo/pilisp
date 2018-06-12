@@ -1,4 +1,5 @@
 #include "pilisp.h"
+#include "pitestutils.h"
 #include <stdio.h>
 
 int parser_test(char * file_path_name) {

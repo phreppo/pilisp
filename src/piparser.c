@@ -34,20 +34,15 @@ int next_token(FILE *f) {
       } while (!char_is_str_terminal(c));
     } else {
       // is not a string: we suppose it is a symbol
-      // ! BUG
       do {
         c = (char)fgetc(f);
         if (feof(f) || !char_is_sym_terminal(c))
           token_text[i++] = c;
         else {
           token_text[i] = '\0';
-          ungetc(
-              c,
-              f); // resets because he could have read something like 'symbol)'
+          ungetc( c, f); // resets because he could have read something like 'symbol)'
         }
       } while (!char_is_sym_terminal(c));
-      // ! BUG
-
       // could be a number
       char *e;
       token_value = strtol(token_text, &e, 0);
@@ -115,7 +110,7 @@ void print_token(int tok) {
     puts(token_text);
     break;
   default:
-    // TODO error
+    // something else?
     break;
   }
 }
@@ -128,7 +123,8 @@ bool char_is_str_terminal(char c) { return c == '\"'; }
 
 bool token_text_is_nill() {
   char *nillstr = "NILL";
-  for (int i = 0; i < 3; i++) {
+  int i=0;
+  for (i = 0; i < 3; i++) {
     if (token_text[i] != nillstr[i])
       return false;
   }

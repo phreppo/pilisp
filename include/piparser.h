@@ -36,7 +36,6 @@ char token_text[MAX_TOK_LEN];
  */
 long token_value;
 
-
 /**
  * @brief Reads and returns the identifier of the next token in f
  *
