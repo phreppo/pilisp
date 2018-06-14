@@ -7,6 +7,7 @@
 * [Installation](#installation)
 
 ## Introduction ##
+
 Pilisp aims to be a small LISP interpreter for the 1.5 version of the language described [here](http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf).
 
 ## Documentation ##
