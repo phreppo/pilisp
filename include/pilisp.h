@@ -6,8 +6,8 @@
 
 /** @addtogroup pilisp */
 /*@{*/
-#ifndef PILISP
-#define PILISP
+#ifndef PILISP_h
+#define PILISP_h
 #define PROMPT_STRING "pi>"
 #include <ctype.h>
 #include <errno.h>
@@ -32,6 +32,6 @@ jmp_buf env_buf;
  */
 int prompt();
 
-#endif // !PILISP
+#endif // !PILISP_h
 
 /*@}*/

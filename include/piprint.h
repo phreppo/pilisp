@@ -6,8 +6,8 @@
 
 /** @addtogroup pilisp */
 /*@{*/
-#ifndef PIPRINT
-#define PIPRINT
+#ifndef PIPRINT_H
+#define PIPRINT_H
 #include "pilisp.h"
 
 void pi_message(const char *);
@@ -35,6 +35,6 @@ static void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
 void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
                           unsigned long level);
 
-#endif // !PIPRINT
+#endif // !PIPRINT_H
 
 /*@}*/

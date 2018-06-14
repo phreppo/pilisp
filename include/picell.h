@@ -7,8 +7,8 @@
 /** @addtogroup picell */
 /*@{*/
 
-#ifndef PICELL
-#define PICELL
+#ifndef PICELL_H
+#define PICELL_H
 #include <stdlib.h>
 #include <string.h>
 
@@ -63,6 +63,6 @@ cell *mk_sym(const char *symbol);
 cell *mk_cons(cell * car, cell * cdr);
 
 
-#endif // !PICELL
+#endif // !PICELL_H
 
 /*@}*/

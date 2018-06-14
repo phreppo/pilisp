@@ -6,8 +6,8 @@
 
 /** @addtogroup pierror */
 /*@{*/
-#ifndef PERROR
-#define PERROR
+#ifndef PERROR_H
+#define PERROR_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,5 +30,5 @@ bool had_error();
 
 void reset_error();
 
-#endif // !PERROR
+#endif // !PERROR_H
 /*@}*/

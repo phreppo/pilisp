@@ -7,8 +7,8 @@
 /** @addtogroup piparser */
 /*@{*/
 
-#ifndef PIPARSER
-#define PIPARSER
+#ifndef PIPARSER_H
+#define PIPARSER_H
 #include <stdio.h>
 #include <stdbool.h>
 #include "pilisp.h"
@@ -94,5 +94,5 @@ cell *read_sexpr_tok(FILE *f, int tok);
 
 const char * get_token_text();
 
-#endif // !PIPARSER
+#endif // !PIPARSER_H
 /*@}*/
