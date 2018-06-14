@@ -7,7 +7,7 @@ cell *get_cell() {
   return &(cells[first_free_cell++]); 
 }
 
-cell *mk_num(int n) {
+cell *mk_num(const int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
