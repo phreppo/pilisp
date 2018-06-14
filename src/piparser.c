@@ -116,7 +116,7 @@ void print_token(int tok) {
 }
 
 bool char_is_sym_terminal(char c) {
-  return c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1;
+  return c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 || c=='.';
 }
 
 bool char_is_str_terminal(char c) { return c == '\"'; }
