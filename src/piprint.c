@@ -5,6 +5,7 @@ void pi_message(const char *message) {
 }
 
 void print_token(int tok) {
+  // TODO: puts(token_text) broken
   switch (tok) {
   case TOK_NONE:
     printf("<NILL>\t\t");
@@ -86,7 +87,7 @@ void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
       break;
 
     case TYPE_STR:
-      printf("%s", c->str);
+      printf("\"%s\"", c->str);
       break;
 
     case TYPE_SYM:
@@ -125,7 +126,7 @@ void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
       break;
 
     case TYPE_STR:
-      printf("%s", c->str);
+      printf("\"%s\"", c->str);
       break;
 
     case TYPE_SYM:
