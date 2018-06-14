@@ -5,11 +5,9 @@
 * [Introduction](#introduction)
 * [Documentation](#documentation)
 * [Installation](#installation)
-* [TODO](#todo)
 
 ## Introduction ##
-
-Pilisp aims to be a lightweight LISP interpreter.
+Pilisp aims to be a small LISP interpreter for the 1.5 version of the language described [here](http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf).
 
 ## Documentation ##
 
@@ -43,7 +41,7 @@ To install `pilisp` run with root permissions
 ninja install -C build
 ```
 
-To run tests run
+To run tests use
 
 ```
 ninja test -C build
