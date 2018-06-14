@@ -50,7 +50,7 @@ typedef struct cell {
 
 static cell cells[MAX_CELLS];
 
-static unsigned long first_free_cell = 0;
+static unsigned long next_free_cell = 0;
 
 cell *get_cell();
 
@@ -59,6 +59,8 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 
 cell *mk_sym(const char *symbol);
+
+cell *mk_cons(cell * car, cell * cdr);
 
 
 #endif // !PICELL

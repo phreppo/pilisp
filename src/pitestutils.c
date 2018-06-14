@@ -13,8 +13,8 @@ void parse_prompt() {
     } else {
       pi_message("everything was ok with last sexpr");
     }
-    read_sexpr(stdin);
-    // print_sexpr(root);
+    cell * root = read_sexpr(stdin);
+    print_sexpr(root);
   }
 }
 

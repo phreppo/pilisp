@@ -2,9 +2,9 @@
 #include "pierror.h"
 
 cell *get_cell() { 
-  if(first_free_cell == MAX_CELLS)
+  if(next_free_cell == MAX_CELLS)
     pi_error(MEMORY_ERROR,"Ran out of memory");
-  return &(cells[first_free_cell++]); 
+  return &(cells[next_free_cell++]); 
 }
 
 cell *mk_num(const int n) {
@@ -29,3 +29,12 @@ cell *mk_sym(const char *symbol) {
   strcpy(c->str, symbol);
   return c;
 }
+
+cell *mk_cons(cell * car, cell * cdr){
+  cell * c = get_cell();
+  c->type = TYPE_CONS;
+  c->car = car;
+  c->cdr = cdr;
+  return c;
+}
+
