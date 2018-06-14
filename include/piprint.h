@@ -20,13 +20,18 @@ void pi_message(const char *);
  */
 void print_token(int tok);
 
-void print_sexpr(const cell *c);
+enum { SEXPR_PRINT_DOT, SEXPR_PRINT_LIST };
+
+void print_sexpr(const cell *c, unsigned char mode);
 
 static bool cell_was_printed(const cell *c, cell **printed_cons_cells,
                              unsigned long level);
 
-static void print_sexpr_rec(const cell *c, cell **printed_cons_cells,
-                            unsigned long level);
+static void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
+                                unsigned long level);
+
+void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
+                          unsigned long level);
 
 #endif // !PIPRINT
 

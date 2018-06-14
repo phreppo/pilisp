@@ -44,10 +44,21 @@ void print_token(int tok) {
   }
 }
 
-void print_sexpr(const cell *c) {
+void print_sexpr(const cell *c, unsigned char mode) {
   cell **printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
   unsigned long level = 0;
-  print_sexpr_rec(c, printed_cons_cells, level);
+
+  switch (mode) {
+  case SEXPR_PRINT_DOT:
+    print_sexpr_rec_dot(c, printed_cons_cells, level);
+    break;
+  case SEXPR_PRINT_LIST:
+    print_sexpr_rec_list(c, printed_cons_cells, level);
+    break;
+  default:
+    pi_error(MODE_ERROR, "Unknown print mode");
+    break;
+  }
   free(printed_cons_cells);
 }
 
@@ -61,8 +72,8 @@ bool cell_was_printed(const cell *c, cell **printed_cons_cells,
   return false;
 }
 
-void print_sexpr_rec(const cell *c, cell **printed_cons_cells,
-                     unsigned long level) {
+void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
+                         unsigned long level) {
   if (c) {
     switch (c->type) {
 
@@ -84,10 +95,71 @@ void print_sexpr_rec(const cell *c, cell **printed_cons_cells,
         // mark the cell as printed
         printed_cons_cells[level++] = c;
         printf("(");
-        print_sexpr_rec(c->car, printed_cons_cells, level);
+        print_sexpr_rec_dot(c->car, printed_cons_cells, level);
         printf(" . ");
-        print_sexpr_rec(c->cdr, printed_cons_cells, level);
+        print_sexpr_rec_dot(c->cdr, printed_cons_cells, level);
         printf(")");
+      }
+      break;
+
+    default:
+      break;
+    }
+  } else {
+    // empty cell
+    printf("NIL");
+  }
+}
+
+void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
+                          unsigned long level) {
+  if (c) {
+    switch (c->type) {
+
+    case TYPE_NUM:
+      printf("%i", c->value);
+      break;
+
+    case TYPE_STR:
+      printf("%s", c->str);
+      break;
+
+    case TYPE_SYM:
+      printf("%s", c->sym);
+      break;
+
+    case TYPE_CONS:
+      // could be a self referenced structure
+      if (!cell_was_printed(c, printed_cons_cells, level)) {
+        // mark the cell as printed
+        printed_cons_cells[level++] = c;
+        if (c->cdr == NULL) {
+          // only head
+          printf("(");
+          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          printf(")");
+        } else {
+          // car && cdr present
+          printf("(");
+          // print car
+          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          printf(" ");
+          const cell *cdr = c->cdr;
+          if (cdr->type != TYPE_CONS) {
+            // cdr is not a cons:
+            printf(". ");
+            print_sexpr_rec_list(cdr, printed_cons_cells, level);
+          } else
+            while (cdr) {
+              // cdr is a cons
+              print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
+              printed_cons_cells[level++] = cdr;
+              cdr = cdr->cdr;
+              if (cdr)
+                printf(" ");
+            }
+          printf(")");
+        }
       }
       break;
 

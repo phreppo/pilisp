@@ -39,4 +39,4 @@ recursive_structure_print_test = executable(
     link_with : pilisplib
 )
 # Cases for parser for rejected sexpressions
-test('Termination test for self-referencing structures', recursive_structure_print_test)
+test('Print self-referencing structures test', recursive_structure_print_test)
