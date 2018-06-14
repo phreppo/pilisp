@@ -23,7 +23,7 @@ script:
   - meson build -Db_coverage=true               # enable coverage
   - ninja -C build                              # build project
   - ninja test -C build                         # run tests
-  - gcovr -exclude="*test.c" -r .             # report coverage
+  - gcovr --exclude="*test.c" -r .             # report coverage
    
   - doxygen                                     # auto generate documentation
   - mv img/ftv2doc.png docs/html/
