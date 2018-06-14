@@ -92,5 +92,7 @@ cell *read_sexpr(FILE *f);
 
 cell *read_sexpr_tok(FILE *f, int tok);
 
+const char * get_token_text();
+
 #endif // !PIPARSER
 /*@}*/
