@@ -233,11 +233,15 @@ void print_sexpr(const cell *c) {
       printf("%s", c->sym);
       break;
     case TYPE_CONS:
-      printf("(");
-      print_sexpr(c->car);
-      printf(" . ");
-      print_sexpr(c->cdr);
-      printf(")");
+      if (c->cdr == NULL) {
+        print_sexpr(c->car);
+      } else {
+        printf("(");
+        print_sexpr(c->car);
+        printf(" . ");
+        print_sexpr(c->cdr);
+        printf(")");
+      }
       break;
     default:
       break;
