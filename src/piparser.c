@@ -206,6 +206,7 @@ cell *read_sexpr_tok(FILE *f, int tok) {
             tok = next_token(f);
           }
         } else {
+          // we have (a NILL => it is equal to a => we have to read another parenthesis
           tok = next_token(f);
           if (tok != TOK_CLOSE)
             pi_error(LISP_ERROR, ") expected");
