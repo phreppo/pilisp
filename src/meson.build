@@ -9,6 +9,7 @@ sources = [
     'pierror.c',
     'pilisp.c',
     'piparser.c',
+    'piprint.c',
     'pitestutils.c',
 ]
 

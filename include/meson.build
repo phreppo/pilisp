@@ -7,6 +7,7 @@ headers = [
         'pierror.h',
         'pilisp.h',
         'piparser.h',
+        'piprint.h',
         'pitestutils.h',
 ]
 

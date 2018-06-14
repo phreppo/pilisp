@@ -20,6 +20,7 @@
 #include "picell.h"
 #include "pierror.h"
 #include "piparser.h"
+#include "piprint.h"
 
 int jmp_destination;
 jmp_buf env_buf;
@@ -30,8 +31,6 @@ jmp_buf env_buf;
  * @return int 0 if no error occurred
  */
 int prompt();
-
-void pi_message(const char *);
 
 #endif // !PILISP
 
