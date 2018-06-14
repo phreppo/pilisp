@@ -158,10 +158,11 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     tok = next_token(f);
     if (tok == TOK_CLOSE)
       // () cell
+      // TODO make this create a cell
       c = NULL;
     else {
-      // read head
-      read_sexpr_tok(f, tok);
+      // read car
+      cell * car = read_sexpr_tok(f, tok);
       // read after head: we can have . || sexpr
       tok = next_token(f);
       if (tok != TOK_DOT) {
@@ -169,12 +170,13 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         pi_error(LISP_ERROR, ". expected");
       }
       tok = next_token(f);
-      read_sexpr_tok(f, tok);
+      // read cdr 
+      cell * cdr = read_sexpr_tok(f, tok);
       tok = next_token(f);
-      if (tok != TOK_CLOSE) {
+      if (tok != TOK_CLOSE)
         pi_error(LISP_ERROR, ") expected");
-      }
-      c = 0;
+      // create the cell
+      c = mk_cons(car,cdr);
     }
     break;
   case TOK_CLOSE:
@@ -190,24 +192,33 @@ cell *read_sexpr_tok(FILE *f, int tok) {
   return c;
 }
 
-// TODO incomplete
 void print_sexpr(const cell *c) {
   if (c) {
 
     switch (c->type) {
 
     case TYPE_NUM:
-      printf("%i\n", c->value);
+      printf("%i", c->value);
       break;
     case TYPE_STR:
-      puts(c->str);
+      printf("%s",c->str);
       break;
     case TYPE_SYM:
-      puts(c->sym);
+      printf("%s",c->sym);
+      break;
+    case TYPE_CONS:
+      printf("(");
+      print_sexpr(c->car);
+      printf(" . ");
+      print_sexpr(c->cdr);
+      printf(")");
       break;
 
     default:
       break;
     }
+  } else {
+    // empty cell
+    printf("NIL");
   }
 }

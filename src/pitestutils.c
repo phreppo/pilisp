@@ -15,6 +15,7 @@ void parse_prompt() {
     }
     cell * root = read_sexpr(stdin);
     print_sexpr(root);
+    puts("");
   }
 }
 
