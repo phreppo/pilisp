@@ -20,9 +20,11 @@ void pi_message(const char *);
  */
 void print_token(int tok);
 
-enum { SEXPR_PRINT_DOT, SEXPR_PRINT_LIST };
+enum { SEXPR_PRINT_DEFAULT, SEXPR_PRINT_VERBOSE };
 
-void print_sexpr(const cell *c, unsigned char mode);
+void print_sexpr(const cell *c);
+
+void print_sexpr_mode(const cell *c, unsigned char mode);
 
 static bool cell_was_printed(const cell *c, cell **printed_cons_cells,
                              unsigned long level);

@@ -15,10 +15,10 @@ void parse_prompt() {
     }
     cell * root = read_sexpr(stdin);
     printf("dot> ");
-    print_sexpr(root,SEXPR_PRINT_DOT);
+    print_sexpr_mode(root,SEXPR_PRINT_VERBOSE);
     puts("");
     printf("lst> ");
-    print_sexpr(root,SEXPR_PRINT_LIST);
+    print_sexpr_mode(root,SEXPR_PRINT_DEFAULT);
     puts("");
   }
 }

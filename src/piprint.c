@@ -44,15 +44,19 @@ void print_token(int tok) {
   }
 }
 
-void print_sexpr(const cell *c, unsigned char mode) {
+void print_sexpr(const cell * c){
+    print_sexpr_mode(c,SEXPR_PRINT_DEFAULT); // default mode
+}
+
+void print_sexpr_mode(const cell *c, unsigned char mode) {
   cell **printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
   unsigned long level = 0;
 
   switch (mode) {
-  case SEXPR_PRINT_DOT:
+  case SEXPR_PRINT_VERBOSE:
     print_sexpr_rec_dot(c, printed_cons_cells, level);
     break;
-  case SEXPR_PRINT_LIST:
+  case SEXPR_PRINT_DEFAULT:
     print_sexpr_rec_list(c, printed_cons_cells, level);
     break;
   default:
