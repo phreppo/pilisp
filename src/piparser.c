@@ -186,22 +186,29 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // sexpr] ....
 
         // head of the cdr: we're going to build the tree
-        cell *cdr_head = read_sexpr_tok(f, tok);
-        cdr = mk_cons(cdr_head, NULL);
+        if (!token_text_is_nill()) {
 
-        tok = next_token(f);
-        // this keeps track of the last cdr added, because we need to attach
-        // list members to the end of the last cdr. Example: (a b c d) needs to
-        // keep track of the last to create the nested structure (a . (b . (c .
-        // (d . NILL))))
-        cell *last_cdr = cdr;
-        while (tok != TOK_CLOSE) {
-          // create a new level
-          cell *new_cdr = mk_cons(read_sexpr_tok(f, tok), NULL);
-          // update cycle variables
-          last_cdr->cdr = new_cdr;
-          last_cdr = new_cdr;
+          cell *cdr_head = read_sexpr_tok(f, tok);
+          cdr = mk_cons(cdr_head, NULL);
+
           tok = next_token(f);
+          // this keeps track of the last cdr added, because we need to attach
+          // list members to the end of the last cdr. Example: (a b c d) needs
+          // to keep track of the last to create the nested structure (a . (b .
+          // (c . (d . NILL))))
+          cell *last_cdr = cdr;
+          while (tok != TOK_CLOSE) {
+            // create a new level
+            cell *new_cdr = mk_cons(read_sexpr_tok(f, tok), NULL);
+            // update cycle variables
+            last_cdr->cdr = new_cdr;
+            last_cdr = new_cdr;
+            tok = next_token(f);
+          }
+        } else {
+          tok = next_token(f);
+          if (tok != TOK_CLOSE)
+            pi_error(LISP_ERROR, ") expected");
         }
       }
       // create the cell
