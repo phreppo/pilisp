@@ -76,46 +76,6 @@ char next_char(FILE *f) {
   return c;
 }
 
-void print_token(int tok) {
-  switch (tok) {
-  case TOK_NONE:
-    printf("<NILL>\t\t");
-    puts("NILL");
-    break;
-  case TOK_OPEN:
-    printf("<OPEN_PAR>\t");
-    puts("(");
-    break;
-  case TOK_CLOSE:
-    printf("<CLOSE_PAR>\t");
-    puts(")");
-    break;
-  case TOK_DOT:
-    printf("<DOT>\t\t");
-    puts(".");
-    break;
-  case TOK_QUOTE:
-    printf("<QUOTE>\t\t");
-    puts("\'");
-    break;
-  case TOK_SYM:
-    printf("<SYMBOL>\t");
-    puts(token_text);
-    break;
-  case TOK_STR:
-    printf("<STRING>\t");
-    puts(token_text);
-    break;
-  case TOK_NUM:
-    printf("<NUMBER>\t");
-    puts(token_text);
-    break;
-  default:
-    // something else?
-    break;
-  }
-}
-
 bool char_is_sym_terminal(char c) {
   return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
          c == '.';
@@ -225,66 +185,4 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     break;
   };
   return c;
-}
-
-void print_sexpr(const cell *c) {
-  cell ** printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
-  unsigned long level = 0;
-  print_sexpr_rec(c, printed_cons_cells, level);
-  free(printed_cons_cells);
-}
-
-bool cell_was_printed(const cell *c, cell **printed_cons_cells,
-                      unsigned long level) {
-  unsigned long i;
-  //start from the end
-  for (i = 0; i < level; i++)
-    if (printed_cons_cells[i] == c)
-      return true;
-  return false;
-}
-
-void print_sexpr_rec(const cell *c, cell **printed_cons_cells,
-                     unsigned long level) {
-  if (c) {
-    switch (c->type) {
-
-    case TYPE_NUM:
-      printf("%i", c->value);
-      break;
-
-    case TYPE_STR:
-      printf("%s", c->str);
-      break;
-
-    case TYPE_SYM:
-      printf("%s", c->sym);
-      break;
-
-    case TYPE_CONS:
-      // could be a self referenced structure
-      if (!cell_was_printed(c, printed_cons_cells, level)) {
-        // mark the cell as printed
-        printed_cons_cells[level++] = c;
-        
-        if (c->cdr == NULL) {
-          // only head
-          print_sexpr_rec(c->car,printed_cons_cells,level);
-        } else {
-          printf("(");
-          print_sexpr_rec(c->car,printed_cons_cells,level);
-          printf(" . ");
-          print_sexpr_rec(c->cdr,printed_cons_cells,level);
-          printf(")");
-        }
-      }
-      break;
-
-    default:
-      break;
-    }
-  } else {
-    // empty cell
-    printf("NIL");
-  }
 }

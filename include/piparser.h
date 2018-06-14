@@ -38,13 +38,13 @@ enum {
  * @brief text of a token
  *
  */
-char token_text[MAX_TOK_LEN];
+static char token_text[MAX_TOK_LEN];
 
 /**
  * @brief value for numeric tokens
  *
  */
-long token_value;
+static long token_value;
 
 /**
  * @brief reads and returns the identifier of the next token in f
@@ -60,15 +60,7 @@ int next_token(FILE *f);
  * @param f the input stream
  * @return char the next char
  */
-char next_char(FILE *f);
-
-/**
- * @brief prints in stdout one formatted token. The text of the token is stored
- * inside the variable token_text
- *
- * @param tok the token
- */
-void print_token(int tok);
+static char next_char(FILE *f);
 
 /**
  * @brief returns true if a char can terminate a symbol (e.g. ), (space), \n)
@@ -77,7 +69,7 @@ void print_token(int tok);
  * @return true can terminate a symbol
  * @return false otherwise
  */
-bool char_is_sym_terminal(char c);
+static bool char_is_sym_terminal(char c);
 
 /**
  * @brief returs true if a char terminates a strings (e.g. ")
@@ -86,7 +78,7 @@ bool char_is_sym_terminal(char c);
  * @return true c can terminate a string
  * @return false otherwise
  */
-bool char_is_str_terminal(char c);
+static bool char_is_str_terminal(char c);
 
 /**
  * @brief checks if the token text equals "NILL"
@@ -94,18 +86,11 @@ bool char_is_str_terminal(char c);
  * @return true the token text equals "NILL"
  * @return false otherwise
  */
-bool token_text_is_nill();
+static bool token_text_is_nill();
 
 cell *read_sexpr(FILE *f);
 
 cell *read_sexpr_tok(FILE *f, int tok);
-
-void print_sexpr(const cell *c);
-
-bool cell_was_printed(const cell *c, cell **printed_cons_cells,
-                      unsigned long level);
-
-void print_sexpr_rec(const cell *c, cell** printed_cons_cells, unsigned long level);
 
 #endif // !PIPARSER
 /*@}*/
