@@ -12,12 +12,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * @brief enumeration to identify the type of one cell
+ * 
+ */
 enum {
-  TYPE_CONS = 0,
-  TYPE_SYM,
+  TYPE_CONS = 0,            // cons cell: it has car and cdr
+  TYPE_SYM,                 // symbol cell
+  TYPE_NUM,                 // number cell
+  TYPE_STR,                 // string cell
   //   TYPE_KEYWORD,
-  TYPE_NUM,
-  TYPE_STR,
   //   TYPE_BUILTINLAMBDA,
   //   TYPE_BUILTINMACRO,
   //   TYPE_BUILTINSTACK,
@@ -25,6 +29,10 @@ enum {
   //   TYPE_FREE
 };
 
+/**
+ * @brief type to describe a generic cell
+ * 
+ */
 typedef struct cell {
   unsigned char type;
   union {
@@ -46,20 +54,62 @@ typedef struct cell {
   };
 } cell;
 
+/**
+ * @brief max number of aviable cells
+ * 
+ */
 #define MAX_CELLS 65536
 
+/**
+ * @brief array containing the cells
+ * 
+ */
 static cell cells[MAX_CELLS];
 
+/**
+ * @brief index of the next free cell in the array
+ * 
+ */
 static unsigned long next_free_cell = 0;
 
+/**
+ * @brief function to get a cell
+ * 
+ * @return cell* pointer to the new cell
+ */
 cell *get_cell();
 
+/**
+ * @brief make a number cell
+ * 
+ * @param n the number
+ * @return cell* pointer to the new cell
+ */
 cell *mk_num(int n);
 
+/**
+ * @brief make a string cell
+ * 
+ * @param s the string
+ * @return cell* pointer to the new cell
+ */
 cell *mk_str(const char *s);
 
+/**
+ * @brief make a new symbol cell
+ * 
+ * @param symbol name of the symbol
+ * @return cell* pointer to the new cell
+ */
 cell *mk_sym(const char *symbol);
 
+/**
+ * @brief make a new cons cell
+ * 
+ * @param car pointer to the car
+ * @param cdr pointer to the cdr
+ * @return cell* pointer to the new cell
+ */
 cell *mk_cons(cell * car, cell * cdr);
 
 

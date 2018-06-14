@@ -32,7 +32,7 @@ static bool cell_was_printed(const cell *c, cell **printed_cons_cells,
 static void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
                                 unsigned long level);
 
-void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
+static void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
                           unsigned long level);
 
 #endif // !PIPRINT_H
