@@ -34,9 +34,10 @@ int next_token(FILE *f) {
     } else {
       // is not a string: we suppose it is a symbol
       do {
+        token_text[0] = toupper(token_text[0]);
         c = (char)fgetc(f);
         if (feof(f) || !char_is_sym_terminal(c))
-          token_text[i++] = c;
+          token_text[i++] = toupper(c);
         else {
           token_text[i] = '\0';
           ungetc(
