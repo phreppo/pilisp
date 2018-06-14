@@ -17,10 +17,10 @@
  * 
  */
 enum {
-  TYPE_CONS = 0,            // @brief cons cell: it has car and cdr
-  TYPE_SYM,                 // @brief symbol cell
-  TYPE_NUM,                 // @brief number cell
-  TYPE_STR,                 // @brief string cell
+  TYPE_CONS = 0,            ///< cons cell: it has car and cdr
+  TYPE_SYM,                 ///< symbol cell
+  TYPE_NUM,                 ///< number cell
+  TYPE_STR,                 ///< string cell
   //   TYPE_KEYWORD,
   //   TYPE_BUILTINLAMBDA,
   //   TYPE_BUILTINMACRO,

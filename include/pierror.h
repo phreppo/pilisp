@@ -18,10 +18,10 @@
  * 
  */
 enum{
-    NO_ERROR = -1,           // @brief no error occurrred
-    LISP_ERROR = 1,          // @brief LISP syntax error
-    MEMORY_ERROR = 2,        // @brief memory error
-    MODE_ERROR = 3           // @brief error passing mode to some kind of functions
+    NO_ERROR = -1,           ///< no error occurrred
+    LISP_ERROR = 1,          ///< LISP syntax error
+    MEMORY_ERROR = 2,        ///< memory error
+    MODE_ERROR = 3           ///< error passing mode to some kind of functions
 };
 
 /**
