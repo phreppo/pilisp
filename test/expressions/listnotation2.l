@@ -1,0 +1,5 @@
+(" hello " from 123 my ( alien . planet))
+(123 123 123 (this is ( a ) test) my (planet))
+((this is ( a ) test) . (NIL)) ("hey" . "man")                  ()
+(((((((a)))))))
+(a b c we)

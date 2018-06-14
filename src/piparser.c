@@ -1,6 +1,5 @@
 #include "piparser.h"
 
-
 int next_token(FILE *f) {
   int token = -1;
   char c = next_char(f);
@@ -40,7 +39,9 @@ int next_token(FILE *f) {
           token_text[i++] = c;
         else {
           token_text[i] = '\0';
-          ungetc( c, f); // resets because he could have read something like 'symbol)'
+          ungetc(
+              c,
+              f); // resets because he could have read something like 'symbol)'
         }
       } while (!char_is_sym_terminal(c));
       // could be a number
@@ -57,7 +58,7 @@ int next_token(FILE *f) {
 char next_char(FILE *f) {
   char c;
   do {
-    if(!f || feof(f))
+    if (!f || feof(f))
       return 0;
     int ch = fgetc(f);
     if (ch == EOF)
@@ -116,14 +117,15 @@ void print_token(int tok) {
 }
 
 bool char_is_sym_terminal(char c) {
-  return c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 || c=='.';
+  return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
+         c == '.';
 }
 
 bool char_is_str_terminal(char c) { return c == '\"'; }
 
 bool token_text_is_nill() {
   char *nillstr = "NILL";
-  int i=0;
+  int i = 0;
   for (i = 0; i < 3; i++) {
     if (token_text[i] != nillstr[i])
       return false;
@@ -150,37 +152,61 @@ cell *read_sexpr_tok(FILE *f, int tok) {
   case TOK_SYM:
     c = (token_text_is_nill() ? 0 : mk_sym(token_text));
     break;
+  case TOK_CLOSE:
+    pi_error(LISP_ERROR, "unexpected )");
+    break;
+  // TODO: implement quote parsing
   // case TOK_QUOTE:
   //   tok=next_token(f);
   //   return mk_cons(quote_atom,mk_cons(read_sexpr_tok(f,tok),0));
   case TOK_OPEN:
-    // TODO now it does not creates cells
     tok = next_token(f);
     if (tok == TOK_CLOSE)
       // () cell
-      // TODO make this create a cell
       c = NULL;
     else {
       // read car
-      cell * car = read_sexpr_tok(f, tok);
+      cell *car = read_sexpr_tok(f, tok);
+      cell *cdr = NULL;
       // read after head: we can have . || sexpr
       tok = next_token(f);
-      if (tok != TOK_DOT) {
+      if (tok == TOK_DOT) {
         // uses the dot notation
-        pi_error(LISP_ERROR, ". expected");
+        tok = next_token(f);
+        // read cdr
+        cdr = read_sexpr_tok(f, tok);
+        tok = next_token(f);
+        if (tok != TOK_CLOSE)
+          pi_error(LISP_ERROR, ") expected");
+      } else if (tok == TOK_CLOSE) {
+        // found something like (a) = (a . NILL)
+        // nothing to do: cdr=NULL is ok
+      } else {
+        // you are here: ( [car] [something that is not a dot or a ')', aka a
+        // sexpr] ....
+
+        // head of the cdr: we're going to build the tree
+        cell *cdr_head = read_sexpr_tok(f, tok);
+        cdr = mk_cons(cdr_head, NULL);
+
+        tok = next_token(f);
+        // this keeps track of the last cdr added, because we need to attach
+        // list members to the end of the last cdr. Example: (a b c d) needs to
+        // keep track of the last to create the nested structure (a . (b . (c .
+        // (d . NILL))))
+        cell *last_cdr = cdr;
+        while (tok != TOK_CLOSE) {
+          // create a new level
+          cell *new_cdr = mk_cons(read_sexpr_tok(f, tok), NULL);
+          // update cycle variables
+          last_cdr->cdr = new_cdr;
+          last_cdr = new_cdr;
+          tok = next_token(f);
+        }
       }
-      tok = next_token(f);
-      // read cdr 
-      cell * cdr = read_sexpr_tok(f, tok);
-      tok = next_token(f);
-      if (tok != TOK_CLOSE)
-        pi_error(LISP_ERROR, ") expected");
       // create the cell
-      c = mk_cons(car,cdr);
+      c = mk_cons(car, cdr);
     }
-    break;
-  case TOK_CLOSE:
-    pi_error(LISP_ERROR, "unexpected )");
     break;
   case TOK_DOT:
     pi_error(LISP_ERROR, "unexpected .");
@@ -201,10 +227,10 @@ void print_sexpr(const cell *c) {
       printf("%i", c->value);
       break;
     case TYPE_STR:
-      printf("%s",c->str);
+      printf("%s", c->str);
       break;
     case TYPE_SYM:
-      printf("%s",c->sym);
+      printf("%s", c->sym);
       break;
     case TYPE_CONS:
       printf("(");
@@ -213,7 +239,6 @@ void print_sexpr(const cell *c) {
       print_sexpr(c->cdr);
       printf(")");
       break;
-
     default:
       break;
     }
