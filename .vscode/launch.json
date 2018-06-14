@@ -8,7 +8,7 @@
             "name": "(gdb) Test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/parser_rejected_strings_test",
+            "program": "${workspaceFolder}/build/test/recursive_structure_print_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

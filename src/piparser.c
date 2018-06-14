@@ -228,30 +228,58 @@ cell *read_sexpr_tok(FILE *f, int tok) {
 }
 
 void print_sexpr(const cell *c) {
-  if (c) {
+  cell ** printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
+  unsigned long level = 0;
+  print_sexpr_rec(c, printed_cons_cells, level);
+  free(printed_cons_cells);
+}
 
+bool cell_was_printed(const cell *c, cell **printed_cons_cells,
+                      unsigned long level) {
+  unsigned long i;
+  //start from the end
+  for (i = 0; i < level; i++)
+    if (printed_cons_cells[i] == c)
+      return true;
+  return false;
+}
+
+void print_sexpr_rec(const cell *c, cell **printed_cons_cells,
+                     unsigned long level) {
+  if (c) {
     switch (c->type) {
 
     case TYPE_NUM:
       printf("%i", c->value);
       break;
+
     case TYPE_STR:
       printf("%s", c->str);
       break;
+
     case TYPE_SYM:
       printf("%s", c->sym);
       break;
+
     case TYPE_CONS:
-      if (c->cdr == NULL) {
-        print_sexpr(c->car);
-      } else {
-        printf("(");
-        print_sexpr(c->car);
-        printf(" . ");
-        print_sexpr(c->cdr);
-        printf(")");
+      // could be a self referenced structure
+      if (!cell_was_printed(c, printed_cons_cells, level)) {
+        // mark the cell as printed
+        printed_cons_cells[level++] = c;
+        
+        if (c->cdr == NULL) {
+          // only head
+          print_sexpr_rec(c->car,printed_cons_cells,level);
+        } else {
+          printf("(");
+          print_sexpr_rec(c->car,printed_cons_cells,level);
+          printf(" . ");
+          print_sexpr_rec(c->cdr,printed_cons_cells,level);
+          printf(")");
+        }
       }
       break;
+
     default:
       break;
     }

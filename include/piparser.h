@@ -102,5 +102,10 @@ cell *read_sexpr_tok(FILE *f, int tok);
 
 void print_sexpr(const cell *c);
 
+ bool cell_was_printed(const cell *c, cell **printed_cons_cells,
+                      unsigned long level);
+
+void print_sexpr_rec(const cell *c, cell** printed_cons_cells, unsigned long level);
+
 #endif // !PIPARSER
 /*@}*/
