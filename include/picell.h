@@ -46,6 +46,12 @@ typedef struct cell {
   };
 } cell;
 
+#define MAX_CELLS 65536
+
+static cell cells[MAX_CELLS];
+
+static unsigned long first_free_cell = 0;
+
 cell *get_cell();
 
 cell *mk_num(int n);

@@ -5,6 +5,13 @@
         "type_traits": "c",
         "pitestutils.h": "c",
         "pilisp.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "pierror.h": "c",
+        "picell.h": "c",
+        "string.h": "c",
+        "error.h": "c",
+        "stdbool.h": "c",
+        "setjmp.h": "c",
+        "piparser.h": "c"
     }
 }

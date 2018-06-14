@@ -17,8 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
-#include "pierror.h"
 #include "picell.h"
+#include "pierror.h"
 #include "piparser.h"
 
 int jmp_destination;

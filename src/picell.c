@@ -1,7 +1,11 @@
 #include "picell.h"
+#include "pierror.h"
 
-
-cell *get_cell() { return (cell *)malloc(sizeof(cell)); }
+cell *get_cell() { 
+  if(first_free_cell == MAX_CELLS)
+    pi_error(MEMORY_ERROR,"Ran out of memory");
+  return &(cells[first_free_cell++]); 
+}
 
 cell *mk_num(int n) {
   cell *c = get_cell();
