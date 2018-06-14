@@ -22,12 +22,12 @@ int next_token(FILE *f) {
       // the token is a string: has to be parsed in a different way: now we
       // can't skip spaces
       token = TOK_STR;
+      i--;
       do {
         c = (char)fgetc(f);
         if (!char_is_str_terminal(c))
           token_text[i++] = c;
         else {
-          token_text[i++] = c;
           token_text[i] = '\0';
         }
       } while (!char_is_str_terminal(c));
