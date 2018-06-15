@@ -20,6 +20,7 @@ int print_parser_test(char *file_path_name) {
       print_sexpr_mode(root, SEXPR_PRINT_VERBOSE);
     }
   }
+  fseek(fp, 0, SEEK_SET);
   fclose(fp);
   return 0;
 }
