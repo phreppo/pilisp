@@ -93,7 +93,6 @@ void pi_message(const char *message) {
 }
 
 void print_token(int tok) {
-  // TODO: puts(token_text) broken
   const char *token_text = get_token_text();
   switch (tok) {
   case TOK_NONE:

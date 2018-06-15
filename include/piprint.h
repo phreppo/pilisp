@@ -20,10 +20,28 @@ void pi_message(const char *);
  */
 void print_token(int tok);
 
-enum { SEXPR_PRINT_DEFAULT, SEXPR_PRINT_VERBOSE };
+/**
+ * @brief enumeration for identify print mode
+ *
+ */
+enum {
+  SEXPR_PRINT_DEFAULT, ///< default print mode
+  SEXPR_PRINT_VERBOSE  ///< verbose print mode: (a b c) is printed (a . (b . (c .NIL)))
+};
 
+/**
+ * @brief prints the sexpression pointed from c
+ * 
+ * @param c the sexpression that has to be printed
+ */
 void print_sexpr(const cell *c);
 
+/**
+ * @brief prints the sexpression pointed from c in SEXPR_PRINT_DEFAULT or SEXPR_PRINT_VERBOSE
+ * 
+ * @param c the sexpression that has to be printed
+ * @param mode SEXPR_PRINT_DEFAULT or SEXPR_PRINT_VERBOSE
+ */
 void print_sexpr_mode(const cell *c, unsigned char mode);
 
 #endif // !PIPRINT_H

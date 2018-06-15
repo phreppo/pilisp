@@ -16,6 +16,7 @@ int print_parser_test(char *file_path_name) {
   while (!feof(fp)) {
     cell * root = read_sexpr(fp);
     if (root) {
+      print_sexpr(root);
       print_sexpr_mode(root, SEXPR_PRINT_DEFAULT);
       print_sexpr_mode(root, SEXPR_PRINT_VERBOSE);
     }
