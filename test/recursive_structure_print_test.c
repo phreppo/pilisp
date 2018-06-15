@@ -7,5 +7,6 @@ int main(int argc, char **argv) {
   cell * second = mk_cons(head,NULL);
   head->cdr = second;
   print_sexpr_mode(head,SEXPR_PRINT_VERBOSE);
+  print_sexpr_mode(head,SEXPR_PRINT_DEFAULT);
   return 0;
 }

@@ -53,81 +53,37 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
                                  unsigned long level) {
   if (c) {
     switch (c->type) {
-
     case TYPE_NUM:
       printf("%i", c->value);
       break;
-
     case TYPE_STR:
       printf("\"%s\"", c->str);
       break;
-
     case TYPE_SYM:
       printf("%s", c->sym);
       break;
-
     case TYPE_CONS:
-      // could be a self referenced structure
       if (!cell_was_printed(c, printed_cons_cells, level)) {
-        // mark the cell as printed
         printed_cons_cells[level++] = c;
-
         printf("(");
-        if (c->cdr == NULL) {
-          // only head
-          print_sexpr_rec_list(c->car, printed_cons_cells, level);
-        } else {
-          // car && cdr present
-          // print car
+        while (c->cdr && c->cdr->type == TYPE_CONS) {
           print_sexpr_rec_list(c->car, printed_cons_cells, level);
           printf(" ");
-          const cell *cdr = c->cdr;
-          if (cdr->type != TYPE_CONS) {
-            // cdr is not a cons: symbol, num etc...
-            printf(". ");
-            print_sexpr_rec_list(cdr, printed_cons_cells, level);
-          } else
-              // il cdr è un cons
-              if (cdr->cdr->type != TYPE_CONS) {
-            // (a . (1 . 2))
-            // ce ne sta solo uno nel livello immediatamente sotto: possiamo
-            // printare il punto
-            printf(". ");
-            print_sexpr_rec_list(cdr,printed_cons_cells,level);
-            // printf(" (");
-            // print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
-            // printed_cons_cells[level++] = cdr;
-            // printf(" ");
-            // print_sexpr_rec_list(cdr->cdr,printed_cons_cells,level);
-            // printf(") ");
-
-          } else
-            while (cdr) {
-              // cdr is a cons
-              // does have the cdr a car? or it is an atom?
-              if (cdr->type == TYPE_CONS) {
-                // cdr is still a cons
-                print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
-                printed_cons_cells[level++] = cdr;
-                cdr = cdr->cdr;
-                if (cdr)
-                  printf(" ");
-              } else {
-                // cdr is an atom
-                print_sexpr_rec_list(cdr, printed_cons_cells, level);
-                cdr = NULL;
-              }
-            }
+          c = c->cdr;
+        }
+        print_sexpr_rec_list(c->car, printed_cons_cells, level);
+        if (c->cdr) {
+          printf(" . ");
+          print_sexpr_rec_list(c->cdr, printed_cons_cells, level);
         }
         printf(")");
       }
       break;
-
     default:
+      puts("error");
       break;
     }
   } else {
-    // empty cell
     printf("NIL");
   }
 }

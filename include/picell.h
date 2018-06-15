@@ -11,6 +11,7 @@
 #define PICELL_H
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -38,7 +39,7 @@ typedef struct cell {
   union {
     struct {
       struct cell *car;
-      struct cell *cdr
+      struct cell *cdr;
     };
     char *sym;
     int value;
@@ -95,6 +96,7 @@ cell *mk_sym(const char *symbol);
  * @return cell* pointer to the new cell
  */
 cell *mk_cons(cell *car, cell *cdr);
+
 
 #endif // !PICELL_H
 
