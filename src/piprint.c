@@ -80,7 +80,7 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
       }
       break;
     default:
-      puts("error");
+      pi_error(MODE_ERROR,"Unkown cell type");
       break;
     }
   } else {
