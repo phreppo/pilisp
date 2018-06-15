@@ -1,5 +1,116 @@
 #include "piprint.h"
 
+static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
+                             unsigned long level) {
+  unsigned long i;
+  // start from the end
+  for (i = 0; i < level; i++)
+    if (printed_cons_cells[i] == c)
+      return true;
+  return false;
+}
+
+static void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
+                         unsigned long level) {
+  if (c) {
+    switch (c->type) {
+
+    case TYPE_NUM:
+      printf("%i", c->value);
+      break;
+
+    case TYPE_STR:
+      printf("\"%s\"", c->str);
+      break;
+
+    case TYPE_SYM:
+      printf("%s", c->sym);
+      break;
+
+    case TYPE_CONS:
+      // could be a self referenced structure
+      if (!cell_was_printed(c, printed_cons_cells, level)) {
+        // mark the cell as printed
+        printed_cons_cells[level++] = c;
+        printf("(");
+        print_sexpr_rec_dot(c->car, printed_cons_cells, level);
+        printf(" . ");
+        print_sexpr_rec_dot(c->cdr, printed_cons_cells, level);
+        printf(")");
+      }
+      break;
+
+    default:
+      break;
+    }
+  } else {
+    // empty cell
+    printf("NIL");
+  }
+}
+
+static void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
+                          unsigned long level) {
+  if (c) {
+    switch (c->type) {
+
+    case TYPE_NUM:
+      printf("%i", c->value);
+      break;
+
+    case TYPE_STR:
+      printf("\"%s\"", c->str);
+      break;
+
+    case TYPE_SYM:
+      printf("%s", c->sym);
+      break;
+
+    case TYPE_CONS:
+      // could be a self referenced structure
+      if (!cell_was_printed(c, printed_cons_cells, level)) {
+        // mark the cell as printed
+        printed_cons_cells[level++] = c;
+        if (c->cdr == NULL) {
+          // only head
+          printf("(");
+          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          printf(")");
+        } else {
+          // car && cdr present
+          printf("(");
+          // print car
+          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          printf(" ");
+          const cell *cdr = c->cdr;
+          if (cdr->type != TYPE_CONS) {
+            // cdr is not a cons:
+            printf(". ");
+            print_sexpr_rec_list(cdr, printed_cons_cells, level);
+          } else
+            while (cdr) {
+              // cdr is a cons
+              print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
+              printed_cons_cells[level++] = cdr;
+              cdr = cdr->cdr;
+              if (cdr)
+                printf(" ");
+            }
+          printf(")");
+        }
+      }
+      break;
+
+    default:
+      break;
+    }
+  } else {
+    // empty cell
+    printf("NIL");
+  }
+}
+
+
 void pi_message(const char *message) {
   printf("%s %s\n", PROMPT_STRING, message);
 }
@@ -66,114 +177,4 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
     break;
   }
   free(printed_cons_cells);
-}
-
-static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
-                             unsigned long level) {
-  unsigned long i;
-  // start from the end
-  for (i = 0; i < level; i++)
-    if (printed_cons_cells[i] == c)
-      return true;
-  return false;
-}
-
-void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
-                         unsigned long level) {
-  if (c) {
-    switch (c->type) {
-
-    case TYPE_NUM:
-      printf("%i", c->value);
-      break;
-
-    case TYPE_STR:
-      printf("\"%s\"", c->str);
-      break;
-
-    case TYPE_SYM:
-      printf("%s", c->sym);
-      break;
-
-    case TYPE_CONS:
-      // could be a self referenced structure
-      if (!cell_was_printed(c, printed_cons_cells, level)) {
-        // mark the cell as printed
-        printed_cons_cells[level++] = c;
-        printf("(");
-        print_sexpr_rec_dot(c->car, printed_cons_cells, level);
-        printf(" . ");
-        print_sexpr_rec_dot(c->cdr, printed_cons_cells, level);
-        printf(")");
-      }
-      break;
-
-    default:
-      break;
-    }
-  } else {
-    // empty cell
-    printf("NIL");
-  }
-}
-
-void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
-                          unsigned long level) {
-  if (c) {
-    switch (c->type) {
-
-    case TYPE_NUM:
-      printf("%i", c->value);
-      break;
-
-    case TYPE_STR:
-      printf("\"%s\"", c->str);
-      break;
-
-    case TYPE_SYM:
-      printf("%s", c->sym);
-      break;
-
-    case TYPE_CONS:
-      // could be a self referenced structure
-      if (!cell_was_printed(c, printed_cons_cells, level)) {
-        // mark the cell as printed
-        printed_cons_cells[level++] = c;
-        if (c->cdr == NULL) {
-          // only head
-          printf("(");
-          print_sexpr_rec_list(c->car, printed_cons_cells, level);
-          printf(")");
-        } else {
-          // car && cdr present
-          printf("(");
-          // print car
-          print_sexpr_rec_list(c->car, printed_cons_cells, level);
-          printf(" ");
-          const cell *cdr = c->cdr;
-          if (cdr->type != TYPE_CONS) {
-            // cdr is not a cons:
-            printf(". ");
-            print_sexpr_rec_list(cdr, printed_cons_cells, level);
-          } else
-            while (cdr) {
-              // cdr is a cons
-              print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
-              printed_cons_cells[level++] = cdr;
-              cdr = cdr->cdr;
-              if (cdr)
-                printf(" ");
-            }
-          printf(")");
-        }
-      }
-      break;
-
-    default:
-      break;
-    }
-  } else {
-    // empty cell
-    printf("NIL");
-  }
 }

@@ -36,59 +36,6 @@ enum {
  */
 #define MAX_TOK_LEN 1024
 
-/**
- * @brief text of a token
- *
- */
-static char token_text[MAX_TOK_LEN];
-
-/**
- * @brief value for numeric tokens
- *
- */
-static long token_value;
-
-/**
- * @brief reads and returns the identifier of the next token in f
- *
- * @param f the input source
- * @return int the code of the token
- */
-int next_token(FILE *f);
-
-/**
- * @brief returns the next char in the input source. Skips the comments
- *
- * @param f the input stream
- * @return char the next char
- */
-static char next_char(FILE *f);
-
-/**
- * @brief returns true if a char can terminate a symbol (e.g. ), (space), \n)
- *
- * @param c the input char
- * @return true can terminate a symbol
- * @return false otherwise
- */
-static bool char_is_sym_terminal(char c);
-
-/**
- * @brief returs true if a char terminates a strings (e.g. ")
- *
- * @param c the input char
- * @return true c can terminate a string
- * @return false otherwise
- */
-static bool char_is_str_terminal(char c);
-
-/**
- * @brief checks if the token text equals "NILL"
- *
- * @return true the token text equals "NILL"
- * @return false otherwise
- */
-static bool token_text_is_nill();
 
 /**
  * @brief reads the next sexpression on the file, consuming chars. Initializaes the call of the recursive version

@@ -1,5 +1,87 @@
 #include "piparser.h"
 
+/**
+ * @brief text of a token
+ *
+ */
+static char token_text[MAX_TOK_LEN];
+
+/**
+ * @brief value for numeric tokens
+ *
+ */
+static long token_value;
+
+/**
+ * @brief returns the next char in the input source. Skips the comments
+ *
+ * @param f the input stream
+ * @return char the next char
+ */
+static char next_char(FILE *f) {
+  char c;
+  do {
+    if (!f || feof(f))
+      return 0;
+    int ch = fgetc(f);
+    if (ch == EOF)
+      return 0;
+    c = (char)ch;
+    if (c == ';') { // single-line comment
+      do {
+        ch = fgetc(f);
+        if (ch == EOF)
+          return 0;
+      } while ((char)ch != '\n');
+      c = (char)ch;
+    }
+  } while (isspace(c));
+  return c;
+}
+
+/**
+ * @brief returns true if a char can terminate a symbol (e.g. ), (space), \n)
+ *
+ * @param c the input char
+ * @return true can terminate a symbol
+ * @return false otherwise
+ */
+static bool char_is_sym_terminal(char c) {
+  return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
+         c == '.';
+}
+
+/**
+ * @brief returs true if a char terminates a strings (e.g. ")
+ *
+ * @param c the input char
+ * @return true c can terminate a string
+ * @return false otherwise
+ */
+static bool char_is_str_terminal(char c) { return c == '\"'; }
+
+/**
+ * @brief checks if the token text equals "NILL"
+ *
+ * @return true the token text equals "NILL"
+ * @return false otherwise
+ */
+static bool token_text_is_nill() {
+  char *nillstr = "NILL";
+  int i = 0;
+  for (i = 0; i < 3; i++) {
+    if (token_text[i] != nillstr[i])
+      return false;
+  }
+  return true;
+}
+
+/**
+ * @brief reads and returns the identifier of the next token in f
+ *
+ * @param f the input source
+ * @return int the code of the token
+ */
 int next_token(FILE *f) {
   int token = -1;
   char c = next_char(f);
@@ -54,44 +136,6 @@ int next_token(FILE *f) {
     }
   }
   return token;
-}
-
-char next_char(FILE *f) {
-  char c;
-  do {
-    if (!f || feof(f))
-      return 0;
-    int ch = fgetc(f);
-    if (ch == EOF)
-      return 0;
-    c = (char)ch;
-    if (c == ';') { // single-line comment
-      do {
-        ch = fgetc(f);
-        if (ch == EOF)
-          return 0;
-      } while ((char)ch != '\n');
-      c = (char)ch;
-    }
-  } while (isspace(c));
-  return c;
-}
-
-bool char_is_sym_terminal(char c) {
-  return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
-         c == '.';
-}
-
-bool char_is_str_terminal(char c) { return c == '\"'; }
-
-bool token_text_is_nill() {
-  char *nillstr = "NILL";
-  int i = 0;
-  for (i = 0; i < 3; i++) {
-    if (token_text[i] != nillstr[i])
-      return false;
-  }
-  return true;
 }
 
 cell *read_sexpr(FILE *f) {
