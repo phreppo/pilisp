@@ -1,4 +1,4 @@
 ignore:
-  - "**/test"  # ignore folders and all its contents
+  - "**/test/*"  # ignore folders and all its contents
   - "**/main*"       # wildcards accepted
   - "**/pitestutils*"  # regexp accepted
