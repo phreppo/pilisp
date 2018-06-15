@@ -42,7 +42,6 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
 
     default:
       pi_error(MODE_ERROR, "Unknown cell type");
-      break;
     }
   } else {
     // empty cell
@@ -82,7 +81,6 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
       break;
     default:
       pi_error(MODE_ERROR, "Unknown cell type");
-      break;
     }
   } else {
     printf("NIL");
@@ -130,7 +128,6 @@ void print_token(int tok) {
     break;
   default:
     pi_error(MODE_ERROR,"Unknown token type");
-    break;
   }
 }
 
@@ -151,7 +148,6 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
     break;
   default:
     pi_error(MODE_ERROR, "Unknown print mode");
-    break;
   }
   free(printed_cons_cells);
 }
