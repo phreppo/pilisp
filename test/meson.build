@@ -64,11 +64,11 @@ print_lexer_test = executable(
 # Cases for print tokens
 test('[PRINT] Tokens print test', print_lexer_test, args : [expressions_path+'tokens.lisp'])
 
-# Print test for tokens
+# Bad prints test
 bad_prints_test = executable(
     'bad_prints_test', 'bad_prints_test.c',
     include_directories : inc,
     link_with : pilisplib
 )
-# Cases for print tokens
+# Cases for bad prints
 test('[PRINT] Recognize bad prints test', bad_prints_test, args : [expressions_path+'tokens.lisp'])

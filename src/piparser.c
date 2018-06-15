@@ -159,7 +159,7 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     break;
   case TOK_CLOSE:
     pi_error(LISP_ERROR, "unexpected )");
-    break;
+
   // TODO: implement quote parsing
   // case TOK_QUOTE:
   //   tok=next_token(f);
@@ -224,7 +224,6 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     break;
   case TOK_DOT:
     pi_error(LISP_ERROR, "unexpected .");
-    break;
   default:
     // error ?
     break;
