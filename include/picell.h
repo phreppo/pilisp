@@ -61,18 +61,6 @@ typedef struct cell {
 #define MAX_CELLS 65536
 
 /**
- * @brief array containing the cells
- * 
- */
-static cell cells[MAX_CELLS];
-
-/**
- * @brief index of the next free cell in the array
- * 
- */
-static unsigned long next_free_cell = 0;
-
-/**
  * @brief function to get a cell
  * 
  * @return cell* pointer to the new cell

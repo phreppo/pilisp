@@ -25,12 +25,6 @@ enum{
 };
 
 /**
- * @brief last error occurred
- * 
- */
-static int last_error=NO_ERROR;
-
-/**
  * @brief sets the last error to CODE, and sets one message. It will longjump to the last saved point
  * 
  * @param CODE code of the error

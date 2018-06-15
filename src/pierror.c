@@ -1,5 +1,11 @@
 #include "pierror.h"
 
+/**
+ * @brief last error occurred
+ * 
+ */
+static int last_error=NO_ERROR;
+
 void pi_error(int CODE, const char* message){
     printf("%s ERROR: %s\n",PROMPT_STRING,message);
     last_error = CODE;

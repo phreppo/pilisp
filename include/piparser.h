@@ -61,5 +61,13 @@ cell *read_sexpr_tok(FILE *f, int tok);
  */
 const char * get_token_text();
 
+/**
+ * @brief reads and returns the identifier of the next token in f
+ *
+ * @param f the input source
+ * @return int the code of the token
+ */
+int next_token(FILE *f);
+
 #endif // !PIPARSER_H
 /*@}*/
