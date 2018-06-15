@@ -14,11 +14,11 @@ void parse_prompt() {
       pi_message("everything was ok with last sexpr");
     }
     cell *root = read_sexpr(stdin);
-    printf("dot> ");
-    print_sexpr_mode(root, SEXPR_PRINT_VERBOSE);
-    puts("");
     printf("lst> ");
     print_sexpr_mode(root, SEXPR_PRINT_DEFAULT);
+    puts("");
+    printf("ext> ");
+    print_sexpr_mode(root, SEXPR_PRINT_VERBOSE);
     puts("");
   }
 }
