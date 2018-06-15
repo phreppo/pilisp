@@ -8,7 +8,7 @@
             "name": "(gdb) Test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/recursive_structure_print_test",
+            "program": "${workspaceFolder}/build/test/print_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -40,3 +40,17 @@ recursive_structure_print_test = executable(
 )
 # Cases for parser for rejected sexpressions
 test('Print self-referencing structures test', recursive_structure_print_test)
+
+# Print test for accepted sexpressions
+print_test = executable(
+    'print_test', 'print_test.c',
+    include_directories : inc,
+    link_with : pilisplib
+)
+# Cases for print sexpressions
+test('Void file test', print_test, args : [expressions_path+'void.lisp'])
+test('Atoms test', print_test, args : [expressions_path+'atoms.lisp'])
+test('Single atom test', print_test, args : [expressions_path+'atom.lisp'])
+test('Dot sexpressions test', print_test, args : [expressions_path+'dotexpressions.lisp'])
+test('List notation accepted strings 1', print_test, args : [expressions_path+'listnotation1.lisp'])
+test('List notation accepted strings 2', print_test, args : [expressions_path+'listnotation2.lisp'])

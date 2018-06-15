@@ -1,6 +1,6 @@
 #include "piprint.h"
 
-static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
+static bool cell_was_printed(const cell *c, const cell **printed_cons_cells,
                              unsigned long level) {
   unsigned long i;
   // start from the end
@@ -10,8 +10,8 @@ static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
   return false;
 }
 
-static void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
-                         unsigned long level) {
+static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
+                                unsigned long level) {
   if (c) {
     switch (c->type) {
 
@@ -49,8 +49,8 @@ static void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
   }
 }
 
-static void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
-                          unsigned long level) {
+static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
+                                 unsigned long level) {
   if (c) {
     switch (c->type) {
 
@@ -71,33 +71,55 @@ static void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
       if (!cell_was_printed(c, printed_cons_cells, level)) {
         // mark the cell as printed
         printed_cons_cells[level++] = c;
+
+        printf("(");
         if (c->cdr == NULL) {
           // only head
-          printf("(");
           print_sexpr_rec_list(c->car, printed_cons_cells, level);
-          printf(")");
         } else {
           // car && cdr present
-          printf("(");
           // print car
           print_sexpr_rec_list(c->car, printed_cons_cells, level);
           printf(" ");
           const cell *cdr = c->cdr;
           if (cdr->type != TYPE_CONS) {
-            // cdr is not a cons:
+            // cdr is not a cons: symbol, num etc...
             printf(". ");
             print_sexpr_rec_list(cdr, printed_cons_cells, level);
           } else
+              // il cdr è un cons
+              if (cdr->cdr->type != TYPE_CONS) {
+            // (a . (1 . 2))
+            // ce ne sta solo uno nel livello immediatamente sotto: possiamo
+            // printare il punto
+            printf(". ");
+            print_sexpr_rec_list(cdr,printed_cons_cells,level);
+            // printf(" (");
+            // print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
+            // printed_cons_cells[level++] = cdr;
+            // printf(" ");
+            // print_sexpr_rec_list(cdr->cdr,printed_cons_cells,level);
+            // printf(") ");
+
+          } else
             while (cdr) {
               // cdr is a cons
-              print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
-              printed_cons_cells[level++] = cdr;
-              cdr = cdr->cdr;
-              if (cdr)
-                printf(" ");
+              // does have the cdr a car? or it is an atom?
+              if (cdr->type == TYPE_CONS) {
+                // cdr is still a cons
+                print_sexpr_rec_list(cdr->car, printed_cons_cells, level);
+                printed_cons_cells[level++] = cdr;
+                cdr = cdr->cdr;
+                if (cdr)
+                  printf(" ");
+              } else {
+                // cdr is an atom
+                print_sexpr_rec_list(cdr, printed_cons_cells, level);
+                cdr = NULL;
+              }
             }
-          printf(")");
         }
+        printf(")");
       }
       break;
 
@@ -110,14 +132,13 @@ static void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
   }
 }
 
-
 void pi_message(const char *message) {
   printf("%s %s\n", PROMPT_STRING, message);
 }
 
 void print_token(int tok) {
   // TODO: puts(token_text) broken
-  const char * token_text = get_token_text();
+  const char *token_text = get_token_text();
   switch (tok) {
   case TOK_NONE:
     printf("<NILL>\t\t");
@@ -157,8 +178,8 @@ void print_token(int tok) {
   }
 }
 
-void print_sexpr(const cell * c){
-    print_sexpr_mode(c,SEXPR_PRINT_DEFAULT); // default mode
+void print_sexpr(const cell *c) {
+  print_sexpr_mode(c, SEXPR_PRINT_DEFAULT); // default mode
 }
 
 void print_sexpr_mode(const cell *c, unsigned char mode) {
