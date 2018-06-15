@@ -43,5 +43,5 @@ int main(int argc, char **argv) {
   // char file_path_name[] = "/home/phreppo/pilisp/test/expressions/dotexpressions.lisp";;
   pi_message("Wellcome to pilisp");
   printf("File name: %s\n", file_path_name);
-  return print_parser_test(file_path_name);
+  return print_parser_test(file_path_name) && print_lexer_test(file_path_name);
 }

@@ -17,6 +17,7 @@ int parser_test(char *file_path_name) {
       return 1;
     } else {
       // it is a LISP_ERROR: we recognized an invalid sexpression: test is valid!
+      reset_error();
       return 0;
     }
   }
