@@ -188,6 +188,4 @@ cell *read_sexpr_tok(FILE *f, int tok) {
   return c;
 }
 
-const char * get_token_text(){
-  return token_text;
-}
+const char *get_token_text() { return token_text; }

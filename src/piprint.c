@@ -6,7 +6,7 @@ void pi_message(const char *message) {
 
 void print_token(int tok) {
   // TODO: puts(token_text) broken
-  char * token_text = get_token_text();
+  const char * token_text = get_token_text();
   switch (tok) {
   case TOK_NONE:
     printf("<NILL>\t\t");
@@ -51,7 +51,7 @@ void print_sexpr(const cell * c){
 }
 
 void print_sexpr_mode(const cell *c, unsigned char mode) {
-  cell **printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
+  const cell **printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
   unsigned long level = 0;
 
   switch (mode) {
@@ -68,8 +68,8 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
   free(printed_cons_cells);
 }
 
-bool cell_was_printed(const cell *c, cell **printed_cons_cells,
-                      unsigned long level) {
+static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
+                             unsigned long level) {
   unsigned long i;
   // start from the end
   for (i = 0; i < level; i++)
@@ -78,7 +78,7 @@ bool cell_was_printed(const cell *c, cell **printed_cons_cells,
   return false;
 }
 
-void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
+void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
                          unsigned long level) {
   if (c) {
     switch (c->type) {
@@ -117,7 +117,7 @@ void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
   }
 }
 
-void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
+void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
                           unsigned long level) {
   if (c) {
     switch (c->type) {

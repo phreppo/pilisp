@@ -26,13 +26,13 @@ void print_sexpr(const cell *c);
 
 void print_sexpr_mode(const cell *c, unsigned char mode);
 
-static bool cell_was_printed(const cell *c, cell **printed_cons_cells,
+static bool cell_was_printed(const cell *c,const cell **printed_cons_cells,
                              unsigned long level);
 
-static void print_sexpr_rec_dot(const cell *c, cell **printed_cons_cells,
+static void print_sexpr_rec_dot(const cell *c,const cell **printed_cons_cells,
                                 unsigned long level);
 
-static void print_sexpr_rec_list(const cell *c, cell **printed_cons_cells,
+static void print_sexpr_rec_list(const cell *c,const cell **printed_cons_cells,
                           unsigned long level);
 
 #endif // !PIPRINT_H
