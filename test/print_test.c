@@ -34,6 +34,7 @@ int print_lexer_test(char *file_path_name) {
     int tok = next_token(fp);
     print_token(tok);
   }
+  fseek(fp, 0, SEEK_SET);
   fclose(fp);
   return 0;
 }
