@@ -1,6 +1,0 @@
-ignore:
-  - "/test/*"  # ignore folders and all its contents
-  - "build/test/*"  # ignore folders and all its contents
-  - "build/test/test/*"  # ignore folders and all its contents
-  - "/test/*"  # ignore folders and all its contents
-  - "./^#test#parser_accepted_strings_test.c.gcov"
