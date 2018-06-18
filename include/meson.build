@@ -9,6 +9,7 @@ headers = [
         'piparser.h',
         'piprint.h',
         'pitestutils.h',
+        'pibuiltin.h',
 ]
 
 install_headers(headers)

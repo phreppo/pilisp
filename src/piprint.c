@@ -127,7 +127,7 @@ void print_token(int tok) {
     puts(token_text);
     break;
   default:
-    pi_error(MODE_ERROR,"Unknown token type");
+    pi_error(MODE_ERROR, "Unknown token type");
   }
 }
 

@@ -11,6 +11,7 @@ sources = [
     'piparser.c',
     'piprint.c',
     'pitestutils.c',
+    'pibuiltin.c',
 ]
 
 # Creation of static library for testing

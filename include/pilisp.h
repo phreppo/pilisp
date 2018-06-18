@@ -18,6 +18,7 @@
 #include <string.h>
 #include <setjmp.h>
 #include "picell.h"
+#include "pibuiltin.h"
 #include "pierror.h"
 #include "piparser.h"
 #include "piprint.h"
