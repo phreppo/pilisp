@@ -106,13 +106,12 @@ void eval_prompt() {
       // pi_message("you just had an error");
       reset_error();
     }
-    pi_message("Type eval sexpression: ");
+    printf("> ");
     cell *list1 = read_sexpr(stdin);
     // printf("sexpr> \t");
     // print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
     // puts("");
     cell *result = eval(list1,env);
-    puts("");
     print_sexpr(result);
     puts("");
   }
