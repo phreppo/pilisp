@@ -13,11 +13,81 @@ bool eq(const cell *v1, const cell *v2) {
     return (v1->value == v2->value);
   if (is_str(v1) && is_str(v2))
     return (strcmp(v1->str, v2->str) == 0);
-
-  // ! NEW: for now we have not symbol table
-  if (is_sym(v1) && is_sym(v2))
-    return (strcmp(v1->sym, v2->sym) == 0);
   return (v1 == v2);
+}
+
+cell *plus(const cell *numbers) {
+  int result = 0;
+  const cell *act = numbers;
+  while (act) {
+    if (!is_cons(act))
+      pi_error(LISP_ERROR, "impossible to perform addition");
+    if (!is_num(car(act)))
+      pi_error(LISP_ERROR, "added a non-number");
+    result += car(act)->value;
+    act = cdr(act);
+  }
+  return mk_num(result);
+}
+
+cell *minus(const cell *numbers) {
+  if (!numbers || !cdr(numbers))
+    // we need 2 numbers at least
+    pi_error_args();
+
+  if (!is_cons(numbers) || !is_cons(cdr(numbers)))
+    pi_error(LISP_ERROR, "impossible to perform subtraction");
+  if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
+    pi_error(LISP_ERROR, "subtracted a non-number");
+  int result = car(numbers)->value;
+  const cell *act = cdr(numbers);
+  while (act) {
+    if (!is_cons(act))
+      pi_error(LISP_ERROR, "impossible to perform subtraction");
+    if (!is_num(car(act)))
+      pi_error(LISP_ERROR, "subtracted a non-number");
+    result -= car(act)->value;
+    act = cdr(act);
+  }
+  return mk_num(result);
+}
+
+cell *multiplication(const cell *numbers) {
+  int result = 1;
+  const cell *act = numbers;
+  while (act) {
+    if (!is_cons(act))
+      pi_error(LISP_ERROR, "impossible to perform multiplication");
+    if (!is_num(car(act)))
+      pi_error(LISP_ERROR, "multiplicated a non-number");
+    result *= car(act)->value;
+    act = cdr(act);
+  }
+  return mk_num(result);
+}
+
+cell *division(const cell *numbers) {
+  if (!numbers || !cdr(numbers))
+    // we need 2 numbers at least
+    pi_error_args();
+
+  if (!is_cons(numbers) || !is_cons(cdr(numbers)))
+    pi_error(LISP_ERROR, "impossible to perform division");
+  if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
+    pi_error(LISP_ERROR, "divided a non-number");
+  double result = (double)car(numbers)->value;
+  const cell *act = cdr(numbers);
+  while (act) {
+    if (!is_cons(act))
+      pi_error(LISP_ERROR, "impossible to perform subtraction");
+    if (!is_num(car(act)))
+      pi_error(LISP_ERROR, "subtracted a non-number");
+    if(car(act)->value == 0)
+      pi_error(LISP_ERROR, "division for 0");
+    result /= (double)car(act)->value;
+    act = cdr(act);
+  }
+  return mk_num(result);
 }
 
 // ! UNSAFE FUNCTIONS
@@ -96,23 +166,57 @@ cell *apply(cell *fn, cell *x, cell *a) {
     print_sexpr(x);
     puts("");
     if (atom(fn)) {
-      if (eq(fn, mk_sym("CAR")))
+
+      // CAR
+      if (eq(fn, symbol_car))
         return caar(x);
-      if (eq(fn, mk_sym("CDR")))
+
+      // CDR
+      if (eq(fn, symbol_cdr))
         return cdar(x);
-      if (eq(fn, mk_sym("CONS")))
+
+      // CONS
+      if (eq(fn, symbol_cons))
         return cons(car(x), cadr(x));
-      if (eq(fn, mk_sym("ATOM")))
-        // not working: how to represent T?
-        // return atom(car(x));
-        return NULL;
-      if (eq(fn, mk_sym("EQ")))
-        // not working: (eq a a) = NIL
-        return NULL;
-      // return eq(car(x),cadr(x));
-      // return eq(car(x),cadr(x));
-      // TODO call custom lambdas
-      // lambda exists?
+
+      // ATOM
+      if (eq(fn, symbol_atom)) {
+        if (atom(car(x)))
+          return symbol_true;
+        else
+          return NULL;
+      }
+
+      // EQ
+      if (eq(fn, symbol_eq)) {
+        if (eq(car(x), cadr(x)))
+          return symbol_true;
+        else
+          return NULL;
+      }
+
+      // +
+      if (eq(fn, symbol_plus)) {
+        return plus(x);
+      }
+
+      // -
+      if (eq(fn, symbol_minus)) {
+        return minus(x);
+      }
+
+      // *
+      if (eq(fn, symbol_multiplication)) {
+        return multiplication(x);
+      }
+
+      // /
+      if (eq(fn, symbol_division)) {
+        return division(x);
+      }
+
+      // CUSTOM FUNCTION
+      // does lambda exists?
       cell *function_body = eval(fn, a);
       if (function_body == NULL) {
         char *err = "unknown function ";
@@ -124,6 +228,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
       }
       // the env knows the lambda
       return apply(function_body, x, a);
+
     } else {
       if (eq(car(fn), mk_sym("LAMBDA")))
         // he's creating a lambda
@@ -143,9 +248,21 @@ cell *eval(cell *e, cell *a) {
     if (is_num(e) || is_str(e))
       // it's a value
       return e;
-    else
+    else {
       // it's a symbol: we have to search for that
-      return cdr(assoc(e, a));
+      cell *symbol_value = cdr(assoc(e, a));
+      if (!symbol_value) {
+        // the symbol has no value in the env
+        char *err = "unknown symbol ";
+        char *sym_name = e->sym;
+        char *result = malloc(strlen(err) + strlen(sym_name) + 1);
+        strcpy(result, err);
+        strcat(result, sym_name);
+        pi_error(LISP_ERROR, result);
+      } else
+        // the symbol has a value in the env
+        return symbol_value;
+    }
   }
   if (atom(car(e))) {
     // car of the cons cell is an atom
@@ -154,7 +271,7 @@ cell *eval(cell *e, cell *a) {
       return cadr(e);
     // COND CASE HERE
 
-    if( eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
+    if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
       return e;
     return apply(car(e), evlis(cdr(e), a), a);
   } else {

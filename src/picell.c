@@ -34,7 +34,21 @@ cell *mk_str(const char *s) {
   return c;
 }
 
+static cell * is_symbol_allocated(const char * symbol){
+  int i=0;
+  for(i=0;i<next_free_cell;i++){
+    if(cells[i].type == TYPE_SYM && strcmp(cells[i].sym,symbol) == 0)
+      return &cells[i];
+  }
+  return NULL;
+}
+
 cell *mk_sym(const char *symbol) {
+  // was the symbol allocated
+  cell *allocated = is_symbol_allocated(symbol);
+  if(allocated)
+    // the symbol was allocated
+    return allocated;
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);

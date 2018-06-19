@@ -12,6 +12,7 @@
         "error.h": "c",
         "stdbool.h": "c",
         "setjmp.h": "c",
-        "piparser.h": "c"
+        "piparser.h": "c",
+        "pibuiltin.h": "c"
     }
 }
