@@ -38,7 +38,13 @@ cell *mk_sym(const char *symbol) {
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
+  int i = 0;
   strcpy(c->str, symbol);
+  // case unsensitive
+  while ((c->str)[i]) {
+    c->str[i] = toupper(c->str[i]);
+    i++;
+  }
   return c;
 }
 
@@ -74,3 +80,9 @@ cell *copy_cell(const cell *c) {
     copy = mk_cons(copy_cell(car(c)), copy_cell(cdr(c)));
   return copy;
 }
+
+int is_num(const cell *c) { return c->type == TYPE_NUM; }
+int is_str(const cell *c) { return c->type == TYPE_STR; }
+int is_sym(const cell *c) { return c->type == TYPE_SYM; }
+//||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
+int is_cons(const cell *c) { return c->type == TYPE_CONS; }

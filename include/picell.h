@@ -99,6 +99,12 @@ cell *mk_cons(cell *car, cell *cdr);
 
 cell * copy_cell(const cell * c);
 
+int is_num(const cell* c);
+int is_str(const cell* c);
+int is_sym(const cell* c);
+//||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
+int is_cons(const cell* c);
+
 #endif // !PICELL_H
 
 /*@}*/

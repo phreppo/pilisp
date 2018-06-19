@@ -6,6 +6,20 @@ bool atom(const cell *c) {
          || (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR);
 }
 
+bool eq(const cell *v1, const cell *v2) {
+  if (!v1 || !v2)
+    return (v1 == v2);
+  if (is_num(v1) && is_num(v2))
+    return (v1->value == v2->value);
+  if (is_str(v1) && is_str(v2))
+    return (strcmp(v1->str, v2->str) == 0);
+
+  // ! NEW: for now we have not symbol table
+  if(is_sym(v1) && is_sym(v2))
+    return (strcmp(v1->sym, v2->sym) == 0);
+  return (v1 == v2);
+}
+
 // ! UNSAFE FUNCTIONS
 
 cell *car(cell *c) {
@@ -42,19 +56,31 @@ cell *cdar(cell *c) { return car(car(c)); }
 
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
-cell* pairlis(cell* x, cell* y,cell* a) {
+cell *pairlis(cell *x, cell *y, cell *a) {
   // creates copies of everything
-  cell * result = copy_cell(a);
-  // ! TOTAL UNSAFE: no checks about cell type
-  while(x && y){
+  cell *result = copy_cell(a);
+  // ! UNSAFE: no checks about cell type
+  while (x && y) {
     // if(atom(x) || atom(y))
     //   pi_error(LISP_ERROR,"pairlis error");
-    cell * left = car(x);
-    cell * right = car(y);
-    cell * new_pair = mk_cons(copy_cell(left),copy_cell(right));
-    result = mk_cons(new_pair,result);
+    cell *left = car(x);
+    cell *right = car(y);
+    cell *new_pair = mk_cons(copy_cell(left), copy_cell(right));
+    result = mk_cons(new_pair, result);
     x = cdr(x);
     y = cdr(y);
   }
   return result;
+}
+
+cell *assoc(const cell *x, cell *l) {
+  // ! UNSAFE
+  while (l) {
+    // we extract the first element in the pair
+    if (eq(x, car(car(l))))
+      // right pair
+      return l->car;
+    l = l->cdr;
+  }
+  return NULL;
 }

@@ -30,9 +30,7 @@ void pairlis_prompt() {
   cell *str1 = mk_str("hi");
   cell *sym1 = mk_sym("num1");
   cell *sym2 = mk_sym("str1");
-  cell *env = mk_cons(mk_cons(sym1,num1),
-                mk_cons(mk_cons(sym2,str1), NULL)
-  );
+  cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
   printf("pairlis env: ");
   print_sexpr(env);
   puts("");
@@ -55,12 +53,17 @@ void pairlis_prompt() {
     print_sexpr_mode(list2, SEXPR_PRINT_DEFAULT);
     puts("");
 
-    cell * pairl = pairlis(list1,list2,env);
+    cell *pairl = pairlis(list1, list2, env);
     printf("Pairlis> \t");
     print_sexpr(pairl);
     puts("");
+    env = pairl;
 
-    env=pairl;
+    pi_message("Now insert one label");
+    cell * label = read_sexpr(stdin);
+    cell * pair = assoc(label,env);
+    print_sexpr(pair);
+    puts("");
   }
 }
 
