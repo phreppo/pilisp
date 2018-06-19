@@ -97,6 +97,7 @@ cell *mk_sym(const char *symbol);
  */
 cell *mk_cons(cell *car, cell *cdr);
 
+cell * copy_cell(const cell * c);
 
 #endif // !PICELL_H
 

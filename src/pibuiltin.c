@@ -24,7 +24,7 @@ cell *car(cell *c) {
     return NULL;
 }
 
-cell *caar(cell *c) { return car(c)->car; }
+cell *caar(cell *c) { return car(car(c)); }
 
 cell *cdr(cell *c) {
   if (c == NULL)
@@ -34,8 +34,28 @@ cell *cdr(cell *c) {
   return c->cdr;
 }
 
-cell *cadr(cell *c) { return cdr(c)->car; }
+cell *cddr(cell *c) { return cdr(cdr(c)); }
 
-cell *cdar(cell *c) { return car(c)->cdr; }
+cell *cadr(cell *c) { return car(cdr(c)); }
+
+cell *cdar(cell *c) { return car(car(c)); }
 
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
+
+cell* pairlis(cell* x, cell* y,cell* a) {
+  return NULL;
+  // cell* res=push(a);
+  // while(x){
+  //   if (ATOM(x)){
+  //     res=swp(mk_cons(mk_cons(x,y),res));
+  //     x=y=0;
+  //   } else {
+  //     CHECK_S(!y,LISP_ERROR,"\"%s\": too few arguments",curr_fn->sym);
+  //     res=swp(mk_cons(mk_cons(car(x),car(y)),res));
+  //     x=x->cdr;
+  //     y=y->cdr;
+  //   }
+  // }
+  // CHECK_S(y,LISP_ERROR,"\"%s\": too many arguments",curr_fn->sym);
+  // return pop(res);
+}

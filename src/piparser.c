@@ -66,8 +66,8 @@ static bool char_is_str_terminal(char c) { return c == '\"'; }
  * @return true the token text equals "NILL"
  * @return false otherwise
  */
-static bool token_text_is_nill() {
-  char *nillstr = "NILL";
+static bool token_text_is_nil() {
+  char *nillstr = "NIL";
   int i = 0;
   for (i = 0; i < 3; i++) {
     if (token_text[i] != nillstr[i])
@@ -155,15 +155,13 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     c = mk_str(token_text);
     break;
   case TOK_SYM:
-    c = (token_text_is_nill() ? 0 : mk_sym(token_text));
+    c = (token_text_is_nil() ? 0 : mk_sym(token_text));
     break;
   case TOK_CLOSE:
     pi_error(LISP_ERROR, "unexpected )");
-
-  // TODO: implement quote parsing
-  // case TOK_QUOTE:
-  //   tok=next_token(f);
-  //   return mk_cons(quote_atom,mk_cons(read_sexpr_tok(f,tok),0));
+  case TOK_QUOTE:
+    tok=next_token(f);
+    return mk_cons(mk_sym("QUOTE"),mk_cons(read_sexpr_tok(f,tok),0));
   case TOK_OPEN:
     tok = next_token(f);
     if (tok == TOK_CLOSE)
@@ -191,7 +189,7 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // sexpr] ....
 
         // head of the cdr: we're going to build the tree
-        if (!token_text_is_nill()) {
+        if (!token_text_is_nil()) {
 
           cell *cdr_head = read_sexpr_tok(f, tok);
           cdr = mk_cons(cdr_head, NULL);

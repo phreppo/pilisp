@@ -72,3 +72,12 @@ bad_prints_test = executable(
 )
 # Cases for bad prints
 test('[PRINT] Recognize bad prints test', bad_prints_test, args : [expressions_path+'tokens.lisp'])
+
+# Sexpr copy test
+sexpr_copy_test = executable(
+    'sexpr_copy_test', 'sexpr_copy_test.c',
+    include_directories : inc,
+    link_with : pilisplib
+)
+# Cases for bad prints
+test('[COPY] Sexpression copy test', sexpr_copy_test, args : [])
