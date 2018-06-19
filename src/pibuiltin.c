@@ -43,19 +43,18 @@ cell *cdar(cell *c) { return car(car(c)); }
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 cell* pairlis(cell* x, cell* y,cell* a) {
-  return NULL;
-  // cell* res=push(a);
-  // while(x){
-  //   if (ATOM(x)){
-  //     res=swp(mk_cons(mk_cons(x,y),res));
-  //     x=y=0;
-  //   } else {
-  //     CHECK_S(!y,LISP_ERROR,"\"%s\": too few arguments",curr_fn->sym);
-  //     res=swp(mk_cons(mk_cons(car(x),car(y)),res));
-  //     x=x->cdr;
-  //     y=y->cdr;
-  //   }
-  // }
-  // CHECK_S(y,LISP_ERROR,"\"%s\": too many arguments",curr_fn->sym);
-  // return pop(res);
+  // creates copies of everything
+  cell * result = copy_cell(a);
+  // ! TOTAL UNSAFE: no checks about cell type
+  while(x && y){
+    // if(atom(x) || atom(y))
+    //   pi_error(LISP_ERROR,"pairlis error");
+    cell * left = car(x);
+    cell * right = car(y);
+    cell * new_pair = mk_cons(copy_cell(left),copy_cell(right));
+    result = mk_cons(new_pair,result);
+    x = cdr(x);
+    y = cdr(y);
+  }
+  return result;
 }
