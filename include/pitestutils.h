@@ -17,6 +17,7 @@ void lexer_prompt();
 void parse_prompt();
 int lexer_file(FILE * f);
 void pairlis_prompt();
+void eval_prompt();
 
 #endif // !PTESTUTILS_H
 

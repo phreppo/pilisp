@@ -6,6 +6,6 @@ int main(int argc, char **argv) {
     // lexer_file(f);
     // lexer_prompt();
     // parse_prompt();
-    pairlis_prompt();
+    eval_prompt();
     return 0;
 }

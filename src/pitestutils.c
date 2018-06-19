@@ -60,8 +60,8 @@ void pairlis_prompt() {
     env = pairl;
 
     pi_message("Now insert one label");
-    cell * label = read_sexpr(stdin);
-    cell * pair = assoc(label,env);
+    cell *label = read_sexpr(stdin);
+    cell *pair = assoc(label, env);
     print_sexpr(pair);
     puts("");
   }
@@ -83,4 +83,36 @@ int lexer_file(FILE *f) {
   while (!feof(f))
     read_sexpr(f);
   return 0;
+}
+
+void eval_prompt() {
+  printf("%s Wellcome to the eval prompt, type expressions to be evaluated\n",
+         PROMPT_STRING);
+  cell *num1 = mk_num(1);
+  cell *str1 = mk_str("hi");
+  cell *sym1 = mk_sym("a");
+  cell *sym2 = mk_sym("b");
+  cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
+  printf("env: ");
+  print_sexpr(env);
+  puts("");
+  while (1) {
+    // sets the destination for longjump here if errors were encountered during
+    // parsing
+    jmp_destination = setjmp(env_buf);
+    if (get_last_error() != NO_ERROR) {
+      // pi_message("you just had an error");
+      reset_error();
+    }
+    pi_message("Type eval sexpression: ");
+    cell *list1 = read_sexpr(stdin);
+    printf("\nsexpr> \t");
+    print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
+    puts("");
+
+    cell *result = eval(list1,env);
+    pi_message("\nResult: ");
+    print_sexpr(result);
+    puts("");
+  }
 }
