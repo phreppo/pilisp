@@ -13,6 +13,7 @@
         "stdbool.h": "c",
         "setjmp.h": "c",
         "piparser.h": "c",
-        "pibuiltin.h": "c"
+        "pibuiltin.h": "c",
+        "piinit.h": "c"
     }
 }

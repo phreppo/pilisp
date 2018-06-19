@@ -10,7 +10,9 @@ headers = [
         'pilisp.h',
         'piparser.h',
         'piprint.h',
+        'piinit.h',
         'pitestutils.h',
+
 ]
 
 install_headers(headers)
