@@ -24,14 +24,5 @@ cell *caddr(cell *c);
 
 cell *cons(cell *car, cell *cdr);
 
-cell *pairlis(cell *x, cell *y, cell *a);
-
-cell* assoc(const cell* x, cell* l);
-
-cell * apply(cell * fn, cell * x, cell * a);
-
-cell * eval(cell * e, cell * a);
-
-cell * evlis(cell * m, cell * a);
 
 #endif // !PIBUILTIN_H

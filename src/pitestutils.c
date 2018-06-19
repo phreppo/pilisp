@@ -1,7 +1,7 @@
 #include "pitestutils.h"
 
 void parse_prompt() {
-  printf("%s Wellcome to the parser prompt, type sexpressions\n",
+  printf("%s Welcome to the parser prompt, type sexpressions\n",
          PROMPT_STRING);
   while (1) {
     // sets the destination for longjump here if errors were encountered during
@@ -24,7 +24,7 @@ void parse_prompt() {
 }
 
 void pairlis_prompt() {
-  printf("%s Wellcome to the pairlis prompt, type pairs of sexpressions\n",
+  printf("%s Welcome to the pairlis prompt, type pairs of sexpressions\n",
          PROMPT_STRING);
   cell *num1 = mk_num(1);
   cell *str1 = mk_str("hi");
@@ -69,7 +69,7 @@ void pairlis_prompt() {
 
 void lexer_prompt() {
   while (1) {
-    printf("%s Wellcome to the lexer prompt, type tokens\n", PROMPT_STRING);
+    printf("%s Welcome to the lexer prompt, type tokens\n", PROMPT_STRING);
     int token =
         next_token(stdin); // note: int, not char, required to handle EOF
     while (1) {
@@ -86,7 +86,7 @@ int lexer_file(FILE *f) {
 }
 
 void eval_prompt() {
-  printf("%s Wellcome to the eval prompt, type expressions to be evaluated\n",
+  printf("%s Welcome to the eval prompt, type expressions to be evaluated\n",
          PROMPT_STRING);
   cell *num1 = mk_num(1);
   cell *str1 = mk_str("hi");
@@ -106,12 +106,11 @@ void eval_prompt() {
     }
     pi_message("Type eval sexpression: ");
     cell *list1 = read_sexpr(stdin);
-    printf("\nsexpr> \t");
-    print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
-    puts("");
-
+    // printf("sexpr> \t");
+    // print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
+    // puts("");
     cell *result = eval(list1,env);
-    pi_message("\nResult: ");
+    puts("");
     print_sexpr(result);
     puts("");
   }

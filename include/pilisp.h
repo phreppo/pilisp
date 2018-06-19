@@ -11,6 +11,7 @@
 #define PROMPT_STRING "pi>"
 #include "pibuiltin.h"
 #include "picell.h"
+#include "picore.h"
 #include "pierror.h"
 #include "piparser.h"
 #include "piprint.h"

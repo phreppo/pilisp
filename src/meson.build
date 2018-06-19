@@ -5,13 +5,15 @@
 # List of sources
 sources = [
     'main.c',
+    'pibuiltin.c',
     'picell.c',
+    'picore.c',
     'pierror.c',
     'pilisp.c',
     'piparser.c',
     'piprint.c',
     'pitestutils.c',
-    'pibuiltin.c',
+
 ]
 
 # Creation of static library for testing

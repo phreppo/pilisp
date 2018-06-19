@@ -29,7 +29,7 @@ int print_parser_test(char *file_path_name) {
 int main(int argc, char **argv) {
   char * file_path_name = argv[1];
   // char file_path_name[] = "/home/phreppo/pilisp/test/expressions/dotexpressions.lisp";;
-  pi_message("Wellcome to pilisp");
+  pi_message("Welcome to pilisp");
   printf("File name: %s\n", file_path_name);
   return print_parser_test(file_path_name);
 }
