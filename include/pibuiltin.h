@@ -13,7 +13,6 @@ cell * minus(const cell * numbers);
 cell * multiplication(const cell * numbers);
 cell * division(const cell * numbers);
 
-
 cell *car(cell *c);
 cell *cdr(cell *c);
 cell *caar(cell *c);

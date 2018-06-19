@@ -26,11 +26,12 @@ void parse_prompt() {
 void pairlis_prompt() {
   printf("%s Welcome to the pairlis prompt, type pairs of sexpressions\n",
          PROMPT_STRING);
-  cell *num1 = mk_num(1);
-  cell *str1 = mk_str("hi");
-  cell *sym1 = mk_sym("num1");
-  cell *sym2 = mk_sym("str1");
-  cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
+  // cell *num1 = mk_num(1);
+  // cell *str1 = mk_str("hi");
+  // cell *sym1 = mk_sym("num1");
+  // cell *sym2 = mk_sym("str1");
+  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
+  cell * env = load_env(INIT_FILE_PATH_GLOBAL);
   printf("pairlis env: ");
   print_sexpr(env);
   puts("");
@@ -88,11 +89,12 @@ int lexer_file(FILE *f) {
 void eval_prompt() {
   printf("%s Welcome to the eval prompt, type expressions to be evaluated\n",
          PROMPT_STRING);
-  cell *num1 = mk_num(1);
-  cell *str1 = mk_str("hi");
-  cell *sym1 = mk_sym("a");
-  cell *sym2 = mk_sym("b");
-  cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
+  // cell *num1 = mk_num(1);
+  // cell *str1 = mk_str("hi");
+  // cell *sym1 = mk_sym("a");
+  // cell *sym2 = mk_sym("b");
+  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
+  cell * env = load_env(INIT_FILE_PATH_GLOBAL);
   printf("env: ");
   print_sexpr(env);
   puts("");
