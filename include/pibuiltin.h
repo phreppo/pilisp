@@ -10,12 +10,10 @@ cell *caar(const cell *c);
 cell *cddr(const cell *c);
 cell *cadr(const cell *c);
 cell *cdar(const cell *c);
+cell *cadar(const cell *c);
 cell *caddr(const cell *c);
-
 cell *cons(const cell *car,const cell *cdr);
-
 int atom(const cell *c);
-
 bool eq(const cell *v1, const cell *v2);
 
 cell *addition(const cell *numbers);

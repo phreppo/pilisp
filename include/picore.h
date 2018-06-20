@@ -12,4 +12,6 @@ cell *eval(cell *e, cell *a);
 
 cell *evlis(cell *m, cell *a);
 
+cell * evcon(cell *c, cell *a);
+
 #endif // !PICORE_H

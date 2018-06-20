@@ -7,4 +7,5 @@
     (s3 . "hey")
     (id . (lambda (x) x))
     (plusone . (lambda (x) (+ x 1)))
+    (ff . (lambda (x) (cond ((atom x) x ) (t (ff (car x))))))
 )

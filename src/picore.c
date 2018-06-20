@@ -60,6 +60,10 @@ cell *apply(cell *fn, cell *x, cell *a) {
           return NULL;
       }
 
+      // T 
+      if(eq(fn, symbol_true))
+        return symbol_true;
+
       // EQ
       if (eq(fn, symbol_eq)) {
         if (eq(car(x), cadr(x)))
@@ -123,6 +127,8 @@ cell *eval(cell *e, cell *a) {
       return e;
     else {
       // it's a symbol: we have to search for that
+      if(e == symbol_true)
+        return symbol_true;
       cell *symbol_value = cdr(assoc(e, a));
       if (!symbol_value) {
         // the symbol has no value in the env
@@ -139,10 +145,14 @@ cell *eval(cell *e, cell *a) {
   }
   if (atom(car(e))) {
     // car of the cons cell is an atom
+
     if (eq(car(e), mk_sym("QUOTE")))
-      // quote function
+      // QUOTE
       return cadr(e);
-    // COND CASE HERE
+    
+    if(eq(car(e), mk_sym("COND")))
+      // COND 
+      return evcon(cdr(e),a);
 
     if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
       return e;
@@ -161,4 +171,11 @@ cell *evlis(cell *m, cell *a) {
   cell *valued_car = eval(car(m), a);
   cell *valued_cdr = evlis(cdr(m), a);
   return mk_cons(valued_car, valued_cdr);
+}
+
+cell * evcon(cell *c, cell *a){
+  if(eval(caar(c),a) == symbol_true)
+    return eval(cadar(c),a);
+  else 
+    return evcon(cdr(c),a);
 }
