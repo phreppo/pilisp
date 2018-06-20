@@ -56,7 +56,7 @@ typedef struct cell {
  *
  */
 // #define MAX_CELLS 65536
-#define MAX_CELLS 9000000
+#define MAX_CELLS 9999999
 
 /**
  * @brief function to get a cell

@@ -159,6 +159,10 @@ cell *timer(const cell *to_execute, cell ** env) {
   t2 = clock();
 
   elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
-  printf("elapsed: %ld ms\n", elapsed);
+  printf("time: %ld ms\n", elapsed);
   return valued;
 }
+
+cell *or(const cell * operands);
+cell *and(const cell * operands);
+cell *not(const cell * operands);

@@ -15,7 +15,12 @@ cell *cadar(const cell *c);
 cell *caddr(const cell *c);
 cell *cons(const cell *car, const cell *cdr);
 int atom(const cell *c);
+
 bool eq(const cell *v1, const cell *v2);
+
+cell *or(const cell * operands);
+cell *and(const cell * operands);
+cell *not(const cell * operands);
 
 cell *set(cell *name, cell *val, cell **env);
 cell *load(cell *name, cell **env);

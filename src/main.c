@@ -2,7 +2,6 @@
 #include "pitestutils.h" // TODO: remove on production
 
 int main(int argc, char **argv) {
-
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
     printf("\npilisp [<file1.l> ... [ <fileN.l>]]\n");

@@ -16,11 +16,14 @@
     ) )
 )
 
-(set 'test (lambda (num) 
+(set 'test1 (lambda (num) 
     ( cond
         ( (eq num 0) 
             T)
         ( T 
-            (test (- num 1)) )
+            (test1 (- num 1)) )
     ) )
 )
+
+;(timer '(test 18000))
+;(timer '(test 17000))
