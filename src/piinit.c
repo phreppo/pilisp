@@ -1,17 +1,21 @@
 #include "piinit.h"
 
 void init_env() {
-  symbol_car = mk_sym("car");
-  symbol_cdr = mk_sym("cdr");
-  symbol_cons = mk_sym("cons");
-  symbol_atom = mk_sym("atom");
-  symbol_eq = mk_sym("eq");
+  symbol_car = mk_sym("CAR");
+  symbol_cdr = mk_sym("CDR");
+  symbol_cons = mk_sym("CONS");
+  symbol_atom = mk_sym("ATOM");
+  symbol_eq = mk_sym("EQ");
   symbol_true = mk_sym("T");
   symbol_addition = mk_sym("+");
   symbol_subtraction = mk_sym("-");
   symbol_multiplication = mk_sym("*");
   symbol_division = mk_sym("/");
-  symbol_set = mk_sym("set");
+  symbol_set = mk_sym("SET");
+  symbol_lambda = mk_sym("LAMBDA");
+  symbol_label = mk_sym("LABEL");
+  symbol_quote = mk_sym("QUOTE");
+  symbol_cond = mk_sym("COND");
 
 }
 

@@ -16,6 +16,10 @@ cell *symbol_addition;
 cell *symbol_subtraction;
 cell *symbol_multiplication;
 cell *symbol_division;
+cell *symbol_lambda;
+cell *symbol_label;
+cell *symbol_quote;
+cell *symbol_cond;
 
 void init_env();
 

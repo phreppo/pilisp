@@ -117,11 +117,11 @@ cell *apply(cell *fn, cell *x, cell **a) {
     } else {
 
       // creating a lambda
-      if (eq(car(fn), mk_sym("LAMBDA")))
+      if (eq(car(fn), symbol_lambda))
         return eval(caddr(fn), pairlis(cadr(fn), x, a));
 
       // LABEL
-      if (eq(car(fn), mk_sym("LABEL"))) {
+      if (eq(car(fn), symbol_label)) {
         return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
       }
     }
@@ -162,15 +162,15 @@ cell *eval(cell *e, cell **a) {
   if (atom(car(e))) {
     // car of the cons cell is an atom
 
-    if (eq(car(e), mk_sym("QUOTE")))
+    if (eq(car(e), symbol_quote))
       // QUOTE
       return cadr(e);
 
-    if (eq(car(e), mk_sym("COND")))
+    if (eq(car(e), symbol_cond))
       // COND
       return evcon(cdr(e), a);
 
-    if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
+    if (eq(car(e), symbol_lambda)) // lambda "autoquote"
       return e;
 
     // something else
