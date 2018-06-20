@@ -127,11 +127,16 @@ cell *set(cell *name, cell *val, cell **env) {
     prec = act;
     act = cdr(act);
   }
+  printf("Creating new cell\n");
   cell *new = cons(cons(name, val), NULL);
+
   if (prec)
     prec->cdr = new;
   else
     (*env) = new;
+  printf(">env: ");
+  print_sexpr(*env);
+  puts("");
   return val;
   // return new;
 }

@@ -85,17 +85,23 @@ static bool token_text_is_nil() {
 int next_token(FILE *f) {
   int token = -1;
   char c = next_char(f);
-  if (c == 0 || feof(f))
+  if (c == 0 || feof(f)) {
+    token_text[0] = '\0';
     return TOK_NONE;
-  if (c == '(')
+  }
+  if (c == '(') {
+    token_text[0] = '\0';
     token = TOK_OPEN;
-  else if (c == ')')
+  } else if (c == ')') {
+    token_text[0] = '\0';
     token = TOK_CLOSE;
-  else if (c == '.')
+  } else if (c == '.') {
+    token_text[0] = '\0';
     token = TOK_DOT;
-  else if (c == '\'')
+  } else if (c == '\'') {
+    token_text[0] = '\0';
     token = TOK_QUOTE;
-  else {
+  } else {
     token = TOK_SYM;
     int i = 0;
     token_text[i++] = c;
@@ -160,8 +166,8 @@ cell *read_sexpr_tok(FILE *f, int tok) {
   case TOK_CLOSE:
     pi_error(LISP_ERROR, "unexpected )");
   case TOK_QUOTE:
-    tok=next_token(f);
-    return mk_cons(mk_sym("QUOTE"),mk_cons(read_sexpr_tok(f,tok),0));
+    tok = next_token(f);
+    return mk_cons(mk_sym("QUOTE"), mk_cons(read_sexpr_tok(f, tok), 0));
   case TOK_OPEN:
     tok = next_token(f);
     if (tok == TOK_CLOSE)
@@ -189,6 +195,13 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // sexpr] ....
 
         // head of the cdr: we're going to build the tree
+
+        // ! HERE BUG
+
+        // what if ((a . NIL) . (b . 2)): token text is stll NIL but the last
+        // token was an open par
+
+        //
         if (!token_text_is_nil()) {
 
           cell *cdr_head = read_sexpr_tok(f, tok);
