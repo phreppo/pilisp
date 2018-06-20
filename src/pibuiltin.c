@@ -169,6 +169,8 @@ cell *or(const cell * operands){
   while(act){
     if(atom)
       return atom;
+    act=cdr(act);
+    atom = car(act);
   }
   return NULL;
 }
