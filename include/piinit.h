@@ -20,6 +20,7 @@ cell *symbol_lambda;
 cell *symbol_label;
 cell *symbol_quote;
 cell *symbol_cond;
+cell *symbol_load;
 
 void init_env();
 

@@ -16,7 +16,7 @@ void init_env() {
   symbol_label = mk_sym("LABEL");
   symbol_quote = mk_sym("QUOTE");
   symbol_cond = mk_sym("COND");
-
+  symbol_load = mk_sym("LOAD");
 }
 
 cell *load_env(char *init_file_path) {

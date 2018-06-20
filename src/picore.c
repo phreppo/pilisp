@@ -80,6 +80,11 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return set(car(x), cadr(x), a);
       }
 
+      // LOAD
+      if (eq(fn, symbol_load)) {
+        return load(car(x),a);
+      }      
+
       // +
       if (eq(fn, symbol_addition)) {
         return addition(x);

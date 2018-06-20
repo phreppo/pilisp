@@ -135,3 +135,17 @@ cell *set(cell *name, cell *val, cell **env) {
   return val;
   // return new;
 }
+
+cell *load(cell *name, cell **env) {
+  if(!name || !is_str(name))
+    pi_error(LISP_ERROR,"first arg must me a string");
+  FILE *file = fopen(name->str, "r");
+  if (!file)
+    pi_error(LISP_ERROR, "can't find file");
+  cell * val = NULL;
+  while (!feof(file)) {
+    cell *sexpr = read_sexpr(file);
+    val = eval(sexpr, env);
+  }
+  return symbol_true;
+}
