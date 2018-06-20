@@ -114,6 +114,14 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return division(x);
       }
 
+      // OR
+      if (eq(fn, symbol_or)) {
+        printf("Requested or on:");
+        print_sexpr(x);
+        puts("");
+        return or(x);
+      }
+
       // CUSTOM FUNCTION
       // does lambda exists?
       cell *function_body = eval(fn, a);
@@ -132,7 +140,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // creating a lambda
       if (eq(car(fn), symbol_lambda)) {
-        cell * env = pairlis(cadr(fn), x, a);
+        cell *env = pairlis(cadr(fn), x, a);
         return eval(caddr(fn), &env);
       }
       // LABEL

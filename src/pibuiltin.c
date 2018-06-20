@@ -163,6 +163,14 @@ cell *timer(const cell *to_execute, cell ** env) {
   return valued;
 }
 
-cell *or(const cell * operands);
+cell *or(const cell * operands){
+  cell * act = operands;
+  cell * atom = car(act);
+  while(act){
+    if(atom)
+      return atom;
+  }
+  return NULL;
+}
 cell *and(const cell * operands);
 cell *not(const cell * operands);

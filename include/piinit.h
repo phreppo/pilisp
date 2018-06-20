@@ -21,6 +21,7 @@ cell *symbol_label;
 cell *symbol_quote;
 cell *symbol_cond;
 cell *symbol_load;
+cell *symbol_or;
 
 void init_env();
 
