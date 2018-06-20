@@ -145,8 +145,9 @@ cell *eval(cell *e, cell **a) {
       // it's a symbol: we have to search for that
       if (e == symbol_true)
         return symbol_true;
-      cell *symbol_value = cdr(assoc(e, *a));
-      if (!symbol_value) {
+      cell * pair = assoc(e, *a);
+      cell *symbol_value = cdr(pair);
+      if (!pair) {
         // the symbol has no value in the env
         char *err = "unknown symbol ";
         char *sym_name = e->sym;
