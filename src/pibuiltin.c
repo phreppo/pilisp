@@ -110,6 +110,28 @@ cell *caar(const cell *c) { return car(car(c)); }
 cell *cddr(const cell *c) { return cdr(cdr(c)); }
 cell *cadr(const cell *c) { return car(cdr(c)); }
 cell *cdar(const cell *c) { return cdr(car(c)); }
-cell *cadar(const cell *c) { return car(cdr(car(c)));}
+cell *cadar(const cell *c) { return car(cdr(car(c))); }
 cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 cell *cons(const cell *car, const cell *cdr) { return mk_cons(car, cdr); }
+
+cell *set(cell *name, cell *val, cell **env) {
+  cell *prec = NULL;
+  cell *act = *env;
+  while (act) {
+    if (eq(name, caar(act))) {
+      // found
+      car(act)->cdr = val;
+      return cdar(act);
+    }
+    // iterate
+    prec = act;
+    act = cdr(act);
+  }
+  cell *new = cons(cons(name, val), NULL);
+  if (prec)
+    prec->cdr = new;
+  else
+    (*env) = new;
+  return val;
+  // return new;
+}

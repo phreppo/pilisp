@@ -1,6 +1,5 @@
 #include "picore.h"
 
-
 cell *pairlis(cell *x, cell *y, cell *a) {
   // creates copies of everything
   cell *result = copy_cell(a);
@@ -53,14 +52,14 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return cons(car(x), cadr(x));
 
       // ATOM
-      if (eq(fn, symbol_atom)) 
+      if (eq(fn, symbol_atom))
         if (atom(car(x)))
           return symbol_true;
         else
           return NULL;
 
-      // T 
-      if(eq(fn, symbol_true))
+      // T
+      if (eq(fn, symbol_true))
         return symbol_true;
 
       // EQ
@@ -110,14 +109,10 @@ cell *apply(cell *fn, cell *x, cell *a) {
       // creating a lambda
       if (eq(car(fn), mk_sym("LAMBDA")))
         return eval(caddr(fn), pairlis(cadr(fn), x, a));
-      
+
       // LABEL
-      if (eq(car(fn), mk_sym("LABEL"))){
-        return apply(
-          caddr(fn),
-          x,
-          cons(cons(cadr(fn),caddr(fn)),a)
-        );
+      if (eq(car(fn), mk_sym("LABEL"))) {
+        return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
       }
     }
   }
@@ -125,12 +120,12 @@ cell *apply(cell *fn, cell *x, cell *a) {
 }
 
 cell *eval(cell *e, cell *a) {
-//   puts("");
-//   printf("Evaluating:");
-//   print_sexpr(e);
-//   puts("");
+  //   puts("");
+  //   printf("Evaluating:");
+  //   print_sexpr(e);
+  //   puts("");
   if (atom(e)) {
-    if(!e)
+    if (!e)
       // NIL
       return NULL;
     if (is_num(e) || is_str(e))
@@ -138,7 +133,7 @@ cell *eval(cell *e, cell *a) {
       return e;
     else {
       // it's a symbol: we have to search for that
-      if(e == symbol_true)
+      if (e == symbol_true)
         return symbol_true;
       cell *symbol_value = cdr(assoc(e, a));
       if (!symbol_value) {
@@ -160,20 +155,29 @@ cell *eval(cell *e, cell *a) {
     if (eq(car(e), mk_sym("QUOTE")))
       // QUOTE
       return cadr(e);
-    
-    if(eq(car(e), mk_sym("COND")))
-      // COND 
-      return evcon(cdr(e),a);
+
+    if (eq(car(e), mk_sym("COND")))
+      // COND
+      return evcon(cdr(e), a);
 
     if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
       return e;
 
+    // SET
+    if (eq(car(e), symbol_set)) {
+      if (!is_sym(cadr(e)))
+        pi_error(LISP_ERROR, "first arg must be a symbol");
+      if (!caddr(e))
+        // label without a value
+        pi_error_args();
+      return set(cadr(e), eval(caddr(e), a), &a);
+    }
+
     // something else
     return apply(car(e), evlis(cdr(e), a), a);
-  } else {
+  } else
     // composed
     return apply(car(e), evlis(cdr(e), a), a);
-  }
   pi_error(LISP_ERROR, "unable to evaluate expression");
 }
 
@@ -186,9 +190,9 @@ cell *evlis(cell *m, cell *a) {
   return mk_cons(valued_car, valued_cdr);
 }
 
-cell * evcon(cell *c, cell *a){
-  if(eval(caar(c),a) == symbol_true)
-    return eval(cadar(c),a);
-  else 
-    return evcon(cdr(c),a);
+cell *evcon(cell *c, cell *a) {
+  if (eval(caar(c), a) == symbol_true)
+    return eval(cadar(c), a);
+  else
+    return evcon(cdr(c), a);
 }

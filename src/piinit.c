@@ -11,6 +11,8 @@ void init_env() {
   symbol_subtraction = mk_sym("-");
   symbol_multiplication = mk_sym("*");
   symbol_division = mk_sym("/");
+  symbol_set = mk_sym("set");
+
 }
 
 cell *load_env(char *init_file_path) {

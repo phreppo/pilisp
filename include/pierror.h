@@ -30,7 +30,7 @@ enum{
  * @param CODE code of the error
  * @param message message to display
  */
-void pi_error(int CODE, const char* message);
+void pi_error(int CODE, char* message);
 
 void pi_error_args();
 

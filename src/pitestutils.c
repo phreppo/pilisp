@@ -95,6 +95,7 @@ void eval_prompt() {
   // cell *sym2 = mk_sym("b");
   // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
   cell * env = load_env(INIT_FILE_PATH_GLOBAL);
+  // cell * env = NULL;
   printf("env: ");
   print_sexpr(env);
   puts("");

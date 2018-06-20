@@ -6,10 +6,10 @@
  */
 static int last_error=NO_ERROR;
 
-void pi_error(int CODE, const char* message){
+void pi_error(int CODE, char* message){
     printf("ERROR: %s\n",message);
     last_error = CODE;
-    free(message);
+    // free(message);
     longjmp(env_buf,jmp_destination); // jumps to the last saved destination
 }
 

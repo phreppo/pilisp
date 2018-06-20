@@ -16,6 +16,8 @@ cell *cons(const cell *car,const cell *cdr);
 int atom(const cell *c);
 bool eq(const cell *v1, const cell *v2);
 
+cell* set(cell * name,cell * val, cell** env);
+
 cell *addition(const cell *numbers);
 cell *subtraction(const cell *numbers);
 cell *multiplication(const cell *numbers);
