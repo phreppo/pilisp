@@ -1,8 +1,8 @@
 #include "picore.h"
 
-cell *pairlis(cell *x, cell *y, cell *a) {
+cell *pairlis(cell *x, cell *y, cell **a) {
   // creates copies of everything
-  cell *result = copy_cell(a);
+  cell *result = copy_cell(*a);
   // ! UNSAFE: no checks about cell type
   while (x && y) {
     // if(atom(x) || atom(y))
@@ -29,7 +29,7 @@ cell *assoc(const cell *x, cell *l) {
   return NULL;
 }
 
-cell *apply(cell *fn, cell *x, cell *a) {
+cell *apply(cell *fn, cell *x, cell **a) {
   if (fn) {
     // puts("");
     // printf("Applying: ");
@@ -77,9 +77,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         if (!cadr(x))
           // label without a value
           pi_error_args();
-        cell * ret = set(car(x), cadr(x), &a);
-        print_sexpr(a);
-        return ret;
+        return set(car(x), cadr(x), a);
       }
 
       // +
@@ -131,7 +129,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
   return NULL; // error?
 }
 
-cell *eval(cell *e, cell *a) {
+cell *eval(cell *e, cell **a) {
   //   puts("");
   //   printf("Evaluating:");
   //   print_sexpr(e);
@@ -147,7 +145,7 @@ cell *eval(cell *e, cell *a) {
       // it's a symbol: we have to search for that
       if (e == symbol_true)
         return symbol_true;
-      cell *symbol_value = cdr(assoc(e, a));
+      cell *symbol_value = cdr(assoc(e, *a));
       if (!symbol_value) {
         // the symbol has no value in the env
         char *err = "unknown symbol ";
@@ -183,7 +181,7 @@ cell *eval(cell *e, cell *a) {
   pi_error(LISP_ERROR, "unable to evaluate expression");
 }
 
-cell *evlis(cell *m, cell *a) {
+cell *evlis(cell *m, cell **a) {
   if (!m)
     // empty par list
     return NULL;
@@ -192,7 +190,7 @@ cell *evlis(cell *m, cell *a) {
   return mk_cons(valued_car, valued_cdr);
 }
 
-cell *evcon(cell *c, cell *a) {
+cell *evcon(cell *c, cell **a) {
   if (eval(caar(c), a) == symbol_true)
     return eval(cadar(c), a);
   else

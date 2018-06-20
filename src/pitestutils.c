@@ -112,7 +112,7 @@ void eval_prompt() {
     // printf("sexpr> \t");
     // print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
     // puts("");
-    cell *result = eval(list1,env);
+    cell *result = eval(list1,&env);
     print_sexpr(result);
     puts("");
   }
