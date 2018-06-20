@@ -70,6 +70,18 @@ cell *apply(cell *fn, cell *x, cell *a) {
           return NULL;
       }
 
+      // SET
+      if (eq(fn, symbol_set)) {
+        if (!is_sym(car(x)))
+          pi_error(LISP_ERROR, "first arg must be a symbol");
+        if (!cadr(x))
+          // label without a value
+          pi_error_args();
+        cell * ret = set(car(x), cadr(x), &a);
+        print_sexpr(a);
+        return ret;
+      }
+
       // +
       if (eq(fn, symbol_addition)) {
         return addition(x);
@@ -162,16 +174,6 @@ cell *eval(cell *e, cell *a) {
 
     if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
       return e;
-
-    // SET
-    if (eq(car(e), symbol_set)) {
-      if (!is_sym(cadr(e)))
-        pi_error(LISP_ERROR, "first arg must be a symbol");
-      if (!caddr(e))
-        // label without a value
-        pi_error_args();
-      return set(cadr(e), eval(caddr(e), a), &a);
-    }
 
     // something else
     return apply(car(e), evlis(cdr(e), a), a);
