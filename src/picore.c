@@ -2,7 +2,11 @@
 
 cell *pairlis(cell *x, cell *y, cell **a) {
   // creates copies of everything
-  cell *result = copy_cell(*a);
+  // puts("");
+  // printf("Pairlis on: ");
+  // print_sexpr(*a);
+  // puts("");
+  cell *result = (*a);
   // ! UNSAFE: no checks about cell type
   while (x && y) {
     // if(atom(x) || atom(y))
@@ -14,6 +18,9 @@ cell *pairlis(cell *x, cell *y, cell **a) {
     x = cdr(x);
     y = cdr(y);
   }
+  // printf("Pairlis now: ");
+  // print_sexpr(result);
+  // puts("");
   return result;
 }
 
@@ -31,12 +38,12 @@ cell *assoc(const cell *x, cell *l) {
 
 cell *apply(cell *fn, cell *x, cell **a) {
   if (fn) {
-    puts("");
-    printf("Applying: ");
-    print_sexpr(fn);
-    printf(" to ");
-    print_sexpr(x);
-    puts("");
+    // puts("");
+    // printf("Applying: ");
+    // print_sexpr(fn);
+    // printf(" to ");
+    // print_sexpr(x);
+    // puts("");
     if (atom(fn)) {
 
       // CAR
@@ -124,9 +131,10 @@ cell *apply(cell *fn, cell *x, cell **a) {
     } else {
 
       // creating a lambda
-      if (eq(car(fn), symbol_lambda))
-        return eval(caddr(fn), pairlis(cadr(fn), x, a));
-
+      if (eq(car(fn), symbol_lambda)) {
+        cell * env = pairlis(cadr(fn), x, a);
+        return eval(caddr(fn), &env);
+      }
       // LABEL
       if (eq(car(fn), symbol_label)) {
         return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
@@ -137,10 +145,10 @@ cell *apply(cell *fn, cell *x, cell **a) {
 }
 
 cell *eval(cell *e, cell **a) {
-    puts("");
-    printf("Evaluating:");
-    print_sexpr(e);
-    puts("");
+  // puts("");
+  // printf("Evaluating:");
+  // print_sexpr(e);
+  // puts("");
   if (atom(e)) {
     if (!e)
       // NIL
