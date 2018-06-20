@@ -33,7 +33,7 @@ jmp_buf env_buf;
  *
  * @return int 0 if no error occurred
  */
-int prompt();
+int pi_prompt();
 
 #endif // !PILISP_h
 

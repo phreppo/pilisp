@@ -74,9 +74,9 @@ cell *apply(cell *fn, cell *x, cell **a) {
       if (eq(fn, symbol_set)) {
         if (!is_sym(car(x)))
           pi_error(LISP_ERROR, "first arg must be a symbol");
-        if (!cadr(x))
-          // label without a value
-          pi_error_args();
+        // if (!cadr(x))
+        //   // label without a value
+        //   pi_error_args();
         return set(car(x), cadr(x), a);
       }
 
