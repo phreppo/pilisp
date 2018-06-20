@@ -5,4 +5,6 @@
     (s1 . "hi")
     (s2 . "hello")
     (s3 . "hey")
+    (id . (lambda (x) x))
+    (plusone . (lambda (x) (+ x 1)))
 )

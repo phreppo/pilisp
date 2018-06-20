@@ -7,7 +7,7 @@
 static int last_error=NO_ERROR;
 
 void pi_error(int CODE, const char* message){
-    printf("%s ERROR: %s\n",PROMPT_STRING,message);
+    printf("ERROR: %s\n",message);
     last_error = CODE;
     longjmp(env_buf,jmp_destination); // jumps to the last saved destination
 }

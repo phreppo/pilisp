@@ -16,8 +16,8 @@ bool eq(const cell *v1, const cell *v2) {
   return (v1 == v2);
 }
 
-cell *plus(const cell *numbers) {
-  int result = 0;
+cell *addition(const cell *numbers) {
+  long result = 0;
   const cell *act = numbers;
   while (act) {
     if (!is_cons(act))
@@ -30,7 +30,7 @@ cell *plus(const cell *numbers) {
   return mk_num(result);
 }
 
-cell *minus(const cell *numbers) {
+cell *subtraction(const cell *numbers) {
   if (!numbers || !cdr(numbers))
     // we need 2 numbers at least
     pi_error_args();
@@ -39,7 +39,7 @@ cell *minus(const cell *numbers) {
     pi_error(LISP_ERROR, "impossible to perform subtraction");
   if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
     pi_error(LISP_ERROR, "subtracted a non-number");
-  int result = car(numbers)->value;
+  long result = car(numbers)->value;
   const cell *act = cdr(numbers);
   while (act) {
     if (!is_cons(act))
@@ -53,7 +53,7 @@ cell *minus(const cell *numbers) {
 }
 
 cell *multiplication(const cell *numbers) {
-  int result = 1;
+  long result = 1;
   const cell *act = numbers;
   while (act) {
     if (!is_cons(act))
@@ -79,51 +79,36 @@ cell *division(const cell *numbers) {
   const cell *act = cdr(numbers);
   while (act) {
     if (!is_cons(act))
-      pi_error(LISP_ERROR, "impossible to perform subtraction");
+      pi_error(LISP_ERROR, "impossible to perform division");
     if (!is_num(car(act)))
-      pi_error(LISP_ERROR, "subtracted a non-number");
-    if(car(act)->value == 0)
-      pi_error(LISP_ERROR, "division for 0");
+      pi_error(LISP_ERROR, "divided a non-number");
+    if (car(act)->value == 0)
+      pi_error(LISP_ERROR, "division by 0");
     result /= (double)car(act)->value;
     act = cdr(act);
   }
   return mk_num(result);
 }
 
-// ! UNSAFE FUNCTIONS
-
-cell *car(cell *c) {
+cell *car(const cell *c) {
   if (c == NULL)
     // (car NIL)
     return NULL;
-  // if(atom(c))
-  //     // (car 1)
-  //     // TODO: questo è sbagliato, potrebbe essere un simbolo che sta per una
-  //     stringa pi_error(LISP_ERROR, "car applied to atom");
-  if (c) {
-    // unsafe
-    return c->car;
-  } else
-    // empty cell
-    return NULL;
+  if (atom(c))
+    pi_error(LISP_ERROR, "car applied to an atom");
+  return c->car;
 }
-
-cell *caar(cell *c) { return car(car(c)); }
-
-cell *cdr(cell *c) {
+cell *cdr(const cell *c) {
   if (c == NULL)
-    // (car NIL)
+    // (cdr NIL)
     return NULL;
-
+  if (atom(c))
+    pi_error(LISP_ERROR, "cdr applied to an atom");
   return c->cdr;
 }
-
-cell *cddr(cell *c) { return cdr(cdr(c)); }
-
-cell *cadr(cell *c) { return car(cdr(c)); }
-
-cell *cdar(cell *c) { return cdr(car(c)); }
-
-cell *caddr(cell *c) { return car(cdr(cdr(c))); }
-
-cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
+cell *caar(const cell *c) { return car(car(c)); }
+cell *cddr(const cell *c) { return cdr(cdr(c)); }
+cell *cadr(const cell *c) { return car(cdr(c)); }
+cell *cdar(const cell *c) { return cdr(car(c)); }
+cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
+cell *cons(const cell *car, const cell *cdr) { return mk_cons(car, cdr); }

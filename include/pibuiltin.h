@@ -4,24 +4,23 @@
 #include "pilisp.h"
 #include <stdbool.h>
 
+cell *car(const cell *c);
+cell *cdr(const cell *c);
+cell *caar(const cell *c);
+cell *cddr(const cell *c);
+cell *cadr(const cell *c);
+cell *cdar(const cell *c);
+cell *caddr(const cell *c);
+
+cell *cons(const cell *car,const cell *cdr);
+
 int atom(const cell *c);
 
-bool eq(const cell* v1,const cell* v2);
+bool eq(const cell *v1, const cell *v2);
 
-cell * plus(const cell * numbers);
-cell * minus(const cell * numbers);
-cell * multiplication(const cell * numbers);
-cell * division(const cell * numbers);
-
-cell *car(cell *c);
-cell *cdr(cell *c);
-cell *caar(cell *c);
-cell *cddr(cell *c);
-cell *cadr(cell *c);
-cell *cdar(cell *c);
-cell *caddr(cell *c);
-
-cell *cons(cell *car, cell *cdr);
-
+cell *addition(const cell *numbers);
+cell *subtraction(const cell *numbers);
+cell *multiplication(const cell *numbers);
+cell *division(const cell *numbers);
 
 #endif // !PIBUILTIN_H

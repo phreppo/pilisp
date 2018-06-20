@@ -11,8 +11,8 @@ cell *symbol_cons;
 cell *symbol_atom;
 cell *symbol_eq;
 cell *symbol_true;
-cell *symbol_plus;
-cell *symbol_minus;
+cell *symbol_addition;
+cell *symbol_subtraction;
 cell *symbol_multiplication;
 cell *symbol_division;
 

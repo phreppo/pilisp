@@ -7,8 +7,8 @@ void init_env() {
   symbol_atom = mk_sym("atom");
   symbol_eq = mk_sym("eq");
   symbol_true = mk_sym("T");
-  symbol_plus = mk_sym("+");
-  symbol_minus = mk_sym("-");
+  symbol_addition = mk_sym("+");
+  symbol_subtraction = mk_sym("-");
   symbol_multiplication = mk_sym("*");
   symbol_division = mk_sym("/");
 }

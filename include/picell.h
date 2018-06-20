@@ -95,7 +95,7 @@ cell *mk_sym(const char *symbol);
  * @param cdr pointer to the cdr
  * @return cell* pointer to the new cell
  */
-cell *mk_cons(cell *car, cell *cdr);
+cell *mk_cons(const cell *car,const cell *cdr);
 
 cell * copy_cell(const cell * c);
 

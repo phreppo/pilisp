@@ -69,13 +69,13 @@ cell *apply(cell *fn, cell *x, cell *a) {
       }
 
       // +
-      if (eq(fn, symbol_plus)) {
-        return plus(x);
+      if (eq(fn, symbol_addition)) {
+        return addition(x);
       }
 
       // -
-      if (eq(fn, symbol_minus)) {
-        return minus(x);
+      if (eq(fn, symbol_subtraction)) {
+        return subtraction(x);
       }
 
       // *
