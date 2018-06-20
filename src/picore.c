@@ -53,12 +53,11 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return cons(car(x), cadr(x));
 
       // ATOM
-      if (eq(fn, symbol_atom)) {
+      if (eq(fn, symbol_atom)) 
         if (atom(car(x)))
           return symbol_true;
         else
           return NULL;
-      }
 
       // T 
       if(eq(fn, symbol_true))
@@ -107,10 +106,19 @@ cell *apply(cell *fn, cell *x, cell *a) {
       return apply(function_body, x, a);
 
     } else {
+
+      // creating a lambda
       if (eq(car(fn), mk_sym("LAMBDA")))
-        // he's creating a lambda
         return eval(caddr(fn), pairlis(cadr(fn), x, a));
-      // LABEL CASE HERE
+      
+      // LABEL
+      if (eq(car(fn), mk_sym("LABEL"))){
+        return apply(
+          caddr(fn),
+          x,
+          cons(cons(cadr(fn),caddr(fn)),a)
+        );
+      }
     }
   }
   return NULL; // error?
@@ -122,6 +130,9 @@ cell *eval(cell *e, cell *a) {
 //   print_sexpr(e);
 //   puts("");
   if (atom(e)) {
+    if(!e)
+      // NIL
+      return NULL;
     if (is_num(e) || is_str(e))
       // it's a value
       return e;
@@ -156,12 +167,14 @@ cell *eval(cell *e, cell *a) {
 
     if (eq(car(e), mk_sym("LAMBDA"))) // lambda "autoquote"
       return e;
+
+    // something else
     return apply(car(e), evlis(cdr(e), a), a);
   } else {
     // composed
     return apply(car(e), evlis(cdr(e), a), a);
   }
-  pi_error(LISP_ERROR, "Unable to evaluate expression");
+  pi_error(LISP_ERROR, "unable to evaluate expression");
 }
 
 cell *evlis(cell *m, cell *a) {
