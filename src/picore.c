@@ -31,12 +31,12 @@ cell *assoc(const cell *x, cell *l) {
 
 cell *apply(cell *fn, cell *x, cell **a) {
   if (fn) {
-    // puts("");
-    // printf("Applying: ");
-    // print_sexpr(fn);
-    // printf(" to ");
-    // print_sexpr(x);
-    // puts("");
+    puts("");
+    printf("Applying: ");
+    print_sexpr(fn);
+    printf(" to ");
+    print_sexpr(x);
+    puts("");
     if (atom(fn)) {
 
       // CAR
@@ -74,16 +74,18 @@ cell *apply(cell *fn, cell *x, cell **a) {
       if (eq(fn, symbol_set)) {
         if (!is_sym(car(x)))
           pi_error(LISP_ERROR, "first arg must be a symbol");
-        // if (!cadr(x))
-        //   // label without a value
-        //   pi_error_args();
         return set(car(x), cadr(x), a);
       }
 
       // LOAD
       if (eq(fn, symbol_load)) {
-        return load(car(x),a);
-      }      
+        return load(car(x), a);
+      }
+
+      // TIMER
+      if (eq(fn, mk_sym("TIMER"))) {
+        return timer(car(x), a);
+      }
 
       // +
       if (eq(fn, symbol_addition)) {
@@ -135,10 +137,10 @@ cell *apply(cell *fn, cell *x, cell **a) {
 }
 
 cell *eval(cell *e, cell **a) {
-  //   puts("");
-  //   printf("Evaluating:");
-  //   print_sexpr(e);
-  //   puts("");
+    puts("");
+    printf("Evaluating:");
+    print_sexpr(e);
+    puts("");
   if (atom(e)) {
     if (!e)
       // NIL
@@ -150,10 +152,11 @@ cell *eval(cell *e, cell **a) {
       // it's a symbol: we have to search for that
       if (e == symbol_true)
         return symbol_true;
-      cell * pair = assoc(e, *a);
+      cell *pair = assoc(e, *a);
       cell *symbol_value = cdr(pair);
       if (!pair) {
         // the symbol has no value in the env
+        // what if it was in a lambda?
         char *err = "unknown symbol ";
         char *sym_name = e->sym;
         char *result = malloc(strlen(err) + strlen(sym_name) + 1);

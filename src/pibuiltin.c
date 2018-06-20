@@ -137,15 +137,28 @@ cell *set(cell *name, cell *val, cell **env) {
 }
 
 cell *load(cell *name, cell **env) {
-  if(!name || !is_str(name))
-    pi_error(LISP_ERROR,"first arg must me a string");
+  if (!name || !is_str(name))
+    pi_error(LISP_ERROR, "first arg must me a string");
   FILE *file = fopen(name->str, "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");
-  cell * val = NULL;
+  cell *val = NULL;
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
     val = eval(sexpr, env);
   }
   return symbol_true;
+}
+
+cell *timer(const cell *to_execute, cell ** env) {
+  clock_t t1, t2;
+  long elapsed;
+
+  t1 = clock();
+  cell * valued = eval(to_execute,env);
+  t2 = clock();
+
+  elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
+  printf("elapsed: %ld ms\n", elapsed);
+  return valued;
 }

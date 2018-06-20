@@ -3,6 +3,7 @@
 #include "picell.h"
 #include "pilisp.h"
 #include <stdbool.h>
+#include <time.h>
 
 cell *car(const cell *c);
 cell *cdr(const cell *c);
@@ -23,5 +24,7 @@ cell *addition(const cell *numbers);
 cell *subtraction(const cell *numbers);
 cell *multiplication(const cell *numbers);
 cell *division(const cell *numbers);
+
+cell * timer(const cell *to_execute, cell **env);
 
 #endif // !PIBUILTIN_H
