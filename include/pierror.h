@@ -32,7 +32,8 @@ enum{
  */
 void pi_error(int CODE, char* message);
 
-void pi_error_args();
+void pi_error_few_args();
+void pi_error_many_args();
 
 /**
  * @brief Get the last error code
