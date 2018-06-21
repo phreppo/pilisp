@@ -141,9 +141,17 @@ test('[LISP] >', lisp_program_test, args : [
     '(set \'n 1)(> n (- 0 100))',
     'T '
 ])
+test('[LISP] >=', lisp_program_test, args : [
+    '(set \'n 1)(>= n n)',
+    'T '
+])
 test('[LISP] <', lisp_program_test, args : [
     '(set \'n 1)(< (* 100 100) n)',
     'NIL '
+])
+test('[LISP] <=', lisp_program_test, args : [
+    '(set \'n 1)(<= n n)',
+    'T '
 ])
 test('[LISP] lambda: id', lisp_program_test, args : [
     '(set \'str "hi")(set \'id (lambda (x) x)) (id str)',
@@ -152,4 +160,20 @@ test('[LISP] lambda: id', lisp_program_test, args : [
 test('[LISP] lambda: ff', lisp_program_test, args : [
     '(set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'str "hi") (ff \'(((((str)7)8))))',
     'str '
+])
+test('[LISP] nth 1', lisp_program_test, args : [
+    '(nth 1 \'(a b c) )',
+    'B '
+])
+test('[LISP] nth 2', lisp_program_test, args : [
+    '(nth 100 \'(a (1 2) c) )',
+    'NIL '
+])
+test('[LISP] member 1', lisp_program_test, args : [
+    '(set \'n 1)(member n \'(4 1 2 3) )',
+    '(1 2 3) '
+])
+test('[LISP] member 2', lisp_program_test, args : [
+    '(set \'n 1)(member n \'(n n2 NIL) )',
+    'NIL '
 ])
