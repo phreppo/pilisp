@@ -324,3 +324,24 @@ cell *nth(const cell *list) {
     res = car(l);
   return res;
 }
+
+bool total_eq(const cell * c1, const cell * c2){
+  if(!c1 && !c2)
+    // NILL NILL
+    return true;
+  if(!c1 && c2)
+    // NILL something
+    return false;
+  if(c1 && !c2)
+    // something NILL
+    return false;
+  // something something
+  if((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
+    // one is an atom and the other is a cons
+    return false;
+  if(atom(c1) && atom(c2))
+    // equality between two atoms
+    return eq(c1,c2);
+  // cons cons
+  return total_eq(car(c1),car(c2)) && total_eq(cdr(c1),cdr(c2));
+}

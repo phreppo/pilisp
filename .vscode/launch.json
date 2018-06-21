@@ -8,7 +8,7 @@
             "name": "(gdb) Test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/print_test",
+            "program": "${workspaceFolder}/build/test/lisp_program_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -48,12 +48,12 @@ print_test = executable(
     link_with : pilisplib
 )
 # Cases for print sexpressions
-test('[PRINT] Void file print test', print_test, args : [expressions_path+'void.lisp'])
-test('[PRINT] Atoms print test', print_test, args : [expressions_path+'atoms.lisp'])
-test('[PRINT] Single atom print test', print_test, args : [expressions_path+'atom.lisp'])
-test('[PRINT] Dot sexpressions print test', print_test, args : [expressions_path+'dotexpressions.lisp'])
-test('[PRINT] Print list notation accepted strings 1', print_test, args : [expressions_path+'listnotation1.lisp'])
-test('[PRINT] Print list notation accepted strings 2', print_test, args : [expressions_path+'listnotation2.lisp'])
+# test('[PRINT] Void file print test', print_test, args : [expressions_path+'void.lisp'])
+# test('[PRINT] Atoms print test', print_test, args : [expressions_path+'atoms.lisp'])
+# test('[PRINT] Single atom print test', print_test, args : [expressions_path+'atom.lisp'])
+# test('[PRINT] Dot sexpressions print test', print_test, args : [expressions_path+'dotexpressions.lisp'])
+# test('[PRINT] Print list notation accepted strings 1', print_test, args : [expressions_path+'listnotation1.lisp'])
+# test('[PRINT] Print list notation accepted strings 2', print_test, args : [expressions_path+'listnotation2.lisp'])
 
 # Print test for tokens
 print_lexer_test = executable(
@@ -81,3 +81,75 @@ sexpr_copy_test = executable(
 )
 # Cases for bad prints
 test('[COPY] Sexpression copy test', sexpr_copy_test, args : [])
+
+# Lisp program test
+lisp_program_test = executable(
+    'lisp_program_test', 'lisp_program_test.c',
+    include_directories : inc,
+    link_with : pilisplib
+)
+# Cases lisp programs prints
+test('[LISP] +', lisp_program_test, args : [
+    '(+ 1 1 1)',
+    '3 '
+])
+test('[LISP] -', lisp_program_test, args : [
+    '(- 1 1)',
+    '0 '
+])
+test('[LISP] *', lisp_program_test, args : [
+    '(* -1 -1)',
+    '1 '
+])
+test('[LISP] /', lisp_program_test, args : [
+    '(/ 8 2 (+ 1 1))',
+    '2 '
+])
+test('[LISP] or 1', lisp_program_test, args : [
+    '(set \'n 1)(or n "ciao" n NIL)',
+    '1 '
+])
+test('[LISP] or 2', lisp_program_test, args : [
+    '(or NIL NIL NIL NIL NIL)',
+    'NIL'
+])
+test('[LISP] and 1', lisp_program_test, args : [
+    '(and 1 NIL)',
+    'NIL '
+])
+test('[LISP] and 2', lisp_program_test, args : [
+    '(or "hey" 7 "hey")',
+    '"hey"'
+])
+test('[LISP] not 1', lisp_program_test, args : [
+    '(not T)',
+    'NIL'
+])
+test('[LISP] not 2', lisp_program_test, args : [
+    '(not NIL)',
+    'T '
+])
+test('[LISP] car 1', lisp_program_test, args : [
+    '(car \'(a b))',
+    'A '
+])
+test('[LISP] car 2', lisp_program_test, args : [
+    '(car \'((a a) b))',
+    '(A A) '
+])
+test('[LISP] >', lisp_program_test, args : [
+    '(set \'n 1)(> n (- 0 100))',
+    'T '
+])
+test('[LISP] <', lisp_program_test, args : [
+    '(set \'n 1)(< (* 100 100) n)',
+    'NIL '
+])
+test('[LISP] lambda: id', lisp_program_test, args : [
+    '(set \'str "hi")(set \'id (lambda (x) x)) (id str)',
+    '"hi" '
+])
+test('[LISP] lambda: ff', lisp_program_test, args : [
+    '(set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'str "hi") (ff \'(((((str)7)8))))',
+    'str '
+])

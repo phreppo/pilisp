@@ -9,9 +9,9 @@
 cell *car(const cell *c);
 cell *cdr(const cell *c);
 cell *caar(const cell *c);
-cell *cddr(const cell *c);
 cell *cadr(const cell *c);
 cell *cdar(const cell *c);
+cell *cddr(const cell *c);
 cell *cadar(const cell *c);
 cell *caddr(const cell *c);
 cell *cons(const cell *car, const cell *cdr);
@@ -44,5 +44,7 @@ cell *load(cell *name, cell **env);
 cell * length(const cell * list);
 cell * member(const cell * list);
 cell * nth(const cell * list);
+
+bool total_eq(const cell * c1, const cell * c2);
 
 #endif // !PIBUILTIN_H

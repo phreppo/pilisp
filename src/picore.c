@@ -6,14 +6,14 @@ cell *pairlis(cell *x, cell *y, cell **a) {
   // printf("Pairlis on: ");
   // print_sexpr(*a);
   // puts("");
-  cell *result = copy_cell(*a);
+  cell *result = (*a);
   // ! UNSAFE: no checks about cell type
   while (x) {
     // if(atom(x) || atom(y))
     //   pi_error(LISP_ERROR,"pairlis error");
     cell *left = car(x);
     cell *right = car(y);
-    cell *new_pair = mk_cons(copy_cell(left), copy_cell(right));
+    cell *new_pair = mk_cons(left, right);
     result = mk_cons(new_pair, result);
     x = cdr(x);
     y = cdr(y);
@@ -123,7 +123,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
         pi_error(LISP_ERROR, result);
       }
       if (!is_cons(function_body))
-        pi_error(LISP_ERROR, "trying to apply a non-function");
+        pi_error(LISP_ERROR, "trying to apply a non-lambda");
       
       // the env knows the lambda
       return apply(function_body, x, a);

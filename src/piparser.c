@@ -48,7 +48,7 @@ static char next_char(FILE *f) {
  */
 static bool char_is_sym_terminal(char c) {
   return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
-         c == '.';
+         c == '.' || c==EOF;
 }
 
 /**
