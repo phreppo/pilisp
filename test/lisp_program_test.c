@@ -9,6 +9,7 @@ int fpeek(FILE *const fp) {
 
 int main(int argc, char **argv) {
   char *program = argv[1];
+  printf(program);
   // char * program ="(or NIL NIL NIL NIL)";
   // char *result = "NIL ";
   char *result = argv[2];

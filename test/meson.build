@@ -4,6 +4,7 @@
 
 test_path = meson.source_root()+'/test/'
 expressions_path = test_path+'expressions/'
+programs_path = test_path+'lisp_programs/'
 bad_expressions_path = expressions_path+'badexpressions/'
 
 # Parser test for accepted sexpressions
@@ -176,4 +177,16 @@ test('[LISP] member 1', lisp_program_test, args : [
 test('[LISP] member 2', lisp_program_test, args : [
     '(set \'n 1)(member n \'(n n2 NIL) )',
     'NIL '
+])
+test('[LISP] length 1', lisp_program_test, args : [
+    '(length \'(NIL NIL NIL) )',
+    '3 '
+])
+test('[LISP] length 2', lisp_program_test, args : [
+    '(length NIL )',
+    '0 '
+])
+test('[LISP] load test', lisp_program_test, args : [
+    '(load "'+programs_path+'loadtest.lisp")(+ n 1)',
+    '2 '
 ])
