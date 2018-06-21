@@ -6,6 +6,7 @@ void init_env() {
   symbol_cons = mk_sym("CONS");
   symbol_atom = mk_sym("ATOM");
   symbol_eq = mk_sym("EQ");
+  symbol_eq = mk_sym("=");
   symbol_true = mk_sym("T");
   symbol_addition = mk_sym("+");
   symbol_subtraction = mk_sym("-");
@@ -21,6 +22,10 @@ void init_env() {
   symbol_or = mk_sym("OR");
   symbol_and = mk_sym("AND");
   symbol_not = mk_sym("NOT");
+  symbol_greater= mk_sym(">");
+  symbol_greater_equal= mk_sym(">=");
+  symbol_less= mk_sym("<");
+  symbol_less_equal= mk_sym("<=");
 }
 
 cell *load_env(char *init_file_path) {

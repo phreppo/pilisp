@@ -9,7 +9,8 @@ cell *symbol_car;
 cell *symbol_cdr;
 cell *symbol_cons;
 cell *symbol_atom;
-cell *symbol_eq;
+cell *symbol_eq;		// eq
+cell *symbol_eq_math; 	// =
 cell *symbol_true;
 cell *symbol_set;
 cell *symbol_addition;
@@ -25,6 +26,10 @@ cell *symbol_timer;
 cell *symbol_or;
 cell *symbol_and;
 cell *symbol_not;
+cell *symbol_greater;
+cell *symbol_greater_equal;
+cell *symbol_less;
+cell *symbol_less_equal;
 
 void init_env();
 

@@ -114,20 +114,23 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return division(x);
       }
 
-      // OR
-      if (eq(fn, symbol_or)) {
+      // LOGICAL OPERATORS
+      if (eq(fn, symbol_or))
         return or (x);
-      }
-
-      // AND
-      if (eq(fn, symbol_and)) {
+      if (eq(fn, symbol_and))
         return and(x);
-      }
-
-      // NOT
-      if (eq(fn, symbol_not)) {
+      if (eq(fn, symbol_not))
         return not(x);
-      }
+
+      // COMPARISON OPERATORS
+      if (eq(fn, symbol_greater))
+        return greater(x);
+      if (eq(fn, symbol_greater_equal))
+        return greater_eq(x);
+      if (eq(fn, symbol_less))
+        return less(x);
+      if (eq(fn, symbol_less_equal))
+        return less_eq(x);
 
       // CUSTOM FUNCTION
       // does lambda exists?

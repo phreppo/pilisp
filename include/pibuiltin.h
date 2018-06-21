@@ -22,6 +22,11 @@ cell *or(const cell * operands);
 cell *and(const cell * operands);
 cell *not(const cell * operands);
 
+cell *greater(const cell * operands);
+cell *greater_eq(const cell * operands);
+cell *less(const cell * operands);
+cell *less_eq(const cell * operands);
+
 cell *set(cell *name, cell *val, cell **env);
 cell *load(cell *name, cell **env);
 

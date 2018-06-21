@@ -174,6 +174,7 @@ cell * or (const cell *operands) {
   }
   return NULL;
 }
+
 cell * and (const cell *operands) {
   cell *act = operands;
   cell *prev = NULL;
@@ -186,17 +187,74 @@ cell * and (const cell *operands) {
     act = cdr(act);
     atom = car(act);
   }
-  if(!prev)
+  if (!prev)
     return symbol_true;
   return car(prev);
 }
-cell * not(const cell *operands){
-  if(!operands)
+cell * not(const cell *operands) {
+  if (!operands)
     pi_error_few_args();
-  if(cdr(operands))
+  if (cdr(operands))
     pi_error_many_args();
-  if(car(operands))
+  if (car(operands))
     return NULL;
   else
     return symbol_true;
+}
+
+cell *greater(const cell *operands) {
+  check_two_args(operands);
+  const cell *first = car(operands);
+  const cell *second = cadr(operands);
+  if (first->type != second->type)
+    pi_error(LISP_ERROR, "incompatible types");
+  if (is_num(first)) {
+    return ((first->value > second->value) ? symbol_true : NULL);
+  } else if (is_str(first)) {
+    return ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
+  } else
+    pi_error(LISP_ERROR, "non-comparable args");
+  return NULL;
+}
+cell *greater_eq(const cell *operands) {
+  check_two_args(operands);
+  const cell *first = car(operands);
+  const cell *second = cadr(operands);
+  if (first->type != second->type)
+    pi_error(LISP_ERROR, "incompatible types");
+  if (is_num(first)) {
+    return ((first->value >= second->value) ? symbol_true : NULL);
+  } else if (is_str(first)) {
+    return ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
+  } else
+    pi_error(LISP_ERROR, "non-comparable args");
+  return NULL;
+}
+cell *less(const cell *operands) {
+  check_two_args(operands);
+  const cell *first = car(operands);
+  const cell *second = cadr(operands);
+  if (first->type != second->type)
+    pi_error(LISP_ERROR, "incompatible types");
+  if (is_num(first)) {
+    return ((first->value < second->value) ? symbol_true : NULL);
+  } else if (is_str(first)) {
+    return ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
+  } else
+    pi_error(LISP_ERROR, "non-comparable args");
+  return NULL;
+}
+cell *less_eq(const cell *operands) {
+  check_two_args(operands);
+  const cell *first = car(operands);
+  const cell *second = cadr(operands);
+  if (first->type != second->type)
+    pi_error(LISP_ERROR, "incompatible types");
+  if (is_num(first)) {
+    return ((first->value <= second->value) ? symbol_true : NULL);
+  } else if (is_str(first)) {
+    return ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
+  } else
+    pi_error(LISP_ERROR, "non-comparable args");
+  return NULL;
 }

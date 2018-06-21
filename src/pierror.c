@@ -17,6 +17,13 @@ void pi_error_few_args() { pi_error(LISP_ERROR, "too few arguments"); }
 
 void pi_error_many_args() { pi_error(LISP_ERROR, "too many arguments"); }
 
+void check_two_args(const cell *args) {
+  if (!args || !cdr(args))
+    pi_error_few_args();
+  if (cddr(args))
+    pi_error_many_args();
+}
+
 int get_last_error() { return last_error; }
 
 void reset_error() { last_error = NO_ERROR; }
