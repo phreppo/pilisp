@@ -1,5 +1,5 @@
 #ifndef PIINIT_H
-#define PIINIT_H 
+#define PIINIT_H
 #include "picell.h"
 #include "piparser.h"
 #include <stdio.h>
@@ -21,11 +21,12 @@ cell *symbol_label;
 cell *symbol_quote;
 cell *symbol_cond;
 cell *symbol_load;
+cell *symbol_timer;
 cell *symbol_or;
+cell *symbol_and;
 
 void init_env();
 
-cell * load_env(char * init_file_path);
-
+cell *load_env(char *init_file_path);
 
 #endif // !PIINIT_H

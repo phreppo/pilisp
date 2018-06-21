@@ -150,12 +150,12 @@ cell *load(cell *name, cell **env) {
   return symbol_true;
 }
 
-cell *timer(const cell *to_execute, cell ** env) {
+cell *timer(const cell *to_execute, cell **env) {
   clock_t t1, t2;
   long elapsed;
 
   t1 = clock();
-  cell * valued = eval(to_execute,env);
+  cell *valued = eval(to_execute, env);
   t2 = clock();
 
   elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
@@ -163,16 +163,31 @@ cell *timer(const cell *to_execute, cell ** env) {
   return valued;
 }
 
-cell *or(const cell * operands){
-  cell * act = operands;
-  cell * atom = car(act);
-  while(act){
-    if(atom)
+cell * or (const cell *operands) {
+  cell *act = operands;
+  cell *atom = car(act);
+  while (act) {
+    if (atom)
       return atom;
-    act=cdr(act);
+    act = cdr(act);
     atom = car(act);
   }
   return NULL;
 }
-cell *and(const cell * operands);
-cell *not(const cell * operands);
+cell * and (const cell *operands) {
+  cell *act = operands;
+  cell *prev = NULL;
+  cell *atom = car(act);
+  while (act) {
+    if (!atom)
+      // NIL found
+      return atom;
+    prev = act;
+    act = cdr(act);
+    atom = car(act);
+  }
+  if(!prev)
+    return symbol_true;
+  return car(prev);
+}
+cell * not(const cell *operands);

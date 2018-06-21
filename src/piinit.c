@@ -17,8 +17,9 @@ void init_env() {
   symbol_quote = mk_sym("QUOTE");
   symbol_cond = mk_sym("COND");
   symbol_load = mk_sym("LOAD");
-
+  symbol_timer = mk_sym("TIMER");
   symbol_or = mk_sym("OR");
+  symbol_and = mk_sym("AND");
 }
 
 cell *load_env(char *init_file_path) {

@@ -90,7 +90,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
 
       // TIMER
-      if (eq(fn, mk_sym("TIMER"))) {
+      if (eq(fn, symbol_timer)) {
         return timer(car(x), a);
       }
 
@@ -116,10 +116,12 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // OR
       if (eq(fn, symbol_or)) {
-        printf("Requested or on:");
-        print_sexpr(x);
-        puts("");
         return or(x);
+      }
+
+      // AND 
+      if(eq(fn,symbol_and)){
+        return and(x);
       }
 
       // CUSTOM FUNCTION
@@ -216,7 +218,7 @@ cell *evlis(cell *m, cell **a) {
 }
 
 cell *evcon(cell *c, cell **a) {
-  if (eval(caar(c), a) == symbol_true)
+  if (eval(caar(c), a) != NULL)
     return eval(cadar(c), a);
   else
     return evcon(cdr(c), a);
