@@ -16,14 +16,12 @@ int main(int argc, char **argv) {
       exit(1);
     }
     // parse one or more files
-    cell *res = NULL;
     unsigned long i = 1;
     for (i = 1; i < argc; i++) {
       cell *res = parse_file(argv[i]);
       print_sexpr(res);
       puts("");
     }
-    return 0;
   } else {
     pi_prompt();
   }
