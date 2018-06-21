@@ -11,7 +11,19 @@ int main(int argc, char **argv) {
   init_env();
 
   if (argc > 1) {
+    jmp_destination = setjmp(env_buf);
+    if (had_error()) {
+      exit(1);
+    }
     // parse one or more files
+    cell *res = NULL;
+    unsigned long i = 1;
+    for (i = 1; i < argc; i++) {
+      cell *res = parse_file(argv[i]);
+      print_sexpr(res);
+      puts("");
+    }
+    return 0;
   } else {
     pi_prompt();
   }
@@ -20,6 +32,6 @@ int main(int argc, char **argv) {
   // lexer_file(f);
   // lexer_prompt();
   // parse_prompt();
-//   eval_prompt();
+  //   eval_prompt();
   return 0;
 }

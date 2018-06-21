@@ -54,6 +54,7 @@ jmp_buf env_buf;
  * @return int 0 if no error occurred
  */
 int pi_prompt();
+cell * parse_file(char * file_path);
 
 #endif // !PILISP_h
 
