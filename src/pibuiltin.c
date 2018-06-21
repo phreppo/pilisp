@@ -115,6 +115,8 @@ cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 cell *cons(const cell *car, const cell *cdr) { return mk_cons(car, cdr); }
 
 cell *set(cell *name, cell *val, cell **env) {
+  if (!is_sym(name))
+    pi_error(LISP_ERROR, "first arg must be a symbol");
   cell *prec = NULL;
   cell *act = *env;
   while (act) {
@@ -142,10 +144,9 @@ cell *load(cell *name, cell **env) {
   FILE *file = fopen(name->str, "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");
-  cell *val = NULL;
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
-    val = eval(sexpr, env);
+    eval(sexpr, env);
   }
   return symbol_true;
 }
@@ -164,7 +165,7 @@ cell *timer(const cell *to_execute, cell **env) {
 }
 
 cell * or (const cell *operands) {
-  cell *act = operands;
+  const cell *act = operands;
   cell *atom = car(act);
   while (act) {
     if (atom)
@@ -176,8 +177,8 @@ cell * or (const cell *operands) {
 }
 
 cell * and (const cell *operands) {
-  cell *act = operands;
-  cell *prev = NULL;
+  const cell *act = operands;
+  const cell *prev = NULL;
   cell *atom = car(act);
   while (act) {
     if (!atom)

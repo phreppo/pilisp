@@ -78,41 +78,26 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
 
       // SET
-      if (eq(fn, symbol_set)) {
-        if (!is_sym(car(x)))
-          pi_error(LISP_ERROR, "first arg must be a symbol");
+      if (eq(fn, symbol_set))
         return set(car(x), cadr(x), a);
-      }
 
       // LOAD
-      if (eq(fn, symbol_load)) {
+      if (eq(fn, symbol_load)) 
         return load(car(x), a);
-      }
 
       // TIMER
-      if (eq(fn, symbol_timer)) {
+      if (eq(fn, symbol_timer)) 
         return timer(car(x), a);
-      }
 
-      // +
-      if (eq(fn, symbol_addition)) {
+      // ARITHMETIC OPERATORS
+      if (eq(fn, symbol_addition)) 
         return addition(x);
-      }
-
-      // -
-      if (eq(fn, symbol_subtraction)) {
+      if (eq(fn, symbol_subtraction)) 
         return subtraction(x);
-      }
-
-      // *
-      if (eq(fn, symbol_multiplication)) {
+      if (eq(fn, symbol_multiplication)) 
         return multiplication(x);
-      }
-
-      // /
-      if (eq(fn, symbol_division)) {
+      if (eq(fn, symbol_division)) 
         return division(x);
-      }
 
       // LOGICAL OPERATORS
       if (eq(fn, symbol_or))
@@ -143,16 +128,18 @@ cell *apply(cell *fn, cell *x, cell **a) {
         strcat(result, fn_name);
         pi_error(LISP_ERROR, result);
       }
+
       // the env knows the lambda
       return apply(function_body, x, a);
 
     } else {
 
-      // creating a lambda
+      // APLLYING A LAMBDA
       if (eq(car(fn), symbol_lambda)) {
         cell *env = pairlis(cadr(fn), x, a);
         return eval(caddr(fn), &env);
       }
+
       // LABEL
       if (eq(car(fn), symbol_label)) {
         return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
@@ -172,7 +159,7 @@ cell *eval(cell *e, cell **a) {
       // NIL
       return NULL;
     if (is_num(e) || is_str(e))
-      // it's a value
+      // VALUE
       return e;
     else {
       // it's a symbol: we have to search for that
@@ -182,7 +169,6 @@ cell *eval(cell *e, cell **a) {
       cell *symbol_value = cdr(pair);
       if (!pair) {
         // the symbol has no value in the env
-        // what if it was in a lambda?
         char *err = "unknown symbol ";
         char *sym_name = e->sym;
         char *result = malloc(strlen(err) + strlen(sym_name) + 1);
@@ -205,11 +191,13 @@ cell *eval(cell *e, cell **a) {
       // COND
       return evcon(cdr(e), a);
 
-    if (eq(car(e), symbol_lambda)) // lambda "autoquote"
+    if (eq(car(e), symbol_lambda)) 
+      // lambda "autoquote"
       return e;
 
     // something else
     return apply(car(e), evlis(cdr(e), a), a);
+    
   } else
     // composed
     return apply(car(e), evlis(cdr(e), a), a);
