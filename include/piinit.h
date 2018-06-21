@@ -24,6 +24,7 @@ cell *symbol_load;
 cell *symbol_timer;
 cell *symbol_or;
 cell *symbol_and;
+cell *symbol_not;
 
 void init_env();
 

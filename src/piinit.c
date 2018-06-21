@@ -20,6 +20,7 @@ void init_env() {
   symbol_timer = mk_sym("TIMER");
   symbol_or = mk_sym("OR");
   symbol_and = mk_sym("AND");
+  symbol_not = mk_sym("NOT");
 }
 
 cell *load_env(char *init_file_path) {

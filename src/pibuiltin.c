@@ -33,7 +33,7 @@ cell *addition(const cell *numbers) {
 cell *subtraction(const cell *numbers) {
   if (!numbers || !cdr(numbers))
     // we need 2 numbers at least
-    pi_error_args();
+    pi_error_few_args();
 
   if (!is_cons(numbers) || !is_cons(cdr(numbers)))
     pi_error(LISP_ERROR, "impossible to perform subtraction");
@@ -69,7 +69,7 @@ cell *multiplication(const cell *numbers) {
 cell *division(const cell *numbers) {
   if (!numbers || !cdr(numbers))
     // we need 2 numbers at least
-    pi_error_args();
+    pi_error_few_args();
 
   if (!is_cons(numbers) || !is_cons(cdr(numbers)))
     pi_error(LISP_ERROR, "impossible to perform division");
@@ -190,4 +190,13 @@ cell * and (const cell *operands) {
     return symbol_true;
   return car(prev);
 }
-cell * not(const cell *operands);
+cell * not(const cell *operands){
+  if(!operands)
+    pi_error_few_args();
+  if(cdr(operands))
+    pi_error_many_args();
+  if(car(operands))
+    return NULL;
+  else
+    return symbol_true;
+}

@@ -116,12 +116,17 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // OR
       if (eq(fn, symbol_or)) {
-        return or(x);
+        return or (x);
       }
 
-      // AND 
-      if(eq(fn,symbol_and)){
+      // AND
+      if (eq(fn, symbol_and)) {
         return and(x);
+      }
+
+      // NOT
+      if (eq(fn, symbol_not)) {
+        return not(x);
       }
 
       // CUSTOM FUNCTION
