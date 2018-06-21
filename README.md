@@ -10,6 +10,12 @@
 
 Pilisp aims to be a small LISP interpreter for the 1.5 version of the language described [here](http://www.softwarepreservation.org/projects/LISP/book/LISP%201.5%20Programmers%20Manual.pdf).
 
+### Features ###
+
+* Prints self-referencing structures
+* **Lambdas**: (set 'id_func (lambda (x) x) ) permitted
+* **Timer builtin**: (timer 'unvalued_expression) prints the elapsed time for the eval of the expression
+
 ## Documentation ##
 
 Full code documentation can be found on [github pages](https://parof.github.io/pilisp/). It is automatically generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen/), with [Bootstrap](https://getbootstrap.com/) CSS (using [this](https://github.com/Velron/doxygen-bootstrapped) guide). The code documentation is generated every push with [Travis CI](https://travis-ci.org/), so it should be always up to date.
