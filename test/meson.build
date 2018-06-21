@@ -48,12 +48,12 @@ print_test = executable(
     link_with : pilisplib
 )
 # Cases for print sexpressions
-# test('[PRINT] Void file print test', print_test, args : [expressions_path+'void.lisp'])
-# test('[PRINT] Atoms print test', print_test, args : [expressions_path+'atoms.lisp'])
-# test('[PRINT] Single atom print test', print_test, args : [expressions_path+'atom.lisp'])
-# test('[PRINT] Dot sexpressions print test', print_test, args : [expressions_path+'dotexpressions.lisp'])
-# test('[PRINT] Print list notation accepted strings 1', print_test, args : [expressions_path+'listnotation1.lisp'])
-# test('[PRINT] Print list notation accepted strings 2', print_test, args : [expressions_path+'listnotation2.lisp'])
+test('[PRINT] Void file print test', print_test, args : [expressions_path+'void.lisp'])
+test('[PRINT] Atoms print test', print_test, args : [expressions_path+'atoms.lisp'])
+test('[PRINT] Single atom print test', print_test, args : [expressions_path+'atom.lisp'])
+test('[PRINT] Dot sexpressions print test', print_test, args : [expressions_path+'dotexpressions.lisp'])
+test('[PRINT] Print list notation accepted strings 1', print_test, args : [expressions_path+'listnotation1.lisp'])
+test('[PRINT] Print list notation accepted strings 2', print_test, args : [expressions_path+'listnotation2.lisp'])
 
 # Print test for tokens
 print_lexer_test = executable(
