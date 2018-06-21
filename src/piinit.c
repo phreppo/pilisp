@@ -6,7 +6,7 @@ void init_env() {
   symbol_cons = mk_sym("CONS");
   symbol_atom = mk_sym("ATOM");
   symbol_eq = mk_sym("EQ");
-  symbol_eq = mk_sym("=");
+  symbol_eq_math = mk_sym("=");
   symbol_true = mk_sym("T");
   symbol_addition = mk_sym("+");
   symbol_subtraction = mk_sym("-");
@@ -26,9 +26,9 @@ void init_env() {
   symbol_greater_equal= mk_sym(">=");
   symbol_less= mk_sym("<");
   symbol_less_equal= mk_sym("<=");
-  symbol_length= mk_sym("length");
-  symbol_member= mk_sym("member");
-  symbol_nth= mk_sym("nth");
+  symbol_length= mk_sym("LENGTH");
+  symbol_member= mk_sym("MEMBER");
+  symbol_nth= mk_sym("NTH");
 }
 
 cell *load_env(char *init_file_path) {

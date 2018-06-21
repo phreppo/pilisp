@@ -6,9 +6,9 @@ cell *pairlis(cell *x, cell *y, cell **a) {
   // printf("Pairlis on: ");
   // print_sexpr(*a);
   // puts("");
-  cell *result = (*a);
+  cell *result = copy_cell(*a);
   // ! UNSAFE: no checks about cell type
-  while (x && y) {
+  while (x) {
     // if(atom(x) || atom(y))
     //   pi_error(LISP_ERROR,"pairlis error");
     cell *left = car(x);
@@ -46,46 +46,32 @@ cell *apply(cell *fn, cell *x, cell **a) {
     // puts("");
     if (atom(fn)) {
 
-      // CAR
+      // BASIC OPERATIONS
       if (eq(fn, symbol_car))
         return caar(x);
-
-      // CDR
       if (eq(fn, symbol_cdr))
         return cdar(x);
-
-      // CONS
       if (eq(fn, symbol_cons))
         return cons(car(x), cadr(x));
-
-      // ATOM
       if (eq(fn, symbol_atom))
         if (atom(car(x)))
           return symbol_true;
         else
           return NULL;
-
-      // T
       if (eq(fn, symbol_true))
         return symbol_true;
-
-      // EQ
-      if (eq(fn, symbol_eq)) {
+      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
         if (eq(car(x), cadr(x)))
           return symbol_true;
         else
           return NULL;
       }
 
-      // SET
+      // UTILITY
       if (eq(fn, symbol_set))
         return set(car(x), cadr(x), a);
-
-      // LOAD
       if (eq(fn, symbol_load))
         return load(car(x), a);
-
-      // TIMER
       if (eq(fn, symbol_timer))
         return timer(car(x), a);
 
@@ -136,7 +122,9 @@ cell *apply(cell *fn, cell *x, cell **a) {
         strcat(result, fn_name);
         pi_error(LISP_ERROR, result);
       }
-
+      if (!is_cons(function_body))
+        pi_error(LISP_ERROR, "trying to apply a non-function");
+      
       // the env knows the lambda
       return apply(function_body, x, a);
 
@@ -149,9 +137,8 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
 
       // LABEL
-      if (eq(car(fn), symbol_label)) {
+      if (eq(car(fn), symbol_label))
         return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
-      }
     }
   }
   return NULL; // error?
