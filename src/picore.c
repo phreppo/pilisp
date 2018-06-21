@@ -82,21 +82,21 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return set(car(x), cadr(x), a);
 
       // LOAD
-      if (eq(fn, symbol_load)) 
+      if (eq(fn, symbol_load))
         return load(car(x), a);
 
       // TIMER
-      if (eq(fn, symbol_timer)) 
+      if (eq(fn, symbol_timer))
         return timer(car(x), a);
 
       // ARITHMETIC OPERATORS
-      if (eq(fn, symbol_addition)) 
+      if (eq(fn, symbol_addition))
         return addition(x);
-      if (eq(fn, symbol_subtraction)) 
+      if (eq(fn, symbol_subtraction))
         return subtraction(x);
-      if (eq(fn, symbol_multiplication)) 
+      if (eq(fn, symbol_multiplication))
         return multiplication(x);
-      if (eq(fn, symbol_division)) 
+      if (eq(fn, symbol_division))
         return division(x);
 
       // LOGICAL OPERATORS
@@ -116,6 +116,14 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return less(x);
       if (eq(fn, symbol_less_equal))
         return less_eq(x);
+
+      // LISTS
+      if (eq(fn, symbol_length))
+        return length(x);
+      if (eq(fn, symbol_member))
+        return member(x);
+      if (eq(fn, symbol_nth))
+        return nth(x);
 
       // CUSTOM FUNCTION
       // does lambda exists?
@@ -191,13 +199,13 @@ cell *eval(cell *e, cell **a) {
       // COND
       return evcon(cdr(e), a);
 
-    if (eq(car(e), symbol_lambda)) 
+    if (eq(car(e), symbol_lambda))
       // lambda "autoquote"
       return e;
 
     // something else
     return apply(car(e), evlis(cdr(e), a), a);
-    
+
   } else
     // composed
     return apply(car(e), evlis(cdr(e), a), a);

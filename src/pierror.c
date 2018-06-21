@@ -24,6 +24,13 @@ void check_two_args(const cell *args) {
     pi_error_many_args();
 }
 
+void check_one_arg(const cell *args) {
+  if (!args)
+    pi_error_few_args();
+  if (cdr(args))
+    pi_error_many_args();
+}
+
 int get_last_error() { return last_error; }
 
 void reset_error() { last_error = NO_ERROR; }

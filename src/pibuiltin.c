@@ -259,3 +259,68 @@ cell *less_eq(const cell *operands) {
     pi_error(LISP_ERROR, "non-comparable args");
   return NULL;
 }
+
+cell *length(const cell *list) {
+  check_one_arg(list);
+  if (!is_cons(list))
+    pi_error(LISP_ERROR, "arg is not a list");
+  unsigned long len = 0;
+  const cell *act = car(list);
+  if (act && !is_cons(act))
+    pi_error(LISP_ERROR, "arg is not a list");
+  while (act) {
+    len++;
+    act = cdr(act);
+  }
+  return mk_num(len);
+}
+cell *member(const cell *list) {
+  check_two_args(
+      list); // the first is the member and che second is the true list
+  const cell *who = car(list);
+  const cell *l = cadr(list);
+  if(l && !is_cons(l))
+    pi_error(LISP_ERROR,"second arg must be a list");
+  cell *res = NULL;
+  cell *head = NULL;
+  bool found = false;
+  while (l) {
+    const cell * value = car(l);
+    if (!found) {
+      if (eq(value, who)) {
+        // found
+        found = true;
+        res = mk_cons(copy_cell(value),NULL);
+        head = res;
+      }
+    } else {
+      // already found => we have to append this cell to the result
+      cell * tmp = mk_cons(copy_cell(value),NULL);
+      res->cdr = tmp;
+      res = res->cdr;
+    }
+    l = cdr(l);
+  }
+  return head;
+}
+
+cell *nth(const cell *list) { 
+  check_two_args(list);
+  const cell * num = car(list);
+  if(!is_num(num))
+    pi_error(LISP_ERROR,"first arg must be a number");
+  const cell * l = cadr(list);
+  if(l && !is_cons(l))
+    pi_error(LISP_ERROR,"second arg must be a list");
+  
+  cell * res = NULL;
+  unsigned long index = num->value;
+  unsigned long act = 0;
+  while(l && act < index){
+    l = cdr(l);
+    act++;
+  }
+  if(l)
+    res = car(l);
+  return res;
+}

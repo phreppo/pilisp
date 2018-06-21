@@ -26,6 +26,9 @@ void init_env() {
   symbol_greater_equal= mk_sym(">=");
   symbol_less= mk_sym("<");
   symbol_less_equal= mk_sym("<=");
+  symbol_length= mk_sym("length");
+  symbol_member= mk_sym("member");
+  symbol_nth= mk_sym("nth");
 }
 
 cell *load_env(char *init_file_path) {

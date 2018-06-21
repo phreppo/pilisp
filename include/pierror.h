@@ -35,6 +35,7 @@ void pi_error(int CODE, char* message);
 void pi_error_few_args();
 void pi_error_many_args();
 void check_two_args(const cell * args);
+void check_one_arg(const cell * args);
 
 /**
  * @brief Get the last error code

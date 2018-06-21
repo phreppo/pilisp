@@ -30,6 +30,10 @@ cell *symbol_greater;
 cell *symbol_greater_equal;
 cell *symbol_less;
 cell *symbol_less_equal;
+cell *symbol_length;
+cell *symbol_member;
+cell *symbol_nth;
+
 
 void init_env();
 
