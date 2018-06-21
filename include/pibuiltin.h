@@ -14,7 +14,7 @@ cell *cdar(const cell *c);
 cell *cddr(const cell *c);
 cell *cadar(const cell *c);
 cell *caddr(const cell *c);
-cell *cons(const cell *car, const cell *cdr);
+cell *cons(cell *car, cell *cdr);
 int atom(const cell *c);
 bool eq(const cell *v1, const cell *v2);
 
@@ -36,7 +36,7 @@ cell *multiplication(const cell *numbers);
 cell *division(const cell *numbers);
 
 // UTILITY
-cell *timer(const cell *to_execute, cell **env);
+cell *timer(cell *to_execute, cell **env);
 cell *set(cell *name, cell *val, cell **env);
 cell *load(cell *name, cell **env);
 

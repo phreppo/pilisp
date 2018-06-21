@@ -1,6 +1,7 @@
 #include "picell.h"
 #include "pilisp.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int fpeek(FILE *const fp) {
   const int c = getc(fp);
@@ -9,7 +10,7 @@ int fpeek(FILE *const fp) {
 
 int main(int argc, char **argv) {
   char *program = argv[1];
-  printf(program);
+  puts(program);
   // char * program ="(or NIL NIL NIL NIL)";
   // char *result = "NIL ";
   char *result = argv[2];
@@ -60,6 +61,6 @@ int main(int argc, char **argv) {
     return 1;
   }
   cell *expected_result = read_sexpr(result_file_read);
-  close(result_file_read);
+  fclose(result_file_read);
   return !(total_eq(expected_result, res));
  }

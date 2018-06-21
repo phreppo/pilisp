@@ -7,10 +7,10 @@ int pi_prompt() {
   
   printf(COLOR1 "\n\t0000000000000000000000000000000\n\t00" COLOR2 "         _ _ _             " COLOR1 "00\n\t00" COLOR2 "        (_) (_)            " COLOR1 "00\n\t00" COLOR2 "   _ __  _| |_ ___ _ __    " COLOR1 "00\n\t00" COLOR2 "  | '_ \\| | | / __| '_ \\   " COLOR1 "00\n\t00" COLOR2 "  | |_) | | | \\__ \\ |_) |  " COLOR1 "00\n\t00" COLOR2 "  | .__/|_|_|_|___/ .__/   " COLOR1 "00\n\t00" COLOR2 "  | |             | |      " COLOR1 "00\n\t00" COLOR2 "  |_|             |_|      " COLOR1 "00\n\t00" COLOR2 "                           " COLOR1 "00\n\t0000000000000000000000000000000 \n\n" ANSI_COLOR_RESET);
 
-  cell *env = load_env(INIT_FILE_PATH_GLOBAL);
-  printf("env: ");
-  print_sexpr(env);
-  puts("");
+  // cell *env = load_env(INIT_FILE_PATH_GLOBAL);
+  // printf("env: ");
+  // print_sexpr(env);
+  // puts("");
   while (1) {
     // sets the destination for longjump here if errors were encountered
     // during parsing
@@ -24,9 +24,12 @@ int pi_prompt() {
         scanf("%c", &ch);
     }
     printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
-    cell *result = eval(read_sexpr(stdin), &env);
+    cell *result = eval(read_sexpr(stdin), &GLOBAL_ENV);
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
+    puts("");
+    printf("env: ");
+    print_sexpr(GLOBAL_ENV);
     puts("");
   }
   return 0;

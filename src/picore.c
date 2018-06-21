@@ -53,11 +53,12 @@ cell *apply(cell *fn, cell *x, cell **a) {
         return cdar(x);
       if (eq(fn, symbol_cons))
         return cons(car(x), cadr(x));
-      if (eq(fn, symbol_atom))
+      if (eq(fn, symbol_atom)) {
         if (atom(car(x)))
           return symbol_true;
         else
           return NULL;
+      }
       if (eq(fn, symbol_true))
         return symbol_true;
       if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
@@ -124,7 +125,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
-      
+
       // the env knows the lambda
       return apply(function_body, x, a);
 
@@ -137,8 +138,10 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
 
       // LABEL
-      if (eq(car(fn), symbol_label))
-        return apply(caddr(fn), x, cons(cons(cadr(fn), caddr(fn)), a));
+      if (eq(car(fn), symbol_label)) {
+        cell * new_env =  cons(cons(cadr(fn), caddr(fn)), *a);
+        return apply(caddr(fn), x, &new_env);
+      }
     }
   }
   return NULL; // error?

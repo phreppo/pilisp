@@ -29,6 +29,8 @@ void init_env() {
   symbol_length= mk_sym("LENGTH");
   symbol_member= mk_sym("MEMBER");
   symbol_nth= mk_sym("NTH");
+
+  GLOBAL_ENV = NULL;
 }
 
 cell *load_env(char *init_file_path) {

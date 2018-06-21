@@ -62,7 +62,7 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_cons(const cell *car,const cell *cdr) {
+cell *mk_cons(cell *car,cell *cdr) {
   cell *c = get_cell();
   c->type = TYPE_CONS;
   c->car = car;

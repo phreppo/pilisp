@@ -34,6 +34,7 @@ cell *symbol_length;
 cell *symbol_member;
 cell *symbol_nth;
 
+cell *GLOBAL_ENV;
 
 void init_env();
 

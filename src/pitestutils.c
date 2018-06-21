@@ -104,7 +104,7 @@ void pairlis_prompt() {
     print_sexpr_mode(list2, SEXPR_PRINT_DEFAULT);
     puts("");
 
-    cell *pairl = pairlis(list1, list2, env);
+    cell *pairl = pairlis(list1, list2, &env);
     printf("Pairlis> \t");
     print_sexpr(pairl);
     puts("");

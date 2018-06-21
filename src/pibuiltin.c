@@ -112,7 +112,7 @@ cell *cadr(const cell *c) { return car(cdr(c)); }
 cell *cdar(const cell *c) { return cdr(car(c)); }
 cell *cadar(const cell *c) { return car(cdr(car(c))); }
 cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
-cell *cons(const cell *car, const cell *cdr) { return mk_cons(car, cdr); }
+cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 cell *set(cell *name, cell *val, cell **env) {
   if (!is_sym(name))
@@ -141,7 +141,7 @@ cell *set(cell *name, cell *val, cell **env) {
 cell *load(cell *name, cell **env) {
   if (!name || !is_str(name))
     pi_error(LISP_ERROR, "first arg must me a string");
-  FILE *file = fopen(name->str, "r");
+  FILE *file = fopen(((name) ? name->str : ""), "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");
   while (!feof(file)) {
@@ -151,7 +151,7 @@ cell *load(cell *name, cell **env) {
   return symbol_true;
 }
 
-cell *timer(const cell *to_execute, cell **env) {
+cell *timer(cell *to_execute, cell **env) {
   clock_t t1, t2;
   long elapsed;
 
@@ -274,6 +274,7 @@ cell *length(const cell *list) {
   }
   return mk_num(len);
 }
+
 cell *member(const cell *list) {
   check_two_args(
       list); // the first is the member and che second is the true list
