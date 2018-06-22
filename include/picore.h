@@ -1,5 +1,6 @@
 #ifndef PICORE_H
 #define PICORE_H
+#define DEBUG_MODE 1
 #include "pilisp.h"
 
 cell *pairlis(cell *x, cell *y, cell **a);

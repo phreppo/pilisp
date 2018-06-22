@@ -40,9 +40,9 @@ int pi_prompt() {
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    printf("env: ");
-    print_sexpr(GLOBAL_ENV);
-    puts("");
+    // printf("env: ");
+    // print_sexpr(GLOBAL_ENV);
+    // puts("");
   }
   return 0;
 }

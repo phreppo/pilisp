@@ -148,10 +148,13 @@ cell *apply(cell *fn, cell *x, cell **a) {
 }
 
 cell *eval(cell *e, cell **a) {
-  // puts("");
-  // printf("Evaluating:");
-  // print_sexpr(e);
-  // puts("");
+  #if DEBUG_MODE == 1
+    printf("Evaluating: " ANSI_COLOR_GREEN);
+    print_sexpr(e);
+    printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
+    print_sexpr(*a);
+    printf( ANSI_COLOR_RESET"\n");
+  #endif
   if (atom(e)) {
     if (!e)
       // NIL
