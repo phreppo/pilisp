@@ -1,5 +1,7 @@
 #include "picore.h"
 
+cell * last_pairlis = NULL;
+
 cell *pairlis(cell *x, cell *y, cell *a) {
 #if DEBUG_MODE
   printf("Pairlis:\t" ANSI_COLOR_GREEN);
@@ -25,6 +27,7 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   print_sexpr(result);
   printf(ANSI_COLOR_RESET "\n");
 #endif
+  last_pairlis = result;
   return result;
 }
 
@@ -137,44 +140,48 @@ cell *apply(cell *fn, cell *x, cell *a) {
       return apply(function_body, x, a);
 
     } else {
-
-      // APPLLYING A LAMBDA
+      // composed function
       if (eq(car(fn), symbol_lambda)) {
+        // direct lambda
 #if DEBUG_MODE
         printf("LAMBDA:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
-        return eval(caddr(fn), pairlis(cadr(fn), x, a));
+        a = pairlis(cadr(fn), x, a);
+        return eval(caddr(fn), a);
       }
-
       // LABEL
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
         return apply(caddr(fn), x, new_env);
       }
+
+#if DEBUG_MODE
+      printf("Resolving fun: \t" ANSI_COLOR_RED);
+      print_sexpr(fn);
+      printf(ANSI_COLOR_RESET "\n");
+#endif
+      // function is not an atomic function: something like (lambda (x) (lambda
+      // (y) y)) ! cell * new_env = pairlis(,a)
+      // ! qui devo ricordarmi dell'ambiente interno (?)
+      cell *function_body = eval(fn, a);
+      a = last_pairlis; // ?
+
+      if (function_body == NULL) {
+        char *err = "unknown function ";
+        char *fn_name = fn->sym;
+        char *result = malloc(strlen(err) + strlen(fn_name) + 1);
+        strcpy(result, err);
+        strcat(result, fn_name);
+        pi_error(LISP_ERROR, result);
+      }
+      if (!is_cons(function_body))
+        pi_error(LISP_ERROR, "trying to apply a non-lambda");
+      // the env knows the lambda
+      return apply(function_body, x, a);
     }
   }
-#if DEBUG_MODE
-  printf("Resolving fun: \t" ANSI_COLOR_RED);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-  // function is not an atomic function: something like (lambda (x) (lambda (y)
-  // y)) ! cell * new_env = pairlis(,a)
-  cell *function_body = eval(fn, a);
-  if (function_body == NULL) {
-    char *err = "unknown function ";
-    char *fn_name = fn->sym;
-    char *result = malloc(strlen(err) + strlen(fn_name) + 1);
-    strcpy(result, err);
-    strcat(result, fn_name);
-    pi_error(LISP_ERROR, result);
-  }
-  if (!is_cons(function_body))
-    pi_error(LISP_ERROR, "trying to apply a non-lambda");
-  // the env knows the lambda
-  return apply(function_body, x, a);
   return NULL; // error?
 }
 
@@ -232,16 +239,6 @@ cell *eval(cell *e, cell *a) {
         if (eq(car(e), symbol_lambda))
           // lambda "autoquote"
           evaulated = e;
-        // evaulated = mk_cons(
-        //   symbol_lambda, // still a lambda
-        //   mk_cons(
-        //     cadr(e), // param
-        //     mk_cons(
-        //       eval(caddr(e),a), // body
-        //       NULL
-        //     )
-        //   )
-        // );
         else {
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
@@ -249,9 +246,10 @@ cell *eval(cell *e, cell *a) {
       }
     }
 
-  } else
-    // composed
+  } else {
+    // ! composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
+  }
 #if DEBUG_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
