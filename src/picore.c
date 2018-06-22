@@ -37,12 +37,12 @@ cell *assoc(const cell *x, cell *l) {
 }
 
 cell *apply(cell *fn, cell *x, cell **a) {
-#if DEBUG_MODE == 1
+#if DEBUG_MODE
   printf("Applying:\t" ANSI_COLOR_GREEN);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
   print_sexpr(x);
-  printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
   print_sexpr(*a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
@@ -136,11 +136,6 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // APPLLYING A LAMBDA
       if (eq(car(fn), symbol_lambda)) {
-#if DEBUG_MODE == 1
-        printf("Lambda application: \t" ANSI_COLOR_GREEN);
-        print_sexpr(fn);
-        printf(ANSI_COLOR_RESET "\n");
-#endif
         cell *env = pairlis(cadr(fn), x, a);
         return eval(caddr(fn), &env);
       }
@@ -152,8 +147,8 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
     }
   }
-#if DEBUG_MODE == 1
-  printf("Trying do discover function: \t" ANSI_COLOR_RED);
+#if DEBUG_MODE
+  printf("Resolving fun: \t" ANSI_COLOR_RED);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET "\n");
 #endif
@@ -176,10 +171,10 @@ cell *apply(cell *fn, cell *x, cell **a) {
 }
 
 cell *eval(cell *e, cell **a) {
-#if DEBUG_MODE == 1
+#if DEBUG_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
-  printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
   print_sexpr(*a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
@@ -230,7 +225,6 @@ cell *eval(cell *e, cell **a) {
           // lambda "autoquote"
           evaulated = e;
         else {
-
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
         }
@@ -240,7 +234,7 @@ cell *eval(cell *e, cell **a) {
   } else
     // composed
     evaulated = apply(car(e), evlis(cdr(e), a), a);
-#if DEBUG_MODE == 1
+#if DEBUG_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_RED);
