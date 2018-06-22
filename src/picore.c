@@ -140,6 +140,11 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // APPLLYING A LAMBDA
       if (eq(car(fn), symbol_lambda)) {
+#if DEBUG_MODE
+        printf("LAMBDA:\t" ANSI_COLOR_RED);
+        print_sexpr(fn);
+        printf(ANSI_COLOR_RESET "\n");
+#endif
         cell *env = pairlis(cadr(fn), x, a);
         return eval(caddr(fn), &env);
       }
