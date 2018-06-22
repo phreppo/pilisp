@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   }
   init_env();
   cell *res = NULL;
-  cell *env = NULL;
+  cell *env = GLOBAL_ENV;
   jmp_destination = setjmp(env_buf);
   if (had_error()) {
     puts("error processing program");

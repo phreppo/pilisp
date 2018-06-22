@@ -1,7 +1,5 @@
 #include "picore.h"
 
-cell * last_pairlis = NULL;
-
 cell *pairlis(cell *x, cell *y, cell *a) {
 #if DEBUG_MODE
   printf("Pairlis:\t" ANSI_COLOR_GREEN);
@@ -27,7 +25,6 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   print_sexpr(result);
   printf(ANSI_COLOR_RESET "\n");
 #endif
-  last_pairlis = result;
   return result;
 }
 
@@ -80,7 +77,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
       // UTILITY
       if (eq(fn, symbol_set))
-        return set(car(x), cadr(x), a);
+        return set(car(x), cadr(x), &a);
       if (eq(fn, symbol_load))
         return load(car(x), a);
       if (eq(fn, symbol_timer))
@@ -166,7 +163,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
       // (y) y)) ! cell * new_env = pairlis(,a)
       // ! qui devo ricordarmi dell'ambiente interno (?)
       cell *function_body = eval(fn, a);
-      a = last_pairlis; // ?
+      // a = last_pairlis; // ?
 
       if (function_body == NULL) {
         char *err = "unknown function ";
