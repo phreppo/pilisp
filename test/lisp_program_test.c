@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
   }
   while (!feof(program_file_read) && fpeek(program_file_read)) {
     cell *sexpr = read_sexpr(program_file_read);
-    res = eval(sexpr, &env);
+    res = eval(sexpr, env);
   }
   fclose(program_file_read);
   // printf("%i ", res->value);

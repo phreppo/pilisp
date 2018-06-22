@@ -1,16 +1,16 @@
 #include "picore.h"
 
-cell *pairlis(cell *x, cell *y, cell **a) {
+cell *pairlis(cell *x, cell *y, cell *a) {
 #if DEBUG_MODE
   printf("Pairlis:\t" ANSI_COLOR_GREEN);
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
   print_sexpr(y);
   printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
-  cell *result = (*a);
+  cell *result = a;
   // ! UNSAFE: no checks about cell type
   while (x) {
     cell *left = car(x);
@@ -40,14 +40,14 @@ cell *assoc(const cell *x, cell *l) {
   return NULL;
 }
 
-cell *apply(cell *fn, cell *x, cell **a) {
+cell *apply(cell *fn, cell *x, cell *a) {
 #if DEBUG_MODE
   printf("Applying:\t" ANSI_COLOR_GREEN);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
   if (fn) {
@@ -141,18 +141,17 @@ cell *apply(cell *fn, cell *x, cell **a) {
       // APPLLYING A LAMBDA
       if (eq(car(fn), symbol_lambda)) {
 #if DEBUG_MODE
-        printf("LAMBDA:\t" ANSI_COLOR_RED);
+        printf("LAMBDA:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
-        cell *env = pairlis(cadr(fn), x, a);
-        return eval(caddr(fn), &env);
+        return eval(caddr(fn), pairlis(cadr(fn), x, a));
       }
 
       // LABEL
       if (eq(car(fn), symbol_label)) {
-        cell *new_env = cons(cons(cadr(fn), caddr(fn)), *a);
-        return apply(caddr(fn), x, &new_env);
+        cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
+        return apply(caddr(fn), x, new_env);
       }
     }
   }
@@ -179,12 +178,12 @@ cell *apply(cell *fn, cell *x, cell **a) {
   return NULL; // error?
 }
 
-cell *eval(cell *e, cell **a) {
+cell *eval(cell *e, cell *a) {
 #if DEBUG_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *evaulated = NULL;
@@ -201,7 +200,7 @@ cell *eval(cell *e, cell **a) {
         if (e == symbol_true)
           evaulated = symbol_true;
         else {
-          cell *pair = assoc(e, *a);
+          cell *pair = assoc(e, a);
           cell *symbol_value = cdr(pair);
           if (!pair) {
             // the symbol has no value in the env
@@ -263,7 +262,7 @@ cell *eval(cell *e, cell **a) {
   return evaulated;
 }
 
-cell *evlis(cell *m, cell **a) {
+cell *evlis(cell *m, cell *a) {
 #if DEBUG_MODE
   printf("Evlis: \t\t" ANSI_COLOR_GREEN);
   print_sexpr(m);
@@ -278,7 +277,7 @@ cell *evlis(cell *m, cell **a) {
   return mk_cons(valued_car, valued_cdr);
 }
 
-cell *evcon(cell *c, cell **a) {
+cell *evcon(cell *c, cell *a) {
   if (eval(caar(c), a) != NULL)
     return eval(cadar(c), a);
   else
