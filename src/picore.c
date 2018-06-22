@@ -134,8 +134,13 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
     } else {
 
-      // APLLYING A LAMBDA
+      // APPLLYING A LAMBDA
       if (eq(car(fn), symbol_lambda)) {
+#if DEBUG_MODE == 1
+        printf("Lambda application: \t" ANSI_COLOR_GREEN);
+        print_sexpr(fn);
+        printf(ANSI_COLOR_RESET "\n");
+#endif
         cell *env = pairlis(cadr(fn), x, a);
         return eval(caddr(fn), &env);
       }
@@ -147,6 +152,26 @@ cell *apply(cell *fn, cell *x, cell **a) {
       }
     }
   }
+#if DEBUG_MODE == 1
+  printf("Trying do discover function: \t" ANSI_COLOR_RED);
+  print_sexpr(fn);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+  // function is not an atomic function: something like (lambda (x) (lambda (y)
+  // y)) ! cell * new_env = pairlis(,a)
+  cell *function_body = eval(fn, a);
+  if (function_body == NULL) {
+    char *err = "unknown function ";
+    char *fn_name = fn->sym;
+    char *result = malloc(strlen(err) + strlen(fn_name) + 1);
+    strcpy(result, err);
+    strcat(result, fn_name);
+    pi_error(LISP_ERROR, result);
+  }
+  if (!is_cons(function_body))
+    pi_error(LISP_ERROR, "trying to apply a non-lambda");
+  // the env knows the lambda
+  return apply(function_body, x, a);
   return NULL; // error?
 }
 
