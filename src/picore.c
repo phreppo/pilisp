@@ -1,16 +1,18 @@
 #include "picore.h"
 
 cell *pairlis(cell *x, cell *y, cell **a) {
-  // creates copies of everything
-  // puts("");
-  // printf("Pairlis on: ");
-  // print_sexpr(*a);
-  // puts("");
+#if DEBUG_MODE
+  printf("Pairlis:\t" ANSI_COLOR_GREEN);
+  print_sexpr(x);
+  printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
+  print_sexpr(y);
+  printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_RED);
+  print_sexpr(*a);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
   cell *result = (*a);
   // ! UNSAFE: no checks about cell type
   while (x) {
-    // if(atom(x) || atom(y))
-    //   pi_error(LISP_ERROR,"pairlis error");
     cell *left = car(x);
     cell *right = car(y);
     cell *new_pair = mk_cons(left, right);
@@ -18,9 +20,11 @@ cell *pairlis(cell *x, cell *y, cell **a) {
     x = cdr(x);
     y = cdr(y);
   }
-  // printf("Pairlis now: ");
-  // print_sexpr(result);
-  // puts("");
+#if DEBUG_MODE
+  printf("Parilis res:\t" ANSI_COLOR_BLUE);
+  print_sexpr(result);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
   return result;
 }
 
@@ -224,16 +228,16 @@ cell *eval(cell *e, cell **a) {
         if (eq(car(e), symbol_lambda))
           // lambda "autoquote"
           evaulated = e;
-          // evaulated = mk_cons(
-          //   symbol_lambda, // still a lambda
-          //   mk_cons(
-          //     cadr(e), // param
-          //     mk_cons(
-          //       eval(caddr(e),a), // body
-          //       NULL
-          //     )
-          //   )
-          // );
+        // evaulated = mk_cons(
+        //   symbol_lambda, // still a lambda
+        //   mk_cons(
+        //     cadr(e), // param
+        //     mk_cons(
+        //       eval(caddr(e),a), // body
+        //       NULL
+        //     )
+        //   )
+        // );
         else {
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
@@ -255,6 +259,12 @@ cell *eval(cell *e, cell **a) {
 }
 
 cell *evlis(cell *m, cell **a) {
+#if DEBUG_MODE
+  printf("Evlis: \t\t" ANSI_COLOR_GREEN);
+  print_sexpr(m);
+  printf(ANSI_COLOR_RESET);
+  puts("");
+#endif
   if (!m)
     // empty par list
     return NULL;
