@@ -33,6 +33,7 @@ cell *symbol_less_equal;
 cell *symbol_length;
 cell *symbol_member;
 cell *symbol_nth;
+cell *symbol_file_ended;
 
 cell *GLOBAL_ENV;
 

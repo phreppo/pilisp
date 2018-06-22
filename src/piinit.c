@@ -29,6 +29,7 @@ void init_env() {
   symbol_length= mk_sym("LENGTH");
   symbol_member= mk_sym("MEMBER");
   symbol_nth= mk_sym("NTH");
+  symbol_file_ended = mk_sym("FILE_ENDED");
 
   GLOBAL_ENV = NULL;
 }

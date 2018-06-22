@@ -148,7 +148,7 @@ cell *read_sexpr(FILE *f) {
   int tok = next_token(f);
   if (tok != TOK_NONE)
     return read_sexpr_tok(f, tok);
-  return 0;
+  return symbol_file_ended;
 }
 
 cell *read_sexpr_tok(FILE *f, int tok) {

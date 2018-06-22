@@ -135,7 +135,6 @@ cell *set(cell *name, cell *val, cell **env) {
   else
     (*env) = new;
   return val;
-  // return new;
 }
 
 cell *load(cell *name, cell **env) {
@@ -146,7 +145,8 @@ cell *load(cell *name, cell **env) {
     pi_error(LISP_ERROR, "can't find file");
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
-    eval(sexpr, env);
+    if(sexpr != symbol_file_ended)
+      eval(sexpr, env);
   }
   return symbol_true;
 }

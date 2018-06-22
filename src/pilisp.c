@@ -60,11 +60,8 @@ cell *parse_file(char *file_path) {
   cell *res = NULL;
   while (!feof(program_file)) {
     cell *sexpr = read_sexpr(program_file);
-    if (!feof(program_file)) {
+    if (sexpr != symbol_file_ended) 
       res = eval(sexpr, &GLOBAL_ENV);
-      // print_sexpr(res);
-      // puts("");
-    }
   }
   fclose(program_file);
   return res;
