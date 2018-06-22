@@ -224,6 +224,16 @@ cell *eval(cell *e, cell **a) {
         if (eq(car(e), symbol_lambda))
           // lambda "autoquote"
           evaulated = e;
+          // evaulated = mk_cons(
+          //   symbol_lambda, // still a lambda
+          //   mk_cons(
+          //     cadr(e), // param
+          //     mk_cons(
+          //       eval(caddr(e),a), // body
+          //       NULL
+          //     )
+          //   )
+          // );
         else {
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
