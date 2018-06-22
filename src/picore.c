@@ -37,13 +37,16 @@ cell *assoc(const cell *x, cell *l) {
 }
 
 cell *apply(cell *fn, cell *x, cell **a) {
+#if DEBUG_MODE == 1
+  printf("Applying:\t" ANSI_COLOR_GREEN);
+  print_sexpr(fn);
+  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
+  print_sexpr(x);
+  printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
+  print_sexpr(*a);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
   if (fn) {
-    // puts("");
-    // printf("Applying: ");
-    // print_sexpr(fn);
-    // printf(" to ");
-    // print_sexpr(x);
-    // puts("");
     if (atom(fn)) {
 
       // BASIC OPERATIONS
@@ -139,7 +142,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // LABEL
       if (eq(car(fn), symbol_label)) {
-        cell * new_env =  cons(cons(cadr(fn), caddr(fn)), *a);
+        cell *new_env = cons(cons(cadr(fn), caddr(fn)), *a);
         return apply(caddr(fn), x, &new_env);
       }
     }
@@ -148,61 +151,78 @@ cell *apply(cell *fn, cell *x, cell **a) {
 }
 
 cell *eval(cell *e, cell **a) {
-  #if DEBUG_MODE == 1
-    printf("Evaluating: " ANSI_COLOR_GREEN);
-    print_sexpr(e);
-    printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
-    print_sexpr(*a);
-    printf( ANSI_COLOR_RESET"\n");
-  #endif
+#if DEBUG_MODE == 1
+  printf("Evaluating: \t" ANSI_COLOR_GREEN);
+  print_sexpr(e);
+  printf(ANSI_COLOR_RESET " In the env: " ANSI_COLOR_RED);
+  print_sexpr(*a);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+  cell *evaulated = NULL;
   if (atom(e)) {
     if (!e)
       // NIL
-      return NULL;
-    if (is_num(e) || is_str(e))
-      // VALUE
-      return e;
+      evaulated = NULL;
     else {
-      // it's a symbol: we have to search for that
-      if (e == symbol_true)
-        return symbol_true;
-      cell *pair = assoc(e, *a);
-      cell *symbol_value = cdr(pair);
-      if (!pair) {
-        // the symbol has no value in the env
-        char *err = "unknown symbol ";
-        char *sym_name = e->sym;
-        char *result = malloc(strlen(err) + strlen(sym_name) + 1);
-        strcpy(result, err);
-        strcat(result, sym_name);
-        pi_error(LISP_ERROR, result);
-      } else
-        // the symbol has a value in the env
-        return symbol_value;
+      if (is_num(e) || is_str(e))
+        // VALUE
+        evaulated = e;
+      else {
+        // it's a symbol: we have to search for that
+        if (e == symbol_true)
+          evaulated = symbol_true;
+        else {
+          cell *pair = assoc(e, *a);
+          cell *symbol_value = cdr(pair);
+          if (!pair) {
+            // the symbol has no value in the env
+            char *err = "unknown symbol ";
+            char *sym_name = e->sym;
+            char *result = malloc(strlen(err) + strlen(sym_name) + 1);
+            strcpy(result, err);
+            strcat(result, sym_name);
+            pi_error(LISP_ERROR, result);
+          } else
+            // the symbol has a value in the env
+            evaulated = symbol_value;
+        }
+      }
     }
-  }
-  if (atom(car(e))) {
+  } else if (atom(car(e))) {
     // car of the cons cell is an atom
 
     if (eq(car(e), symbol_quote))
       // QUOTE
-      return cadr(e);
+      evaulated = cadr(e);
+    else {
 
-    if (eq(car(e), symbol_cond))
-      // COND
-      return evcon(cdr(e), a);
+      if (eq(car(e), symbol_cond))
+        // COND
+        evaulated = evcon(cdr(e), a);
+      else {
 
-    if (eq(car(e), symbol_lambda))
-      // lambda "autoquote"
-      return e;
+        if (eq(car(e), symbol_lambda))
+          // lambda "autoquote"
+          evaulated = e;
+        else {
 
-    // something else
-    return apply(car(e), evlis(cdr(e), a), a);
+          // something else
+          evaulated = apply(car(e), evlis(cdr(e), a), a);
+        }
+      }
+    }
 
   } else
     // composed
-    return apply(car(e), evlis(cdr(e), a), a);
-  pi_error(LISP_ERROR, "unable to evaluate expression");
+    evaulated = apply(car(e), evlis(cdr(e), a), a);
+#if DEBUG_MODE == 1
+  printf("Evaluated: \t" ANSI_COLOR_GREEN);
+  print_sexpr(e);
+  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_RED);
+  print_sexpr(evaulated);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+  return evaulated;
 }
 
 cell *evlis(cell *m, cell **a) {
