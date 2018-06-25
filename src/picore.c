@@ -1,7 +1,7 @@
 #include "picore.h"
 
 cell *pairlis(cell *x, cell *y, cell *a) {
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Pairlis:\t" ANSI_COLOR_GREEN);
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
@@ -20,7 +20,7 @@ cell *pairlis(cell *x, cell *y, cell *a) {
     x = cdr(x);
     y = cdr(y);
   }
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Parilis res:\t" ANSI_COLOR_BLUE);
   print_sexpr(result);
   printf(ANSI_COLOR_RESET "\n");
@@ -41,7 +41,7 @@ cell *assoc(const cell *x, cell *l) {
 }
 
 cell *apply(cell *fn, cell *x, cell *a) {
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Applying:\t" ANSI_COLOR_GREEN);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
@@ -92,6 +92,14 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return load(x, &a);
       if (eq(fn, symbol_timer))
         return timer(x, &a);
+      if(eq(fn,symbol_env)){
+        if(x)
+          pi_error_many_args();
+        printf(" > env: " ANSI_COLOR_BLUE);
+        print_sexpr(a);
+        printf("\n" ANSI_COLOR_RESET);
+        return symbol_true;
+      }
 
       // ARITHMETIC OPERATORS
       if (eq(fn, symbol_addition))
@@ -150,7 +158,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
       // composed function
       if (eq(car(fn), symbol_lambda)) {
         // direct lambda
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
         printf("LAMBDA:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
@@ -164,7 +172,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return apply(caddr(fn), x, new_env);
       }
 
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
       printf("Resolving fun: \t" ANSI_COLOR_RED);
       print_sexpr(fn);
       printf(ANSI_COLOR_RESET "\n");
@@ -193,7 +201,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 }
 
 cell *eval(cell *e, cell *a) {
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
@@ -257,7 +265,7 @@ cell *eval(cell *e, cell *a) {
     // ! composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
   }
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_RED);
@@ -268,7 +276,7 @@ cell *eval(cell *e, cell *a) {
 }
 
 cell *evlis(cell *m, cell *a) {
-#if DEBUG_MODE
+#if DEBUG_EVAL_MODE
   printf("Evlis: \t\t" ANSI_COLOR_GREEN);
   print_sexpr(m);
   printf(ANSI_COLOR_RESET);

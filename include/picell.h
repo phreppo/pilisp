@@ -55,9 +55,9 @@ typedef struct cell {
  * @brief max number of aviable cells
  *
  */
-#define MAX_CELLS 500
+// #define MAX_CELLS 500
 // #define MAX_CELLS 65536
-// #define MAX_CELLS 9999999
+#define MAX_CELLS 9999999
 
 /**
  * @brief function to get a cell
