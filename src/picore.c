@@ -1,16 +1,16 @@
 #include "picore.h"
 
-cell *pairlis(cell *x, cell *y, cell **a) {
+cell *pairlis(cell *x, cell *y, cell *a) {
 #if DEBUG_MODE
   printf("Pairlis:\t" ANSI_COLOR_GREEN);
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
   print_sexpr(y);
   printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
-  cell *result = (*a);
+  cell *result = a;
   // ! UNSAFE: no checks about cell type
   while (x) {
     cell *left = car(x);
@@ -40,14 +40,14 @@ cell *assoc(const cell *x, cell *l) {
   return NULL;
 }
 
-cell *apply(cell *fn, cell *x, cell **a) {
+cell *apply(cell *fn, cell *x, cell *a) {
 #if DEBUG_MODE
   printf("Applying:\t" ANSI_COLOR_GREEN);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
   if (fn) {
@@ -77,7 +77,7 @@ cell *apply(cell *fn, cell *x, cell **a) {
 
       // UTILITY
       if (eq(fn, symbol_set))
-        return set(car(x), cadr(x), a);
+        return set(car(x), cadr(x), &a);
       if (eq(fn, symbol_load))
         return load(car(x), a);
       if (eq(fn, symbol_timer))
@@ -137,54 +137,57 @@ cell *apply(cell *fn, cell *x, cell **a) {
       return apply(function_body, x, a);
 
     } else {
-
-      // APPLLYING A LAMBDA
+      // composed function
       if (eq(car(fn), symbol_lambda)) {
+        // direct lambda
 #if DEBUG_MODE
-        printf("LAMBDA:\t" ANSI_COLOR_RED);
+        printf("LAMBDA:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
-        cell *env = pairlis(cadr(fn), x, a);
-        return eval(caddr(fn), &env);
+        a = pairlis(cadr(fn), x, a);
+        return eval(caddr(fn), a);
       }
-
       // LABEL
       if (eq(car(fn), symbol_label)) {
-        cell *new_env = cons(cons(cadr(fn), caddr(fn)), *a);
-        return apply(caddr(fn), x, &new_env);
+        cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
+        return apply(caddr(fn), x, new_env);
       }
+
+#if DEBUG_MODE
+      printf("Resolving fun: \t" ANSI_COLOR_RED);
+      print_sexpr(fn);
+      printf(ANSI_COLOR_RESET "\n");
+#endif
+      // function is not an atomic function: something like (lambda (x) (lambda
+      // (y) y)) ! cell * new_env = pairlis(,a)
+      // ! qui devo ricordarmi dell'ambiente interno (?)
+      cell *function_body = eval(fn, a);
+      // a = last_pairlis; // ?
+
+      if (function_body == NULL) {
+        char *err = "unknown function ";
+        char *fn_name = fn->sym;
+        char *result = malloc(strlen(err) + strlen(fn_name) + 1);
+        strcpy(result, err);
+        strcat(result, fn_name);
+        pi_error(LISP_ERROR, result);
+      }
+      if (!is_cons(function_body))
+        pi_error(LISP_ERROR, "trying to apply a non-lambda");
+      // the env knows the lambda
+      return apply(function_body, x, a);
     }
   }
-#if DEBUG_MODE
-  printf("Resolving fun: \t" ANSI_COLOR_RED);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-  // function is not an atomic function: something like (lambda (x) (lambda (y)
-  // y)) ! cell * new_env = pairlis(,a)
-  cell *function_body = eval(fn, a);
-  if (function_body == NULL) {
-    char *err = "unknown function ";
-    char *fn_name = fn->sym;
-    char *result = malloc(strlen(err) + strlen(fn_name) + 1);
-    strcpy(result, err);
-    strcat(result, fn_name);
-    pi_error(LISP_ERROR, result);
-  }
-  if (!is_cons(function_body))
-    pi_error(LISP_ERROR, "trying to apply a non-lambda");
-  // the env knows the lambda
-  return apply(function_body, x, a);
   return NULL; // error?
 }
 
-cell *eval(cell *e, cell **a) {
+cell *eval(cell *e, cell *a) {
 #if DEBUG_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
-  print_sexpr(*a);
+  print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *evaulated = NULL;
@@ -201,7 +204,7 @@ cell *eval(cell *e, cell **a) {
         if (e == symbol_true)
           evaulated = symbol_true;
         else {
-          cell *pair = assoc(e, *a);
+          cell *pair = assoc(e, a);
           cell *symbol_value = cdr(pair);
           if (!pair) {
             // the symbol has no value in the env
@@ -233,16 +236,6 @@ cell *eval(cell *e, cell **a) {
         if (eq(car(e), symbol_lambda))
           // lambda "autoquote"
           evaulated = e;
-        // evaulated = mk_cons(
-        //   symbol_lambda, // still a lambda
-        //   mk_cons(
-        //     cadr(e), // param
-        //     mk_cons(
-        //       eval(caddr(e),a), // body
-        //       NULL
-        //     )
-        //   )
-        // );
         else {
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
@@ -250,9 +243,10 @@ cell *eval(cell *e, cell **a) {
       }
     }
 
-  } else
-    // composed
+  } else {
+    // ! composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
+  }
 #if DEBUG_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
@@ -263,7 +257,7 @@ cell *eval(cell *e, cell **a) {
   return evaulated;
 }
 
-cell *evlis(cell *m, cell **a) {
+cell *evlis(cell *m, cell *a) {
 #if DEBUG_MODE
   printf("Evlis: \t\t" ANSI_COLOR_GREEN);
   print_sexpr(m);
@@ -278,7 +272,7 @@ cell *evlis(cell *m, cell **a) {
   return mk_cons(valued_car, valued_cdr);
 }
 
-cell *evcon(cell *c, cell **a) {
+cell *evcon(cell *c, cell *a) {
   if (eval(caar(c), a) != NULL)
     return eval(cadar(c), a);
   else
