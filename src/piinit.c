@@ -31,7 +31,7 @@ void init_env() {
   symbol_nth= mk_sym("NTH");
   symbol_file_ended = mk_sym("FILE_ENDED");
 
-  GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);
+  GLOBAL_ENV = mk_cons(mk_cons(mk_sym("T"),mk_sym("T")),NULL);
   // GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);
 }
 
