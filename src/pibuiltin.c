@@ -31,25 +31,34 @@ cell *addition(const cell *numbers) {
 }
 
 cell *subtraction(const cell *numbers) {
-  if (!numbers || !cdr(numbers))
-    // we need 2 numbers at least
+  if (!numbers)
+    // we need 1 argument at least
     pi_error_few_args();
 
-  if (!is_cons(numbers) || !is_cons(cdr(numbers)))
-    pi_error(LISP_ERROR, "impossible to perform subtraction");
-  if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
-    pi_error(LISP_ERROR, "subtracted a non-number");
-  long result = car(numbers)->value;
-  const cell *act = cdr(numbers);
-  while (act) {
-    if (!is_cons(act))
+  if (!cdr(numbers)) {
+    // (- number) => we have to invert the result
+    if (!is_cons(numbers))
       pi_error(LISP_ERROR, "impossible to perform subtraction");
-    if (!is_num(car(act)))
+    if (!is_num(car(numbers)))
       pi_error(LISP_ERROR, "subtracted a non-number");
-    result -= car(act)->value;
-    act = cdr(act);
+    return mk_num(-(car(numbers)->value));
+  } else {
+    if (!is_cons(numbers) || !is_cons(cdr(numbers)))
+      pi_error(LISP_ERROR, "impossible to perform subtraction");
+    if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
+      pi_error(LISP_ERROR, "subtracted a non-number");
+    long result = car(numbers)->value;
+    const cell *act = cdr(numbers);
+    while (act) {
+      if (!is_cons(act))
+        pi_error(LISP_ERROR, "impossible to perform subtraction");
+      if (!is_num(car(act)))
+        pi_error(LISP_ERROR, "subtracted a non-number");
+      result -= car(act)->value;
+      act = cdr(act);
+    }
+    return mk_num(result);
   }
-  return mk_num(result);
 }
 
 cell *multiplication(const cell *numbers) {
@@ -145,7 +154,7 @@ cell *load(cell *name, cell **env) {
     pi_error(LISP_ERROR, "can't find file");
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
-    if(sexpr != symbol_file_ended)
+    if (sexpr != symbol_file_ended)
       eval(sexpr, env);
   }
   return symbol_true;
@@ -280,23 +289,23 @@ cell *member(const cell *list) {
       list); // the first is the member and che second is the true list
   const cell *who = car(list);
   const cell *l = cadr(list);
-  if(l && !is_cons(l))
-    pi_error(LISP_ERROR,"second arg must be a list");
+  if (l && !is_cons(l))
+    pi_error(LISP_ERROR, "second arg must be a list");
   cell *res = NULL;
   cell *head = NULL;
   bool found = false;
   while (l) {
-    const cell * value = car(l);
+    const cell *value = car(l);
     if (!found) {
       if (eq(value, who)) {
         // found
         found = true;
-        res = mk_cons(copy_cell(value),NULL);
+        res = mk_cons(copy_cell(value), NULL);
         head = res;
       }
     } else {
       // already found => we have to append this cell to the result
-      cell * tmp = mk_cons(copy_cell(value),NULL);
+      cell *tmp = mk_cons(copy_cell(value), NULL);
       res->cdr = tmp;
       res = res->cdr;
     }
@@ -305,44 +314,44 @@ cell *member(const cell *list) {
   return head;
 }
 
-cell *nth(const cell *list) { 
+cell *nth(const cell *list) {
   check_two_args(list);
-  const cell * num = car(list);
-  if(!is_num(num))
-    pi_error(LISP_ERROR,"first arg must be a number");
-  const cell * l = cadr(list);
-  if(l && !is_cons(l))
-    pi_error(LISP_ERROR,"second arg must be a list");
-  
-  cell * res = NULL;
+  const cell *num = car(list);
+  if (!is_num(num))
+    pi_error(LISP_ERROR, "first arg must be a number");
+  const cell *l = cadr(list);
+  if (l && !is_cons(l))
+    pi_error(LISP_ERROR, "second arg must be a list");
+
+  cell *res = NULL;
   unsigned long index = num->value;
   unsigned long act = 0;
-  while(l && act < index){
+  while (l && act < index) {
     l = cdr(l);
     act++;
   }
-  if(l)
+  if (l)
     res = car(l);
   return res;
 }
 
-bool total_eq(const cell * c1, const cell * c2){
-  if(!c1 && !c2)
+bool total_eq(const cell *c1, const cell *c2) {
+  if (!c1 && !c2)
     // NILL NILL
     return true;
-  if(!c1 && c2)
+  if (!c1 && c2)
     // NILL something
     return false;
-  if(c1 && !c2)
+  if (c1 && !c2)
     // something NILL
     return false;
   // something something
-  if((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
+  if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
     // one is an atom and the other is a cons
     return false;
-  if(atom(c1) && atom(c2))
+  if (atom(c1) && atom(c2))
     // equality between two atoms
-    return eq(c1,c2);
+    return eq(c1, c2);
   // cons cons
-  return total_eq(car(c1),car(c2)) && total_eq(cdr(c1),cdr(c2));
+  return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
