@@ -27,6 +27,7 @@ void cell_space_init(cell_space *cs) {
   cs->blocks = (cell_block *)malloc(sizeof(cell_block) * INITIAL_BLOCKS);
   // first block
   cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
+  cs->first_free = cs->blocks->block;
 }
 
 bool cell_space_is_full(const cell_space *cs) {
@@ -50,6 +51,16 @@ void cell_space_grow(cell_space *cs) {
   size_t index = cs->cell_space_size;
   // the new block will have the double size of the last block
   cs->blocks[index] = *new_cell_block(cs->blocks[index - 1].block_size * 2);
+  
+  // new cell block
+  cell_block * new_cb = &(cs->blocks[index]);
+  // last cell in the new block
+  cell * last = new_cb->block + new_cb->block_size-1;
+  // hooking the first free 
+  cell * tmp = cs->first_free;
+  last->next_free_cell = tmp;
+  cs->first_free = new_cb->block;
+
   cs->cell_space_size++;
 }
 

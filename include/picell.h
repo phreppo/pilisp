@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define INITIAL_BLOCK_SIZE 2  // size of the first created block
-#define INITIAL_BLOCKS 1      // number of blocks initially allocated
+#define INITIAL_BLOCKS 8      // number of blocks initially allocated
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -127,13 +127,14 @@ typedef struct {
   size_t cell_space_size;
   size_t cell_space_capacity;
   cell_block * blocks;
+  cell * first_free;
 } cell_space;
 
-void cell_space_init(cell_space *cs);
-bool cell_space_is_full(const cell_space *cs);
+// allocates a new block and links the last free cell with the first free in the cell space
 void cell_space_grow(cell_space *cs);
 void cell_space_double_capacity_if_full(cell_space *cs);
-
+void cell_space_init(cell_space *cs);
+bool cell_space_is_full(const cell_space *cs);
 
 cell_space *memory;
 

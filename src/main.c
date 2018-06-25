@@ -5,8 +5,8 @@ int main(int argc, char **argv) {
   init_pi();
   cell_space_grow(memory);
   cell_space_grow(memory);
-  cell_space_grow(memory);
   print_cell_space(memory);
+  print_free_cells(memory);
 
   return 0;
   if (argc > 1 &&
@@ -35,6 +35,6 @@ int main(int argc, char **argv) {
   // lexer_file(f);
   // lexer_prompt();
   // parse_prompt();
-  //   eval_prompt();
+  // eval_prompt();
   return 0;
 }
