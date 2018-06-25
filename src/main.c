@@ -2,19 +2,18 @@
 #include "pitestutils.h" // TODO: remove on production
 
 int main(int argc, char **argv) {
+  init_pi();
+  cell_space_grow(memory);
+  cell_space_grow(memory);
+  cell_space_grow(memory);
+  print_cell_space(memory);
 
-  cell_block * block= new_cell_block(4);
-  // (block->block[1]).type = TYPE_NUM;
-  // (block->block[1]).value = 1;
-  print_cell_block(block);
   return 0;
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
     printf("\npilisp [<file1.lisp> ... [ <fileN.lisp>]]\n");
     return 0;
   }
-
-  init_pi();
 
   if (argc > 1) {
     jmp_destination = setjmp(env_buf);

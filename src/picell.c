@@ -3,7 +3,6 @@
 
 // GARBAGE COLLECTOR
 static cell *next_free = NULL;
-static cell_space cell_universe;
 
 cell_block *new_cell_block(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
@@ -21,8 +20,52 @@ cell_block *new_cell_block(size_t s) {
   return new_cb;
 }
 
-void init_memory(){
-  
+void cell_space_init(cell_space *cs) {
+  // create the space with one block
+  cs->cell_space_size = 1;
+  cs->cell_space_capacity = INITIAL_BLOCKS;
+  // take the space for blocks
+  cs->blocks = malloc(sizeof(cell_block *) * INITIAL_BLOCKS);
+  // first block
+  cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
+}
+
+bool cell_space_is_full(const cell_space *cs) {
+  return cs->cell_space_size >= cs->cell_space_capacity;
+}
+
+void cell_space_double_capacity_if_full(cell_space *cs) {
+  if (cs->cell_space_size >= cs->cell_space_capacity) {
+    // double vector->capacity and resize the allocated memory accordingly
+    cs->cell_space_capacity *= 2;
+    cs->blocks =
+        realloc(cs->blocks, sizeof(cell_block) * cs->cell_space_capacity);
+  }
+}
+
+void cell_space_grow(cell_space *cs) {
+  // make sure there's room to expand into
+  cell_space_double_capacity_if_full(cs);
+
+  // append the value and increment vector->size
+  size_t index = cs->cell_space_size;
+  // the new block will have the double size of the last block
+  cs->blocks[index] = *new_cell_block(cs->blocks[index - 1].block_size * 2);
+  cs->cell_space_size++;
+}
+
+cell_block cell_block_get(cell_space *cs, size_t index) {
+  if (index >= cs->cell_space_size || index < 0) {
+    printf("Index %d out of bounds for cs of cell_space_size %d\n", index,
+           cs->cell_space_size);
+    exit(1);
+  }
+  return cs->blocks[index];
+}
+
+void init_memory() {
+  memory = malloc(sizeof(cell_space));
+  cell_space_init(memory);
 }
 
 /**

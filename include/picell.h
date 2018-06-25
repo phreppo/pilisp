@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#define INITIAL_BLOCK_SIZE 2  // size of the first created block
+#define INITIAL_BLOCKS 1      // number of blocks initially allocated
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -110,6 +112,7 @@ int is_cons(const cell *c);
 
 
 // GARBAGE COLLECTOR
+void init_memory();
 
 // cells array 
 typedef struct {
@@ -117,15 +120,25 @@ typedef struct {
   cell *block;
 } cell_block;
 
+cell_block * new_cell_block(size_t s);
+
 // cells space: array of cell blocks 
 typedef struct {
   size_t cell_space_size;
-  size_t cell_space_used;
+  size_t cell_space_capacity;
   cell_block * blocks;
 } cell_space;
 
-cell_block * new_cell_block(size_t s);
-void init_memory();
+void cell_space_init(cell_space *cs);
+bool cell_space_is_full(const cell_space *cs);
+void cell_space_grow(cell_space *cs);
+void cell_space_double_capacity_if_full(cell_space *cs);
+cell_block cell_block_get(cell_space * cs, size_t index);
+
+
+cell_space *memory;
+
+// !TODO: give the chance to free the mem
 
 #endif // !PICELL_H
 

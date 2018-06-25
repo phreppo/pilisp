@@ -48,6 +48,8 @@ void print_cell_block(const cell_block * block);
 
 void print_cell(const cell * cell);
 
+void print_cell_space(const cell_space * cs);
+
 #endif // !PIPRINT_H
 
 /*@}*/

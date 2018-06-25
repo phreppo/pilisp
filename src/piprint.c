@@ -158,7 +158,7 @@ void print_cell_block(const cell_block *block) {
     cell *arr = block->block;
     int i = 0;
     for (i = 0; i < s; i++) {
-      printf(ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RESET,arr+i);
+      printf("%i\t"ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RESET,i,arr+i);
       print_cell(arr+i);
       puts("");
     }
@@ -188,4 +188,12 @@ void print_cell(const cell *cell) {
     }
   } else
     printf("NO CELL");
+}
+
+void print_cell_space(const cell_space * cs){
+  size_t i = 0;
+  for(i = 0; i<cs->cell_space_size;i++){
+    printf(ANSI_COLOR_RED "Block %i\n" ANSI_COLOR_RESET,i);
+    print_cell_block(&cs->blocks[i]);
+  }
 }

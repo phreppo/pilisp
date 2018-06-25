@@ -14,6 +14,9 @@
         "setjmp.h": "c",
         "piparser.h": "c",
         "pibuiltin.h": "c",
-        "piinit.h": "c"
+        "piinit.h": "c",
+        "array": "c",
+        "initializer_list": "c",
+        "utility": "c"
     }
 }
