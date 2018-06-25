@@ -48,7 +48,7 @@ static char next_char(FILE *f) {
  */
 static bool char_is_sym_terminal(char c) {
   return c == '(' || c == ')' || c == ' ' || c == '\n' || c == 0 || c == -1 ||
-         c == '.' || c==EOF;
+         c == '.' || c == EOF;
 }
 
 /**
@@ -124,7 +124,7 @@ int next_token(FILE *f) {
       do {
         token_text[0] = toupper(token_text[0]);
         c = (char)fgetc(f);
-        if (feof(f) || !char_is_sym_terminal(c))
+        if (!char_is_sym_terminal(c))
           token_text[i++] = toupper(c);
         else {
           token_text[i] = '\0';

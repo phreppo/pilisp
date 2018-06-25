@@ -197,21 +197,21 @@ test('[LISP] member 1', lisp_program_test, args : [
 ])
 test('[LISP] member 2', lisp_program_test, args : [
     '(set \'n 1)(member n \'(n n2 NIL) )',
-    'NIL ',
+    'NIL',
     '21'
 ])
 test('[LISP] length 1', lisp_program_test, args : [
     '(length \'(NIL NIL NIL) )',
-    '3 ',
+    '3',
     '22'
 ])
 test('[LISP] length 2', lisp_program_test, args : [
     '(length NIL )',
-    '0 ',
+    '0',
     '23'
 ])
 test('[LISP] load test', lisp_program_test, args : [
     '(load "'+programs_path+'loadtest.lisp")(+ n 1)',
-    '2 ' ,
+    '2' ,
     '24'
 ])
