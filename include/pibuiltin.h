@@ -36,9 +36,9 @@ cell *multiplication(const cell *numbers);
 cell *division(const cell *numbers);
 
 // UTILITY
-cell *timer(cell *to_execute, cell **env);
-cell *set(cell *name, cell *val, cell **env);
-cell *load(cell *name, cell **env);
+cell *timer(cell *arg, cell **env);
+cell *set(cell *args, cell **env);
+cell *load(cell *arg, cell **env);
 
 // LISTS
 cell * length(const cell * list);

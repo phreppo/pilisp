@@ -123,7 +123,10 @@ cell *cadar(const cell *c) { return car(cdr(car(c))); }
 cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
-cell *set(cell *name, cell *val, cell **env) {
+cell *set(cell *args, cell **env) {
+  check_two_args(args);
+  cell *name = car(args);
+  cell *val = cadr(args);
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");
   cell *prec = NULL;
@@ -146,7 +149,9 @@ cell *set(cell *name, cell *val, cell **env) {
   return val;
 }
 
-cell *load(cell *name, cell **env) {
+cell *load(cell *arg, cell **env) {
+  check_one_arg(arg);
+  cell * name = car(arg);
   if (!name || !is_str(name))
     pi_error(LISP_ERROR, "first arg must me a string");
   FILE *file = fopen(((name) ? name->str : ""), "r");
@@ -155,12 +160,15 @@ cell *load(cell *name, cell **env) {
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
     if (sexpr != symbol_file_ended)
-      eval(sexpr, env);
+      // eval only if you didn't read an empty fragment
+      eval(sexpr, *env);
   }
   return symbol_true;
 }
 
-cell *timer(cell *to_execute, cell **env) {
+cell *timer(cell *arg, cell **env) {
+  check_one_arg(arg);
+  cell * to_execute = car(arg);
   clock_t t1, t2;
   long elapsed;
 

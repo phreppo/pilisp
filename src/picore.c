@@ -87,11 +87,11 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
       // UTILITY
       if (eq(fn, symbol_set))
-        return set(car(x), cadr(x), &a);
+        return set(x, &a);
       if (eq(fn, symbol_load))
-        return load(car(x), a);
+        return load(x, &a);
       if (eq(fn, symbol_timer))
-        return timer(car(x), a);
+        return timer(x, &a);
 
       // ARITHMETIC OPERATORS
       if (eq(fn, symbol_addition))
