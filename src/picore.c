@@ -74,7 +74,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
           return NULL;
       }
       if (eq(fn, symbol_true)) {
-        pi_error(LISP_ERROR,"T is not a function");
+        pi_error(LISP_ERROR, "T is not a function");
         // return symbol_true;
       }
       if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
@@ -92,8 +92,15 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return load(x, &a);
       if (eq(fn, symbol_timer))
         return timer(x, &a);
-      if(eq(fn,symbol_env)){
+      if (eq(fn, symbol_mem_dump)) {
         if(x)
+          pi_error_many_args();
+        printf(ANSI_COLOR_YELLOW "============================== MEMORY ==============================\n" ANSI_COLOR_RESET);
+        print_cell_space(memory);
+        return symbol_true;
+      }
+      if (eq(fn, symbol_env)) {
+        if (x)
           pi_error_many_args();
         printf(" > env: " ANSI_COLOR_BLUE);
         print_sexpr(a);

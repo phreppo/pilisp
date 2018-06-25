@@ -22,28 +22,29 @@ void init_env() {
   symbol_or = mk_sym("OR");
   symbol_and = mk_sym("AND");
   symbol_not = mk_sym("NOT");
-  symbol_greater= mk_sym(">");
-  symbol_greater_equal= mk_sym(">=");
-  symbol_less= mk_sym("<");
-  symbol_less_equal= mk_sym("<=");
-  symbol_length= mk_sym("LENGTH");
-  symbol_member= mk_sym("MEMBER");
-  symbol_nth= mk_sym("NTH");
+  symbol_greater = mk_sym(">");
+  symbol_greater_equal = mk_sym(">=");
+  symbol_less = mk_sym("<");
+  symbol_less_equal = mk_sym("<=");
+  symbol_length = mk_sym("LENGTH");
+  symbol_member = mk_sym("MEMBER");
+  symbol_nth = mk_sym("NTH");
   symbol_file_ended = mk_sym("FILE_ENDED");
   symbol_env = mk_sym("ENV");
+  symbol_mem_dump = mk_sym("MD");
 
-  GLOBAL_ENV = mk_cons(mk_cons(mk_sym("p"),mk_str("a.lisp")),NULL);
+  GLOBAL_ENV = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
   // GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);
 }
 
-void init_pi(){
+void init_pi() {
   init_memory();
   init_env();
 }
 
 cell *load_env(char *init_file_path) {
   FILE *fp = fopen("init.lisp", "r");
-  if(fp == NULL){
+  if (fp == NULL) {
     printf("No init file found\n");
     return NULL;
   }
