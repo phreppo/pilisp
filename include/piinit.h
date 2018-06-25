@@ -41,6 +41,8 @@ cell *GLOBAL_ENV;
 
 void init_env();
 
+void init_pi();
+
 cell *load_env(char *init_file_path);
 
 #endif // !PIINIT_H

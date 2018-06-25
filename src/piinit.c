@@ -36,6 +36,11 @@ void init_env() {
   // GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);
 }
 
+void init_pi(){
+  init_env();
+  init_memory();
+}
+
 cell *load_env(char *init_file_path) {
   FILE *fp = fopen("init.lisp", "r");
   if(fp == NULL){

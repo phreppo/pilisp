@@ -108,12 +108,24 @@ int is_sym(const cell *c);
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c);
 
+
+// GARBAGE COLLECTOR
+
+// cells array 
 typedef struct {
+  size_t block_size;
   cell *block;
-  size_t size;
 } cell_block;
 
+// cells space: array of cell blocks 
+typedef struct {
+  size_t cell_space_size;
+  size_t cell_space_used;
+  cell_block * blocks;
+} cell_space;
+
 cell_block * new_cell_block(size_t s);
+void init_memory();
 
 #endif // !PICELL_H
 

@@ -3,11 +3,11 @@
 
 // GARBAGE COLLECTOR
 static cell *next_free = NULL;
+static cell_space cell_universe;
 
 cell_block *new_cell_block(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
-  // (cell *)malloc(s * sizeof(cell))
-  new_cb->size = s;
+  new_cb->block_size = s;
   new_cb->block = (cell *)malloc(s * sizeof(cell));
   size_t i = 0;
   for (i = 0; i < s - 1; i++) {
@@ -18,8 +18,11 @@ cell_block *new_cell_block(size_t s) {
   // last cell
   (new_cb->block[s - 1]).type = TYPE_FREE;
   (new_cb->block[s - 1]).next_free_cell = NULL;
-
   return new_cb;
+}
+
+void init_memory(){
+  
 }
 
 /**

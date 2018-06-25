@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     puts("error reading program file");
     return 1;
   }
-  init_env();
+  init_pi();
   cell *res = NULL;
   cell *env = GLOBAL_ENV;
   jmp_destination = setjmp(env_buf);

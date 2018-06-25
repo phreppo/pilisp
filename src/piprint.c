@@ -154,7 +154,7 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
 
 void print_cell_block(const cell_block *block) {
   if (block) {
-    size_t s = block->size;
+    size_t s = block->block_size;
     cell *arr = block->block;
     int i = 0;
     for (i = 0; i < s; i++) {
@@ -174,16 +174,16 @@ void print_cell(const cell *cell) {
 
       break;
     case TYPE_NUM:
-      printf("NUM\t%i",cell->value);
+      printf("NUM" ANSI_COLOR_LIGHT_BLUE "\t%i" ANSI_COLOR_RESET,cell->value);
       break;
     case TYPE_STR:
-      printf("STR\t%s",cell->str);
+      printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET,cell->str);
       break;
     case TYPE_SYM:
-      printf("SYM\t%s",cell->sym);
+      printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET,cell->sym);
       break;
     case TYPE_FREE:
-      printf("FREE\t%p",cell->next_free_cell);
+      printf("FREE" ANSI_COLOR_LIGHT_BLUE "\t%p" ANSI_COLOR_RESET,cell->next_free_cell);
       break;
     }
   } else
