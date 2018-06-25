@@ -1,12 +1,6 @@
 #include "picell.h"
 #include "pierror.h"
 
-/**
- * @brief index of the next free cell in the array
- *
- */
-static unsigned long next_free_cell = 0;
-
 cell *get_cell() {
   // if (next_free_cell == MAX_CELLS)
   //   pi_error(MEMORY_ERROR, "Ran out of memory");
@@ -172,7 +166,7 @@ void cell_space_double_capacity_if_full(cell_space *cs) {
     // double vector->capacity and resize the allocated memory accordingly
     cs->cell_space_capacity *= 2;
     cs->blocks =
-        realloc(cs->blocks, sizeof(cell_block) * cs->cell_space_capacity);
+        (cell_block*) realloc(cs->blocks, sizeof(cell_block) * cs->cell_space_capacity);
   }
 }
 
