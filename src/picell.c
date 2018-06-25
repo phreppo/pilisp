@@ -1,6 +1,27 @@
 #include "picell.h"
 #include "pierror.h"
 
+// GARBAGE COLLECTOR
+static cell *next_free = NULL;
+
+cell_block *new_cell_block(size_t s) {
+  cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
+  // (cell *)malloc(s * sizeof(cell))
+  new_cb->size = s;
+  new_cb->block = (cell *)malloc(s * sizeof(cell));
+  size_t i = 0;
+  for (i = 0; i < s - 1; i++) {
+    (new_cb->block[i]).type = TYPE_FREE;
+    // set the next next cell as the next free
+    (new_cb->block[i]).next_free_cell = (new_cb->block) + i + 1;
+  }
+  // last cell
+  (new_cb->block[s - 1]).type = TYPE_FREE;
+  (new_cb->block[s - 1]).next_free_cell = NULL;
+
+  return new_cb;
+}
+
 /**
  * @brief array containing the cells
  *
@@ -34,10 +55,10 @@ cell *mk_str(const char *s) {
   return c;
 }
 
-static cell * is_symbol_allocated(const char * symbol){
-  int i=0;
-  for(i=0;i<next_free_cell;i++){
-    if(cells[i].type == TYPE_SYM && strcmp(cells[i].sym,symbol) == 0)
+static cell *is_symbol_allocated(const char *symbol) {
+  int i = 0;
+  for (i = 0; i < next_free_cell; i++) {
+    if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
       return &cells[i];
   }
   return NULL;
@@ -46,7 +67,7 @@ static cell * is_symbol_allocated(const char * symbol){
 cell *mk_sym(const char *symbol) {
   // was the symbol allocated
   cell *allocated = is_symbol_allocated(symbol);
-  if(allocated)
+  if (allocated)
     // the symbol was allocated
     return allocated;
   cell *c = get_cell();
@@ -62,7 +83,7 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_cons(cell *car,cell *cdr) {
+cell *mk_cons(cell *car, cell *cdr) {
   cell *c = get_cell();
   c->type = TYPE_CONS;
   c->car = car;

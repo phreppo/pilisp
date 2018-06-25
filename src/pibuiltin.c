@@ -173,7 +173,7 @@ cell *timer(cell *arg, cell **env) {
   long elapsed;
 
   t1 = clock();
-  cell *valued = eval(to_execute, env);
+  cell *valued = eval(to_execute, *env);
   t2 = clock();
 
   elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;

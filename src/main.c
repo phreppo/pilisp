@@ -3,6 +3,9 @@
 
 int main(int argc, char **argv) {
 
+  cell_block * block= new_cell_block(4);
+  print_cell_block(block);
+
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
     printf("\npilisp [<file1.lisp> ... [ <fileN.lisp>]]\n");

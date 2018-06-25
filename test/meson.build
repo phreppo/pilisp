@@ -215,3 +215,8 @@ test('[LISP] load test', lisp_program_test, args : [
     '2' ,
     '24'
 ])
+test('[LISP] env printing test', lisp_program_test, args : [
+    '(env)',
+    'T',
+    '25'
+])

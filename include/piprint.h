@@ -44,6 +44,10 @@ void print_sexpr(const cell *c);
  */
 void print_sexpr_mode(const cell *c, unsigned char mode);
 
+void print_cell_block(const cell_block * block);
+
+void print_cell(const cell * cell);
+
 #endif // !PIPRINT_H
 
 /*@}*/

@@ -44,6 +44,7 @@ typedef struct cell {
     char *sym;
     int value;
     char *str;
+    struct cell * next_free_cell;
   };
   // union {
   //   double dvalue;
@@ -56,8 +57,8 @@ typedef struct cell {
  *
  */
 // #define MAX_CELLS 500
-// #define MAX_CELLS 65536
-#define MAX_CELLS 9999999
+#define MAX_CELLS 65536
+// #define MAX_CELLS 9999999
 
 /**
  * @brief function to get a cell
@@ -106,6 +107,13 @@ int is_str(const cell *c);
 int is_sym(const cell *c);
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c);
+
+typedef struct {
+  cell *block;
+  size_t size;
+} cell_block;
+
+cell_block * new_cell_block(size_t s);
 
 #endif // !PICELL_H
 

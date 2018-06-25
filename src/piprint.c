@@ -151,3 +151,41 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
   }
   free(printed_cons_cells);
 }
+
+void print_cell_block(const cell_block *block) {
+  if (block) {
+    size_t s = block->size;
+    cell *arr = block->block;
+    int i = 0;
+    for (i = 0; i < s; i++) {
+      printf(ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RESET,arr+i);
+      print_cell(arr+i);
+      puts("");
+    }
+  }
+}
+
+void print_cell(const cell *cell) {
+  if (cell) {
+
+    switch (cell->type) {
+    case TYPE_CONS:
+      printf("CONS");
+
+      break;
+    case TYPE_NUM:
+      printf("NUM\t%i",cell->value);
+      break;
+    case TYPE_STR:
+      printf("STR\t%s",cell->str);
+      break;
+    case TYPE_SYM:
+      printf("SYM\t%s",cell->sym);
+      break;
+    case TYPE_FREE:
+      printf("FREE\t%p",cell->next_free_cell);
+      break;
+    }
+  } else
+    printf("NO CELL");
+}
