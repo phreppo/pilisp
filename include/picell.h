@@ -12,8 +12,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#define INITIAL_BLOCK_SIZE 2 // size of the first created block
-#define INITIAL_BLOCKS 8     // number of blocks initially allocated
+#define INITIAL_BLOCK_SIZE 1 // size of the first created block
+#define INITIAL_BLOCKS 1     // number of blocks initially allocated
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -53,6 +53,8 @@ typedef struct cell {
   //   long long int lvalue;
   // } numV;
 } cell;
+
+void init_memory();
 
 /**
  * @brief function to get a cell
@@ -99,11 +101,11 @@ cell *copy_cell(const cell *c);
 int is_num(const cell *c);
 int is_str(const cell *c);
 int is_sym(const cell *c);
-//||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c);
 
-// GARBAGE COLLECTOR
-void init_memory();
+/********************************************************************************
+ *                                  GARBAGE COLLECTOR
+********************************************************************************/
 
 // cells array
 typedef struct {
@@ -113,7 +115,8 @@ typedef struct {
 
 cell_block *new_cell_block(size_t s);
 
-// cells space: array of cell blocks
+// cells space: array of cell blocks. Just one of this will be instantiated: the
+// pointer "memory" that represents the allocated cells in the interpreter
 typedef struct {
   size_t cell_space_size;
   size_t cell_space_capacity;
@@ -125,12 +128,20 @@ typedef struct {
 // allocates a new block and links the last free cell with the first free in the
 // cell space
 void cell_space_grow(cell_space *cs);
+// doubles the capacity of the cell spce
 void cell_space_double_capacity_if_full(cell_space *cs);
+// always use this on one allocated cell space before use
 void cell_space_init(cell_space *cs);
-bool cell_space_is_full(const cell_space *cs);
-cell *cell_space_get_cell(cell_space *cs);
-cell *cell_space_is_symbol_allocated(cell_space *cs,const char* symbol);
 
+bool cell_space_is_full(const cell_space *cs);
+
+// ALWAYS returns a new cell: if none is present it allocates new space
+cell *cell_space_get_cell(cell_space *cs);
+
+// checks if the symbol is present in the cell space
+cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
+
+// global var that represents the memory of the program
 cell_space *memory;
 
 // !TODO: give the chance to free the mem

@@ -197,7 +197,7 @@ void print_cell_space(const cell_space *cs) {
     printf(ANSI_COLOR_RED "Block %i\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
   }
-  printf("> First free cell: %p\n", cs->first_free);
+  printf(ANSI_COLOR_YELLOW " > First free cell: %p\n" ANSI_COLOR_RESET, cs->first_free);
 }
 
 void print_free_cells(const cell_space *cs) {

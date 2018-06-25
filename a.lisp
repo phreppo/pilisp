@@ -11,3 +11,8 @@
         )
     )
 )
+
+(set 
+    'ff
+    (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))
+)
