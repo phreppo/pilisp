@@ -50,6 +50,8 @@ void print_cell(const cell * cell);
 
 void print_cell_space(const cell_space * cs);
 
+void print_free_cells(const cell_space * cs);
+
 #endif // !PIPRINT_H
 
 /*@}*/
