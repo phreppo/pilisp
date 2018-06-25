@@ -40,7 +40,7 @@ cell *subtraction(const cell *numbers) {
     if (!is_cons(numbers))
       pi_error(LISP_ERROR, "impossible to perform subtraction");
     if (!is_num(car(numbers)))
-      pi_error(LISP_ERROR, "subtracted a non-number");
+      pi_error(LISP_ERROR, "changing the number of a non-number");
     return mk_num(-(car(numbers)->value));
   } else {
     if (!is_cons(numbers) || !is_cons(cdr(numbers)))
