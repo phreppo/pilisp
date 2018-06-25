@@ -37,8 +37,8 @@ void init_env() {
 }
 
 void init_pi(){
-  init_env();
   init_memory();
+  init_env();
 }
 
 cell *load_env(char *init_file_path) {
