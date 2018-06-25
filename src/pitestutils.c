@@ -133,7 +133,9 @@ void mem_prompt() {
     case 1:
       mk_num(count++);
       break;
-
+    case 3:
+      mk_sym("NEW_SYM");
+      break;
     default:
       break;
     }
