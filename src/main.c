@@ -2,9 +2,19 @@
 #include "pitestutils.h" // TODO: remove on production
 
 int main(int argc, char **argv) {
+
+  int i=33;
+  int a[i];
+  for(int i=0;i<33;i++){
+    a[i] = i;
+  }
+  for(int i=0;i<33;i++){
+    printf("%i\n",a[i]);
+  }
+
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
-    printf("\npilisp [<file1.l> ... [ <fileN.l>]]\n");
+    printf("\npilisp [<file1.lisp> ... [ <fileN.lisp>]]\n");
     return 0;
   }
 

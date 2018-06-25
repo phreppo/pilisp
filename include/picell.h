@@ -9,9 +9,9 @@
 
 #ifndef PICELL_H
 #define PICELL_H
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -22,12 +22,12 @@ enum {
   TYPE_SYM,      ///< symbol cell
   TYPE_NUM,      ///< number cell
   TYPE_STR,      ///< string cell
+  TYPE_FREE
   //   TYPE_KEYWORD,
   //   TYPE_BUILTINLAMBDA,
   //   TYPE_BUILTINMACRO,
   //   TYPE_BUILTINSTACK,
   //   TYPE_CXR,
-  //   TYPE_FREE
 };
 
 /**
@@ -97,15 +97,15 @@ cell *mk_sym(const char *symbol);
  * @param cdr pointer to the cdr
  * @return cell* pointer to the new cell
  */
-cell *mk_cons(cell *car,cell *cdr);
+cell *mk_cons(cell *car, cell *cdr);
 
-cell * copy_cell(const cell * c);
+cell *copy_cell(const cell *c);
 
-int is_num(const cell* c);
-int is_str(const cell* c);
-int is_sym(const cell* c);
+int is_num(const cell *c);
+int is_str(const cell *c);
+int is_sym(const cell *c);
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
-int is_cons(const cell* c);
+int is_cons(const cell *c);
 
 #endif // !PICELL_H
 
