@@ -2,7 +2,6 @@
 #include "pierror.h"
 
 // GARBAGE COLLECTOR
-static cell *next_free = NULL;
 
 cell_block *new_cell_block(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
@@ -25,7 +24,7 @@ void cell_space_init(cell_space *cs) {
   cs->cell_space_size = 1;
   cs->cell_space_capacity = INITIAL_BLOCKS;
   // take the space for blocks
-  cs->blocks = malloc(sizeof(cell_block *) * INITIAL_BLOCKS);
+  cs->blocks = (cell_block *)malloc(sizeof(cell_block) * INITIAL_BLOCKS);
   // first block
   cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
 }
@@ -52,15 +51,6 @@ void cell_space_grow(cell_space *cs) {
   // the new block will have the double size of the last block
   cs->blocks[index] = *new_cell_block(cs->blocks[index - 1].block_size * 2);
   cs->cell_space_size++;
-}
-
-cell_block cell_block_get(cell_space *cs, size_t index) {
-  if (index >= cs->cell_space_size || index < 0) {
-    printf("Index %d out of bounds for cs of cell_space_size %d\n", index,
-           cs->cell_space_size);
-    exit(1);
-  }
-  return cs->blocks[index];
 }
 
 void init_memory() {

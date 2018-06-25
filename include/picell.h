@@ -133,7 +133,6 @@ void cell_space_init(cell_space *cs);
 bool cell_space_is_full(const cell_space *cs);
 void cell_space_grow(cell_space *cs);
 void cell_space_double_capacity_if_full(cell_space *cs);
-cell_block cell_block_get(cell_space * cs, size_t index);
 
 
 cell_space *memory;
