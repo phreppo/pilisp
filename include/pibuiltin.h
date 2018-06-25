@@ -45,6 +45,7 @@ cell * length(const cell * list);
 cell * member(const cell * list);
 cell * nth(const cell * list);
 
+// works also on lists: eq no
 bool total_eq(const cell * c1, const cell * c2);
 
 #endif // !PIBUILTIN_H

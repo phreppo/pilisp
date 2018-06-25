@@ -54,21 +54,31 @@ cell *apply(cell *fn, cell *x, cell *a) {
     if (atom(fn)) {
 
       // BASIC OPERATIONS
-      if (eq(fn, symbol_car))
+      if (eq(fn, symbol_car)) {
+        check_one_arg(x);
         return caar(x);
-      if (eq(fn, symbol_cdr))
+      }
+      if (eq(fn, symbol_cdr)) {
+        check_one_arg(x);
         return cdar(x);
-      if (eq(fn, symbol_cons))
+      }
+      if (eq(fn, symbol_cons)) {
+        check_two_args(x);
         return cons(car(x), cadr(x));
+      }
       if (eq(fn, symbol_atom)) {
+        check_one_arg(x);
         if (atom(car(x)))
           return symbol_true;
         else
           return NULL;
       }
-      if (eq(fn, symbol_true))
-        return symbol_true;
+      if (eq(fn, symbol_true)) {
+        pi_error(LISP_ERROR,"T is not a function");
+        // return symbol_true;
+      }
       if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
+        check_two_args(x);
         if (eq(car(x), cadr(x)))
           return symbol_true;
         else

@@ -226,6 +226,7 @@ cell *greater(const cell *operands) {
     pi_error(LISP_ERROR, "non-comparable args");
   return NULL;
 }
+
 cell *greater_eq(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
@@ -240,6 +241,7 @@ cell *greater_eq(const cell *operands) {
     pi_error(LISP_ERROR, "non-comparable args");
   return NULL;
 }
+
 cell *less(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
@@ -254,6 +256,7 @@ cell *less(const cell *operands) {
     pi_error(LISP_ERROR, "non-comparable args");
   return NULL;
 }
+
 cell *less_eq(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
