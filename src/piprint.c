@@ -136,7 +136,7 @@ void print_sexpr(const cell *c) {
 }
 
 void print_sexpr_mode(const cell *c, unsigned char mode) {
-  const cell **printed_cons_cells = malloc(sizeof(cell *) * MAX_CELLS);
+  const cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
   unsigned long level = 0;
 
   switch (mode) {
@@ -158,8 +158,8 @@ void print_cell_block(const cell_block *block) {
     cell *arr = block->block;
     int i = 0;
     for (i = 0; i < s; i++) {
-      printf("%i\t"ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RESET,i,arr+i);
-      print_cell(arr+i);
+      printf("%i\t" ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RESET, i, arr + i);
+      print_cell(arr + i);
       puts("");
     }
   }
@@ -174,36 +174,39 @@ void print_cell(const cell *cell) {
 
       break;
     case TYPE_NUM:
-      printf("NUM" ANSI_COLOR_LIGHT_BLUE "\t%i" ANSI_COLOR_RESET,cell->value);
+      printf("NUM" ANSI_COLOR_LIGHT_BLUE "\t%i" ANSI_COLOR_RESET, cell->value);
       break;
     case TYPE_STR:
-      printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET,cell->str);
+      printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->str);
       break;
     case TYPE_SYM:
-      printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET,cell->sym);
+      printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
       break;
     case TYPE_FREE:
-      printf("FREE" ANSI_COLOR_LIGHT_BLUE "\t%p" ANSI_COLOR_RESET,cell->next_free_cell);
+      printf("FREE" ANSI_COLOR_LIGHT_BLUE "\t%p" ANSI_COLOR_RESET,
+             cell->next_free_cell);
       break;
     }
   } else
     printf("NO CELL");
 }
 
-void print_cell_space(const cell_space * cs){
+void print_cell_space(const cell_space *cs) {
   size_t i = 0;
-  for(i = 0; i<cs->cell_space_size;i++){
-    printf(ANSI_COLOR_RED "Block %i\n" ANSI_COLOR_RESET,i);
+  for (i = 0; i < cs->cell_space_size; i++) {
+    printf(ANSI_COLOR_RED "Block %i\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
   }
-  printf("> First free cell: %p\n",cs->first_free);
+  printf("> First free cell: %p\n", cs->first_free);
 }
 
-void print_free_cells(const cell_space * cs){
-  cell * free = cs->first_free;
+void print_free_cells(const cell_space *cs) {
+  cell *free = cs->first_free;
   size_t i = 0;
-  while(free){
-    printf("%i\t" ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RED "%p\n" ANSI_COLOR_RESET,i,free,free->next_free_cell);
+  while (free) {
+    printf("%i\t" ANSI_COLOR_GREEN "%p\t" ANSI_COLOR_RED
+           "%p\n" ANSI_COLOR_RESET,
+           i, free, free->next_free_cell);
     i++;
     free = free->next_free_cell;
   }

@@ -28,6 +28,7 @@ void cell_space_init(cell_space *cs) {
   // first block
   cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
   cs->first_free = cs->blocks->block;
+  cs->n_cells = cs->blocks[0].block_size;
 }
 
 bool cell_space_is_full(const cell_space *cs) {
@@ -61,6 +62,9 @@ void cell_space_grow(cell_space *cs) {
   last->next_free_cell = tmp;
   cs->first_free = new_cb->block;
 
+  // update the number of cells
+  cs->n_cells += new_cb->block_size;
+
   cs->cell_space_size++;
 }
 
@@ -76,12 +80,6 @@ void init_memory() {
   memory = malloc(sizeof(cell_space));
   cell_space_init(memory);
 }
-
-/**
- * @brief array containing the cells
- *
- */
-static cell cells[MAX_CELLS];
 
 /**
  * @brief index of the next free cell in the array

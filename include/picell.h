@@ -55,14 +55,6 @@ typedef struct cell {
 } cell;
 
 /**
- * @brief max number of aviable cells
- *
- */
-// #define MAX_CELLS 500
-#define MAX_CELLS 65536
-// #define MAX_CELLS 9999999
-
-/**
  * @brief function to get a cell
  *
  * @return cell* pointer to the new cell
@@ -125,6 +117,7 @@ cell_block *new_cell_block(size_t s);
 typedef struct {
   size_t cell_space_size;
   size_t cell_space_capacity;
+  size_t n_cells;
   cell_block *blocks;
   cell *first_free;
 } cell_space;
