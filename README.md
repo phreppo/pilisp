@@ -15,6 +15,7 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 * Prints self-referencing structures
 * **Lambdas**: (set 'id_func (lambda (x) x) ) permitted
 * **Timer builtin**: (timer 'unvalued_expression) prints the elapsed time for the eval of the expression
+* **Memory dump builtin**: (md) prints the structure of the allocated memory
 
 ## Documentation ##
 
