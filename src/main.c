@@ -3,12 +3,8 @@
 
 int main(int argc, char **argv) {
   init_pi();
-  cell_space_grow(memory);
-  cell_space_grow(memory);
-  print_cell_space(memory);
-  print_free_cells(memory);
+  // mem_prompt();
 
-  return 0;
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
     printf("\npilisp [<file1.lisp> ... [ <fileN.lisp>]]\n");

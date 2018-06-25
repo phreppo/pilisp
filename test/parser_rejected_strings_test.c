@@ -28,6 +28,7 @@ int parser_test(char *file_path_name) {
 
 int main(int argc, char **argv) {
   char *file_path_name = argv[1];
+  init_pi();
   // char file_path_name[] = "/home/phreppo/pilisp/test/expressions/badexpressions/badsexpr1.l";
   printf("File name: %s\n", file_path_name);
   return parser_test(file_path_name);

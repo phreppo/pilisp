@@ -12,8 +12,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#define INITIAL_BLOCK_SIZE 2  // size of the first created block
-#define INITIAL_BLOCKS 8      // number of blocks initially allocated
+#define INITIAL_BLOCK_SIZE 2 // size of the first created block
+#define INITIAL_BLOCKS 8     // number of blocks initially allocated
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -46,7 +46,7 @@ typedef struct cell {
     char *sym;
     int value;
     char *str;
-    struct cell * next_free_cell;
+    struct cell *next_free_cell;
   };
   // union {
   //   double dvalue;
@@ -110,31 +110,33 @@ int is_sym(const cell *c);
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c);
 
-
 // GARBAGE COLLECTOR
 void init_memory();
 
-// cells array 
+// cells array
 typedef struct {
   size_t block_size;
   cell *block;
 } cell_block;
 
-cell_block * new_cell_block(size_t s);
+cell_block *new_cell_block(size_t s);
 
-// cells space: array of cell blocks 
+// cells space: array of cell blocks
 typedef struct {
   size_t cell_space_size;
   size_t cell_space_capacity;
-  cell_block * blocks;
-  cell * first_free;
+  cell_block *blocks;
+  cell *first_free;
 } cell_space;
 
-// allocates a new block and links the last free cell with the first free in the cell space
+// allocates a new block and links the last free cell with the first free in the
+// cell space
 void cell_space_grow(cell_space *cs);
 void cell_space_double_capacity_if_full(cell_space *cs);
 void cell_space_init(cell_space *cs);
 bool cell_space_is_full(const cell_space *cs);
+cell *cell_space_get_cell(cell_space *cs);
+cell *cell_space_is_symbol_allocated(cell_space *cs,const char* symbol);
 
 cell_space *memory;
 

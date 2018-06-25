@@ -35,6 +35,9 @@ int pi_prompt() {
       while (ch != '\n')
         scanf("%c", &ch);
     }
+#if DEBUG_MEM_MODE
+    print_cell_space(memory);
+#endif
     printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
     cell *result = eval(read_sexpr(stdin), GLOBAL_ENV);
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
@@ -60,7 +63,7 @@ cell *parse_file(char *file_path) {
   cell *res = NULL;
   while (!feof(program_file)) {
     cell *sexpr = read_sexpr(program_file);
-    if (sexpr != symbol_file_ended) 
+    if (sexpr != symbol_file_ended)
       res = eval(sexpr, GLOBAL_ENV);
   }
   fclose(program_file);

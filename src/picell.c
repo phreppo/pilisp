@@ -51,17 +51,25 @@ void cell_space_grow(cell_space *cs) {
   size_t index = cs->cell_space_size;
   // the new block will have the double size of the last block
   cs->blocks[index] = *new_cell_block(cs->blocks[index - 1].block_size * 2);
-  
+
   // new cell block
-  cell_block * new_cb = &(cs->blocks[index]);
+  cell_block *new_cb = &(cs->blocks[index]);
   // last cell in the new block
-  cell * last = new_cb->block + new_cb->block_size-1;
-  // hooking the first free 
-  cell * tmp = cs->first_free;
+  cell *last = new_cb->block + new_cb->block_size - 1;
+  // hooking the first free
+  cell *tmp = cs->first_free;
   last->next_free_cell = tmp;
   cs->first_free = new_cb->block;
 
   cs->cell_space_size++;
+}
+
+cell *cell_space_get_cell(cell_space *cs) {
+  // no space?
+  if (!cs->first_free)
+    // then grow
+    cell_space_grow(cs);
+  return cs->first_free;
 }
 
 void init_memory() {
@@ -82,9 +90,12 @@ static cell cells[MAX_CELLS];
 static unsigned long next_free_cell = 0;
 
 cell *get_cell() {
-  if (next_free_cell == MAX_CELLS)
-    pi_error(MEMORY_ERROR, "Ran out of memory");
-  return &(cells[next_free_cell++]);
+  // if (next_free_cell == MAX_CELLS)
+  //   pi_error(MEMORY_ERROR, "Ran out of memory");
+  // return &(cells[next_free_cell++]);
+  cell *new_cell = cell_space_get_cell(memory);
+  memory->first_free = new_cell->next_free_cell;
+  return new_cell;
 }
 
 cell *mk_num(const int n) {
@@ -103,12 +114,44 @@ cell *mk_str(const char *s) {
 }
 
 static cell *is_symbol_allocated(const char *symbol) {
-  int i = 0;
-  for (i = 0; i < next_free_cell; i++) {
-    if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
-      return &cells[i];
+  return cell_space_is_symbol_allocated(memory,symbol);
+  // int i = 0;
+  // for (i = 0; i < next_free_cell; i++) {
+  //   if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
+  //     return &cells[i];
+  // }
+  // return NULL;
+}
+
+cell *cell_space_is_symbol_allocated(cell_space *cs, const char * symbol) {
+
+  cell_block * current_block = cs->blocks;
+  size_t i = 0;
+  // TODO learn why this is <= and not <
+  for(i = 0;i<=cs->cell_space_size;i++){
+    // for every block...
+    size_t j = 0;
+
+    for(j=0;j<current_block->block_size;j++){
+      // for every cell...
+      cell * current_cell = current_block->block+j;
+      if(is_sym(current_cell) && strcmp(current_cell->sym,symbol) == 0){
+        // found!
+        return current_cell;
+      }
+    }
+
+    current_block = cs->blocks + i;
   }
   return NULL;
+  
+
+  // int i = 0;
+  // for (i = 0; i < next_free_cell; i++) {
+  //   if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
+  //     return &cells[i];
+  // }
+  // return NULL;
 }
 
 cell *mk_sym(const char *symbol) {

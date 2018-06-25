@@ -44,6 +44,7 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 #define COLOR1 ANSI_COLOR_LIGHT_BLUE
 #define COLOR2 ANSI_COLOR_YELLOW
+#define DEBUG_MEM_MODE 0
 
 int jmp_destination;
 jmp_buf env_buf;
