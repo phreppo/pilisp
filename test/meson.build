@@ -92,101 +92,126 @@ lisp_program_test = executable(
 # Cases lisp programs prints
 test('[LISP] +', lisp_program_test, args : [
     '(+ 1 1 1)',
-    '3 '
+    '3 ',
+    '1'
 ])
 test('[LISP] -', lisp_program_test, args : [
     '(- 1 1)',
-    '0 '
+    '0 ',
+    '2'
 ])
 test('[LISP] *', lisp_program_test, args : [
     '(* -1 -1)',
-    '1 '
+    '1 ',
+    '3'
 ])
 test('[LISP] /', lisp_program_test, args : [
     '(/ 8 2 (+ 1 1))',
-    '2 '
+    '2 ' ,
+    '3'
 ])
 test('[LISP] or 1', lisp_program_test, args : [
     '(set \'n 1)(or n "ciao" n NIL)',
-    '1 '
+    '1 ',
+    '4'
 ])
 test('[LISP] or 2', lisp_program_test, args : [
     '(or NIL NIL NIL NIL NIL)',
-    'NIL'
+    'NIL',
+    '5'
 ])
 test('[LISP] and 1', lisp_program_test, args : [
     '(and 1 NIL)',
-    'NIL '
+    'NIL ' ,
+    '6'
 ])
 test('[LISP] and 2', lisp_program_test, args : [
     '(or "hey" 7 "hey")',
-    '"hey"'
+    '"hey"',
+    '7'
 ])
 test('[LISP] not 1', lisp_program_test, args : [
     '(not T)',
-    'NIL'
+    'NIL',
+    '8'
 ])
 test('[LISP] not 2', lisp_program_test, args : [
     '(not NIL)',
-    'T '
+    'T ',
+    '9'
 ])
 test('[LISP] car 1', lisp_program_test, args : [
     '(car \'(a b))',
-    'A '
+    'A ',
+    '10'
 ])
 test('[LISP] car 2', lisp_program_test, args : [
     '(car \'((a a) b))',
-    '(A A) '
+    '(A A) ',
+    '11'
 ])
 test('[LISP] >', lisp_program_test, args : [
     '(set \'n 1)(> n (- 0 100))',
-    'T '
+    'T ',
+    '12'
 ])
 test('[LISP] >=', lisp_program_test, args : [
     '(set \'n 1)(>= n n)',
-    'T '
+    'T ',
+    '13'
 ])
 test('[LISP] <', lisp_program_test, args : [
     '(set \'n 1)(< (* 100 100) n)',
-    'NIL '
+    'NIL ',
+    '14'
 ])
 test('[LISP] <=', lisp_program_test, args : [
     '(set \'n 1)(<= n n)',
-    'T '
+    'T ',
+    '15'
 ])
 test('[LISP] lambda: id', lisp_program_test, args : [
     '(set \'str "hi")(set \'id (lambda (x) x)) (id str)',
-    '"hi" '
+    '"hi" ',
+    '16'
 ])
 test('[LISP] lambda: ff', lisp_program_test, args : [
     '(set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'str "hi") (ff \'(((((str)7)8))))',
-    'str '
+    'str ',
+    '17'
 ])
 test('[LISP] nth 1', lisp_program_test, args : [
     '(nth 1 \'(a b c) )',
-    'B '
+    'B ',
+    '18'
 ])
 test('[LISP] nth 2', lisp_program_test, args : [
     '(nth 100 \'(a (1 2) c) )',
-    'NIL '
+    'NIL ',
+    '19'
 ])
 test('[LISP] member 1', lisp_program_test, args : [
     '(set \'n 1)(member n \'(4 1 2 3) )',
-    '(1 2 3) '
+    '(1 2 3) ',
+    '20'
 ])
 test('[LISP] member 2', lisp_program_test, args : [
     '(set \'n 1)(member n \'(n n2 NIL) )',
-    'NIL '
+    'NIL ',
+    '21'
 ])
 test('[LISP] length 1', lisp_program_test, args : [
     '(length \'(NIL NIL NIL) )',
-    '3 '
+    '3 ',
+    '22'
 ])
 test('[LISP] length 2', lisp_program_test, args : [
     '(length NIL )',
-    '0 '
+    '0 ',
+    '23'
 ])
 test('[LISP] load test', lisp_program_test, args : [
     '(load "'+programs_path+'loadtest.lisp")(+ n 1)',
-    '2 '
+    '2 ' ,
+    '24'
 ])
