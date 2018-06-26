@@ -110,7 +110,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return symbol_true;
       }
       if (eq(fn, symbol_collect_garbage)) {
-        cell * root = mk_cons(NULL,NULL);
+        cell * root = mk_cons(GLOBAL_ENV,x);
         collect_garbage(memory,root);
         return symbol_true;
       }
@@ -193,9 +193,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 #endif
       // function is not an atomic function: something like (lambda (x) (lambda
       // (y) y)) ! cell * new_env = pairlis(,a)
-      // ! qui devo ricordarmi dell'ambiente interno (?)
       cell *function_body = eval(fn, a);
-      // a = last_pairlis; // ?
 
       if (function_body == NULL) {
         char *err = "unknown function ";

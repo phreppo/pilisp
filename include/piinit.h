@@ -38,7 +38,11 @@ cell *symbol_env;
 cell *symbol_mem_dump;
 cell *symbol_collect_garbage;
 
+// global env of the variables
 cell *GLOBAL_ENV;
+
+// list of the builtin symbols: the garbage collector will mark this as used, otherwise they would be collected
+cell *LANGUAGE_SYMBOLS;
 
 void init_env();
 
