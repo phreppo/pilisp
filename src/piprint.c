@@ -167,10 +167,40 @@ void print_cell_block(const cell_block *block) {
 
 void print_cell(const cell *cell) {
   if (cell) {
-    printf(ANSI_COLOR_DARK_GRAY "%d " ANSI_COLOR_RESET,cell->marked);
+    printf(ANSI_COLOR_DARK_GRAY "%d " ANSI_COLOR_RESET, cell->marked);
     switch (cell->type) {
     case TYPE_CONS:
-      printf("CONS");
+      printf("CONS\t" ANSI_COLOR_LIGHT_BLUE "( " ANSI_COLOR_RESET);
+      if (!car(cell) || !is_cons(car(cell))) {
+        // we can print here
+        if (!car(cell))
+          printf("NILL");
+        else if (is_str(car(cell)))
+          printf("%s", car(cell)->str);
+        else if (is_sym(car(cell)))
+          printf("%s", car(cell)->sym);
+        else if (is_num(car(cell)))
+          printf("%i", car(cell)->value);
+      } else {
+        // points to something we can't print
+        printf("%p",cell->car);
+      }
+      printf(ANSI_COLOR_RED " . " ANSI_COLOR_RESET);
+      if (!cdr(cell) || !is_cons(cdr(cell))) {
+        // we can print here
+        if (!cdr(cell))
+          printf("NILL");
+        else if (is_str(cdr(cell)))
+          printf("%s", cdr(cell)->str);
+        else if (is_sym(cdr(cell)))
+          printf("%s", cdr(cell)->sym);
+        else if (is_num(cdr(cell)))
+          printf("%i", cdr(cell)->value);
+      } else {
+        // points to something we can't print
+        printf("%p",cell->cdr);
+      }
+      printf(ANSI_COLOR_LIGHT_BLUE " ) " ANSI_COLOR_RESET);
 
       break;
     case TYPE_NUM:
@@ -188,7 +218,7 @@ void print_cell(const cell *cell) {
       break;
     }
   } else
-    printf("NO CELL");
+    printf("NIL");
 }
 
 void print_cell_space(const cell_space *cs) {
@@ -199,8 +229,10 @@ void print_cell_space(const cell_space *cs) {
   }
   printf(ANSI_COLOR_PURPLE " > Stack: \n" ANSI_COLOR_RESET);
   print_stack(cs->stack);
-  printf(ANSI_COLOR_YELLOW " > Free cells: \t\t%lu\n" ANSI_COLOR_RESET, cs->n_free_cells);
-  printf(ANSI_COLOR_YELLOW " > First free cell: \t%p\n" ANSI_COLOR_RESET, cs->first_free);
+  printf(ANSI_COLOR_YELLOW " > Free cells: \t\t%lu\n" ANSI_COLOR_RESET,
+         cs->n_free_cells);
+  printf(ANSI_COLOR_YELLOW " > First free cell: \t%p\n" ANSI_COLOR_RESET,
+         cs->first_free);
 }
 
 void print_free_cells(const cell_space *cs) {
@@ -215,12 +247,12 @@ void print_free_cells(const cell_space *cs) {
   }
 }
 
-void print_stack(const cell_stack * stack){
-  if(stack){
-    cell_stack_node * it = stack->tail;
+void print_stack(const cell_stack *stack) {
+  if (stack) {
+    cell_stack_node *it = stack->tail;
     size_t i = 0;
-    while(it){
-      printf("%u\t" ANSI_COLOR_BLUE "%p " ANSI_COLOR_RESET ,i,it->c);
+    while (it) {
+      printf("%u\t" ANSI_COLOR_BLUE "%p  " ANSI_COLOR_RESET, i, it->c);
       print_cell(it->c);
       puts("");
       it = it->prec;
