@@ -17,6 +17,11 @@
         "piinit.h": "c",
         "array": "c",
         "initializer_list": "c",
-        "utility": "c"
+        "utility": "c",
+        "*.tcc": "c",
+        "chrono": "c",
+        "functional": "c",
+        "ratio": "c",
+        "tuple": "c"
     }
 }

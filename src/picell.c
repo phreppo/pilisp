@@ -28,24 +28,19 @@ static cell *is_symbol_allocated(const char *symbol) {
 }
 
 cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
+  size_t block_index = 0;
+  for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
-  cell_block *current_block = cs->blocks;
-  size_t i = 0;
-  // TODO learn why this is <= and not <
-  for (i = 0; i <= cs->cell_space_size; i++) {
-    // for every block...
-    size_t j = 0;
+    size_t cell_index = 0;
+    cell_block *current_block = cs->blocks + block_index;
 
-    for (j = 0; j < current_block->block_size; j++) {
-      // for every cell...
-      cell *current_cell = current_block->block + j;
+    for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
+      cell *current_cell = current_block->block + cell_index;
       if (is_sym(current_cell) && strcmp(current_cell->sym, symbol) == 0) {
         // found!
         return current_cell;
       }
     }
-
-    current_block = cs->blocks + i;
   }
   return NULL;
 }
@@ -148,6 +143,7 @@ void cell_space_init(cell_space *cs) {
   cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
   cs->first_free = cs->blocks->block;
   cs->n_cells = cs->blocks[0].block_size;
+  cs->n_free_cells = INITIAL_BLOCK_SIZE;
 }
 
 bool cell_space_is_full(const cell_space *cs) {
@@ -182,6 +178,7 @@ void cell_space_grow(cell_space *cs) {
 
   // update the number of cells
   cs->n_cells += new_cb->block_size;
+  cs->n_free_cells += new_cb->block_size;
 
   // update the size
   cs->cell_space_size++;
@@ -192,6 +189,7 @@ cell *cell_space_get_cell(cell_space *cs) {
   if (!cs->first_free)
     // then grow
     cell_space_grow(cs);
+  cs->n_free_cells--;
   return cs->first_free;
 }
 
@@ -206,7 +204,8 @@ void collect_garbage(cell_space *cs, cell *root) {
          " >> Going to collect garbage <<\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
-  cell *r = mk_cons(LANGUAGE_SYMBOLS, root);
+  cell *r = mk_cons(LANGUAGE_SYMBOLS,
+                    root); // remembers to not free the language symbols
   mark(r);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW " >> After marking <<\n" ANSI_COLOR_RESET);
@@ -216,8 +215,6 @@ void collect_garbage(cell_space *cs, cell *root) {
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW " >> After sweep <<\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
-  printf(ANSI_COLOR_YELLOW " >> Free cells << \n" ANSI_COLOR_RESET);
-  print_free_cells(cs);
 #endif
 }
 
@@ -241,7 +238,7 @@ void sweep(cell_space *cs) {
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       cell *current_cell = current_block->block + cell_index;
       if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) {
-        cell_space_mark_cell_as_free(cs,current_cell);
+        cell_space_mark_cell_as_free(cs, current_cell);
       } else {
         current_cell->marked = 0;
       }
@@ -254,4 +251,5 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   c->type = TYPE_FREE;
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
+  cs->n_free_cells++;
 }
