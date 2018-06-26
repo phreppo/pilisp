@@ -14,6 +14,7 @@
 #include <string.h>
 #define INITIAL_BLOCK_SIZE 2 // size of the first created block
 #define INITIAL_BLOCKS 1     // number of blocks initially allocated
+#define NEW_BLOCK_THRESHOLD 0.5 
 #define DEBUG_GARBAGE_COLLECTOR_MODE 1
 
 /**

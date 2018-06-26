@@ -1,12 +1,7 @@
 #include "picell.h"
 #include "pierror.h"
 
-cell *get_cell() {
-  cell *new_cell = cell_space_get_cell(memory);
-  new_cell->marked = 0;
-  memory->first_free = new_cell->next_free_cell;
-  return new_cell;
-}
+cell *get_cell() { return cell_space_get_cell(memory); }
 
 cell *mk_num(const int n) {
   cell *c = get_cell();
@@ -186,11 +181,15 @@ void cell_space_grow(cell_space *cs) {
 
 cell *cell_space_get_cell(cell_space *cs) {
   // no space?
-  if (!cs->first_free)
-    // then grow
+  if (!cs->first_free) {
+    // then collect garbage
     cell_space_grow(cs);
+  }
   cs->n_free_cells--;
-  return cs->first_free;
+  cell *new_cell = cs->first_free;
+  new_cell->marked = 0;
+  cs->first_free = new_cell->next_free_cell;
+  return new_cell;
 }
 
 void init_memory() {
