@@ -2,9 +2,6 @@
 #include "pierror.h"
 
 cell *get_cell() {
-  // if (next_free_cell == MAX_CELLS)
-  //   pi_error(MEMORY_ERROR, "Ran out of memory");
-  // return &(cells[next_free_cell++]);
   cell *new_cell = cell_space_get_cell(memory);
   memory->first_free = new_cell->next_free_cell;
   return new_cell;
@@ -27,12 +24,6 @@ cell *mk_str(const char *s) {
 
 static cell *is_symbol_allocated(const char *symbol) {
   return cell_space_is_symbol_allocated(memory,symbol);
-  // int i = 0;
-  // for (i = 0; i < next_free_cell; i++) {
-  //   if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
-  //     return &cells[i];
-  // }
-  // return NULL;
 }
 
 cell *cell_space_is_symbol_allocated(cell_space *cs, const char * symbol) {
@@ -56,14 +47,6 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char * symbol) {
     current_block = cs->blocks + i;
   }
   return NULL;
-  
-
-  // int i = 0;
-  // for (i = 0; i < next_free_cell; i++) {
-  //   if (cells[i].type == TYPE_SYM && strcmp(cells[i].sym, symbol) == 0)
-  //     return &cells[i];
-  // }
-  // return NULL;
 }
 
 cell *mk_sym(const char *symbol) {
