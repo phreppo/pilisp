@@ -110,8 +110,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return symbol_true;
       }
       if (eq(fn, symbol_collect_garbage)) {
-        cell * root = mk_cons(GLOBAL_ENV,x);
-        collect_garbage(memory,root);
+        cell *root = mk_cons(GLOBAL_ENV, x);
+        collect_garbage(memory, root);
         return symbol_true;
       }
 
@@ -263,18 +263,17 @@ cell *eval(cell *e, cell *a) {
         evaulated = evcon(cdr(e), a);
       else {
 
-        if (eq(car(e), symbol_lambda))
+        if (eq(car(e), symbol_lambda)) {
           // lambda "autoquote"
           evaulated = e;
-        else {
+        } else {
           // something else
           evaulated = apply(car(e), evlis(cdr(e), a), a);
         }
       }
     }
-
   } else {
-    // ! composed function
+    // composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
   }
 #if DEBUG_EVAL_MODE

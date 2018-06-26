@@ -126,7 +126,6 @@ typedef struct {
   size_t n_free_cells;
   cell_block *blocks;
   cell *first_free;
-
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the
@@ -136,15 +135,11 @@ void cell_space_grow(cell_space *cs);
 void cell_space_double_capacity_if_full(cell_space *cs);
 // always use this on one allocated cell space before use
 void cell_space_init(cell_space *cs);
-
 bool cell_space_is_full(const cell_space *cs);
-
 // ALWAYS returns a new cell: if none is present it allocates new space
 cell *cell_space_get_cell(cell_space *cs);
-
 // checks if the symbol is present in the cell space
 cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
-
 // marks the cell as free and updates the first cel, in the cs. cell must be in
 // the cell space
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
