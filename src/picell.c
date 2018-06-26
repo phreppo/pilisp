@@ -124,6 +124,15 @@ int is_sym(const cell *c) { return c->type == TYPE_SYM; }
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
 
+void free_cell_pointed_memory(cell * c){
+  if(c){
+    if(is_str(c) && c->str)
+      free(c->str);
+    else if(is_sym(c) && c->sym)
+      free(c->sym);
+  }
+}
+
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
