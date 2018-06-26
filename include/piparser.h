@@ -30,12 +30,6 @@ enum {
   TOK_STR         ///< string token
 };
 
-/**
- * @brief defines the max number of chars for a token
- *
- */
-#define MAX_TOK_LEN 1024
-
 
 /**
  * @brief reads the next sexpression on the file, consuming chars. Initializaes the call of the recursive version
