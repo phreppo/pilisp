@@ -197,6 +197,8 @@ void print_cell_space(const cell_space *cs) {
     printf(ANSI_COLOR_RED "Block %lu\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
   }
+  printf(ANSI_COLOR_PURPLE " > Stack: \n" ANSI_COLOR_RESET);
+  print_stack(cs->stack);
   printf(ANSI_COLOR_YELLOW " > Free cells: \t\t%lu\n" ANSI_COLOR_RESET, cs->n_free_cells);
   printf(ANSI_COLOR_YELLOW " > First free cell: \t%p\n" ANSI_COLOR_RESET, cs->first_free);
 }
@@ -210,5 +212,19 @@ void print_free_cells(const cell_space *cs) {
            i, free, free->next_free_cell);
     i++;
     free = free->next_free_cell;
+  }
+}
+
+void print_stack(const cell_stack * stack){
+  if(stack){
+    cell_stack_node * it = stack->head;
+    size_t i = 0;
+    while(it){
+      printf("%u\t" ANSI_COLOR_BLUE "%p " ANSI_COLOR_RESET ,i,it->c);
+      print_cell(it->c);
+      puts("");
+      it = it->next;
+      i++;
+    }
   }
 }

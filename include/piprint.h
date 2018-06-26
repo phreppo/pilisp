@@ -52,6 +52,8 @@ void print_cell_space(const cell_space * cs);
 
 void print_free_cells(const cell_space * cs);
 
+void print_stack(const cell_stack * stack);
+
 #endif // !PIPRINT_H
 
 /*@}*/

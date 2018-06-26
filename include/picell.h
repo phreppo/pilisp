@@ -105,6 +105,30 @@ int is_cons(const cell *c);
 // does nothing if the cell has not pointers
 void free_cell_pointed_memory(cell *c);
 
+void cell_push(cell * c); // mark as used
+void cell_remove(cell * c); // mark as not used
+
+/********************************************************************************
+ *                              STACK GARBAGE COLLECTOR
+ ********************************************************************************/
+
+typedef struct cell_stack_node{
+  struct cell_stack_node * prec;
+  struct cell_stack_node * next;
+  cell * c;
+} cell_stack_node;
+
+typedef struct {
+  cell_stack_node * head;
+  cell_stack_node * tail;
+} cell_stack;
+
+cell_stack *cell_stack_create();
+cell_stack_node *cell_stack_node_create_node(cell * val, cell_stack_node * next, cell_stack_node * prec);
+
+void cell_stack_push(cell_stack * stack, cell * val);
+void cell_stack_remove(cell_stack * stack, cell * val);
+
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
  ********************************************************************************/
@@ -126,6 +150,7 @@ typedef struct {
   size_t n_free_cells;
   cell_block *blocks;
   cell *first_free;
+  cell_stack * stack;
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the

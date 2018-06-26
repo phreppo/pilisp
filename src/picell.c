@@ -139,6 +139,7 @@ void cell_space_init(cell_space *cs) {
   cs->first_free = cs->blocks->block;
   cs->n_cells = cs->blocks[0].block_size;
   cs->n_free_cells = INITIAL_BLOCK_SIZE;
+  cs->stack = cell_stack_create();
 }
 
 bool cell_space_is_full(const cell_space *cs) {
@@ -189,6 +190,7 @@ cell *cell_space_get_cell(cell_space *cs) {
   cell *new_cell = cs->first_free;
   new_cell->marked = 0;
   cs->first_free = new_cell->next_free_cell;
+  cell_push(new_cell);
   return new_cell;
 }
 
@@ -251,4 +253,73 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
   cs->n_free_cells++;
+  // ! HERE PUT THE POP FROM THE STACK
+}
+
+cell_stack *cell_stack_create() {
+  cell_stack *s = malloc(sizeof(cell_stack));
+  s->head = NULL;
+  s->tail = NULL;
+  return s;
+}
+
+cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
+                                             cell_stack_node *prec) {
+
+  cell_stack_node *n = malloc(sizeof(cell_stack_node));
+  n->c = val;
+  n->next = next;
+  n->prec = prec;
+  return n;
+}
+
+void cell_stack_push(cell_stack *stack, cell *val) {
+  cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
+  if (stack->head == NULL) {
+    stack->head = n;
+    stack->tail = n;
+  } else {
+    stack->head->prec = n;
+    n->next = stack->head;
+    stack->head = n;
+  }
+}
+void cell_stack_remove(cell_stack *stack, cell *val) {
+  // TODO CHECK THIS
+  cell_stack_node *act = stack->head;
+  cell_stack_node *prec = NULL;
+  while (act) {
+    if (act->c == val) {
+      // found
+
+      if (prec) {
+        // was not the first in the list
+        prec->next = act->next;
+        if (act->next)
+          // we're not removing the tail
+          act->next->prec = prec;
+        else
+          // we're removing the tail
+          stack->tail = prec;
+      } else {
+        // was the first in the list
+        stack->head = act->next;
+        if (!stack->head)
+          // was the only in the tail
+          stack->tail = NULL;
+      }
+      free(act);
+    } else {
+      prec = act;
+      act = act->next;
+    }
+  }
+}
+
+void cell_push(cell * c){
+  cell_stack_push(memory->stack,c);
+}
+
+void cell_remove(cell * c){
+  cell_stack_remove(memory->stack,c);
 }

@@ -80,6 +80,7 @@ void init_env() {
 void init_pi() {
   init_memory();
   init_env();
+  cell_stack_push(memory->stack,LANGUAGE_SYMBOLS);
 }
 
 cell *load_env(char *init_file_path) {
