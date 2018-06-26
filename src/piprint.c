@@ -217,13 +217,13 @@ void print_free_cells(const cell_space *cs) {
 
 void print_stack(const cell_stack * stack){
   if(stack){
-    cell_stack_node * it = stack->head;
+    cell_stack_node * it = stack->tail;
     size_t i = 0;
     while(it){
       printf("%u\t" ANSI_COLOR_BLUE "%p " ANSI_COLOR_RESET ,i,it->c);
       print_cell(it->c);
       puts("");
-      it = it->next;
+      it = it->prec;
       i++;
     }
   }

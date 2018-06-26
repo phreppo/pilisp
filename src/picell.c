@@ -309,17 +309,12 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
           stack->tail = NULL;
       }
       free(act);
-    } else {
-      prec = act;
-      act = act->next;
     }
+    prec = act;
+    act = act->next;
   }
 }
 
-void cell_push(cell * c){
-  cell_stack_push(memory->stack,c);
-}
+void cell_push(cell *c) { cell_stack_push(memory->stack, c); }
 
-void cell_remove(cell * c){
-  cell_stack_remove(memory->stack,c);
-}
+void cell_remove(cell *c) { cell_stack_remove(memory->stack, c); }
