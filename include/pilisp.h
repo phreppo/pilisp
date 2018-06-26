@@ -6,6 +6,7 @@
 
 /** @addtogroup pilisp */
 /*@{*/
+
 #ifndef PILISP_h
 #define PILISP_h
 #define PROMPT_STRING "pi>"
@@ -26,14 +27,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+// VARIABLES FOR HANDLING FUNCTIONS
 int jmp_destination;
 jmp_buf env_buf;
 
-/**
- * @brief Displays pilisp prompt
- *
- * @return int 0 if no error occurred
- */
+/********************************************************************************
+ *                           BASIC INTERPRETER FUNCTIONS
+ ********************************************************************************/
+
 int pi_prompt();
 cell * parse_file(char * file_path);
 

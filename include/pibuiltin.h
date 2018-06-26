@@ -1,3 +1,12 @@
+/** @defgroup pibuiltin
+ *
+ *  @brief Provides builtin lambdas: for example car, cdr
+ *
+ */
+
+/** @addtogroup pibuiltin */
+/*@{*/
+
 #ifndef PIBUILTIN_H
 #define PIBUILTIN_H
 #include "picell.h"
@@ -17,6 +26,8 @@ cell *caddr(const cell *c);
 cell *cons(cell *car, cell *cdr);
 int atom(const cell *c);
 bool eq(const cell *v1, const cell *v2);
+bool total_eq(const cell *c1,
+              const cell *c2); // works also on lists: eq does not
 
 // LOGIC
 cell * or (const cell *operands);
@@ -41,11 +52,10 @@ cell *set(cell *args, cell **env);
 cell *load(cell *arg, cell **env);
 
 // LISTS
-cell * length(const cell * list);
-cell * member(const cell * list);
-cell * nth(const cell * list);
-
-// works also on lists: eq no
-bool total_eq(const cell * c1, const cell * c2);
+cell *length(const cell *list);
+cell *member(const cell *list);
+cell *nth(const cell *list);
 
 #endif // !PIBUILTIN_H
+
+/*@}*/

@@ -35,7 +35,7 @@ enum {
  *
  */
 typedef struct cell {
-  unsigned char type,marked;
+  unsigned char type, marked;
   union {
     struct {
       struct cell *car;
@@ -126,7 +126,7 @@ typedef struct {
   size_t n_free_cells;
   cell_block *blocks;
   cell *first_free;
-  
+
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the
@@ -145,15 +145,16 @@ cell *cell_space_get_cell(cell_space *cs);
 // checks if the symbol is present in the cell space
 cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
 
-// marks the cell as free and updates the first cel, in the cs. cell must be in the cell space
-void cell_space_mark_cell_as_free(cell_space * cs, cell * c);
+// marks the cell as free and updates the first cel, in the cs. cell must be in
+// the cell space
+void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
 
 // global var that represents the memory of the program
 cell_space *memory;
 
-void collect_garbage(cell_space * cs, cell * root);
-void mark(cell * root);
-void sweep(cell_space * cs);
+void collect_garbage(cell_space *cs, cell *root);
+void mark(cell *root);
+void sweep(cell_space *cs);
 
 // !TODO: give the chance to free the mem
 

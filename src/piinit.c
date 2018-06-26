@@ -1,5 +1,6 @@
 #include "piinit.h"
 
+// adds to the list of the language symbols the new sym
 static void add_language_symbol(cell *sym) {
   cell *head = mk_cons(sym, LANGUAGE_SYMBOLS);
   LANGUAGE_SYMBOLS = head;
@@ -74,7 +75,6 @@ void init_env() {
   add_language_symbol(symbol_collect_garbage);
 
   GLOBAL_ENV = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
-  // GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);
 }
 
 void init_pi() {
