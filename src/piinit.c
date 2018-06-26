@@ -32,6 +32,7 @@ void init_env() {
   symbol_file_ended = mk_sym("FILE_ENDED");
   symbol_env = mk_sym("ENV");
   symbol_mem_dump = mk_sym("MD");
+  symbol_collect_garbage = mk_sym("CG");
 
   GLOBAL_ENV = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
   // GLOBAL_ENV = mk_cons(mk_cons(mk_sym("a"),mk_num(1)),NULL);

@@ -167,7 +167,7 @@ void print_cell_block(const cell_block *block) {
 
 void print_cell(const cell *cell) {
   if (cell) {
-
+    printf(ANSI_COLOR_DARK_GRAY "%d " ANSI_COLOR_RESET,cell->marked);
     switch (cell->type) {
     case TYPE_CONS:
       printf("CONS");

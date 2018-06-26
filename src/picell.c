@@ -3,6 +3,7 @@
 
 cell *get_cell() {
   cell *new_cell = cell_space_get_cell(memory);
+  new_cell->marked = 0;
   memory->first_free = new_cell->next_free_cell;
   return new_cell;
 }
@@ -23,22 +24,22 @@ cell *mk_str(const char *s) {
 }
 
 static cell *is_symbol_allocated(const char *symbol) {
-  return cell_space_is_symbol_allocated(memory,symbol);
+  return cell_space_is_symbol_allocated(memory, symbol);
 }
 
-cell *cell_space_is_symbol_allocated(cell_space *cs, const char * symbol) {
+cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
 
-  cell_block * current_block = cs->blocks;
+  cell_block *current_block = cs->blocks;
   size_t i = 0;
   // TODO learn why this is <= and not <
-  for(i = 0;i<=cs->cell_space_size;i++){
+  for (i = 0; i <= cs->cell_space_size; i++) {
     // for every block...
     size_t j = 0;
 
-    for(j=0;j<current_block->block_size;j++){
+    for (j = 0; j < current_block->block_size; j++) {
       // for every cell...
-      cell * current_cell = current_block->block+j;
-      if(is_sym(current_cell) && strcmp(current_cell->sym,symbol) == 0){
+      cell *current_cell = current_block->block + j;
+      if (is_sym(current_cell) && strcmp(current_cell->sym, symbol) == 0) {
         // found!
         return current_cell;
       }
@@ -107,19 +108,18 @@ int is_sym(const cell *c) { return c->type == TYPE_SYM; }
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
 
-void free_cell_pointed_memory(cell * c){
-  if(c){
-    if(is_str(c) && c->str)
+void free_cell_pointed_memory(cell *c) {
+  if (c) {
+    if (is_str(c) && c->str)
       free(c->str);
-    else if(is_sym(c) && c->sym)
+    else if (is_sym(c) && c->sym)
       free(c->sym);
   }
 }
 
-
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
-********************************************************************************/
+ ********************************************************************************/
 
 cell_block *new_cell_block(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
@@ -128,6 +128,7 @@ cell_block *new_cell_block(size_t s) {
   size_t i = 0;
   for (i = 0; i < s - 1; i++) {
     (new_cb->block[i]).type = TYPE_FREE;
+    (new_cb->block[i]).marked = 0;
     // set the next next cell as the next free
     (new_cb->block[i]).next_free_cell = (new_cb->block) + i + 1;
   }
@@ -157,8 +158,8 @@ void cell_space_double_capacity_if_full(cell_space *cs) {
   if (cs->cell_space_size >= cs->cell_space_capacity) {
     // double vector->capacity and resize the allocated memory accordingly
     cs->cell_space_capacity *= 2;
-    cs->blocks =
-        (cell_block*) realloc(cs->blocks, sizeof(cell_block) * cs->cell_space_capacity);
+    cs->blocks = (cell_block *)realloc(cs->blocks, sizeof(cell_block) *
+                                                       cs->cell_space_capacity);
   }
 }
 
@@ -182,7 +183,7 @@ void cell_space_grow(cell_space *cs) {
   // update the number of cells
   cs->n_cells += new_cb->block_size;
 
-  //update the size
+  // update the size
   cs->cell_space_size++;
 }
 
@@ -197,4 +198,27 @@ cell *cell_space_get_cell(cell_space *cs) {
 void init_memory() {
   memory = malloc(sizeof(cell_space));
   cell_space_init(memory);
+}
+
+void collect_garbage(cell_space *cs, cell *root) {
+#if DEBUG_GARBAGE_COLLECTOR_MODE
+  printf(ANSI_COLOR_YELLOW " >> Going to collect garbage <<\n" ANSI_COLOR_RESET);
+  print_cell_space(memory);
+#endif
+  mark(root);
+#if DEBUG_GARBAGE_COLLECTOR_MODE
+  printf(ANSI_COLOR_YELLOW " >> After marking <<\n" ANSI_COLOR_RESET);
+  print_cell_space(memory);
+#endif
+  // sweep
+}
+
+void mark(cell *root) {
+  if (root) {
+    root->marked = 1;
+    if (is_cons(root)) {
+      mark(car(root));
+      mark(cdr(root));
+    }
+  }
 }

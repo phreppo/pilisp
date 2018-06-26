@@ -93,9 +93,11 @@ cell *apply(cell *fn, cell *x, cell *a) {
       if (eq(fn, symbol_timer))
         return timer(x, &a);
       if (eq(fn, symbol_mem_dump)) {
-        if(x)
+        if (x)
           pi_error_many_args();
-        printf(ANSI_COLOR_YELLOW "============================== MEMORY ==============================\n" ANSI_COLOR_RESET);
+        printf(ANSI_COLOR_YELLOW
+               "============================== MEMORY "
+               "==============================\n" ANSI_COLOR_RESET);
         print_cell_space(memory);
         return symbol_true;
       }
@@ -105,6 +107,11 @@ cell *apply(cell *fn, cell *x, cell *a) {
         printf(" > env: " ANSI_COLOR_BLUE);
         print_sexpr(a);
         printf("\n" ANSI_COLOR_RESET);
+        return symbol_true;
+      }
+      if (eq(fn, symbol_collect_garbage)) {
+        cell * root = mk_cons(NULL,NULL);
+        collect_garbage(memory,root);
         return symbol_true;
       }
 

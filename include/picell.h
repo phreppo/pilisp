@@ -12,8 +12,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#define INITIAL_BLOCK_SIZE 1 // size of the first created block
+#define INITIAL_BLOCK_SIZE 64 // size of the first created block
 #define INITIAL_BLOCKS 1     // number of blocks initially allocated
+#define DEBUG_GARBAGE_COLLECTOR_MODE 1
 
 /**
  * @brief enumeration to identify the type of one cell
@@ -37,7 +38,7 @@ enum {
  *
  */
 typedef struct cell {
-  unsigned char type;
+  unsigned char type,marked;
   union {
     struct {
       struct cell *car;
@@ -147,6 +148,11 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
 
 // global var that represents the memory of the program
 cell_space *memory;
+
+void collect_garbage(cell_space * cs, cell * root);
+
+void mark(cell * root);
+void sweep();
 
 // !TODO: give the chance to free the mem
 

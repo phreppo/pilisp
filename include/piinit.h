@@ -36,7 +36,7 @@ cell *symbol_nth;
 cell *symbol_file_ended;
 cell *symbol_env;
 cell *symbol_mem_dump;
-
+cell *symbol_collect_garbage;
 
 cell *GLOBAL_ENV;
 
