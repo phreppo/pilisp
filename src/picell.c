@@ -274,6 +274,11 @@ cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
 }
 
 void cell_stack_push(cell_stack *stack, cell *val) {
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BROWN " > Pushing to the stack free: " ANSI_COLOR_RESET);
+  print_sexpr(val);
+  puts("");
+#endif
   cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
   if (stack->head == NULL) {
     stack->head = n;
@@ -285,6 +290,11 @@ void cell_stack_push(cell_stack *stack, cell *val) {
   }
 }
 void cell_stack_remove(cell_stack *stack, cell *val) {
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BROWN " > Removing from the stack: " ANSI_COLOR_RESET);
+  print_sexpr(val);
+  puts("");
+#endif
   // TODO CHECK THIS
   cell_stack_node *act = stack->head;
   cell_stack_node *prec = NULL;

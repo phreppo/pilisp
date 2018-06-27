@@ -79,6 +79,9 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
         printf(")");
       }
       break;
+    case TYPE_FREE:
+      printf("FREE");
+      break;
     default:
       pi_error(MODE_ERROR, "Unknown cell type");
     }
@@ -183,7 +186,7 @@ void print_cell(const cell *cell) {
           printf("%i", car(cell)->value);
       } else {
         // points to something we can't print
-        printf("%p",cell->car);
+        printf("%p", cell->car);
       }
       printf(ANSI_COLOR_RED " . " ANSI_COLOR_RESET);
       if (!cdr(cell) || !is_cons(cdr(cell))) {
@@ -198,7 +201,7 @@ void print_cell(const cell *cell) {
           printf("%i", cdr(cell)->value);
       } else {
         // points to something we can't print
-        printf("%p",cell->cdr);
+        printf("%p", cell->cdr);
       }
       printf(ANSI_COLOR_LIGHT_BLUE " ) " ANSI_COLOR_RESET);
 

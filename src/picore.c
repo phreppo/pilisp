@@ -153,7 +153,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
       // CUSTOM FUNCTION
       // does lambda exists?
-      cell *function_body = eval(fn, a);
+      cell *function_body = eval(fn, a); // ! REMOVE THIS ONCE RESOLVED
       if (function_body == NULL) {
         char *err = "unknown function ";
         char *fn_name = fn->sym;
@@ -166,7 +166,9 @@ cell *apply(cell *fn, cell *x, cell *a) {
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
       // the env knows the lambda
-      return apply(function_body, x, a);
+      cell * ret = apply(function_body, x, a);
+      cell_remove(function_body);
+      return ret;
 
     } else {
       // composed function
@@ -221,6 +223,8 @@ cell *eval(cell *e, cell *a) {
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *evaulated = NULL;
+  //========================= ATOM EVAL =========================//
+  // ** every used cells released **
   if (atom(e)) {
     if (!e)
       // NIL
@@ -250,7 +254,10 @@ cell *eval(cell *e, cell *a) {
         }
       }
     }
-  } else if (atom(car(e))) {
+  } 
+  //========================= ATOM FUNCTION EVAL =========================// 
+  // ! Not every cells released ! 
+  else if (atom(car(e))) {
     // car of the cons cell is an atom
 
     if (eq(car(e), symbol_quote))
@@ -267,12 +274,17 @@ cell *eval(cell *e, cell *a) {
           // lambda "autoquote"
           evaulated = e;
         } else {
-          // something else
+          // apply atom function to evaluated list of parameters
           evaulated = apply(car(e), evlis(cdr(e), a), a);
+          cell_remove(e); // we have the result: we can unlock the unvalued expression
         }
       }
     }
-  } else {
+  } 
+  //========================= COMPOSED FUNCTION EVAL =========================//
+  // ! Not every cells released ! 
+
+  else {
     // composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
   }
