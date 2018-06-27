@@ -166,7 +166,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
       // the env knows the lambda
-      cell * ret = apply(function_body, x, a);
+      cell *ret = apply(function_body, x, a);
       cell_remove(function_body);
       return ret;
 
@@ -254,9 +254,9 @@ cell *eval(cell *e, cell *a) {
         }
       }
     }
-  } 
-  //========================= ATOM FUNCTION EVAL =========================// 
-  // ! Not every cells released ! 
+  }
+  //========================= ATOM FUNCTION EVAL =========================//
+  // ! Not every cells released !
   else if (atom(car(e))) {
     // car of the cons cell is an atom
 
@@ -276,13 +276,12 @@ cell *eval(cell *e, cell *a) {
         } else {
           // apply atom function to evaluated list of parameters
           evaulated = apply(car(e), evlis(cdr(e), a), a);
-          cell_remove(e); // we have the result: we can unlock the unvalued expression
         }
       }
     }
-  } 
+  }
   //========================= COMPOSED FUNCTION EVAL =========================//
-  // ! Not every cells released ! 
+  // ! Not every cells released !
 
   else {
     // composed function
@@ -295,6 +294,7 @@ cell *eval(cell *e, cell *a) {
   print_sexpr(evaulated);
   printf(ANSI_COLOR_RESET "\n");
 #endif
+  cell_remove(e); // we have the result: we can unlock the unvalued expression
   return evaulated;
 }
 

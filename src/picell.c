@@ -7,6 +7,11 @@ cell *mk_num(const int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -15,6 +20,11 @@ cell *mk_str(const char *s) {
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
   strcpy(c->str, s);
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -56,6 +66,11 @@ cell *mk_sym(const char *symbol) {
     c->str[i] = toupper(c->str[i]);
     i++;
   }
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a sym: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -64,6 +79,11 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a sym: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -274,11 +294,6 @@ cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
 }
 
 void cell_stack_push(cell_stack *stack, cell *val) {
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BROWN " > Pushing to the stack free: " ANSI_COLOR_RESET);
-  print_sexpr(val);
-  puts("");
-#endif
   cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
   if (stack->head == NULL) {
     stack->head = n;
@@ -291,7 +306,7 @@ void cell_stack_push(cell_stack *stack, cell *val) {
 }
 void cell_stack_remove(cell_stack *stack, cell *val) {
 #if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BROWN " > Removing from the stack: " ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
   puts("");
 #endif
@@ -319,10 +334,16 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
           stack->tail = NULL;
       }
       free(act);
+      return;
     }
     prec = act;
     act = act->next;
   }
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
+  print_sexpr(val);
+  puts("");
+#endif
 }
 
 void cell_push(cell *c) { cell_stack_push(memory->stack, c); }
