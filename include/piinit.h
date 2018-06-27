@@ -13,8 +13,6 @@
 #include "piparser.h"
 #include <stdio.h>
 
-#define N_BUILTIN_LAMBDA 777
-
 // array of builtin lambdas
 cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
 size_t builtin_lambda_index;

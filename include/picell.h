@@ -72,6 +72,7 @@ int is_num(const cell *c);
 int is_str(const cell *c);
 int is_sym(const cell *c);
 int is_cons(const cell *c);
+int is_builtin(const cell *c);
 
 // free the memory pointed by the cell. for example the string for str cells.
 // does nothing if the cell has not pointers

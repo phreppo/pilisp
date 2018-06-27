@@ -30,7 +30,7 @@ void init_builtin_lambdas(){
   symbol_length = mk_builtin_lambda("LENGTH");
   symbol_member = mk_builtin_lambda("MEMBER");
   symbol_nth = mk_builtin_lambda("NTH");
-  symbol_file_ended = mk_builtin_lambda("FILE_ENDED");
+  symbol_file_ended = mk_builtin_lambda("FEOF");
   symbol_env = mk_builtin_lambda("ENV");
   symbol_mem_dump = mk_builtin_lambda("MD");
   symbol_collect_garbage = mk_builtin_lambda("CG");

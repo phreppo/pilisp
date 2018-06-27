@@ -33,9 +33,10 @@
   "../init.lisp" // defines the path to the .lisp init file
 
 /********************************************************************************
- *                                PARSER SETTINGS
+ *                                  LIMITS
  ********************************************************************************/
 #define MAX_TOK_LEN 1024 // max length of a token
+#define N_BUILTIN_LAMBDA 777 // EXACT number of builtin lambdas
 
 /********************************************************************************
  *                             CONSOLE ANSI COLORS

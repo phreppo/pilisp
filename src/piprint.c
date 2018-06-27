@@ -235,7 +235,7 @@ void print_cell_space(const cell_space *cs) {
   printf(ANSI_COLOR_BLUE "BUILTIN LAMBDAS\n" ANSI_COLOR_RESET);
   size_t i = 0;
   for (i = 0; i < builtin_lambda_index; i++) {
-    printf(ANSI_COLOR_BLUE "%i" ANSI_COLOR_RESET"\t%s\t", i, BUILTIN_LAMBDAS[i].sym);
+    printf(ANSI_COLOR_BLUE "%lu" ANSI_COLOR_RESET"\t%s\t", i, BUILTIN_LAMBDAS[i].sym);
     if((i+1) % 3 == 0)
       puts("");
   }

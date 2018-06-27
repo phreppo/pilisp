@@ -147,7 +147,11 @@ cell *copy_cell(const cell *c) {
 
 int is_num(const cell *c) { return c->type == TYPE_NUM; }
 int is_str(const cell *c) { return c->type == TYPE_STR; }
-int is_sym(const cell *c) { return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA; }
+int is_sym(const cell *c) {
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA;
+}
+int is_builtin(const cell *c){ return c->type == TYPE_BUILTINLAMBDA;}
+
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
 
@@ -347,43 +351,53 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
   puts("");
 #endif
   // TODO CHECK THIS
-  cell_stack_node *act = stack->head;
-  cell_stack_node *prec = NULL;
-  while (act) {
-    if (act->c == val) {
-      // found
+  if (!is_builtin(val)) {
+    cell_stack_node *act = stack->head;
+    cell_stack_node *prec = NULL;
+    while (act) {
+      if (act->c == val) {
+        // found
 
-      // is it's a cons we have to remove also their sons
-      // if(is_cons(val)){
-      // cell_stack_remove(stack, car(val));
-      // cell_stack_remove(stack, cdr(val));
-      // }
-      if (prec) {
-        // was not the first in the list
-        prec->next = act->next;
-        if (act->next)
-          // we're not removing the tail
-          act->next->prec = prec;
-        else
-          // we're removing the tail
-          stack->tail = prec;
-      } else {
-        // was the first in the list
-        stack->head = act->next;
-        if (!stack->head)
-          // was the only in the tail
-          stack->tail = NULL;
+        // is it's a cons we have to remove also their sons
+        // if(is_cons(val)){
+        // cell_stack_remove(stack, car(val));
+        // cell_stack_remove(stack, cdr(val));
+        // }
+        if (prec) {
+          // was not the first in the list
+          prec->next = act->next;
+          if (act->next)
+            // we're not removing the tail
+            act->next->prec = prec;
+          else
+            // we're removing the tail
+            stack->tail = prec;
+        } else {
+          // was the first in the list
+          stack->head = act->next;
+          if (!stack->head)
+            // was the only in the tail
+            stack->tail = NULL;
+        }
+        free(act);
+        return;
       }
-      free(act);
-      return;
+      prec = act;
+      act = act->next;
     }
-    prec = act;
-    act = act->next;
+#if DEBUG_PUSH_REMOVE_MODE
+    printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+#endif
   }
 #if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
-  print_sexpr(val);
-  puts("");
+  else {
+    printf(ANSI_COLOR_YELLOW
+           " > Trying to remove a builtin lambda: " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+  }
 #endif
 }
 
