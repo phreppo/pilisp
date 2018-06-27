@@ -80,7 +80,7 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->car = car;
   c->cdr = cdr;
 #if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a sym: " ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_LIGHT_BLUE " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
   print_sexpr(c);
   puts("");
 #endif
@@ -219,15 +219,18 @@ void init_memory() {
   cell_space_init(memory);
 }
 
-void collect_garbage(cell_space *cs, cell *root) {
+void collect_garbage(cell_space *cs) {
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          " >> Going to collect garbage <<\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
-  cell *r = mk_cons(LANGUAGE_SYMBOLS,
-                    root); // remembers to not free the language symbols
-  mark(r);
+  cell_stack * stack = cs->stack;
+  cell_stack_node * node = cs->stack->head;
+  while(node){
+    mark(node->c);
+    node= node->next;
+  }
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW " >> After marking <<\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
@@ -316,7 +319,12 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
   while (act) {
     if (act->c == val) {
       // found
-
+      
+      //is it's a cons we have to remove also their sons
+      // if(is_cons(val)){
+        // cell_stack_remove(stack, car(val));
+        // cell_stack_remove(stack, cdr(val));
+      // }
       if (prec) {
         // was not the first in the list
         prec->next = act->next;

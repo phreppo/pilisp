@@ -172,7 +172,7 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
 // global var that represents the memory of the program
 cell_space *memory;
 
-void collect_garbage(cell_space *cs, cell *root);
+void collect_garbage(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
 

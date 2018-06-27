@@ -110,8 +110,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return symbol_true;
       }
       if (eq(fn, symbol_collect_garbage)) {
-        cell *root = mk_cons(GLOBAL_ENV, x);
-        collect_garbage(memory, root);
+        collect_garbage(memory);
         return symbol_true;
       }
 
@@ -276,6 +275,8 @@ cell *eval(cell *e, cell *a) {
         } else {
           // apply atom function to evaluated list of parameters
           evaulated = apply(car(e), evlis(cdr(e), a), a);
+          cell_remove(
+              e); // we have the result: we can unlock the unvalued expression
         }
       }
     }
@@ -294,7 +295,6 @@ cell *eval(cell *e, cell *a) {
   print_sexpr(evaulated);
   printf(ANSI_COLOR_RESET "\n");
 #endif
-  cell_remove(e); // we have the result: we can unlock the unvalued expression
   return evaulated;
 }
 
