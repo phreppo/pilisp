@@ -22,9 +22,9 @@ enum {
   TYPE_SYM,      ///< symbol cell
   TYPE_NUM,      ///< number cell
   TYPE_STR,      ///< string cell
-  TYPE_FREE
+  TYPE_FREE,
+  TYPE_BUILTINLAMBDA,
   //   TYPE_KEYWORD,
-  //   TYPE_BUILTINLAMBDA,
   //   TYPE_BUILTINMACRO,
   //   TYPE_BUILTINSTACK,
   //   TYPE_CXR,
@@ -46,6 +46,9 @@ typedef struct cell {
     char *str;
     struct cell *next_free_cell;
   };
+
+  // TODO: add pointer for funciton for builtin lambda
+
   // union {
   //   double dvalue;
   //   long long int lvalue;
@@ -54,45 +57,14 @@ typedef struct cell {
 
 void init_memory();
 
-/**
- * @brief function to get a cell
- *
- * @return cell* pointer to the new cell
- */
 cell *get_cell();
-
-/**
- * @brief make a number cell
- *
- * @param n the number
- * @return cell* pointer to the new cell
- */
 cell *mk_num(int n);
-
-/**
- * @brief make a string cell
- *
- * @param s the string
- * @return cell* pointer to the new cell
- */
 cell *mk_str(const char *s);
-
-/**
- * @brief make a new symbol cell
- *
- * @param symbol name of the symbol
- * @return cell* pointer to the new cell
- */
 cell *mk_sym(const char *symbol);
-
-/**
- * @brief make a new cons cell
- *
- * @param car pointer to the car
- * @param cdr pointer to the cdr
- * @return cell* pointer to the new cell
- */
 cell *mk_cons(cell *car, cell *cdr);
+cell *mk_builtin_lambda(const char *symbol);
+
+cell *is_symbol_builtin_lambda(const char *symbol);
 
 cell *copy_cell(const cell *c);
 

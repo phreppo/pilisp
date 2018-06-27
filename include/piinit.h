@@ -13,6 +13,12 @@
 #include "piparser.h"
 #include <stdio.h>
 
+#define N_BUILTIN_LAMBDA 777
+
+// array of builtin lambdas
+cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
+size_t builtin_lambda_index;
+
 // global env of the variables
 cell *GLOBAL_ENV;
 
@@ -26,6 +32,7 @@ cell *LANGUAGE_SYMBOLS;
 
 void init_pi();  // always call this before using pilisp
 void init_env(); // inits the global env
+void init_builtin_lambdas();
 cell *load_env(char *init_file_path);
 
 /********************************************************************************

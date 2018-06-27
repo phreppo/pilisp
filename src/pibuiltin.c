@@ -3,7 +3,7 @@
 
 int atom(const cell *c) {
   return (c == NULL) // NIL case
-         || (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR);
+         || (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA);
 }
 
 bool eq(const cell *v1, const cell *v2) {

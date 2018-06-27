@@ -50,9 +50,26 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
   return NULL;
 }
 
+cell *is_symbol_builtin_lambda(const char *symbol) {
+  size_t i = 0;
+  for (i = 0; i < builtin_lambda_index; i++) {
+
+    if (strcmp(BUILTIN_LAMBDAS[i].sym, symbol) == 0)
+      // found!
+      return BUILTIN_LAMBDAS + i;
+  }
+  // not found
+  return NULL;
+}
+
 cell *mk_sym(const char *symbol) {
-  // was the symbol allocated
-  cell *allocated = is_symbol_allocated(symbol);
+  // check if is a builtin lambda
+  cell *allocated = is_symbol_builtin_lambda(symbol);
+  if (allocated)
+    return allocated;
+
+  // was the symbol allocated but no builtin?
+  allocated = is_symbol_allocated(symbol);
   if (allocated)
     // the symbol was allocated
     return allocated;
@@ -80,11 +97,27 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->car = car;
   c->cdr = cdr;
 #if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_LIGHT_BLUE
+         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
   print_sexpr(c);
   puts("");
 #endif
   return c;
+}
+
+cell *mk_builtin_lambda(const char *symbol) {
+  cell *lambda = &BUILTIN_LAMBDAS[builtin_lambda_index++];
+  lambda->type = TYPE_BUILTINLAMBDA;
+  lambda->sym = symbol;
+  lambda->str = malloc(strlen(symbol) + 1);
+  int i = 0;
+  strcpy(lambda->str, symbol);
+  // case unsensitive
+  while ((lambda->str)[i]) {
+    lambda->str[i] = toupper(lambda->str[i]);
+    i++;
+  }
+  return lambda;
 }
 
 cell *copy_cell(const cell *c) {
@@ -114,7 +147,7 @@ cell *copy_cell(const cell *c) {
 
 int is_num(const cell *c) { return c->type == TYPE_NUM; }
 int is_str(const cell *c) { return c->type == TYPE_STR; }
-int is_sym(const cell *c) { return c->type == TYPE_SYM; }
+int is_sym(const cell *c) { return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA; }
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
 
@@ -225,11 +258,11 @@ void collect_garbage(cell_space *cs) {
          " >> Going to collect garbage <<\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
-  cell_stack * stack = cs->stack;
-  cell_stack_node * node = cs->stack->head;
-  while(node){
+  cell_stack *stack = cs->stack;
+  cell_stack_node *node = cs->stack->head;
+  while (node) {
     mark(node->c);
-    node= node->next;
+    node = node->next;
   }
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW " >> After marking <<\n" ANSI_COLOR_RESET);
@@ -319,11 +352,11 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
   while (act) {
     if (act->c == val) {
       // found
-      
-      //is it's a cons we have to remove also their sons
+
+      // is it's a cons we have to remove also their sons
       // if(is_cons(val)){
-        // cell_stack_remove(stack, car(val));
-        // cell_stack_remove(stack, cdr(val));
+      // cell_stack_remove(stack, car(val));
+      // cell_stack_remove(stack, cdr(val));
       // }
       if (prec) {
         // was not the first in the list

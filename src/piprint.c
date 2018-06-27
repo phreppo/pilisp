@@ -22,7 +22,9 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
     case TYPE_STR:
       printf("\"%s\"", c->str);
       break;
-
+    case TYPE_BUILTINLAMBDA:
+      printf("%s", c->sym);
+      break;
     case TYPE_SYM:
       printf("%s", c->sym);
       break;
@@ -42,6 +44,7 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
 
     default:
       pi_error(MODE_ERROR, "Unknown cell type");
+      break;
     }
   } else {
     // empty cell
@@ -58,6 +61,9 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
       break;
     case TYPE_STR:
       printf("\"%s\"", c->str);
+      break;
+    case TYPE_BUILTINLAMBDA:
+      printf("%s", c->sym);
       break;
     case TYPE_SYM:
       printf("%s", c->sym);
@@ -84,6 +90,7 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
       break;
     default:
       pi_error(MODE_ERROR, "Unknown cell type");
+      break;
     }
   } else {
     printf("NIL");
@@ -225,7 +232,14 @@ void print_cell(const cell *cell) {
 }
 
 void print_cell_space(const cell_space *cs) {
+  printf(ANSI_COLOR_BLUE "BUILTIN LAMBDAS\n" ANSI_COLOR_RESET);
   size_t i = 0;
+  for (i = 0; i < builtin_lambda_index; i++) {
+    printf(ANSI_COLOR_BLUE "%i" ANSI_COLOR_RESET"\t%s\t", i, BUILTIN_LAMBDAS[i].sym);
+    if((i+1) % 3 == 0)
+      puts("");
+  }
+  puts("");
   for (i = 0; i < cs->cell_space_size; i++) {
     printf(ANSI_COLOR_RED "Block %lu\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
