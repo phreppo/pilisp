@@ -266,13 +266,16 @@ void print_free_cells(const cell_space *cs) {
 
 void print_stack(const cell_stack *stack) {
   if (stack) {
-    cell_stack_node *it = stack->tail;
+
+    cell_stack_node *it = stack->head;
     size_t i = 0;
     while (it) {
-      printf("%u\t" ANSI_COLOR_BLUE "%p  " ANSI_COLOR_RESET, i, it->c);
+      printf("%u\t" ANSI_COLOR_BLUE "cell:  %p\tnode: %p\t" ANSI_COLOR_RESET, i, it->c, it);
+
+      printf("\tprec: %p\tnext: %p\t",it->prec,it->next);
       print_cell(it->c);
       puts("");
-      it = it->prec;
+      it = it->next;
       i++;
     }
   }

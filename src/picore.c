@@ -275,8 +275,9 @@ cell *eval(cell *e, cell *a) {
         } else {
           // apply atom function to evaluated list of parameters
           evaulated = apply(car(e), evlis(cdr(e), a), a);
-          cell_remove(
-              e); // we have the result: we can unlock the unvalued expression
+          
+          // we have the result: we can unlock the unvalued expression
+          cell_remove(e);
         }
       }
     }

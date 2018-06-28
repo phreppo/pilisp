@@ -220,3 +220,10 @@ test('[LISP] env printing test', lisp_program_test, args : [
     'T',
     '25'
 ])
+
+#test('[LISP] env printing test', lisp_program_test, args : [
+#    '(+ 1 2)',q
+#    '(+ 1 2)',
+#    '3',
+#    '26'
+#])

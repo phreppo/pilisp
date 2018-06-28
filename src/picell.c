@@ -150,7 +150,7 @@ int is_str(const cell *c) { return c->type == TYPE_STR; }
 int is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA;
 }
-int is_builtin(const cell *c){ return c->type == TYPE_BUILTINLAMBDA;}
+int is_builtin(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
 
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
@@ -351,7 +351,15 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
   puts("");
 #endif
   // TODO CHECK THIS
+  if (!val)
+    return;
   if (!is_builtin(val)) {
+#if DEBUG_PUSH_REMOVE_MODE
+    printf("> Removing from stack: ");
+    puts("");
+    print_stack(stack);
+    puts("");
+#endif
     cell_stack_node *act = stack->head;
     cell_stack_node *prec = NULL;
     while (act) {
@@ -359,19 +367,23 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
         // found
 
         // is it's a cons we have to remove also their sons
-        // if(is_cons(val)){
-        // cell_stack_remove(stack, car(val));
-        // cell_stack_remove(stack, cdr(val));
-        // }
+        cell *car1 = NULL;
+        cell *cdr1 = NULL;
+        if (is_cons(val)) {
+          car1 = car(val);
+          cdr1 = cdr(val);
+        }
         if (prec) {
           // was not the first in the list
           prec->next = act->next;
           if (act->next)
             // we're not removing the tail
             act->next->prec = prec;
-          else
+          else {
             // we're removing the tail
+            act->next->prec = prec;
             stack->tail = prec;
+          }
         } else {
           // was the first in the list
           stack->head = act->next;
@@ -379,7 +391,16 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
             // was the only in the tail
             stack->tail = NULL;
         }
+#if DEBUG_PUSH_REMOVE_MODE
+        printf(ANSI_COLOR_GREEN " > Removed from the stack: " ANSI_COLOR_RESET);
+        print_sexpr(val);
+        puts("");
+#endif
         free(act);
+        if (car1)
+          cell_stack_remove(stack, car1);
+        if (cdr1)
+          cell_stack_remove(stack, cdr1);
         return;
       }
       prec = act;
@@ -393,7 +414,7 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
   }
 #if DEBUG_PUSH_REMOVE_MODE
   else {
-    printf(ANSI_COLOR_YELLOW
+    printf(ANSI_COLOR_DARK_GRAY
            " > Trying to remove a builtin lambda: " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
