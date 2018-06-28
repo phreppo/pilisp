@@ -278,7 +278,7 @@ cell *eval(cell *e, cell *a) {
           cell *expr = caddr(e);
           evaulated = eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
         }
-
+        cell_remove(e);
         return NULL;
       } else {
 
@@ -290,7 +290,7 @@ cell *eval(cell *e, cell *a) {
           evaulated = apply(car(e), evlis(cdr(e), a), a);
 
           // we have the result: we can unlock the unvalued expression
-          // cell_remove(e);
+          cell_remove(e);
         }
       }
     }

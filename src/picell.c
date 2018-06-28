@@ -260,7 +260,8 @@ void init_memory() {
 void collect_garbage(cell_space *cs) {
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
-         "=================================== Going to collect garbage ===================================\n" ANSI_COLOR_RESET);
+         "=================================== Going to collect garbage "
+         "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
   cell_stack *stack = cs->stack;
@@ -270,12 +271,16 @@ void collect_garbage(cell_space *cs) {
     node = node->next;
   }
 #if DEBUG_GARBAGE_COLLECTOR_MODE
-  printf(ANSI_COLOR_YELLOW "=================================== After marking ===================================\n" ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_YELLOW
+         "=================================== After marking "
+         "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
   sweep(memory);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
-  printf(ANSI_COLOR_YELLOW "=================================== After sweep ===================================\n" ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_YELLOW
+         "=================================== After sweep "
+         "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
 }
@@ -411,6 +416,7 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
     printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
+    pi_error(MEMORY_ERROR, "REMOVING SOMETHING THAT DOES NT EXISTS");
 #endif
   }
 #if DEBUG_PUSH_REMOVE_MODE
