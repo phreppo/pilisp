@@ -112,7 +112,7 @@ void init_env() {
   // add_language_symbol(symbol_collect_garbage);
 
   // GLOBAL_ENV = NULL;
-  GLOBAL_ENV = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
+  memory->global_env = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
 }
 
 void init_pi() {

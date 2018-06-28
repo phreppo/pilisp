@@ -130,7 +130,7 @@ cell *set(cell *args) {
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");
   cell *prec = NULL;
-  cell *act = GLOBAL_ENV;
+  cell *act = memory->global_env;
   while (act) {
     if (eq(name, caar(act))) {
       // found
@@ -145,7 +145,7 @@ cell *set(cell *args) {
   if (prec)
     prec->cdr = new;
   else
-    GLOBAL_ENV = new;
+    memory->global_env = new;
   return val;
 }
 

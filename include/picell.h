@@ -124,6 +124,7 @@ typedef struct {
   cell_block *blocks;
   cell *first_free;
   cell_stack * stack;
+  cell * global_env;
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the

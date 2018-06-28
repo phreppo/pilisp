@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   }
   init_pi();
   cell *res = NULL;
-  cell *env = GLOBAL_ENV;
+  cell *env = memory->global_env;
   jmp_destination = setjmp(env_buf);
   if (had_error()) {
     puts("error processing program");
