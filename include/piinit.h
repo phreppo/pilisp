@@ -70,6 +70,7 @@ cell *symbol_env;
 cell *symbol_mem_dump;
 cell *symbol_collect_garbage;
 cell *symbol_dotimes;
+cell *symbol_list;
 
 #endif // !PIINIT_H
 

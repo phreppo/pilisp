@@ -55,6 +55,7 @@ cell *load(cell *arg, cell **env);
 cell *length(const cell *list);
 cell *member(const cell *list);
 cell *nth(const cell *list);
+cell *list(const cell *list);
 
 #endif // !PIBUILTIN_H
 

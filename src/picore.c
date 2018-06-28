@@ -149,6 +149,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return member(x);
       if (eq(fn, symbol_nth))
         return nth(x);
+      if (eq(fn, symbol_list))
+        return list(x);
 
       // CUSTOM FUNCTION
       // does lambda exists?
@@ -268,13 +270,13 @@ cell *eval(cell *e, cell *a) {
         // COND
         evaulated = evcon(cdr(e), a);
       else if (eq(car(e), symbol_dotimes)) {
-
+        // DOTIMES
         size_t n = 0;
         cell *name = car(car(cdr(e)));
         cell *num = car(cdr(car(cdr(e))));
         for (n = 0; n < num->value; n++) {
           cell *expr = caddr(e);
-          evaulated =  eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
+          evaulated = eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
         }
 
         return NULL;

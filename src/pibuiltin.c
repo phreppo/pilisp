@@ -366,3 +366,7 @@ bool total_eq(const cell *c1, const cell *c2) {
   // cons cons
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
+
+cell *list(const cell *list){
+  return copy_cell(list);
+}
