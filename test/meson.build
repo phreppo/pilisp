@@ -221,9 +221,14 @@ test('[LISP] env printing test', lisp_program_test, args : [
     '25'
 ])
 
-#test('[LISP] env printing test', lisp_program_test, args : [
-#    '(+ 1 2)',q
-#    '(+ 1 2)',
-#    '3',
-#    '26'
-#])
+test('[LISP] set-sum test', lisp_program_test, args : [
+    '(+ 1 2) (+ 1 2) (+ 1 2) (set \'n 3) n (+ 1 n)',
+    '4',
+    '26'
+])
+
+test('[LISP] set-lambda test 1', lisp_program_test, args : [
+    '(set \'id (lambda (x) x)) (set \'n 1) (id 1)',
+    '1',
+    '27'
+])

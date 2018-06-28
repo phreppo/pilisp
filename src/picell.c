@@ -259,7 +259,7 @@ void init_memory() {
 void collect_garbage(cell_space *cs) {
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
-         " >> Going to collect garbage <<\n" ANSI_COLOR_RESET);
+         "=================================== Going to collect garbage ===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
   cell_stack *stack = cs->stack;
@@ -269,12 +269,12 @@ void collect_garbage(cell_space *cs) {
     node = node->next;
   }
 #if DEBUG_GARBAGE_COLLECTOR_MODE
-  printf(ANSI_COLOR_YELLOW " >> After marking <<\n" ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_YELLOW "=================================== After marking ===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
   sweep(memory);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
-  printf(ANSI_COLOR_YELLOW " >> After sweep <<\n" ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_YELLOW "=================================== After sweep ===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
 }
@@ -355,10 +355,10 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
     return;
   if (!is_builtin(val)) {
 #if DEBUG_PUSH_REMOVE_MODE
-    printf("> Removing from stack: ");
-    puts("");
-    print_stack(stack);
-    puts("");
+    // printf("> Removing from stack: ");
+    // puts("");
+    // print_stack(stack);
+    // puts("");
 #endif
     cell_stack_node *act = stack->head;
     cell_stack_node *prec = NULL;

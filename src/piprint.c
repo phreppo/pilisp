@@ -236,7 +236,7 @@ void print_cell_space(const cell_space *cs) {
   size_t i = 0;
   for (i = 0; i < builtin_lambda_index; i++) {
     printf(ANSI_COLOR_BLUE "%lu" ANSI_COLOR_RESET"\t%s\t", i, BUILTIN_LAMBDAS[i].sym);
-    if((i+1) % 3 == 0)
+    if((i+1) % 5 == 0)
       puts("");
   }
   puts("");
@@ -270,9 +270,15 @@ void print_stack(const cell_stack *stack) {
     cell_stack_node *it = stack->head;
     size_t i = 0;
     while (it) {
-      printf("%u\t" ANSI_COLOR_BLUE "cell:  %p\tnode: %p\t" ANSI_COLOR_RESET, i, it->c, it);
+      printf("%u\t" ANSI_COLOR_BLUE "cell:  %p\tnode: %p" ANSI_COLOR_RESET, i, it->c, it);
 
-      printf("\tprec: %p\tnext: %p\t",it->prec,it->next);
+      printf("\tprec: %p\t",it->prec);
+      if(!it->prec)
+        printf("\t");
+      printf("next: %p\t",it->next);
+      if(!it->next)
+        printf("\t");
+
       print_cell(it->c);
       puts("");
       it = it->next;
