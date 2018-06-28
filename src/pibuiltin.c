@@ -123,14 +123,14 @@ cell *cadar(const cell *c) { return car(cdr(car(c))); }
 cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
-cell *set(cell *args, cell **env) {
+cell *set(cell *args) {
   check_two_args(args);
   cell *name = car(args);
   cell *val = cadr(args);
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");
   cell *prec = NULL;
-  cell *act = *env;
+  cell *act = GLOBAL_ENV;
   while (act) {
     if (eq(name, caar(act))) {
       // found
@@ -145,7 +145,7 @@ cell *set(cell *args, cell **env) {
   if (prec)
     prec->cdr = new;
   else
-    (*env) = new;
+    GLOBAL_ENV = new;
   return val;
 }
 

@@ -87,7 +87,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
       // UTILITY
       if (eq(fn, symbol_set))
-        return set(x, &a);
+        return set(x);
       if (eq(fn, symbol_load))
         return load(x, &a);
       if (eq(fn, symbol_timer))

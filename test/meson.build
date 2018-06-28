@@ -232,3 +232,9 @@ test('[LISP] set-lambda test 1', lisp_program_test, args : [
     '1',
     '27'
 ])
+
+test('[LISP] set test', lisp_program_test, args : [
+    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (ff \'(((n1 . n2))))',
+    'n1',
+    '27'
+])
