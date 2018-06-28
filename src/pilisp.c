@@ -40,7 +40,7 @@ int pi_prompt() {
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    // cell_remove(result);
+    cell_remove(result);
     // printf("env: ");
     // print_sexpr(GLOBAL_ENV);
     // puts("");
@@ -61,8 +61,10 @@ cell *parse_file(char *file_path) {
   cell *res = NULL;
   while (!feof(program_file)) {
     cell *sexpr = read_sexpr(program_file);
-    if (sexpr != symbol_file_ended)
+    if (sexpr != symbol_file_ended) {
       res = eval(sexpr, GLOBAL_ENV);
+      cell_remove(res);
+    }
   }
   fclose(program_file);
   return res;

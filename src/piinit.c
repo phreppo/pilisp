@@ -34,6 +34,7 @@ void init_builtin_lambdas(){
   symbol_env = mk_builtin_lambda("ENV");
   symbol_mem_dump = mk_builtin_lambda("MD");
   symbol_collect_garbage = mk_builtin_lambda("CG");
+  symbol_dotimes = mk_builtin_lambda("DOTIMES");
 }
 
 // adds to the list of the language symbols the new sym

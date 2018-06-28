@@ -267,7 +267,18 @@ cell *eval(cell *e, cell *a) {
       if (eq(car(e), symbol_cond))
         // COND
         evaulated = evcon(cdr(e), a);
-      else {
+      else if (eq(car(e), symbol_dotimes)) {
+
+        size_t n = 0;
+        cell *name = car(car(cdr(e)));
+        cell *num = car(cdr(car(cdr(e))));
+        for (n = 0; n < num->value; n++) {
+          cell *expr = caddr(e);
+          evaulated =  eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
+        }
+
+        return NULL;
+      } else {
 
         if (eq(car(e), symbol_lambda)) {
           // lambda "autoquote"
@@ -275,7 +286,7 @@ cell *eval(cell *e, cell *a) {
         } else {
           // apply atom function to evaluated list of parameters
           evaulated = apply(car(e), evlis(cdr(e), a), a);
-          
+
           // we have the result: we can unlock the unvalued expression
           // cell_remove(e);
         }
