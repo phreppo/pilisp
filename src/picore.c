@@ -166,7 +166,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
       // the env knows the lambda
       cell *ret = apply(function_body, x, a);
-      cell_remove(function_body);
+      // cell_remove(function_body);
       return ret;
 
     } else {
@@ -277,7 +277,7 @@ cell *eval(cell *e, cell *a) {
           evaulated = apply(car(e), evlis(cdr(e), a), a);
           
           // we have the result: we can unlock the unvalued expression
-          cell_remove(e);
+          // cell_remove(e);
         }
       }
     }

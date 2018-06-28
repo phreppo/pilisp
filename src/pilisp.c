@@ -40,7 +40,7 @@ int pi_prompt() {
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    cell_remove(result);
+    // cell_remove(result);
     // printf("env: ");
     // print_sexpr(GLOBAL_ENV);
     // puts("");
