@@ -111,7 +111,6 @@ void init_env() {
   // symbol_collect_garbage = mk_sym("CG");
   // add_language_symbol(symbol_collect_garbage);
 
-  // GLOBAL_ENV = NULL;
   memory->global_env = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
 }
 

@@ -287,8 +287,9 @@ cell *eval(cell *e, cell *a) {
           evaulated = e;
         } else {
           // apply atom function to evaluated list of parameters
-          evaulated = apply(car(e), evlis(cdr(e), a), a);
-
+          cell * evaulated_args = evlis(cdr(e), a);
+          evaulated = apply(car(e), evaulated_args, a);
+          cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
           // we have the result: we can unlock the unvalued expression
           cell_remove(e);
         }
@@ -323,6 +324,8 @@ cell *evlis(cell *m, cell *a) {
     // empty par list
     return NULL;
   cell *valued_car = eval(car(m), a);
+
+  cell_push(valued_car); // protect the valued cell: may be not a new cell
   cell *valued_cdr = evlis(cdr(m), a);
   return mk_cons(valued_car, valued_cdr);
 }

@@ -17,9 +17,6 @@
 cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
 size_t builtin_lambda_index;
 
-// global env of the variables
-cell *GLOBAL_ENV;
-
 // list of the builtin symbols: the garbage collector will mark this as used,
 // otherwise they would be collected
 cell *LANGUAGE_SYMBOLS;
