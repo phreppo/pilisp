@@ -133,6 +133,7 @@ cell *copy_cell(const cell *c) {
     case TYPE_STR:
       copy = mk_str(c->str);
       break;
+    case TYPE_BUILTINLAMBDA:
     case TYPE_SYM:
       copy = mk_sym(c->sym);
       break;

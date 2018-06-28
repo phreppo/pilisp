@@ -200,6 +200,11 @@ test('[LISP] member 2', lisp_program_test, args : [
     'NIL',
     '21'
 ])
+test('[LISP] list', lisp_program_test, args : [
+    '(set \'n 1)(list n 1 1)',
+    '(1 1 1)',
+    '21.5'
+])
 test('[LISP] length 1', lisp_program_test, args : [
     '(length \'(NIL NIL NIL) )',
     '3',
@@ -236,5 +241,17 @@ test('[LISP] set-lambda test 1', lisp_program_test, args : [
 test('[LISP] set test', lisp_program_test, args : [
     '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (ff \'(((n1 . n2))))',
     'n1',
-    '27'
+    '28'
+])
+
+test('[LISP] dotimes test', lisp_program_test, args : [
+    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100000) (ff \'(n1 n2)))',
+    'NIL',
+    '29'
+])
+
+test('[LISP] to zero dotimes test', lisp_program_test, args : [
+    '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (time \'(dotimes (n 100) (toz n)))',
+    'NIL',
+    '30'
 ])

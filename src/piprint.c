@@ -219,6 +219,7 @@ void print_cell(const cell *cell) {
     case TYPE_STR:
       printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->str);
       break;
+    case TYPE_BUILTINLAMBDA:
     case TYPE_SYM:
       printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
       break;
