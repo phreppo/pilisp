@@ -70,9 +70,11 @@ cell *mk_sym(const char *symbol) {
 
   // was the symbol allocated but no builtin?
   allocated = is_symbol_allocated(symbol);
-  if (allocated)
+  if (allocated) {
     // the symbol was allocated
+    cell_push(allocated);
     return allocated;
+  }
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
@@ -416,7 +418,7 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
     printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
-    pi_error(MEMORY_ERROR, "REMOVING SOMETHING THAT DOES NT EXISTS");
+    // pi_error(MEMORY_ERROR, "REMOVING SOMETHING THAT DOES NT EXISTS");
 #endif
   }
 #if DEBUG_PUSH_REMOVE_MODE
