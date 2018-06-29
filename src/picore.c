@@ -34,6 +34,7 @@ cell *assoc(const cell *x, cell *l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
       // right pair
+      cell_push(cdar(l),RECURSIVE);  // protect the value. if it s a list protect all the members
       cell_remove(x,
                   SINGLE); // don't need no more the symbol: we have the value
       return l->car;
@@ -203,6 +204,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell_remove(cddr(fn), SINGLE);    // cons pointing to body
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
+        cell_remove_cars(x);
         /*
         (((lambda (x) (lambda (y) y)) 1 ) 2)
         ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3)

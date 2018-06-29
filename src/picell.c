@@ -72,7 +72,7 @@ cell *mk_sym(const char *symbol) {
   allocated = is_symbol_allocated(symbol);
   if (allocated) {
     // the symbol was allocated
-    cell_push(allocated);
+    cell_push(allocated,SINGLE);
     return allocated;
   }
   cell *c = get_cell();
@@ -250,7 +250,7 @@ cell *cell_space_get_cell(cell_space *cs) {
   cell *new_cell = cs->first_free;
   new_cell->marked = 0;
   cs->first_free = new_cell->next_free_cell;
-  cell_push(new_cell);
+  cell_push(new_cell,SINGLE);
   return new_cell;
 }
 
@@ -341,7 +341,7 @@ cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
   return n;
 }
 
-void cell_stack_push(cell_stack *stack, cell *val) {
+void cell_stack_push(cell_stack *stack, cell *val,unsigned char mode) {
   cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
   if (stack->head == NULL) {
     stack->head = n;
@@ -350,6 +350,11 @@ void cell_stack_push(cell_stack *stack, cell *val) {
     stack->head->prec = n;
     n->next = stack->head;
     stack->head = n;
+  } if(mode == RECURSIVE && val && is_cons(val)){
+    if(car(val))
+      cell_stack_push(stack,car(val),mode);
+    if(cdr(val))
+      cell_stack_push(stack,cdr(val),mode);
   }
 }
 void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
@@ -358,7 +363,6 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
   print_sexpr(val);
   puts("");
 #endif
-  // TODO CHECK THIS
   if (!val)
     return;
   if (!is_builtin(val)) {
@@ -454,8 +458,16 @@ void cell_stack_remove_pairlis(cell_stack * stack, cell * new_env, cell * old_en
   }
 }
 
+void cell_stack_remove_cars(cell_stack * stack, cell * list){
+  cell * act = list;
+  while(act){
+    cell_stack_remove(stack,car(act),SINGLE); //single?
+    act = cdr(act);
+  }
+}
 
-void cell_push(cell *c) { cell_stack_push(memory->stack, c); }
+
+void cell_push(cell *c,unsigned char mode) { cell_stack_push(memory->stack, c,mode); }
 
 void cell_remove(cell *c, unsigned char mode) { cell_stack_remove(memory->stack, c,mode); }
 
@@ -463,4 +475,8 @@ void cell_remove_args(cell * args){ cell_stack_remove_args(memory->stack,args);}
 
 void cell_remove_pairlis( cell * new_env, cell * old_env){
   cell_stack_remove_pairlis(memory->stack,new_env,old_env);
+}
+
+void cell_remove_cars( cell * list){
+  cell_stack_remove_cars(memory->stack,list);
 }

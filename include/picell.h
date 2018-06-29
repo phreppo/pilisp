@@ -78,10 +78,11 @@ int is_builtin(const cell *c);
 // does nothing if the cell has not pointers
 void free_cell_pointed_memory(cell *c);
 
-void cell_push(cell * c); // mark as used
+void cell_push(cell * c, unsigned char mode); // mark as used
 void cell_remove(cell * c, unsigned char mode); // mark as not used
 void cell_remove_args(cell * args); // removes from the stack the structure of the args
 void cell_remove_pairlis( cell * new_env, cell * old_env);
+void cell_remove_cars( cell * list);
 
 
 /********************************************************************************
@@ -107,10 +108,11 @@ enum{
   RECURSIVE,
 };
 
-void cell_stack_push(cell_stack * stack, cell * val);
+void cell_stack_push(cell_stack * stack, cell * val,unsigned char mode);
 void cell_stack_remove(cell_stack * stack, cell * val, unsigned char mode);
 void cell_stack_remove_args(cell_stack * stack, cell * args);
 void cell_stack_remove_pairlis(cell_stack * stack, cell * new_env, cell * old_env);
+void cell_stack_remove_cars(cell_stack * stack, cell * list);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR

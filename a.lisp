@@ -22,5 +22,7 @@
 (((lambda (x) (lambda (y) y)) 1 ) 2)
 (((lambda (x) (lambda (y) y)) 1 2 ) 3)
 ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3)
-
 ( (lambda (x) (+ 1 x ) ) 1 )
+( set 'ivar (lambda (x) (set 'var x)))
+(d '(cos x) 'x)
+(* (cos x) 1)
