@@ -236,11 +236,14 @@ void print_cell_space(const cell_space *cs) {
   printf(ANSI_COLOR_BLUE "BUILTIN LAMBDAS\n" ANSI_COLOR_RESET);
   size_t i = 0;
   for (i = 0; i < builtin_lambda_index; i++) {
-    printf(ANSI_COLOR_BLUE "%lu" ANSI_COLOR_RESET"\t%s\t", i, BUILTIN_LAMBDAS[i].sym);
-    if((i+1) % 5 == 0)
+    printf(ANSI_COLOR_LIGHT_BLUE "%lu" ANSI_COLOR_RESET "\t%s\t", i,
+           BUILTIN_LAMBDAS[i].sym);
+    if ((i + 1) % 5 == 0)
       puts("");
   }
   puts("");
+  printf(ANSI_COLOR_BLUE "GLOBAL ENV\n" ANSI_COLOR_RESET);
+  print_global_env(cs->global_env);
   for (i = 0; i < cs->cell_space_size; i++) {
     printf(ANSI_COLOR_RED "Block %lu\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
@@ -265,19 +268,36 @@ void print_free_cells(const cell_space *cs) {
   }
 }
 
+static bool is_in_global_env(cell *global_env, cell *c) {
+  if (!global_env)
+    // no global env
+    return false;
+  if (c == global_env)
+    return true;
+  if (!is_cons(global_env))
+    return false;
+  return is_in_global_env(car(global_env), c) ||
+         is_in_global_env(cdr(global_env), c);
+}
+
 void print_stack(const cell_stack *stack) {
   if (stack) {
 
     cell_stack_node *it = stack->head;
     size_t i = 0;
     while (it) {
-      printf("%u\t" ANSI_COLOR_BLUE "cell:  %p\tnode: %p" ANSI_COLOR_RESET, i, it->c, it);
+      printf("%u\t", i);
+      if (!is_in_global_env(memory->global_env, it->c))
+        printf(ANSI_COLOR_BLUE);
+      else
+        printf(ANSI_COLOR_RED);
+      printf("cell:  %p" ANSI_COLOR_RESET, it->c);
 
-      printf("\tprec: %p\t",it->prec);
-      if(!it->prec)
+      printf("\tprec: %p\t", it->prec);
+      if (!it->prec)
         printf("\t");
-      printf("next: %p\t",it->next);
-      if(!it->next)
+      printf("next: %p\t", it->next);
+      if (!it->next)
         printf("\t");
 
       print_cell(it->c);
@@ -285,5 +305,17 @@ void print_stack(const cell_stack *stack) {
       it = it->next;
       i++;
     }
+  }
+}
+
+void print_global_env(const cell *env) {
+  cell *act = env;
+  printf("Head : %p\n", act);
+  while (act) {
+    cell *pair = car(act);
+    printf(ANSI_COLOR_LIGHT_BLUE "%s\t" ANSI_COLOR_RESET, car(pair)->sym);
+    print_sexpr(cdr(pair));
+    puts("");
+    act = cdr(act);
   }
 }
