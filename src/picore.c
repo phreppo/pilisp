@@ -263,10 +263,12 @@ cell *eval(cell *e, cell *a) {
   else if (atom(car(e))) {
     // car of the cons cell is an atom
 
-    if (eq(car(e), symbol_quote))
+    if (eq(car(e), symbol_quote)) {
       // QUOTE
       evaulated = cadr(e);
-    else {
+      cell_remove(e,SINGLE);
+      cell_remove(cdr(e),SINGLE);
+    } else {
 
       if (eq(car(e), symbol_cond))
         // COND
@@ -291,8 +293,8 @@ cell *eval(cell *e, cell *a) {
           // apply atom function to evaluated list of parameters
           cell *evaulated_args = evlis(cdr(e), a);
           evaulated = apply(car(e), evaulated_args, a);
-          cell_remove(e,SINGLE);      // remove function
-          cell_remove_args(cdr(e));   // remove list of args
+          cell_remove(e, SINGLE);   // remove function
+          cell_remove_args(cdr(e)); // remove list of args
           // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
           // we have the result: we can unlock the unvalued expression
           // cell_remove(e);

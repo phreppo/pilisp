@@ -41,7 +41,7 @@ int pi_prompt() {
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    cell_remove(result,SINGLE);
+    cell_remove(result,RECURSIVE);
     // cell_remove(sexpression, RECURSIVE);
   }
   return 0;

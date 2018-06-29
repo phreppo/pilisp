@@ -245,7 +245,7 @@ test('[LISP] set test', lisp_program_test, args : [
 ])
 
 test('[LISP] dotimes test', lisp_program_test, args : [
-    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 1000) (ff \'(n1 n2)))',
+    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100) (ff \'(n1 n2)))',
     'NIL',
     '29'
 ])
