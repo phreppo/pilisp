@@ -168,6 +168,7 @@ cell *set(cell *args) {
     prec->cdr = new;
   else
     memory->global_env = new;
+  cell_remove_args(args);
   return val;
 }
 
