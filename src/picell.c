@@ -352,7 +352,7 @@ void cell_stack_push(cell_stack *stack, cell *val) {
     stack->head = n;
   }
 }
-void cell_stack_remove(cell_stack *stack, cell *val) {
+void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -377,7 +377,7 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
         // is it's a cons we have to remove also their sons
         cell *car1 = NULL;
         cell *cdr1 = NULL;
-        if (is_cons(val)) {
+        if (mode == RECURSIVE && is_cons(val)) {
           car1 = car(val);
           cdr1 = cdr(val);
         }
@@ -405,10 +405,12 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
         puts("");
 #endif
         free(act);
-        if (car1)
-          cell_stack_remove(stack, car1);
-        if (cdr1)
-          cell_stack_remove(stack, cdr1);
+        if (mode == RECURSIVE) {
+          if (car1)
+            cell_stack_remove(stack, car1,mode);
+          if (cdr1)
+            cell_stack_remove(stack, cdr1,mode);
+        }
         return;
       }
       prec = act;
@@ -431,6 +433,16 @@ void cell_stack_remove(cell_stack *stack, cell *val) {
 #endif
 }
 
+void cell_stack_remove_args(cell_stack * stack, cell * args){
+  cell * act = args;
+  while(act){
+    cell_stack_remove(stack,act,SINGLE);
+    act = cdr(act);
+  }
+}
+
 void cell_push(cell *c) { cell_stack_push(memory->stack, c); }
 
-void cell_remove(cell *c) { cell_stack_remove(memory->stack, c); }
+void cell_remove(cell *c, unsigned char mode) { cell_stack_remove(memory->stack, c,mode); }
+
+void cell_remove_args(cell * args){ cell_stack_remove_args(memory->stack,args);}

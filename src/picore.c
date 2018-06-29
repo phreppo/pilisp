@@ -115,8 +115,9 @@ cell *apply(cell *fn, cell *x, cell *a) {
       }
 
       // ARITHMETIC OPERATORS
-      if (eq(fn, symbol_addition))
+      if (eq(fn, symbol_addition)) {
         return addition(x);
+      }
       if (eq(fn, symbol_subtraction))
         return subtraction(x);
       if (eq(fn, symbol_multiplication))
@@ -166,9 +167,10 @@ cell *apply(cell *fn, cell *x, cell *a) {
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
+      // probabilmente dovrò eliminare il corpo della funzione
       // the env knows the lambda
       cell *ret = apply(function_body, x, a);
-      cell_remove(function_body);
+      // cell_remove(function_body);
       return ret;
 
     } else {
@@ -278,7 +280,7 @@ cell *eval(cell *e, cell *a) {
           cell *expr = caddr(e);
           evaulated = eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
         }
-        cell_remove(e);
+        // cell_remove(e);
         return NULL;
       } else {
 
@@ -287,11 +289,13 @@ cell *eval(cell *e, cell *a) {
           evaulated = e;
         } else {
           // apply atom function to evaluated list of parameters
-          cell * evaulated_args = evlis(cdr(e), a);
+          cell *evaulated_args = evlis(cdr(e), a);
           evaulated = apply(car(e), evaulated_args, a);
-          cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
+          cell_remove(e,SINGLE);      // remove function
+          cell_remove_args(cdr(e));   // remove list of args
+          // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
           // we have the result: we can unlock the unvalued expression
-          cell_remove(e);
+          // cell_remove(e);
         }
       }
     }
@@ -325,7 +329,7 @@ cell *evlis(cell *m, cell *a) {
     return NULL;
   cell *valued_car = eval(car(m), a);
 
-  cell_push(valued_car); // protect the valued cell: may be not a new cell
+  // cell_push(valued_car); // protect the valued cell: may be not a new cell
   cell *valued_cdr = evlis(cdr(m), a);
   return mk_cons(valued_car, valued_cdr);
 }

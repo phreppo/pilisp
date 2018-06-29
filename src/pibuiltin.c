@@ -3,7 +3,8 @@
 
 int atom(const cell *c) {
   return (c == NULL) // NIL case
-         || (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA);
+         || (c->type == TYPE_SYM || c->type == TYPE_NUM ||
+             c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA);
 }
 
 bool eq(const cell *v1, const cell *v2) {
@@ -25,7 +26,10 @@ cell *addition(const cell *numbers) {
     if (!is_num(car(act)))
       pi_error(LISP_ERROR, "added a non-number");
     result += car(act)->value;
-    act = cdr(act);
+    cell *tmp = cdr(act);
+    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
+    cell_remove(act, SINGLE);
+    act = tmp;
   }
   return mk_num(result);
 }
@@ -41,7 +45,10 @@ cell *subtraction(const cell *numbers) {
       pi_error(LISP_ERROR, "impossible to perform subtraction");
     if (!is_num(car(numbers)))
       pi_error(LISP_ERROR, "changing the number of a non-number");
-    return mk_num(-(car(numbers)->value));
+    int ret = -(car(numbers)->value);
+    cell_remove(car(numbers), SINGLE);
+    cell_remove(numbers, SINGLE);
+    return mk_num(ret);
   } else {
     if (!is_cons(numbers) || !is_cons(cdr(numbers)))
       pi_error(LISP_ERROR, "impossible to perform subtraction");
@@ -49,13 +56,18 @@ cell *subtraction(const cell *numbers) {
       pi_error(LISP_ERROR, "subtracted a non-number");
     long result = car(numbers)->value;
     const cell *act = cdr(numbers);
+    cell_remove(car(numbers), SINGLE); // num used: we don't need it anymore
+    cell_remove(numbers, SINGLE);
     while (act) {
       if (!is_cons(act))
         pi_error(LISP_ERROR, "impossible to perform subtraction");
       if (!is_num(car(act)))
         pi_error(LISP_ERROR, "subtracted a non-number");
       result -= car(act)->value;
-      act = cdr(act);
+      cell *tmp = cdr(act);
+      cell_remove(car(act), SINGLE); // num used: we don't need it anymore
+      cell_remove(act, SINGLE);
+      act = tmp;
     }
     return mk_num(result);
   }
@@ -70,7 +82,11 @@ cell *multiplication(const cell *numbers) {
     if (!is_num(car(act)))
       pi_error(LISP_ERROR, "multiplicated a non-number");
     result *= car(act)->value;
-    act = cdr(act);
+
+    cell *tmp = cdr(act);
+    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
+    cell_remove(act, SINGLE);
+    act = tmp;
   }
   return mk_num(result);
 }
@@ -86,6 +102,8 @@ cell *division(const cell *numbers) {
     pi_error(LISP_ERROR, "divided a non-number");
   double result = (double)car(numbers)->value;
   const cell *act = cdr(numbers);
+  cell_remove(car(numbers), SINGLE); // num used: we don't need it anymore
+  cell_remove(numbers, SINGLE);
   while (act) {
     if (!is_cons(act))
       pi_error(LISP_ERROR, "impossible to perform division");
@@ -94,7 +112,11 @@ cell *division(const cell *numbers) {
     if (car(act)->value == 0)
       pi_error(LISP_ERROR, "division by 0");
     result /= (double)car(act)->value;
-    act = cdr(act);
+
+    cell *tmp = cdr(act);
+    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
+    cell_remove(act, SINGLE);
+    act = tmp;
   }
   return mk_num(result);
 }
@@ -151,7 +173,7 @@ cell *set(cell *args) {
 
 cell *load(cell *arg, cell **env) {
   check_one_arg(arg);
-  cell * name = car(arg);
+  cell *name = car(arg);
   if (!name || !is_str(name))
     pi_error(LISP_ERROR, "first arg must me a string");
   FILE *file = fopen(((name) ? name->str : ""), "r");
@@ -168,7 +190,7 @@ cell *load(cell *arg, cell **env) {
 
 cell *timer(cell *arg, cell **env) {
   check_one_arg(arg);
-  cell * to_execute = car(arg);
+  cell *to_execute = car(arg);
   clock_t t1, t2;
   long elapsed;
 
@@ -367,6 +389,4 @@ bool total_eq(const cell *c1, const cell *c2) {
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
-cell *list(const cell *list){
-  return copy_cell(list);
-}
+cell *list(const cell *list) { return copy_cell(list); }

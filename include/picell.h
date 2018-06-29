@@ -79,7 +79,9 @@ int is_builtin(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 void cell_push(cell * c); // mark as used
-void cell_remove(cell * c); // mark as not used
+void cell_remove(cell * c, unsigned char mode); // mark as not used
+void cell_remove_args(cell * args); // removes from the stack the structure of the args
+
 
 /********************************************************************************
  *                              STACK GARBAGE COLLECTOR
@@ -99,8 +101,14 @@ typedef struct {
 cell_stack *cell_stack_create();
 cell_stack_node *cell_stack_node_create_node(cell * val, cell_stack_node * next, cell_stack_node * prec);
 
+enum{
+  SINGLE,
+  RECURSIVE,
+};
+
 void cell_stack_push(cell_stack * stack, cell * val);
-void cell_stack_remove(cell_stack * stack, cell * val);
+void cell_stack_remove(cell_stack * stack, cell * val, unsigned char mode);
+void cell_stack_remove_args(cell_stack * stack, cell * args);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR

@@ -251,7 +251,7 @@ test('[LISP] dotimes test', lisp_program_test, args : [
 ])
 
 test('[LISP] to zero dotimes test', lisp_program_test, args : [
-    '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (time \'(dotimes (n 100) (toz n)))',
+    '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (time \'(dotimes (n 10) (toz n)))',
     'NIL',
     '30'
 ])
