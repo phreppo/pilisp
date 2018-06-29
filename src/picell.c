@@ -441,8 +441,26 @@ void cell_stack_remove_args(cell_stack * stack, cell * args){
   }
 }
 
+void cell_stack_remove_pairlis(cell_stack * stack, cell * new_env, cell * old_env){
+  cell * act = new_env;
+  while(act != old_env){
+    // for the head of the pairlis
+    cell * tmp = cdr(act);
+    // cell_stack_remove(stack,caar(act),SINGLE);
+    // cell_stack_remove(stack,cdar(act),SINGLE);
+    cell_stack_remove(stack,car(act),SINGLE);
+    cell_stack_remove(stack,act,SINGLE);
+    act = tmp;
+  }
+}
+
+
 void cell_push(cell *c) { cell_stack_push(memory->stack, c); }
 
 void cell_remove(cell *c, unsigned char mode) { cell_stack_remove(memory->stack, c,mode); }
 
 void cell_remove_args(cell * args){ cell_stack_remove_args(memory->stack,args);}
+
+void cell_remove_pairlis( cell * new_env, cell * old_env){
+  cell_stack_remove_pairlis(memory->stack,new_env,old_env);
+}

@@ -81,6 +81,7 @@ void free_cell_pointed_memory(cell *c);
 void cell_push(cell * c); // mark as used
 void cell_remove(cell * c, unsigned char mode); // mark as not used
 void cell_remove_args(cell * args); // removes from the stack the structure of the args
+void cell_remove_pairlis( cell * new_env, cell * old_env);
 
 
 /********************************************************************************
@@ -109,6 +110,7 @@ enum{
 void cell_stack_push(cell_stack * stack, cell * val);
 void cell_stack_remove(cell_stack * stack, cell * val, unsigned char mode);
 void cell_stack_remove_args(cell_stack * stack, cell * args);
+void cell_stack_remove_pairlis(cell_stack * stack, cell * new_env, cell * old_env);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR

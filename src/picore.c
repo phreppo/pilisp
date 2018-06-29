@@ -32,9 +32,12 @@ cell *assoc(const cell *x, cell *l) {
   // ! UNSAFE
   while (l) {
     // we extract the first element in the pair
-    if (eq(x, car(car(l))))
+    if (eq(x, car(car(l)))) {
       // right pair
+      cell_remove(x,
+                  SINGLE); // don't need no more the symbol: we have the value
       return l->car;
+    }
     l = l->cdr;
   }
   return NULL;
@@ -52,6 +55,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
 #endif
   if (fn) {
     if (atom(fn)) {
+      //========================= ATOM FUNCTION =========================//
+      //=========================    (fun x)    =========================//
 
       // BASIC OPERATIONS
       if (eq(fn, symbol_car)) {
@@ -174,7 +179,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
       return ret;
 
     } else {
-      // composed function
+      //========================= COMPOSED FUNCTION =========================//
+      //================= ( (lambda (x y z) (....)) param) ==================//
       if (eq(car(fn), symbol_lambda)) {
         // direct lambda
 #if DEBUG_EVAL_MODE
@@ -182,8 +188,26 @@ cell *apply(cell *fn, cell *x, cell *a) {
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
+        cell *old_env = a;
         a = pairlis(cadr(fn), x, a);
-        return eval(caddr(fn), a);
+        cell *fn_body = caddr(fn);
+        cell *res = eval(fn_body, a);
+        // FREE THINGS
+        // cell_remove(x,RECURSIVE);              // remove args cons
+        // cell_remove(x,SINGLE);            // remove the arg
+        // cell_remove(car(x),SINGLE);       // remove args val
+        cell_remove_args(x);              // remove args cons
+        cell_remove_pairlis(a, old_env);  // remove associations
+        cell_remove(car(fn), SINGLE);     // function name
+        cell_remove(cadr(fn), RECURSIVE); // params
+        cell_remove(cddr(fn), SINGLE);    // cons pointing to body
+        cell_remove(cdr(fn), SINGLE);     // cons poining to param
+        cell_remove(fn, SINGLE);          // cons pointing to lambda sym
+        /*
+        (((lambda (x) (lambda (y) y)) 1 ) 2)
+        ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3)
+        */
+        return res;
       }
       // LABEL
       if (eq(car(fn), symbol_label)) {
@@ -266,8 +290,8 @@ cell *eval(cell *e, cell *a) {
     if (eq(car(e), symbol_quote)) {
       // QUOTE
       evaulated = cadr(e);
-      cell_remove(e,SINGLE);
-      cell_remove(cdr(e),SINGLE);
+      cell_remove(e, SINGLE);
+      cell_remove(cdr(e), SINGLE);
     } else {
 
       if (eq(car(e), symbol_cond))
@@ -297,17 +321,21 @@ cell *eval(cell *e, cell *a) {
           cell_remove_args(cdr(e)); // remove list of args
           // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
           // we have the result: we can unlock the unvalued expression
-          // cell_remove(e);
         }
       }
     }
   }
   //========================= COMPOSED FUNCTION EVAL =========================//
+  //=========================   ((lambda (x) x) 1)   =========================//
   // ! Not every cells released !
 
   else {
     // composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
+    cell_remove(e, SINGLE);   // remove function
+    cell_remove_args(cdr(e)); // remove list of args
+    // ! RIMUOVERE LA LISTA DEGLI ELEMENTI VALUTATI? IN CASO DOVREBBE FARE UN PO
+    // DI PUSH LA EVLIS
   }
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);

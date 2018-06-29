@@ -16,3 +16,11 @@
     'ff
     (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))
 )
+
+((lambda (x) (lambda (y) y)) 1 )
+(((lambda (x) (lambda (y) 2))  ) ) 
+(((lambda (x) (lambda (y) y)) 1 ) 2)
+(((lambda (x) (lambda (y) y)) 1 2 ) 3)
+((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3)
+
+( (lambda (x) (+ 1 x) ) 1 )
