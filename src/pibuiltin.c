@@ -201,6 +201,7 @@ cell *timer(cell *arg, cell **env) {
 
   elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
   printf("time: %ld ms\n", elapsed);
+  cell_remove_args(arg);
   return valued;
 }
 
