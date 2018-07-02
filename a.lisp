@@ -12,6 +12,7 @@
 ( set 'ivar (lambda (x) (set 'var x)))
 (set 'f (lambda (x) (lambda (y) (+ 1 2))))
 ((f))
+(set 'l '(nil (1 2) ((1)(2)) nil "ciao"))
 
-(d '(cos x) 'x)
-(* (cos x) 1)
+;; (d '(cos x) 'x)
+;; (* (cos x) 1)

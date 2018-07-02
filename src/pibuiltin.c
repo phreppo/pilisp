@@ -311,10 +311,15 @@ cell *length(const cell *list) {
   const cell *act = car(list);
   if (act && !is_cons(act))
     pi_error(LISP_ERROR, "arg is not a list");
+  cell * tmp;
   while (act) {
     len++;
-    act = cdr(act);
+    tmp = cdr(act);
+    cell_remove(car(act),RECURSIVE);  // remove sublist
+    cell_remove(act,SINGLE);          // remove cons of the sublis
+    act = tmp;
   }
+  cell_remove(list,SINGLE); // cons of the argument
   return mk_num(len);
 }
 
