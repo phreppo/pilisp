@@ -207,10 +207,18 @@ cell *timer(cell *arg, cell **env) {
 cell * or (const cell *operands) {
   const cell *act = operands;
   cell *atom = car(act);
+  cell *tmp;
   while (act) {
-    if (atom)
+    if (atom) {
+      cell_remove(act,SINGLE);
+      cell_remove(cdr(act),RECURSIVE);
       return atom;
-    act = cdr(act);
+    }
+
+    tmp = cdr(act);
+    cell_remove(act,SINGLE);
+    cell_remove(car(act),SINGLE);
+    act = tmp;
     atom = car(act);
   }
   return NULL;
@@ -416,6 +424,6 @@ bool total_eq(const cell *c1, const cell *c2) {
 
 cell *list(const cell *list) {
   cell *tmp = copy_cell(list);
-  cell_remove(list,RECURSIVE);
+  cell_remove(list, RECURSIVE);
   return tmp;
 }

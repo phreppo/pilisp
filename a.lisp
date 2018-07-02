@@ -13,6 +13,7 @@
 (set 'f (lambda (x) (lambda (y) (+ 1 2))))
 ((f))
 (set 'l '(nil (1 2) ((1)(2)) nil "ciao"))
+(or nil nil nil '(1 2 3) 4)
 
 ;; (d '(cos x) 'x)
 ;; (* (cos x) 1)
