@@ -8,7 +8,11 @@ n2
 n
 ; to zero function
 (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1))))))
+(set 'toz (lambda (x) ( cond ( (eq x 0) (+ 11 22) ) ( T (toz (- x 1))))))
 (set 'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x))))))
+(set 'po (lambda (n) (+ 1 n)))
+
+(ff '(a))
 
 ((lambda (x) (lambda (y) y)) 1 )
 (((lambda (x) (lambda (y) 2))  ) ) 
@@ -26,6 +30,7 @@ n
 (dotimes (n 1) (toz n))
 (dotimes (n 2) (toz n))
 (dotimes (n 3) (toz n))
+(dotimes (n 3) (+ 1 n))
 (dotimes (n 1) 666)
 (dotimes (n 2) 666)
 (dotimes (n 3) 666)

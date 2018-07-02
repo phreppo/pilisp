@@ -367,9 +367,11 @@ cell *evcon(cell *c, cell *a) {
   } else {
     // result of the last eval
     cell_remove(res, RECURSIVE);
-
+    // remove the unevaluated body
+    cell_remove(cadar(c),RECURSIVE);
     res = evcon(cdr(c), a);
   }
+  // cell_remove(cadar(c),RECURSIVE);
   // cons of the body
   cell_remove(cdar(c), SINGLE);
   // cons of the pair (cond [body])
