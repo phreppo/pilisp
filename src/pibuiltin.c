@@ -234,9 +234,9 @@ cell * and (const cell *operands) {
   while (act) {
     if (!atom) {
       // NIL found
-      cell_remove(car(prev), RECURSIVE);  // release the prev memory
-      cell_remove(cdr(act), RECURSIVE);   // release the rest of the list
-      cell_remove(act,SINGLE);            // release the act cons
+      cell_remove(car(prev), RECURSIVE); // release the prev memory
+      cell_remove(cdr(act), RECURSIVE);  // release the rest of the list
+      cell_remove(act, SINGLE);          // release the act cons
       return NULL;
     }
     cell_remove(car(prev), RECURSIVE);
@@ -258,10 +258,12 @@ cell * not(const cell *operands) {
     pi_error_few_args();
   if (cdr(operands))
     pi_error_many_args();
-  if (car(operands))
+  if (car(operands)) {
+    cell_remove(operands,RECURSIVE);
     return NULL;
-  else
-    return symbol_true;
+  } else{
+    cell_remove(operands,SINGLE);
+    return symbol_true;}
 }
 
 // ==================== COMPARISON ====================
