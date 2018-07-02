@@ -243,7 +243,11 @@ cell *cell_space_get_cell(cell_space *cs) {
   // no space?
   if (!cs->first_free) {
     // then collect garbage
-    cell_space_grow(cs);
+    collect_garbage(cs);
+    if ((double)((double)cs->n_free_cells / (double)cs->n_cells) <= NEW_BLOCK_THRESHOLD)
+      // free/n->cells is smaller than the threshold to allocate a new block =>
+      // allocate!
+      cell_space_grow(cs);
   }
   cs->n_free_cells--;
   cell *new_cell = cs->first_free;

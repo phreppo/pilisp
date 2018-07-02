@@ -13,9 +13,13 @@
 /********************************************************************************
  *                              MEMORY SETTINGS
  ********************************************************************************/
-#define INITIAL_BLOCK_SIZE 2    // size of the first created block of cells
-#define INITIAL_BLOCKS 1        // number of blocks initially allocated
-#define NEW_BLOCK_THRESHOLD 0.5 //
+#define INITIAL_BLOCK_SIZE                                                     \
+  10 // size of the first created block of cells: must be greater than the init
+    // size, or will fail tests
+#define INITIAL_BLOCKS 1 // number of blocks initially allocated
+#define NEW_BLOCK_THRESHOLD                                                    \
+  0.5 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
+      // block
 
 /********************************************************************************
  *                                 DEBUGGING
@@ -31,12 +35,14 @@
  ********************************************************************************/
 #define INIT_FILE_PATH_GLOBAL                                                  \
   "../init.lisp" // defines the path to the .lisp init file
-#define ERROR_EMPTY_REMOVING 1 // raise an error if trying to remove a cell that is not on the stack (beacuse that cell does not belongs to you)
+#define ERROR_EMPTY_REMOVING                                                   \
+  1 // raise an error if trying to remove a cell that is not on the stack
+    // (beacuse that cell does not belongs to you)
 
 /********************************************************************************
  *                                  LIMITS
  ********************************************************************************/
-#define MAX_TOK_LEN 1024 // max length of a token
+#define MAX_TOK_LEN 512      // max length of a token
 #define N_BUILTIN_LAMBDA 777 // EXACT number of builtin lambdas
 
 /********************************************************************************
