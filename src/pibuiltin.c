@@ -204,20 +204,22 @@ cell *timer(cell *arg, cell **env) {
   return valued;
 }
 
+// ==================== LOGIC ====================
+
 cell * or (const cell *operands) {
   const cell *act = operands;
   cell *atom = car(act);
   cell *tmp;
   while (act) {
     if (atom) {
-      cell_remove(act,SINGLE);
-      cell_remove(cdr(act),RECURSIVE);
+      cell_remove(act, SINGLE);
+      cell_remove(cdr(act), RECURSIVE);
       return atom;
     }
 
     tmp = cdr(act);
-    cell_remove(act,SINGLE);
-    cell_remove(car(act),SINGLE);
+    cell_remove(act, SINGLE);
+    cell_remove(car(act), SINGLE);
     act = tmp;
     atom = car(act);
   }
@@ -228,18 +230,29 @@ cell * and (const cell *operands) {
   const cell *act = operands;
   const cell *prev = NULL;
   cell *atom = car(act);
+  cell *tmp;
   while (act) {
-    if (!atom)
+    if (!atom) {
       // NIL found
-      return atom;
+      cell_remove(car(prev), RECURSIVE);  // release the prev memory
+      cell_remove(cdr(act), RECURSIVE);   // release the rest of the list
+      cell_remove(act,SINGLE);            // release the act cons
+      return NULL;
+    }
+    cell_remove(car(prev), RECURSIVE);
     prev = act;
-    act = cdr(act);
+    cell_push(car(prev), RECURSIVE); // protect the last value
+    tmp = cdr(act);
+    cell_remove(act, SINGLE);
+    cell_remove(car(act), RECURSIVE);
+    act = tmp;
     atom = car(act);
   }
   if (!prev)
     return symbol_true;
   return car(prev);
 }
+
 cell * not(const cell *operands) {
   if (!operands)
     pi_error_few_args();
@@ -250,6 +263,8 @@ cell * not(const cell *operands) {
   else
     return symbol_true;
 }
+
+// ==================== COMPARISON ====================
 
 cell *greater(const cell *operands) {
   check_two_args(operands);
@@ -310,6 +325,8 @@ cell *less_eq(const cell *operands) {
     pi_error(LISP_ERROR, "non-comparable args");
   return NULL;
 }
+
+// ==================== LISTS ====================
 
 cell *length(const cell *list) {
   check_one_arg(list);
