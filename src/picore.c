@@ -181,7 +181,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell_remove(cddr(fn), SINGLE);    // cons pointing to body
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
-        cell_remove_cars(x);
+        cell_remove_cars(x);              // remove deep cars
         return res;
       }
       // LABEL
@@ -367,16 +367,18 @@ cell *evcon(cell *c, cell *a) {
   } else {
     // result of the last eval
     cell_remove(res, RECURSIVE);
+    
     // remove the unevaluated body
     cell_remove(cadar(c),RECURSIVE);
+    
     res = evcon(cdr(c), a);
   }
-  // cell_remove(cadar(c),RECURSIVE);
   // cons of the body
   cell_remove(cdar(c), SINGLE);
   // cons of the pair (cond [body])
   cell_remove(car(c), SINGLE);
   // head of the list
   cell_remove(c, SINGLE);
+
   return res;
 }

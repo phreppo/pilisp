@@ -456,8 +456,6 @@ void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env,
   while (act != old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
-    // cell_stack_remove(stack,caar(act),SINGLE);
-    // cell_stack_remove(stack,cdar(act),SINGLE);
     cell_stack_remove(stack, car(act), SINGLE);
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
@@ -467,7 +465,7 @@ void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env,
 void cell_stack_remove_cars(cell_stack *stack, cell *list) {
   cell *act = list;
   while (act) {
-    cell_stack_remove(stack, car(act), SINGLE); // single?
+    cell_stack_remove(stack, car(act), RECURSIVE); // single?
     act = cdr(act);
   }
 }
