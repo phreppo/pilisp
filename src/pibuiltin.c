@@ -311,15 +311,15 @@ cell *length(const cell *list) {
   const cell *act = car(list);
   if (act && !is_cons(act))
     pi_error(LISP_ERROR, "arg is not a list");
-  cell * tmp;
+  cell *tmp;
   while (act) {
     len++;
     tmp = cdr(act);
-    cell_remove(car(act),RECURSIVE);  // remove sublist
-    cell_remove(act,SINGLE);          // remove cons of the sublis
+    cell_remove(car(act), RECURSIVE); // remove sublist
+    cell_remove(act, SINGLE);         // remove cons of the sublis
     act = tmp;
   }
-  cell_remove(list,SINGLE); // cons of the argument
+  cell_remove(list, SINGLE); // cons of the argument
   return mk_num(len);
 }
 
@@ -333,10 +333,13 @@ cell *member(const cell *list) {
   cell *res = NULL;
   cell *head = NULL;
   bool found = false;
+  cell *value; // actual value
+  cell *tmp;   // tmp to switch cell
+  cell *next_copy; // start to copy
   while (l) {
-    const cell *value = car(l);
+    value = car(l);
     if (!found) {
-      if (eq(value, who)) {
+      if (eq(value, who)) { // it's ok not total_eq here
         // found
         found = true;
         res = mk_cons(copy_cell(value), NULL);
@@ -344,12 +347,18 @@ cell *member(const cell *list) {
       }
     } else {
       // already found => we have to append this cell to the result
-      cell *tmp = mk_cons(copy_cell(value), NULL);
-      res->cdr = tmp;
+      next_copy = mk_cons(copy_cell(value), NULL);
+      res->cdr = next_copy;
       res = res->cdr;
     }
-    l = cdr(l);
+    tmp = cdr(l);
+    cell_remove(l, SINGLE);
+    cell_remove(car(l), RECURSIVE);
+    l = tmp;
   }
+  cell_remove(who, RECURSIVE);
+  cell_remove_args(list); // cons of the two args
+
   return head;
 }
 
