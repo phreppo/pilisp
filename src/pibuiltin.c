@@ -186,7 +186,7 @@ cell *load(cell *arg, cell **env) {
     if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
       last_result = eval(sexpr, *env);
-      cell_remove(last_result,RECURSIVE);
+      cell_remove(last_result, RECURSIVE);
     }
   }
   cell_remove_args(arg);
@@ -459,4 +459,50 @@ cell *list(const cell *list) {
   cell *tmp = copy_cell(list);
   cell_remove(list, RECURSIVE);
   return tmp;
+}
+
+// ==================== BASIC APPLY ====================
+
+cell *builtin_car(const cell *args) {
+  check_one_arg(args);
+  cell *res = caar(args);
+  cell_remove(car(args), SINGLE);
+  cell_remove(cdar(args), RECURSIVE); // remove the rest of the arg
+  cell_remove_args(args);
+  return res;
+}
+cell *builtin_cdr(const cell *args) {
+  check_one_arg(args);
+  cell *res = cdar(args);
+  cell_remove(car(args), SINGLE);
+  cell_remove(caar(args), RECURSIVE); // remove the car of the lists
+  cell_remove_args(args);
+  return res;
+}
+cell *builtin_cons(const cell *args) {
+  check_two_args(args);
+  cell *res = cons(car(args), cadr(args));
+  cell_remove_args(args);
+  return res;
+}
+
+cell *builtin_atom(const cell *args) {
+  check_one_arg(args);
+  cell *res;
+  if (atom(car(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove(args, RECURSIVE);
+  return res;
+}
+cell *builtin_eq(const cell *args) {
+  check_two_args(args);
+  cell *res;
+  if (eq(car(args), cadr(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove(args, RECURSIVE);
+  return res;
 }

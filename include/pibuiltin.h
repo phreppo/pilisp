@@ -29,7 +29,16 @@ bool eq(const cell *v1, const cell *v2);
 bool total_eq(const cell *c1,
               const cell *c2); // works also on lists: eq does not
 
-// ==================== LOGIC ==================== 
+// ==================== BASIC APPLY ====================
+// differences from the first basic block: these functions can be called from
+// the apply, because they do cell_remove and cell_push and check for args error
+cell *builtin_car(const cell *args);
+cell *builtin_cdr(const cell *args);
+cell *builtin_cons(const cell *args);
+cell *builtin_atom(const cell *args);
+cell *builtin_eq(const cell * args);
+
+// ==================== LOGIC ====================
 cell * or (const cell *operands);
 cell * and (const cell *operands);
 cell * not(const cell *operands);

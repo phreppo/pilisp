@@ -34,7 +34,8 @@ cell *assoc(const cell *x, cell *l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
       // right pair
-      cell_push(cdar(l),RECURSIVE);  // protect the value. if it s a list protect all the members
+      cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
+                                     // protect all the members
       cell_remove(x,
                   SINGLE); // don't need no more the symbol: we have the value
       return l->car;
@@ -60,36 +61,18 @@ cell *apply(cell *fn, cell *x, cell *a) {
       //=========================    (fun x)    =========================//
 
       // BASIC OPERATIONS
-      if (eq(fn, symbol_car)) {
-        check_one_arg(x);
-        return caar(x);
-      }
-      if (eq(fn, symbol_cdr)) {
-        check_one_arg(x);
-        return cdar(x);
-      }
-      if (eq(fn, symbol_cons)) {
-        check_two_args(x);
-        return cons(car(x), cadr(x));
-      }
-      if (eq(fn, symbol_atom)) {
-        check_one_arg(x);
-        if (atom(car(x)))
-          return symbol_true;
-        else
-          return NULL;
-      }
-      if (eq(fn, symbol_true)) {
+      if (eq(fn, symbol_car))
+        return builtin_car(x);
+      if (eq(fn, symbol_cdr))
+        return builtin_cdr(x);
+      if (eq(fn, symbol_cons)) 
+        return builtin_cons(x);
+      if (eq(fn, symbol_atom))
+        return builtin_atom(x);
+      if (eq(fn, symbol_true)) 
         pi_error(LISP_ERROR, "T is not a function");
-        // return symbol_true;
-      }
-      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
-        check_two_args(x);
-        if (eq(car(x), cadr(x)))
-          return symbol_true;
-        else
-          return NULL;
-      }
+      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) 
+        return builtin_eq(x);
 
       // UTILITY
       if (eq(fn, symbol_set))
@@ -121,9 +104,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
       }
 
       // ARITHMETIC OPERATORS
-      if (eq(fn, symbol_addition)) {
+      if (eq(fn, symbol_addition))
         return addition(x);
-      }
       if (eq(fn, symbol_subtraction))
         return subtraction(x);
       if (eq(fn, symbol_multiplication))
@@ -173,10 +155,8 @@ cell *apply(cell *fn, cell *x, cell *a) {
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
-      // probabilmente dovrò eliminare il corpo della funzione
       // the env knows the lambda
       cell *ret = apply(function_body, x, a);
-      // cell_remove(function_body);
       return ret;
 
     } else {
@@ -212,6 +192,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return res;
       }
       // LABEL
+      // TODO: cell_remove here
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
         return apply(caddr(fn), x, new_env);
@@ -285,7 +266,6 @@ cell *eval(cell *e, cell *a) {
     }
   }
   //========================= ATOM FUNCTION EVAL =========================//
-  // ! Not every cells released !
   else if (atom(car(e))) {
     // car of the cons cell is an atom
 
@@ -329,15 +309,12 @@ cell *eval(cell *e, cell *a) {
   }
   //========================= COMPOSED FUNCTION EVAL =========================//
   //=========================   ((lambda (x) x) 1)   =========================//
-  // ! Not every cells released !
 
   else {
     // composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
     cell_remove(e, SINGLE);   // remove function
     cell_remove_args(cdr(e)); // remove list of args
-    // ! RIMUOVERE LA LISTA DEGLI ELEMENTI VALUTATI? IN CASO DOVREBBE FARE UN PO
-    // DI PUSH LA EVLIS
   }
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
