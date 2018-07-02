@@ -259,11 +259,12 @@ cell * not(const cell *operands) {
   if (cdr(operands))
     pi_error_many_args();
   if (car(operands)) {
-    cell_remove(operands,RECURSIVE);
+    cell_remove(operands, RECURSIVE);
     return NULL;
-  } else{
-    cell_remove(operands,SINGLE);
-    return symbol_true;}
+  } else {
+    cell_remove(operands, SINGLE);
+    return symbol_true;
+  }
 }
 
 // ==================== COMPARISON ====================
@@ -274,13 +275,15 @@ cell *greater(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+  cell *res = NULL;
   if (is_num(first)) {
-    return ((first->value > second->value) ? symbol_true : NULL);
+    res = ((first->value > second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
-    return ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
+    res = ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  return NULL;
+  cell_remove(operands, RECURSIVE);
+  return res;
 }
 
 cell *greater_eq(const cell *operands) {
@@ -289,13 +292,15 @@ cell *greater_eq(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+  cell * res = NULL;
   if (is_num(first)) {
-    return ((first->value >= second->value) ? symbol_true : NULL);
+    res = ((first->value >= second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
-    return ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
+    res = ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  return NULL;
+  cell_remove(operands,RECURSIVE);
+  return res;
 }
 
 cell *less(const cell *operands) {
@@ -304,13 +309,15 @@ cell *less(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+  cell * res = NULL;
   if (is_num(first)) {
-    return ((first->value < second->value) ? symbol_true : NULL);
+    res = ((first->value < second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
-    return ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
+    res = ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  return NULL;
+  cell_remove(operands,RECURSIVE);
+  return res;
 }
 
 cell *less_eq(const cell *operands) {
@@ -319,13 +326,15 @@ cell *less_eq(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+  cell * res = NULL;
   if (is_num(first)) {
-    return ((first->value <= second->value) ? symbol_true : NULL);
+    res = ((first->value <= second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
-    return ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
+    res = ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  return NULL;
+  cell_remove(operands,RECURSIVE);
+  return res;
 }
 
 // ==================== LISTS ====================
