@@ -157,6 +157,8 @@ cell *set(cell *args) {
     if (eq(name, caar(act))) {
       // found
       car(act)->cdr = val;
+      cell_remove_args(args);
+      cell_remove(name,SINGLE);
       return cdar(act);
     }
     // iterate
@@ -189,6 +191,7 @@ cell *load(cell *arg, cell **env) {
       cell_remove(last_result, RECURSIVE);
     }
   }
+  cell_remove(name,SINGLE);
   cell_remove_args(arg);
   return symbol_true;
 }
