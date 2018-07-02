@@ -180,12 +180,16 @@ cell *load(cell *arg, cell **env) {
   FILE *file = fopen(((name) ? name->str : ""), "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");
+  cell *last_result;
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
-    if (sexpr != symbol_file_ended)
+    if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
-      eval(sexpr, *env);
+      last_result = eval(sexpr, *env);
+      cell_remove(last_result,RECURSIVE);
+    }
   }
+  cell_remove_args(arg);
   return symbol_true;
 }
 
@@ -293,14 +297,14 @@ cell *greater_eq(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
-  cell * res = NULL;
+  cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value >= second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands,RECURSIVE);
+  cell_remove(operands, RECURSIVE);
   return res;
 }
 
@@ -310,14 +314,14 @@ cell *less(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
-  cell * res = NULL;
+  cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value < second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands,RECURSIVE);
+  cell_remove(operands, RECURSIVE);
   return res;
 }
 
@@ -327,14 +331,14 @@ cell *less_eq(const cell *operands) {
   const cell *second = cadr(operands);
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
-  cell * res = NULL;
+  cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value <= second->value) ? symbol_true : NULL);
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands,RECURSIVE);
+  cell_remove(operands, RECURSIVE);
   return res;
 }
 
