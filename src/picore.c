@@ -269,16 +269,16 @@ cell *eval(cell *e, cell *a) {
       cell_remove(cdr(e), SINGLE);
     } else {
 
-      if (eq(car(e), symbol_cond))
+      if (eq(car(e), symbol_cond)) {
         // COND
+        cell *res;
         evaulated = evcon(cdr(e), a);
-      else if (eq(car(e), symbol_dotimes)) {
+        cell_remove(e, SINGLE);
+      } else if (eq(car(e), symbol_dotimes)) {
         // DOTIMES
         size_t n = 0;
-        cell *name = car(car(cdr(e)));
         cell *name_list = car(cdr(e));
         cell *num = car(cdr(car(cdr(e))));
-        cell *num_list = cdr(car(cdr(e)));
         cell *expr = caddr(e);
         cell *new_env;
         for (n = 0; n < num->value; n++) {
@@ -353,8 +353,28 @@ cell *evlis(cell *m, cell *a) {
 }
 
 cell *evcon(cell *c, cell *a) {
-  if (eval(caar(c), a) != NULL)
-    return eval(cadar(c), a);
-  else
-    return evcon(cdr(c), a);
+  cell *res = eval(caar(c), a);
+  if (res != NULL) {
+    // result of the last eval
+    cell_remove(res, RECURSIVE);
+
+    // eval the bod of the cond
+    res = eval(cadar(c), a);
+
+    // cut off the rest of the sexpressions
+    cell_remove(cdr(c), RECURSIVE);
+
+  } else {
+    // result of the last eval
+    cell_remove(res, RECURSIVE);
+
+    res = evcon(cdr(c), a);
+  }
+  // cons of the body
+  cell_remove(cdar(c), SINGLE);
+  // cons of the pair (cond [body])
+  cell_remove(car(c), SINGLE);
+  // head of the list
+  cell_remove(c, SINGLE);
+  return res;
 }

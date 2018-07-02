@@ -21,6 +21,8 @@
 (dotimes (n 2) 666)
 (dotimes (n 3) 666)
 (time '(dotimes (n 10) (toz n)))
+(cond ( (not nil) 1 ) (t 2) (t 1))
+(cond (nil nil) ((not nil) 1 ) (t 2) (t 1))
 
 ;; (d '(cos x) 'x)
 ;; (* (cos x) 1)
