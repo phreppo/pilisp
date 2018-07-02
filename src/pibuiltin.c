@@ -382,10 +382,11 @@ cell *nth(const cell *list) {
     l = tmp;
     act++;
   }
-  if (l) { // cell is in the range: we can return it and free the rest of the list
+  if (l) { // cell is in the range: we can return it and free the rest of the
+           // list
     res = car(l);
-    cell_remove(l,SINGLE); // remove the cons of the result
-    cell_remove(cdr(l),RECURSIVE); // remove the rest of the list
+    cell_remove(l, SINGLE);         // remove the cons of the result
+    cell_remove(cdr(l), RECURSIVE); // remove the rest of the list
   }
   cell_remove(num, SINGLE);
   cell_remove_args(list);
@@ -413,4 +414,8 @@ bool total_eq(const cell *c1, const cell *c2) {
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
-cell *list(const cell *list) { return copy_cell(list); }
+cell *list(const cell *list) {
+  cell *tmp = copy_cell(list);
+  cell_remove(list,RECURSIVE);
+  return tmp;
+}
