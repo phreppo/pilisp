@@ -406,7 +406,8 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
             stack->tail = NULL;
         }
 #if DEBUG_PUSH_REMOVE_MODE
-        printf(ANSI_COLOR_GREEN " > Removed from the stack: " ANSI_COLOR_RESET);
+        printf(ANSI_COLOR_GREEN
+               " > Removed from the stack:  " ANSI_COLOR_RESET);
         print_sexpr(val);
         puts("");
 #endif
@@ -426,7 +427,9 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
     printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
-    // pi_error(MEMORY_ERROR, "REMOVING SOMETHING THAT DOES NT EXISTS");
+#endif
+#if ERROR_EMPTY_REMOVING
+    pi_error(MEMORY_ERROR, "you have no more access to that cell");
 #endif
   }
 #if DEBUG_PUSH_REMOVE_MODE

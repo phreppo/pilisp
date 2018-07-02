@@ -14,6 +14,13 @@
 ((f))
 (set 'l '(nil (1 2) ((1)(2)) nil "ciao"))
 (or nil nil nil '(1 2 3) 4)
+(set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1))))))
+(dotimes (n 1) (toz n))
+(dotimes (n 2) (toz n))
+(dotimes (n 1) 666)
+(dotimes (n 2) 666)
+(dotimes (n 3) 666)
+(time '(dotimes (n 10) (toz n)))
 
 ;; (d '(cos x) 'x)
 ;; (* (cos x) 1)

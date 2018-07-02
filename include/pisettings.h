@@ -31,6 +31,7 @@
  ********************************************************************************/
 #define INIT_FILE_PATH_GLOBAL                                                  \
   "../init.lisp" // defines the path to the .lisp init file
+#define ERROR_EMPTY_REMOVING 1 // raise an error if trying to remove a cell that is not on the stack (beacuse that cell does not belongs to you)
 
 /********************************************************************************
  *                                  LIMITS

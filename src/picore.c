@@ -65,13 +65,13 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return builtin_car(x);
       if (eq(fn, symbol_cdr))
         return builtin_cdr(x);
-      if (eq(fn, symbol_cons)) 
+      if (eq(fn, symbol_cons))
         return builtin_cons(x);
       if (eq(fn, symbol_atom))
         return builtin_atom(x);
-      if (eq(fn, symbol_true)) 
+      if (eq(fn, symbol_true))
         pi_error(LISP_ERROR, "T is not a function");
-      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) 
+      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math))
         return builtin_eq(x);
 
       // UTILITY
@@ -174,9 +174,6 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
         // FREE THINGS
-        // cell_remove(x,RECURSIVE);              // remove args cons
-        // cell_remove(x,SINGLE);            // remove the arg
-        // cell_remove(car(x),SINGLE);       // remove args val
         cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
@@ -185,10 +182,6 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
         cell_remove_cars(x);
-        /*
-        (((lambda (x) (lambda (y) y)) 1 ) 2)
-        ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3)
-        */
         return res;
       }
       // LABEL
@@ -283,12 +276,28 @@ cell *eval(cell *e, cell *a) {
         // DOTIMES
         size_t n = 0;
         cell *name = car(car(cdr(e)));
+        cell *name_list = car(cdr(e));
         cell *num = car(cdr(car(cdr(e))));
+        cell *num_list = cdr(car(cdr(e)));
+        cell *expr = caddr(e);
+        cell *new_env;
         for (n = 0; n < num->value; n++) {
-          cell *expr = caddr(e);
-          evaulated = eval(expr, pairlis(car(cdr(e)), cdr(car(cdr(e))), a));
+          cell *num_list_new = mk_cons(mk_num(n), NULL);
+          new_env = pairlis(name_list, num_list_new, a);
+          if (n > 0)
+            // we have to protect the body of the function
+            cell_push(expr, RECURSIVE);
+          evaulated = eval(expr, new_env);
+          // remove the result
+          cell_remove(evaulated, RECURSIVE);
+          // remove the pair (n [actual_value])
+          cell_remove_pairlis(new_env, a);
+          // remove the just created cell
+          cell_remove(num_list_new, RECURSIVE);
         }
-        // cell_remove(e);
+        cell_remove(cadr(e),
+                    RECURSIVE); // remove the pair and cons (n [number])
+        cell_remove_args(e);
         return NULL;
       } else {
 
