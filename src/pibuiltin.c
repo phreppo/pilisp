@@ -333,8 +333,8 @@ cell *member(const cell *list) {
   cell *res = NULL;
   cell *head = NULL;
   bool found = false;
-  cell *value; // actual value
-  cell *tmp;   // tmp to switch cell
+  cell *value;     // actual value
+  cell *tmp;       // tmp to switch cell
   cell *next_copy; // start to copy
   while (l) {
     value = car(l);
@@ -374,12 +374,21 @@ cell *nth(const cell *list) {
   cell *res = NULL;
   unsigned long index = num->value;
   unsigned long act = 0;
+  cell *tmp;
   while (l && act < index) {
-    l = cdr(l);
+    tmp = cdr(l);
+    cell_remove(car(l), RECURSIVE);
+    cell_remove(l, SINGLE);
+    l = tmp;
     act++;
   }
-  if (l)
+  if (l) { // cell is in the range: we can return it and free the rest of the list
     res = car(l);
+    cell_remove(l,SINGLE); // remove the cons of the result
+    cell_remove(cdr(l),RECURSIVE); // remove the rest of the list
+  }
+  cell_remove(num, SINGLE);
+  cell_remove_args(list);
   return res;
 }
 
