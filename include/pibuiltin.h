@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-// BASIC
+// ==================== BASIC ====================
 cell *car(const cell *c);
 cell *cdr(const cell *c);
 cell *caar(const cell *c);

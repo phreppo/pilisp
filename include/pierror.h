@@ -24,22 +24,22 @@ enum {
   MODE_ERROR = 3    ///< error passing mode to some kind of functions
 };
 
-// ERRORS THROWING
+// ==================== ERRORS THROWING ====================
 void pi_error(int CODE, char *message);
 void pi_lisp_error(char *message); // throws LISP_ERROR
 void pi_error_few_args();          // throws "too few args"
 void pi_error_many_args();         // throws "too many args"
 
-// CHECKS
+// ==================== CHECKS ====================
 // checks that the list args has exaclty 2 args
 void check_two_args(const cell *args);
 // checks that the list args has exaclty 1 args
 void check_one_arg(const cell *args);
 
-// MANIPULATE LAST ERROR
+// ==================== LAST ERROR ====================
 int get_last_error();
 bool had_error();
 void reset_error();
 
 #endif // !PERROR_H
-       /*@}*/
+/*@}*/

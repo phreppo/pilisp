@@ -25,5 +25,4 @@ void eval_prompt();
 void mem_prompt();
 
 #endif // !PTESTUTILS_H
-
 /*}*/

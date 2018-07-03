@@ -11,6 +11,7 @@
 #define PICORE_H
 #include "pilisp.h"
 
+// ==================== LISP CORE FUNCTIONS ====================
 cell *eval(cell *e, cell *a);
 cell *apply(cell *fn, cell *x, cell *a);
 cell *pairlis(cell *x, cell *y, cell *a);

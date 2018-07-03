@@ -164,8 +164,6 @@ void collect_garbage(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
 
-// ! TODO: give the chance to free the mem
-
 #endif // !PICELL_H
 
 /*@}*/
