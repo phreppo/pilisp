@@ -28,7 +28,7 @@
 #define DEBUG_GARBAGE_COLLECTOR_MODE                                           \
   0                       // when performing gargabe collection prints messages
 #define DEBUG_EVAL_MODE 0 // describes what appens evaluating sexpressions
-#define DEBUG_PUSH_REMOVE_MODE 1 // when pushing or removing things in the stack
+#define DEBUG_PUSH_REMOVE_MODE 0 // when pushing or removing things in the stack
 
 /********************************************************************************
  *                                   INIT
@@ -36,7 +36,7 @@
 #define INIT_FILE_PATH_GLOBAL                                                  \
   "../init.lisp" // defines the path to the .lisp init file
 #define ERROR_EMPTY_REMOVING                                                   \
-  1 // raise an error if trying to remove a cell that is not on the stack
+  0 // raise an error if trying to remove a cell that is not on the stack
     // (beacuse that cell does not belongs to you)
 
 /********************************************************************************

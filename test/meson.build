@@ -273,5 +273,22 @@ test('[LISP] label test', lisp_program_test, args : [
     'A',
     '33'
 ])
+
+
 # (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
 # ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a))
+
+# Lisp program loaded from file test
+lisp_program_load_test = executable(
+    'lisp_program_load_test', 'lisp_program_load_test.c',
+    include_directories : inc,
+    link_with : pilisplib
+)
+# Cases lisp programs prints
+test('[LOAD] load test', lisp_program_load_test, args : [
+    programs_path+'loadtest.lisp',
+])
+
+# test('[LOAD] maze test', lisp_program_load_test, args : [
+#     programs_path+'maze.lisp',
+# ])
