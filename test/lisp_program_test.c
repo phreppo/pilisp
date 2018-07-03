@@ -46,9 +46,9 @@ int main(int argc, char **argv) {
     puts("error reading program file");
     return 1;
   }
-  init_env();
+  init_pi();
   cell *res = NULL;
-  cell *env = GLOBAL_ENV;
+  cell *env = memory->global_env;
   jmp_destination = setjmp(env_buf);
   if (had_error()) {
     puts("error processing program");
@@ -80,5 +80,7 @@ int main(int argc, char **argv) {
   }
   cell *expected_result = read_sexpr(result_file_read);
   fclose(result_file_read);
-  return !(total_eq(expected_result, res));
+  int ret = (total_eq(expected_result, res));
+  free_pi();
+  return !ret;
 }

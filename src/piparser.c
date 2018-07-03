@@ -161,7 +161,7 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     c = mk_str(token_text);
     break;
   case TOK_SYM:
-    c = (token_text_is_nil() ? 0 : mk_sym(token_text));
+    c = (token_text_is_nil() ? 0 : mk_sym(token_text)); // can be a builtin lambda
     break;
   case TOK_CLOSE:
     pi_error(LISP_ERROR, "unexpected )");

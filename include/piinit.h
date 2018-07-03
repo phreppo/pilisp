@@ -1,16 +1,51 @@
+/** @defgroup piinit
+ *
+ * @brief Provides methods that have to be called before using pilisp
+ *
+ */
+
+/** @addtogroup piinit */
+/*@{*/
+
 #ifndef PIINIT_H
 #define PIINIT_H
 #include "picell.h"
 #include "piparser.h"
 #include <stdio.h>
-#define INIT_FILE_PATH_GLOBAL "../init.lisp"
+
+// array of builtin lambdas
+cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
+size_t builtin_lambda_index;
+
+// list of the builtin symbols: the garbage collector will mark this as used,
+// otherwise they would be collected
+cell *LANGUAGE_SYMBOLS;
+
+/********************************************************************************
+ *                                 INIT FUNCTIONS
+ ********************************************************************************/
+
+void init_pi();  // always call this before using pilisp
+void init_env(); // inits the global env
+void init_builtin_lambdas();
+cell *load_env(char *init_file_path);
+
+/********************************************************************************
+ *                                 FREE FUNCTIONS
+ ********************************************************************************/
+
+void free_pi();
+
+/********************************************************************************
+ *                                 BUILTIN SYMBOLS
+ ********************************************************************************/
 
 cell *symbol_car;
 cell *symbol_cdr;
 cell *symbol_cons;
 cell *symbol_atom;
-cell *symbol_eq;		// eq
-cell *symbol_eq_math; 	// =
+cell *symbol_eq;      // eq
+cell *symbol_eq_math; // =
 cell *symbol_true;
 cell *symbol_set;
 cell *symbol_addition;
@@ -35,12 +70,12 @@ cell *symbol_member;
 cell *symbol_nth;
 cell *symbol_file_ended;
 cell *symbol_env;
-
-
-cell *GLOBAL_ENV;
-
-void init_env();
-
-cell *load_env(char *init_file_path);
+cell *symbol_mem_dump;
+cell *symbol_collect_garbage;
+cell *symbol_dotimes;
+cell *symbol_list;
+cell *symbol_bye;
 
 #endif // !PIINIT_H
+
+/*@}*/

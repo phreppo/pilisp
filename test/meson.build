@@ -200,6 +200,11 @@ test('[LISP] member 2', lisp_program_test, args : [
     'NIL',
     '21'
 ])
+test('[LISP] list', lisp_program_test, args : [
+    '(set \'n 1)(list n 1 1)',
+    '(1 1 1)',
+    '21.5'
+])
 test('[LISP] length 1', lisp_program_test, args : [
     '(length \'(NIL NIL NIL) )',
     '3',
@@ -215,3 +220,58 @@ test('[LISP] load test', lisp_program_test, args : [
     '2' ,
     '24'
 ])
+test('[LISP] env printing test', lisp_program_test, args : [
+    '(env)',
+    'T',
+    '25'
+])
+
+test('[LISP] set-sum test', lisp_program_test, args : [
+    '(+ 1 2) (+ 1 2) (+ 1 2) (set \'n 3) n (+ 1 n)',
+    '4',
+    '26'
+])
+
+test('[LISP] set-lambda test 1', lisp_program_test, args : [
+    '(set \'id (lambda (x) x)) (set \'n 1) (id 1)',
+    '1',
+    '27'
+])
+
+test('[LISP] set test', lisp_program_test, args : [
+    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (ff \'(((n1 . n2))))',
+    'n1',
+    '28'
+])
+
+test('[LISP] dotimes test', lisp_program_test, args : [
+    '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100) (ff \'(n1 n2)))',
+    'NIL',
+    '29'
+])
+
+test('[LISP] to zero dotimes test', lisp_program_test, args : [
+    '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (time \'(dotimes (n 10) (toz n)))',
+    'NIL',
+    '30'
+])
+
+test('[LISP] cond test', lisp_program_test, args : [
+    '(cond (nil nil) ((not nil) 1 ) (t 2) (t 1))',
+    '1',
+    '31'
+])
+
+test('[LISP] stress test 1', lisp_program_test, args : [
+    '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'iso (lambda (x) (cond ((eq x 1) 1 ) ((eq x 2) 2) (t 666)))) (set \'plo (lambda (n) (+ 1 n))) (dotimes (n 5) (toz 5)) (ff \'(a)) (ff \'((((a) b ) c ) d)) (ff \'((a) b )) ((lambda (x) (cond ((eq x 1) 1 ) ((eq x 2) 2) (t 666))) \'(1)) ((lambda (x) x) \'(1)) ((lambda (x) (lambda (y) y)) 1 ) (((lambda (x) (lambda (y) 2))  ) ) (((lambda (x) (lambda (y) y)) 1 ) 2) (((lambda (x) (lambda (y) y)) 1 2 ) 3) ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3) ( (lambda (x) (+ 1 x ) ) 1 ) (set \'ivar (lambda (x) (set \'var x))) (set \'l \'(nil (1 2) ((1)(2)) nil "ciao")) (or nil nil nil \'(1 2 3) 4) (set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (dotimes (n 1) (toz n)) (dotimes (n 2) (toz n)) (dotimes (n 3) (toz n)) (dotimes (n 3) (+ 1 n)) (dotimes (n 1) 666) (dotimes (n 2) 666) (dotimes (n 3) 666) NIL',
+    'NIL',
+    '32'
+])
+
+test('[LISP] label test', lisp_program_test, args : [
+    '((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) \'((a)))',
+    'A',
+    '33'
+])
+# (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
+# ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a))

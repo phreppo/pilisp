@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
+  init_pi();
   cell * head = mk_cons(mk_num(1),NULL);
   cell * second = mk_cons(head,NULL);
   head->cdr = second;

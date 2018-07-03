@@ -13,12 +13,16 @@
 #include <setjmp.h>
 #include "pilisp.h"
 
+/********************************************************************************
+ *                                    PROMPTS
+ ********************************************************************************/
+
 void lexer_prompt();
 void parse_prompt();
 int lexer_file(FILE * f);
 void pairlis_prompt();
 void eval_prompt();
+void mem_prompt();
 
 #endif // !PTESTUTILS_H
-
 /*}*/

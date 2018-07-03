@@ -12,7 +12,7 @@ headers = [
         'piprint.h',
         'piinit.h',
         'pitestutils.h',
-
+        'pisettings.h',
 ]
 
 install_headers(headers)

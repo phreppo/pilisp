@@ -1,14 +1,15 @@
 #include "pilisp.h"
-#include "pitestutils.h" // TODO: remove on production
+#include "pitestutils.h" // remove once tests
 
 int main(int argc, char **argv) {
+  init_pi();
+  // mem_prompt();
+
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
-    printf("\npilisp [<file1.l> ... [ <fileN.l>]]\n");
+    printf("\npilisp [<file1.lisp> ... [ <fileN.lisp>]]\n");
     return 0;
   }
-
-  init_env();
 
   if (argc > 1) {
     jmp_destination = setjmp(env_buf);
@@ -30,6 +31,8 @@ int main(int argc, char **argv) {
   // lexer_file(f);
   // lexer_prompt();
   // parse_prompt();
-  //   eval_prompt();
+  // eval_prompt();
+
+  free_pi();
   return 0;
 }

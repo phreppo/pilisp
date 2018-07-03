@@ -13,6 +13,8 @@ void pi_error(int CODE, char *message) {
   longjmp(env_buf, jmp_destination); // jumps to the last saved destination
 }
 
+void pi_lisp_error(char *message) { pi_error(LISP_ERROR, message); }
+
 void pi_error_few_args() { pi_error(LISP_ERROR, "too few arguments"); }
 
 void pi_error_many_args() { pi_error(LISP_ERROR, "too many arguments"); }

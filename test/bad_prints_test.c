@@ -72,5 +72,6 @@ int print_bad_mode_test() {
 }
 
 int main(int argc, char **argv) {
+  init_pi();
   return print_bad_cell_test() || print_verbose_bad_cell_test() || print_bad_token_test();
 }

@@ -32,9 +32,14 @@ cell *assoc(const cell *x, cell *l) {
   // ! UNSAFE
   while (l) {
     // we extract the first element in the pair
-    if (eq(x, car(car(l))))
+    if (eq(x, car(car(l)))) {
       // right pair
+      cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
+                                     // protect all the members
+      cell_remove(x,
+                  SINGLE); // don't need no more the symbol: we have the value
       return l->car;
+    }
     l = l->cdr;
   }
   return NULL;
@@ -52,53 +57,53 @@ cell *apply(cell *fn, cell *x, cell *a) {
 #endif
   if (fn) {
     if (atom(fn)) {
+      //========================= ATOM FUNCTION =========================//
+      //=========================    (fun x)    =========================//
 
       // BASIC OPERATIONS
-      if (eq(fn, symbol_car)) {
-        check_one_arg(x);
-        return caar(x);
-      }
-      if (eq(fn, symbol_cdr)) {
-        check_one_arg(x);
-        return cdar(x);
-      }
-      if (eq(fn, symbol_cons)) {
-        check_two_args(x);
-        return cons(car(x), cadr(x));
-      }
-      if (eq(fn, symbol_atom)) {
-        check_one_arg(x);
-        if (atom(car(x)))
-          return symbol_true;
-        else
-          return NULL;
-      }
-      if (eq(fn, symbol_true)) {
-        pi_error(LISP_ERROR,"T is not a function");
-        // return symbol_true;
-      }
-      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math)) {
-        check_two_args(x);
-        if (eq(car(x), cadr(x)))
-          return symbol_true;
-        else
-          return NULL;
-      }
+      if (eq(fn, symbol_car))
+        return builtin_car(x);
+      if (eq(fn, symbol_cdr))
+        return builtin_cdr(x);
+      if (eq(fn, symbol_cons))
+        return builtin_cons(x);
+      if (eq(fn, symbol_atom))
+        return builtin_atom(x);
+      if (eq(fn, symbol_true))
+        pi_error(LISP_ERROR, "T is not a function");
+      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math))
+        return builtin_eq(x);
 
       // UTILITY
       if (eq(fn, symbol_set))
-        return set(x, &a);
+        return set(x);
       if (eq(fn, symbol_load))
         return load(x, &a);
       if (eq(fn, symbol_timer))
         return timer(x, &a);
-      if(eq(fn,symbol_env)){
-        if(x)
+      if (eq(fn, symbol_mem_dump)) {
+        if (x)
+          pi_error_many_args();
+        printf(ANSI_COLOR_YELLOW
+               "============================== MEMORY "
+               "==============================\n" ANSI_COLOR_RESET);
+        print_cell_space(memory);
+        return symbol_true;
+      }
+      if (eq(fn, symbol_env)) {
+        if (x)
           pi_error_many_args();
         printf(" > env: " ANSI_COLOR_BLUE);
         print_sexpr(a);
         printf("\n" ANSI_COLOR_RESET);
         return symbol_true;
+      }
+      if (eq(fn, symbol_collect_garbage)) {
+        collect_garbage(memory);
+        return symbol_true;
+      }
+      if(eq(fn, symbol_bye)){
+        return symbol_bye;
       }
 
       // ARITHMETIC OPERATORS
@@ -136,10 +141,12 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return member(x);
       if (eq(fn, symbol_nth))
         return nth(x);
+      if (eq(fn, symbol_list))
+        return list(x);
 
       // CUSTOM FUNCTION
       // does lambda exists?
-      cell *function_body = eval(fn, a);
+      cell *function_body = eval(fn, a); // ! REMOVE THIS ONCE RESOLVED
       if (function_body == NULL) {
         char *err = "unknown function ";
         char *fn_name = fn->sym;
@@ -152,10 +159,12 @@ cell *apply(cell *fn, cell *x, cell *a) {
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
       // the env knows the lambda
-      return apply(function_body, x, a);
+      cell *ret = apply(function_body, x, a);
+      return ret;
 
     } else {
-      // composed function
+      //========================= COMPOSED FUNCTION =========================//
+      //================= ( (lambda (x y z) (....)) param) ==================//
       if (eq(car(fn), symbol_lambda)) {
         // direct lambda
 #if DEBUG_EVAL_MODE
@@ -163,13 +172,33 @@ cell *apply(cell *fn, cell *x, cell *a) {
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
+        cell *old_env = a;
         a = pairlis(cadr(fn), x, a);
-        return eval(caddr(fn), a);
+        cell *fn_body = caddr(fn);
+        cell *res = eval(fn_body, a);
+        // FREE THINGS
+        cell_remove_cars(x);              // deep remove cars
+        cell_remove_args(x);              // remove args cons
+        cell_remove_pairlis(a, old_env);  // remove associations
+        cell_remove(car(fn), SINGLE);     // function name
+        cell_remove(cadr(fn), RECURSIVE); // params
+        cell_remove(cddr(fn), SINGLE);    // cons pointing to body
+        cell_remove(cdr(fn), SINGLE);     // cons poining to param
+        cell_remove(fn, SINGLE);          // cons pointing to lambda sym
+        return res;
       }
       // LABEL
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
-        return apply(caddr(fn), x, new_env);
+        cell * res = apply(caddr(fn), x, new_env);
+        cell_remove(cddr(fn),SINGLE);         // cons of the body
+        cell_remove(cadr(fn),SINGLE);         // symbol to bind
+        cell_remove(cdr(fn),SINGLE);          // cons of the top level
+        cell_remove(car(fn),SINGLE);          // symbol label
+        cell_remove(fn,SINGLE);               // cons of everything
+        cell_remove(car(new_env),SINGLE);     // new cons of the pair of the new env
+        cell_remove(new_env,SINGLE);          // head of new env
+        return res;
       }
 
 #if DEBUG_EVAL_MODE
@@ -179,9 +208,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 #endif
       // function is not an atomic function: something like (lambda (x) (lambda
       // (y) y)) ! cell * new_env = pairlis(,a)
-      // ! qui devo ricordarmi dell'ambiente interno (?)
       cell *function_body = eval(fn, a);
-      // a = last_pairlis; // ?
 
       if (function_body == NULL) {
         char *err = "unknown function ";
@@ -209,6 +236,8 @@ cell *eval(cell *e, cell *a) {
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *evaulated = NULL;
+  //========================= ATOM EVAL =========================//
+  // ** every used cells released **
   if (atom(e)) {
     if (!e)
       // NIL
@@ -238,32 +267,73 @@ cell *eval(cell *e, cell *a) {
         }
       }
     }
-  } else if (atom(car(e))) {
+  }
+  //========================= ATOM FUNCTION EVAL =========================//
+  else if (atom(car(e))) {
     // car of the cons cell is an atom
 
-    if (eq(car(e), symbol_quote))
+    if (eq(car(e), symbol_quote)) {
       // QUOTE
       evaulated = cadr(e);
-    else {
+      cell_remove(e, SINGLE);
+      cell_remove(cdr(e), SINGLE);
+    } else {
 
-      if (eq(car(e), symbol_cond))
+      if (eq(car(e), symbol_cond)) {
         // COND
+        cell *res;
         evaulated = evcon(cdr(e), a);
-      else {
+        cell_remove(e, SINGLE);
+      } else if (eq(car(e), symbol_dotimes)) {
+        // DOTIMES
+        size_t n = 0;
+        cell *name_list = car(cdr(e));
+        cell *num = car(cdr(car(cdr(e))));
+        cell *expr = caddr(e);
+        cell *new_env;
+        for (n = 0; n < num->value; n++) {
+          cell *num_list_new = mk_cons(mk_num(n), NULL);
+          new_env = pairlis(name_list, num_list_new, a);
+          if (n > 0)
+            // we have to protect the body of the function
+            cell_push(expr, RECURSIVE);
+          evaulated = eval(expr, new_env);
+          // remove the result
+          cell_remove(evaulated, RECURSIVE);
+          // remove the pair (n [actual_value])
+          cell_remove_pairlis(new_env, a);
+          // remove the just created cell
+          cell_remove(num_list_new, RECURSIVE);
+        }
+        cell_remove(cadr(e),
+                    RECURSIVE); // remove the pair and cons (n [number])
+        cell_remove_args(e);
+        return NULL;
+      } else {
 
-        if (eq(car(e), symbol_lambda))
+        if (eq(car(e), symbol_lambda)) {
           // lambda "autoquote"
           evaulated = e;
-        else {
-          // something else
-          evaulated = apply(car(e), evlis(cdr(e), a), a);
+        } else {
+          // apply atom function to evaluated list of parameters
+          cell *evaulated_args = evlis(cdr(e), a);
+          evaulated = apply(car(e), evaulated_args, a);
+          cell_remove(e, SINGLE);   // remove function
+          cell_remove_args(cdr(e)); // remove list of args
+          // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
+          // we have the result: we can unlock the unvalued expression
         }
       }
     }
+  }
+  //========================= COMPOSED FUNCTION EVAL =========================//
+  //=========================   ((lambda (x) x) 1)   =========================//
 
-  } else {
-    // ! composed function
+  else {
+    // composed function
     evaulated = apply(car(e), evlis(cdr(e), a), a);
+    cell_remove(e, SINGLE);   // remove function
+    cell_remove_args(cdr(e)); // remove list of args
   }
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
@@ -286,13 +356,39 @@ cell *evlis(cell *m, cell *a) {
     // empty par list
     return NULL;
   cell *valued_car = eval(car(m), a);
+
+  // cell_push(valued_car); // protect the valued cell: may be not a new cell
   cell *valued_cdr = evlis(cdr(m), a);
   return mk_cons(valued_car, valued_cdr);
 }
 
 cell *evcon(cell *c, cell *a) {
-  if (eval(caar(c), a) != NULL)
-    return eval(cadar(c), a);
-  else
-    return evcon(cdr(c), a);
+  cell *res = eval(caar(c), a);
+  if (res != NULL) {
+    // result of the last eval
+    cell_remove(res, RECURSIVE);
+
+    // eval the bod of the cond
+    res = eval(cadar(c), a);
+
+    // cut off the rest of the sexpressions
+    cell_remove(cdr(c), RECURSIVE);
+
+  } else {
+    // result of the last eval
+    cell_remove(res, RECURSIVE);
+    
+    // remove the unevaluated body
+    cell_remove(cadar(c),RECURSIVE);
+    
+    res = evcon(cdr(c), a);
+  }
+  // cons of the body
+  cell_remove(cdar(c), SINGLE);
+  // cons of the pair (cond [body])
+  cell_remove(car(c), SINGLE);
+  // head of the list
+  cell_remove(c, SINGLE);
+
+  return res;
 }

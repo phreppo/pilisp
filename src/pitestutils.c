@@ -1,8 +1,7 @@
 #include "pitestutils.h"
 
 void parse_prompt() {
-  printf("%s Welcome to the parser prompt, type sexpressions\n",
-         PROMPT_STRING);
+  printf("%s Welcome to the parser prompt, type sexpressions\n", PROMPT_STRING);
   while (1) {
     // sets the destination for longjump here if errors were encountered during
     // parsing
@@ -48,8 +47,9 @@ void eval_prompt() {
   // cell *str1 = mk_str("hi");
   // cell *sym1 = mk_sym("a");
   // cell *sym2 = mk_sym("b");
-  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
-  cell * env = load_env(INIT_FILE_PATH_GLOBAL);
+  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1),
+  // NULL));
+  cell *env = load_env(INIT_FILE_PATH_GLOBAL);
   // cell * env = NULL;
   printf("env: ");
   print_sexpr(env);
@@ -67,7 +67,7 @@ void eval_prompt() {
     // printf("sexpr> \t");
     // print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
     // puts("");
-    cell *result = eval(list1,env);
+    cell *result = eval(list1, env);
     print_sexpr(result);
     puts("");
   }
@@ -80,8 +80,9 @@ void pairlis_prompt() {
   // cell *str1 = mk_str("hi");
   // cell *sym1 = mk_sym("num1");
   // cell *sym2 = mk_sym("str1");
-  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1), NULL));
-  cell * env = load_env(INIT_FILE_PATH_GLOBAL);
+  // cell *env = mk_cons(mk_cons(sym1, num1), mk_cons(mk_cons(sym2, str1),
+  // NULL));
+  cell *env = load_env(INIT_FILE_PATH_GLOBAL);
   printf("pairlis env: ");
   print_sexpr(env);
   puts("");
@@ -115,5 +116,28 @@ void pairlis_prompt() {
     cell *pair = assoc(label, env);
     print_sexpr(pair);
     puts("");
+  }
+}
+
+void mem_prompt() {
+  int count = 0;
+
+  while (1) {
+    printf("############################## MEMORY "
+           "##############################\n");
+    print_cell_space(memory);
+    printf("> ");
+    int i;
+    scanf("%i", &i);
+    switch (i) {
+    case 1:
+      mk_num(count++);
+      break;
+    case 3:
+      mk_sym("NEW_SYM");
+      break;
+    default:
+      break;
+    }
   }
 }

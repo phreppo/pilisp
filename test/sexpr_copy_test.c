@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
+  init_pi();
   cell *num1 = mk_num(1);
   cell *str1 = mk_str("hi");
   cell *sym1 = mk_sym("var1");

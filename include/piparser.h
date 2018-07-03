@@ -1,6 +1,6 @@
 /** @defgroup piparser
  *
- * @brief provides lexer and parser
+ * @brief Provides lexer and parser
  *
  */
 
@@ -22,19 +22,11 @@ enum {
   TOK_OPEN,       ///< open par token
   TOK_CLOSE,      ///< closed par token
   TOK_DOT,        ///< dot token
-
-  // TODO not handled      
   TOK_QUOTE,      ///< quote token
   TOK_SYM,        ///< symbol token
   TOK_NUM,        ///< number token
   TOK_STR         ///< string token
 };
-
-/**
- * @brief defines the max number of chars for a token
- *
- */
-#define MAX_TOK_LEN 1024
 
 
 /**
