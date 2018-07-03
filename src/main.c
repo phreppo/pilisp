@@ -1,5 +1,5 @@
 #include "pilisp.h"
-#include "pitestutils.h" // TODO: remove on production
+#include "pitestutils.h" // remove once tests
 
 int main(int argc, char **argv) {
   init_pi();
