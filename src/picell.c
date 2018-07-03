@@ -201,6 +201,12 @@ void cell_space_init(cell_space *cs) {
   cs->stack = cell_stack_create();
 }
 
+cell_space *cell_space_create() {
+  cell_space *new_space = malloc(sizeof(cell_space));
+  cell_space_init(new_space);
+  return new_space;
+}
+
 bool cell_space_is_full(const cell_space *cs) {
   return cs->cell_space_size >= cs->cell_space_capacity;
 }
@@ -244,7 +250,8 @@ cell *cell_space_get_cell(cell_space *cs) {
   if (!cs->first_free) {
     // then collect garbage
     collect_garbage(cs);
-    if ((double)((double)cs->n_free_cells / (double)cs->n_cells) <= NEW_BLOCK_THRESHOLD)
+    if ((double)((double)cs->n_free_cells / (double)cs->n_cells) <=
+        NEW_BLOCK_THRESHOLD)
       // free/n->cells is smaller than the threshold to allocate a new block =>
       // allocate!
       cell_space_grow(cs);
@@ -258,8 +265,7 @@ cell *cell_space_get_cell(cell_space *cs) {
 }
 
 void init_memory() {
-  memory = malloc(sizeof(cell_space));
-  cell_space_init(memory);
+  memory = cell_space_create();
 }
 
 void collect_garbage(cell_space *cs) {
@@ -324,7 +330,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
   cs->n_free_cells++;
-  // ! HERE PUT THE POP FROM THE STACK
 }
 
 cell_stack *cell_stack_create() {
@@ -415,7 +420,8 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
         print_sexpr(val);
         puts("");
 #endif
-        free(act);
+        free(act); // no mem leak: it s justa a pointer -> gc will free the
+                   // pointed mem
         if (mode == RECURSIVE) {
           if (car1)
             cell_stack_remove(stack, car1, mode);
@@ -448,9 +454,11 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 
 void cell_stack_remove_args(cell_stack *stack, cell *args) {
   cell *act = args;
+  cell *tmp;
   while (act) {
+    tmp = cdr(act);
     cell_stack_remove(stack, act, SINGLE);
-    act = cdr(act);
+    act = tmp;
   }
 }
 
@@ -468,9 +476,11 @@ void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env,
 
 void cell_stack_remove_cars(cell_stack *stack, cell *list) {
   cell *act = list;
+  cell *tmp;
   while (act) {
-    cell_stack_remove(stack, car(act), RECURSIVE); // single?
-    act = cdr(act);
+    tmp = cdr(act);
+    cell_stack_remove(stack, car(act), RECURSIVE);
+    act = tmp;
   }
 }
 

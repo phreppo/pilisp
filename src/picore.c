@@ -174,6 +174,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
         // FREE THINGS
+        cell_remove_cars(x);              // deep remove cars
         cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
@@ -181,7 +182,6 @@ cell *apply(cell *fn, cell *x, cell *a) {
         cell_remove(cddr(fn), SINGLE);    // cons pointing to body
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
-        cell_remove_cars(x);              // remove deep cars
         return res;
       }
       // LABEL
