@@ -60,107 +60,109 @@ cell *apply(cell *fn, cell *x, cell *a) {
       //========================= ATOM FUNCTION =========================//
       //=========================    (fun x)    =========================//
 
-      // BASIC OPERATIONS
-      if (eq(fn, symbol_car))
-        return builtin_car(x);
-      if (eq(fn, symbol_cdr))
-        return builtin_cdr(x);
-      if (eq(fn, symbol_cons))
-        return builtin_cons(x);
-      if (eq(fn, symbol_atom))
-        return builtin_atom(x);
-      if (eq(fn, symbol_true))
-        pi_error(LISP_ERROR, "T is not a function");
-      if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math))
-        return builtin_eq(x);
+      if (fn->type == TYPE_BUILTINLAMBDA) { // BASIC OPERATIONS
+        if (eq(fn, symbol_car))
+          return builtin_car(x);
+        if (eq(fn, symbol_cdr))
+          return builtin_cdr(x);
+        if (eq(fn, symbol_cons))
+          return builtin_cons(x);
+        if (eq(fn, symbol_atom))
+          return builtin_atom(x);
+        if (eq(fn, symbol_true))
+          pi_error(LISP_ERROR, "T is not a function");
+        if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math))
+          return builtin_eq(x);
 
-      // UTILITY
-      if (eq(fn, symbol_set))
-        return set(x);
-      if (eq(fn, symbol_load))
-        return load(x, &a);
-      if (eq(fn, symbol_timer))
-        return timer(x, &a);
-      if (eq(fn, symbol_mem_dump)) {
-        if (x)
-          pi_error_many_args();
-        printf(ANSI_COLOR_YELLOW
-               "============================== MEMORY "
-               "==============================\n" ANSI_COLOR_RESET);
-        print_cell_space(memory);
-        return symbol_true;
+        // UTILITY
+        if (eq(fn, symbol_set))
+          return set(x);
+        if (eq(fn, symbol_load))
+          return load(x, &a);
+        if (eq(fn, symbol_timer))
+          return timer(x, &a);
+        if (eq(fn, symbol_mem_dump)) {
+          if (x)
+            pi_error_many_args();
+          printf(ANSI_COLOR_YELLOW
+                 "============================== MEMORY "
+                 "==============================\n" ANSI_COLOR_RESET);
+          print_cell_space(memory);
+          return symbol_true;
+        }
+        if (eq(fn, symbol_env)) {
+          if (x)
+            pi_error_many_args();
+          printf(" > env: " ANSI_COLOR_BLUE);
+          print_sexpr(a);
+          printf("\n" ANSI_COLOR_RESET);
+          return symbol_true;
+        }
+        if (eq(fn, symbol_collect_garbage)) {
+          collect_garbage(memory);
+          return symbol_true;
+        }
+        if (eq(fn, symbol_bye))
+          return symbol_bye;
+
+        // ARITHMETIC OPERATORS
+        if (eq(fn, symbol_addition))
+          return addition(x);
+        if (eq(fn, symbol_subtraction))
+          return subtraction(x);
+        if (eq(fn, symbol_multiplication))
+          return multiplication(x);
+        if (eq(fn, symbol_division))
+          return division(x);
+
+        // LOGICAL OPERATORS
+        if (eq(fn, symbol_or))
+          return or (x);
+        if (eq(fn, symbol_and))
+          return and(x);
+        if (eq(fn, symbol_not))
+          return not(x);
+
+        // COMPARISON OPERATORS
+        if (eq(fn, symbol_greater))
+          return greater(x);
+        if (eq(fn, symbol_greater_equal))
+          return greater_eq(x);
+        if (eq(fn, symbol_less))
+          return less(x);
+        if (eq(fn, symbol_less_equal))
+          return less_eq(x);
+
+        // LISTS
+        if (eq(fn, symbol_length))
+          return length(x);
+        if (eq(fn, symbol_member))
+          return member(x);
+        if (eq(fn, symbol_nth))
+          return nth(x);
+        if (eq(fn, symbol_list))
+          return list(x);
+
+      } else {
+
+        // CUSTOM FUNCTION
+        // does lambda exists?
+        cell *function_body = eval(fn, a); // ! REMOVE THIS ONCE RESOLVED
+        if (function_body == NULL) {
+          char *err = "unknown function ";
+          char *fn_name = fn->sym;
+          char *result = malloc(strlen(err) + strlen(fn_name) + 1);
+          strcpy(result, err);
+          strcat(result, fn_name);
+          pi_error(LISP_ERROR, result);
+        }
+        if (!is_cons(function_body))
+          pi_error(LISP_ERROR, "trying to apply a non-lambda");
+
+        // the env knows the lambda
+        cell *ret = apply(function_body, x, a);
+        return ret;
       }
-      if (eq(fn, symbol_env)) {
-        if (x)
-          pi_error_many_args();
-        printf(" > env: " ANSI_COLOR_BLUE);
-        print_sexpr(a);
-        printf("\n" ANSI_COLOR_RESET);
-        return symbol_true;
-      }
-      if (eq(fn, symbol_collect_garbage)) {
-        collect_garbage(memory);
-        return symbol_true;
-      }
-      if(eq(fn, symbol_bye)){
-        return symbol_bye;
-      }
-
-      // ARITHMETIC OPERATORS
-      if (eq(fn, symbol_addition))
-        return addition(x);
-      if (eq(fn, symbol_subtraction))
-        return subtraction(x);
-      if (eq(fn, symbol_multiplication))
-        return multiplication(x);
-      if (eq(fn, symbol_division))
-        return division(x);
-
-      // LOGICAL OPERATORS
-      if (eq(fn, symbol_or))
-        return or (x);
-      if (eq(fn, symbol_and))
-        return and(x);
-      if (eq(fn, symbol_not))
-        return not(x);
-
-      // COMPARISON OPERATORS
-      if (eq(fn, symbol_greater))
-        return greater(x);
-      if (eq(fn, symbol_greater_equal))
-        return greater_eq(x);
-      if (eq(fn, symbol_less))
-        return less(x);
-      if (eq(fn, symbol_less_equal))
-        return less_eq(x);
-
-      // LISTS
-      if (eq(fn, symbol_length))
-        return length(x);
-      if (eq(fn, symbol_member))
-        return member(x);
-      if (eq(fn, symbol_nth))
-        return nth(x);
-      if (eq(fn, symbol_list))
-        return list(x);
-
-      // CUSTOM FUNCTION
-      // does lambda exists?
-      cell *function_body = eval(fn, a); // ! REMOVE THIS ONCE RESOLVED
-      if (function_body == NULL) {
-        char *err = "unknown function ";
-        char *fn_name = fn->sym;
-        char *result = malloc(strlen(err) + strlen(fn_name) + 1);
-        strcpy(result, err);
-        strcat(result, fn_name);
-        pi_error(LISP_ERROR, result);
-      }
-      if (!is_cons(function_body))
-        pi_error(LISP_ERROR, "trying to apply a non-lambda");
-
-      // the env knows the lambda
-      cell *ret = apply(function_body, x, a);
-      return ret;
 
     } else {
       //========================= COMPOSED FUNCTION =========================//
@@ -190,14 +192,15 @@ cell *apply(cell *fn, cell *x, cell *a) {
       // LABEL
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
-        cell * res = apply(caddr(fn), x, new_env);
-        cell_remove(cddr(fn),SINGLE);         // cons of the body
-        cell_remove(cadr(fn),SINGLE);         // symbol to bind
-        cell_remove(cdr(fn),SINGLE);          // cons of the top level
-        cell_remove(car(fn),SINGLE);          // symbol label
-        cell_remove(fn,SINGLE);               // cons of everything
-        cell_remove(car(new_env),SINGLE);     // new cons of the pair of the new env
-        cell_remove(new_env,SINGLE);          // head of new env
+        cell *res = apply(caddr(fn), x, new_env);
+        cell_remove(cddr(fn), SINGLE); // cons of the body
+        cell_remove(cadr(fn), SINGLE); // symbol to bind
+        cell_remove(cdr(fn), SINGLE);  // cons of the top level
+        cell_remove(car(fn), SINGLE);  // symbol label
+        cell_remove(fn, SINGLE);       // cons of everything
+        cell_remove(car(new_env),
+                    SINGLE);          // new cons of the pair of the new env
+        cell_remove(new_env, SINGLE); // head of new env
         return res;
       }
 
@@ -277,6 +280,7 @@ cell *eval(cell *e, cell *a) {
       evaulated = cadr(e);
       cell_remove(e, SINGLE);
       cell_remove(cdr(e), SINGLE);
+
     } else {
 
       if (eq(car(e), symbol_cond)) {
@@ -314,6 +318,9 @@ cell *eval(cell *e, cell *a) {
         if (eq(car(e), symbol_lambda)) {
           // lambda "autoquote"
           evaulated = e;
+        } else if (eq(car(e), symbol_macro)) {
+          // lambda "autoquote"
+          evaulated = e;
         } else {
           // apply atom function to evaluated list of parameters
           cell *evaulated_args = evlis(cdr(e), a);
@@ -330,11 +337,28 @@ cell *eval(cell *e, cell *a) {
   //=========================   ((lambda (x) x) 1)   =========================//
 
   else {
-    // composed function
-    evaulated = apply(car(e), evlis(cdr(e), a), a);
-    cell_remove(e, SINGLE);   // remove function
-    cell_remove_args(cdr(e)); // remove list of args
+
+    if ((eq(caar(e), symbol_macro))) {
+      // MACRO
+      // ==================== ! LEAKS MEMORY ====================
+      cell *old_env = a;
+      // cell *body = car(e);
+      cell *body = car(e);
+      // cell *prm = cdr(e);
+      cell *prm = cdr(e);
+      a = pairlis(cadr(body), prm, a);
+
+      cell *fn_body = caddr(body);
+      evaulated = eval(fn_body, a);
+      // evaulated = eval(evaulated, a);
+    } else {
+      // composed function
+      evaulated = apply(car(e), evlis(cdr(e), a), a);
+      cell_remove(e, SINGLE); // remove function
+      cell_remove_args(cdr(e));
+    }
   }
+  // remove list of args
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
@@ -377,10 +401,10 @@ cell *evcon(cell *c, cell *a) {
   } else {
     // result of the last eval
     cell_remove(res, RECURSIVE);
-    
+
     // remove the unevaluated body
-    cell_remove(cadar(c),RECURSIVE);
-    
+    cell_remove(cadar(c), RECURSIVE);
+
     res = evcon(cdr(c), a);
   }
   // cons of the body

@@ -75,6 +75,7 @@ cell *symbol_collect_garbage;
 cell *symbol_dotimes;
 cell *symbol_list;
 cell *symbol_bye;
+cell *symbol_macro;
 
 #endif // !PIINIT_H
 

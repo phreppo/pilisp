@@ -90,5 +90,5 @@ int main(int argc, char **argv) {
   fclose(result_file_read);
   int ret = (total_eq(expected_result, res));
   free_pi();
-  return 0;
+  return !(ret);
 }

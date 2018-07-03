@@ -37,6 +37,7 @@ void init_builtin_lambdas(){
   symbol_dotimes = mk_builtin_lambda("DOTIMES");
   symbol_list = mk_builtin_lambda("LIST");
   symbol_bye = mk_builtin_lambda("BYE");
+  symbol_macro = mk_builtin_lambda("MACRO");
 }
 
 // adds to the list of the language symbols the new sym

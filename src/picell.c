@@ -348,7 +348,9 @@ cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
 }
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
-  if (val && is_builtin(val))
+  if(!val)
+    return;
+  if (is_builtin(val))
     return;
   cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
   if (stack->head == NULL) {
