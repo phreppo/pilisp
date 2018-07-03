@@ -285,10 +285,16 @@ lisp_program_load_test = executable(
     link_with : pilisplib
 )
 # Cases lisp programs prints
-test('[LOAD] load test', lisp_program_load_test, args : [
+test('[LOAD] first load test', lisp_program_load_test, args : [
     programs_path+'loadtest.lisp',
+    '1',
+    '1',
+    '34'
 ])
 
-# test('[LOAD] maze test', lisp_program_load_test, args : [
-#     programs_path+'maze.lisp',
-# ])
+test('[LOAD] maze test', lisp_program_load_test, args : [
+    programs_path+'maze.lisp',
+    '(solveMaze maze1)',
+    '(2 3 1 0))',
+    '35'
+])

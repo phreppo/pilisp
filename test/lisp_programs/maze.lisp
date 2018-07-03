@@ -11,9 +11,9 @@
         (
             (not doors)
             ; no exit
-            NIL
+            nil
         ) (
-            T ; at least one door
+            t ; at least one door
             (cond 
                 ( (not (solveMazeRec maze (car doors) exploredCells))
                     ; => the result is not a valid path 
@@ -37,7 +37,7 @@
             ) 
             ((member actualCell exploredCells)
                 ; already explored this path        
-                NIL)
+                nil)
             (t
                 ; not finished
                 (sm1 maze actualCell (cons actualCell exploredCells) (nth actualCell maze))
@@ -48,7 +48,7 @@
 
 (set 'solveMaze 
     (lambda (maze)
-    (solveMazeRec 0 '() maze) )
+    (solveMazeRec maze 0 '()))
 )
 
-(solveMaze maze1)
+; (solveMaze maze1)
