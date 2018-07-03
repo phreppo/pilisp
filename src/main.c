@@ -32,5 +32,7 @@ int main(int argc, char **argv) {
   // lexer_prompt();
   // parse_prompt();
   // eval_prompt();
+
+  free_pi();
   return 0;
 }

@@ -46,8 +46,6 @@ int pi_prompt() {
     else
       cell_remove(result, RECURSIVE);
   }
-  cell_space_free(memory);
-
   return 0;
 }
 

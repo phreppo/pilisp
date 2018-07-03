@@ -80,5 +80,7 @@ int main(int argc, char **argv) {
   }
   cell *expected_result = read_sexpr(result_file_read);
   fclose(result_file_read);
-  return !(total_eq(expected_result, res));
+  int ret = (total_eq(expected_result, res));
+  free_pi();
+  return !ret;
 }

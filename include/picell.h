@@ -49,6 +49,7 @@ typedef struct cell {
  ********************************************************************************/
 
 void init_memory();
+void free_memory();
 cell *get_cell();
 cell *mk_num(int n);
 cell *mk_str(const char *s);
@@ -108,6 +109,7 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
 void cell_stack_remove_args(cell_stack *stack, cell *args);
 void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env, cell *old_env);
 void cell_stack_remove_cars(cell_stack *stack, cell *list);
+void cell_stack_free(cell_stack * stack);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
@@ -129,10 +131,10 @@ typedef struct {
   size_t cell_space_capacity;
   size_t n_cells;
   size_t n_free_cells;
-  cell_block *blocks;
   cell *first_free;
-  cell_stack *stack;
   cell *global_env;
+  cell_block *blocks;
+  cell_stack *stack;
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the

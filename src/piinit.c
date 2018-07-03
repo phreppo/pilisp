@@ -131,3 +131,7 @@ cell *load_env(char *init_file_path) {
   }
   return read_sexpr(fp);
 }
+
+void free_pi(){
+  free_memory();
+}

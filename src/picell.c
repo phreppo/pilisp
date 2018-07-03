@@ -509,7 +509,7 @@ void cell_space_free(cell_space *cs) {
       cell_block_free((cs->blocks) + block_index);
     free(cs->blocks);
 
-    // stack
+    cell_stack_free(cs->stack);
     
     free(cs);
   }
@@ -524,4 +524,20 @@ void cell_block_free(cell_block *cb) {
     
     free(cb->block);
   }
+}
+
+void cell_stack_free(cell_stack * stack){
+  if(stack){
+    cell_stack_node * act = stack->head;
+    cell_stack_node * tmp;
+    while(act){
+      tmp = act->next;
+      free(act);
+      act = tmp;
+    }
+  }
+}
+
+void free_memory(){
+  cell_space_free(memory);
 }
