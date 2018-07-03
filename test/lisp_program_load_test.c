@@ -15,14 +15,21 @@ char *string_merge(char *str1, char *str2) {
   return new_str;
 }
 
-// how to use: [1] = program text; [2] = sexpression result; [3](optional) =
-// file number. why [3]? beacuse when you run many tests at the same you can
-// occur in file opening errors
+// how to use:
+//  [1] = program file path;
+//  [2] = program to execute after the first;
+//  [3] = sexpression result;
+//  [4](optional) = file number. why [4]? beacuse when you run many tests at the
+//  same you can occur in file opening errors
+//
+// Execution: load and parse the [1] program (write there your test functions)
+// => execute the program in [2] => check that the result of the last
+// sexpression in equal to [3]
 int main(int argc, char **argv) {
   init_pi();
   char *load_file_name = argv[1];
   parse_file(load_file_name);
-  
+
   char *program = argv[2];
   puts(program);
 
