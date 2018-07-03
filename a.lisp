@@ -17,6 +17,8 @@ n
 (ff '(a))
 (ff '((((a) b ) c ) d))
 (ff '((a) b ))
+((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a)))
+((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) 'a)
 
 ((lambda (x) (cond ((eq x 1) 1 ) ((eq x 2) 2) (t 666))) '(1))
 ((lambda (x) x) '(1))

@@ -267,4 +267,11 @@ test('[LISP] stress test 1', lisp_program_test, args : [
     'NIL',
     '32'
 ])
+
+test('[LISP] label test', lisp_program_test, args : [
+    '((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) \'((a)))',
+    'A',
+    '33'
+])
 # (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
+# ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a))

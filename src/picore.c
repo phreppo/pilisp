@@ -185,10 +185,17 @@ cell *apply(cell *fn, cell *x, cell *a) {
         return res;
       }
       // LABEL
-      // TODO: cell_remove here
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
-        return apply(caddr(fn), x, new_env);
+        cell * res = apply(caddr(fn), x, new_env);
+        cell_remove(cddr(fn),SINGLE);         // cons of the body
+        cell_remove(cadr(fn),SINGLE);         // symbol to bind
+        cell_remove(cdr(fn),SINGLE);          // cons of the top level
+        cell_remove(car(fn),SINGLE);          // symbol label
+        cell_remove(fn,SINGLE);               // cons of everything
+        cell_remove(car(new_env),SINGLE);     // new cons of the pair of the new env
+        cell_remove(new_env,SINGLE);          // head of new env
+        return res;
       }
 
 #if DEBUG_EVAL_MODE

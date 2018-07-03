@@ -1,6 +1,5 @@
 #include "pilisp.h"
 
-// TODO: make this run
 int pi_prompt() {
 
   // printf("\n  ____  ____  __    ____  ___  ____ \n (  _ \\(_  _)(  )  (_  _)/
@@ -62,7 +61,7 @@ cell *parse_file(char *file_path) {
     cell *sexpr = read_sexpr(program_file);
     if (sexpr != symbol_file_ended) {
       res = eval(sexpr, memory->global_env);
-      // cell_remove(res);
+      cell_remove(res,RECURSIVE);
     }
   }
   fclose(program_file);
