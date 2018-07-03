@@ -41,12 +41,13 @@ int pi_prompt() {
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    if (result == symbol_bye)
+    if (result == symbol_bye) 
       repeat = false;
-      // free the full mem
     else
       cell_remove(result, RECURSIVE);
   }
+  cell_space_free(memory);
+
   return 0;
 }
 

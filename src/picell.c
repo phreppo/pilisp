@@ -264,9 +264,7 @@ cell *cell_space_get_cell(cell_space *cs) {
   return new_cell;
 }
 
-void init_memory() {
-  memory = cell_space_create();
-}
+void init_memory() { memory = cell_space_create(); }
 
 void collect_garbage(cell_space *cs) {
 #if DEBUG_GARBAGE_COLLECTOR_MODE
@@ -502,4 +500,28 @@ void cell_remove_pairlis(cell *new_env, cell *old_env) {
 
 void cell_remove_cars(cell *list) {
   cell_stack_remove_cars(memory->stack, list);
+}
+
+void cell_space_free(cell_space *cs) {
+  if (cs) {
+    size_t block_index;
+    for (block_index = 0; block_index < cs->cell_space_size; block_index++) 
+      cell_block_free((cs->blocks) + block_index);
+    free(cs->blocks);
+
+    // stack
+    
+    free(cs);
+  }
+}
+
+void cell_block_free(cell_block *cb) {
+  if (cb) {
+    size_t cell_index = 0;
+    for (cell_index = 0; cell_index < cb->block_size; cell_index++) 
+      // free the memory pointed from strings and symbols
+      free_cell_pointed_memory(cb->block + cell_index);
+    
+    free(cb->block);
+  }
 }
