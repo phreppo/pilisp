@@ -13,6 +13,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/********************************************************************************
+ *                                  CELL DEFINITION
+ ********************************************************************************/
+
 enum {
   TYPE_CONS = 0, 
   TYPE_SYM,      
@@ -40,12 +44,11 @@ typedef struct cell {
   // TODO: add pointer for funciton for builtin lambda
 } cell;
 
-void init_memory();
-
-
 /********************************************************************************
  *                                CELL CREATION
  ********************************************************************************/
+
+void init_memory();
 cell *get_cell();
 cell *mk_num(int n);
 cell *mk_str(const char *s);
@@ -57,6 +60,7 @@ cell *copy_cell(const cell *c);
 /********************************************************************************
  *                                CELL IDENTIFICATION
  ********************************************************************************/
+
 int is_num(const cell *c);
 int is_str(const cell *c);
 int is_sym(const cell *c);

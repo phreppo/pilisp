@@ -36,6 +36,7 @@ void init_builtin_lambdas(){
   symbol_collect_garbage = mk_builtin_lambda("CG");
   symbol_dotimes = mk_builtin_lambda("DOTIMES");
   symbol_list = mk_builtin_lambda("LIST");
+  symbol_bye = mk_builtin_lambda("BYE");
 }
 
 // adds to the list of the language symbols the new sym

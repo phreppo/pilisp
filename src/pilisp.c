@@ -22,7 +22,8 @@ int pi_prompt() {
   // printf("env: ");
   // print_sexpr(env);
   // puts("");
-  while (1) {
+  bool repeat = true;
+  while (repeat) {
     // sets the destination for longjump here if errors were encountered
     // during parsing
     jmp_destination = setjmp(env_buf);
@@ -35,13 +36,16 @@ int pi_prompt() {
         scanf("%c", &ch);
     }
     printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
-    cell * sexpression = read_sexpr(stdin);
+    cell *sexpression = read_sexpr(stdin);
     cell *result = eval(sexpression, memory->global_env);
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    cell_remove(result,RECURSIVE);
-    // cell_remove(sexpression, RECURSIVE);
+    if (result == symbol_bye)
+      repeat = false;
+      // free the full mem
+    else
+      cell_remove(result, RECURSIVE);
   }
   return 0;
 }
@@ -61,7 +65,7 @@ cell *parse_file(char *file_path) {
     cell *sexpr = read_sexpr(program_file);
     if (sexpr != symbol_file_ended) {
       res = eval(sexpr, memory->global_env);
-      cell_remove(res,RECURSIVE);
+      cell_remove(res, RECURSIVE);
     }
   }
   fclose(program_file);

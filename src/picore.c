@@ -102,6 +102,9 @@ cell *apply(cell *fn, cell *x, cell *a) {
         collect_garbage(memory);
         return symbol_true;
       }
+      if(eq(fn, symbol_bye)){
+        return symbol_bye;
+      }
 
       // ARITHMETIC OPERATORS
       if (eq(fn, symbol_addition))
