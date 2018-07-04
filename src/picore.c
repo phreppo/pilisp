@@ -312,66 +312,70 @@ cell *eval(cell *e, cell *a) {
   else if (atom(car(e))) {
     // car of the cons cell is an atom
 
-    if (eq(car(e), symbol_quote)) {
+    if (is_builtin_macro(car(e))) {
+      // ==================== BUILTIN MACRO ====================
+      if (eq(car(e), symbol_setq)) 
+        evaulated = setq(cdr(e), a);
+      cell_remove(e,SINGLE);
+    } 
+    
+    // ==================== SPECIAL FORMS ====================
+    else if (eq(car(e), symbol_quote)) {
       // QUOTE
       evaulated = cadr(e);
       cell_remove(e, SINGLE);
       cell_remove(cdr(e), SINGLE);
 
+    } else if (eq(car(e), symbol_cond)) {
+      // COND
+      cell *res;
+      evaulated = evcon(cdr(e), a);
+      cell_remove(e, SINGLE);
+    } else if (eq(car(e), symbol_dotimes)) {
+      // DOTIMES
+      size_t n = 0;
+      cell *name_list = car(cdr(e));
+      cell *num = car(cdr(car(cdr(e))));
+      cell *expr = caddr(e);
+      cell *new_env;
+      for (n = 0; n < num->value; n++) {
+        cell *num_list_new = mk_cons(mk_num(n), NULL);
+        new_env = pairlis(name_list, num_list_new, a);
+        if (n > 0)
+          // we have to protect the body of the function
+          cell_push(expr, RECURSIVE);
+        evaulated = eval(expr, new_env);
+        // remove the result
+        cell_remove(evaulated, RECURSIVE);
+        // remove the pair (n [actual_value])
+        cell_remove_pairlis(new_env, a);
+        // remove the just created cell
+        cell_remove(num_list_new, RECURSIVE);
+      }
+      cell_remove(cadr(e),
+                  RECURSIVE); // remove the pair and cons (n [number])
+      cell_remove_args(e);
+      return NULL;
     } else {
 
-      if (eq(car(e), symbol_cond)) {
-        // COND
-        cell *res;
-        evaulated = evcon(cdr(e), a);
-        cell_remove(e, SINGLE);
-      } else if (eq(car(e), symbol_dotimes)) {
-        // DOTIMES
-        size_t n = 0;
-        cell *name_list = car(cdr(e));
-        cell *num = car(cdr(car(cdr(e))));
-        cell *expr = caddr(e);
-        cell *new_env;
-        for (n = 0; n < num->value; n++) {
-          cell *num_list_new = mk_cons(mk_num(n), NULL);
-          new_env = pairlis(name_list, num_list_new, a);
-          if (n > 0)
-            // we have to protect the body of the function
-            cell_push(expr, RECURSIVE);
-          evaulated = eval(expr, new_env);
-          // remove the result
-          cell_remove(evaulated, RECURSIVE);
-          // remove the pair (n [actual_value])
-          cell_remove_pairlis(new_env, a);
-          // remove the just created cell
-          cell_remove(num_list_new, RECURSIVE);
-        }
-        cell_remove(cadr(e),
-                    RECURSIVE); // remove the pair and cons (n [number])
-        cell_remove_args(e);
-        return NULL;
+      if (eq(car(e), symbol_lambda)) {
+        // lambda "autoquote"
+        evaulated = e;
+      } else if (eq(car(e), symbol_macro)) {
+        // macro "autoquote"
+        evaulated = e;
       } else {
-
-        if (eq(car(e), symbol_lambda)) {
-          // lambda "autoquote"
-          evaulated = e;
-        } else if (eq(car(e), symbol_macro)) {
-          // macro "autoquote"
-          evaulated = e;
-        } else {
-          // apply atom function to evaluated list of parameters
-          // cell *evaulated_args = evlis(cdr(e), a);
-          cell *args = cdr(e);
-          // evaulated = apply(car(e), evaulated_args, a,true);
-          evaulated = apply(car(e), args, a, true);
-          cell_remove(e, SINGLE);   // remove function
-          cell_remove_args(cdr(e)); // remove list of args
-          // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
-          // we have the result: we can unlock the unvalued expression
-        }
+        // apply atom function to evaluated list of parameters
+        // cell *evaulated_args = evlis(cdr(e), a);
+        cell *args = cdr(e);
+        // evaulated = apply(car(e), evaulated_args, a,true);
+        evaulated = apply(car(e), args, a, true);
+        cell_remove(e, SINGLE);   // remove function
+        cell_remove_args(cdr(e)); // remove list of args
       }
     }
   }
+
   //========================= COMPOSED FUNCTION EVAL =========================//
   //=========================   ((lambda (x) x) 1)   =========================//
 

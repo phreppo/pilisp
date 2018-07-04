@@ -62,9 +62,25 @@ cell *is_symbol_builtin_lambda(const char *symbol) {
   return NULL;
 }
 
+cell *is_symbol_builtin_macro(const char *symbol) {
+  size_t i = 0;
+  for (i = 0; i < builtin_macro_index; i++) {
+
+    if (strcmp(BUILTIN_MACROS[i].sym, symbol) == 0)
+      // found!
+      return BUILTIN_MACROS + i;
+  }
+  // not found
+  return NULL;
+}
+
 cell *mk_sym(const char *symbol) {
   // check if is a builtin lambda
   cell *allocated = is_symbol_builtin_lambda(symbol);
+  if (allocated)
+    return allocated;
+  
+  allocated = is_symbol_builtin_macro(symbol);
   if (allocated)
     return allocated;
 
@@ -122,6 +138,21 @@ cell *mk_builtin_lambda(const char *symbol) {
   return lambda;
 }
 
+cell *mk_builtin_macro(const char *symbol) {
+  cell *macro = &BUILTIN_MACROS[builtin_macro_index++];
+  macro->type = TYPE_BUILTINMACRO;
+  macro->sym = symbol;
+  macro->str = malloc(strlen(symbol) + 1);
+  int i = 0;
+  strcpy(macro->str, symbol);
+  // case unsensitive
+  while ((macro->str)[i]) {
+    macro->str[i] = toupper(macro->str[i]);
+    i++;
+  }
+  return macro;
+}
+
 cell *copy_cell(const cell *c) {
   if (!c)
     return NULL;
@@ -150,9 +181,11 @@ cell *copy_cell(const cell *c) {
 int is_num(const cell *c) { return c->type == TYPE_NUM; }
 int is_str(const cell *c) { return c->type == TYPE_STR; }
 int is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA;
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA || c->type == BUILTIN_MACROS;
 }
-int is_builtin(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+int is_builtin(const cell *c) { return is_builtin_lambda(c) || is_builtin_macro(c); }
+int is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+int is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
 
 //||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
 int is_cons(const cell *c) { return c->type == TYPE_CONS; }
@@ -348,7 +381,7 @@ cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
 }
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
-  if(!val)
+  if (!val)
     return;
   if (is_builtin(val))
     return;
@@ -507,12 +540,12 @@ void cell_remove_cars(cell *list) {
 void cell_space_free(cell_space *cs) {
   if (cs) {
     size_t block_index;
-    for (block_index = 0; block_index < cs->cell_space_size; block_index++) 
+    for (block_index = 0; block_index < cs->cell_space_size; block_index++)
       cell_block_free((cs->blocks) + block_index);
     free(cs->blocks);
 
     cell_stack_free(cs->stack);
-    
+
     free(cs);
   }
 }
@@ -520,19 +553,19 @@ void cell_space_free(cell_space *cs) {
 void cell_block_free(cell_block *cb) {
   if (cb) {
     size_t cell_index = 0;
-    for (cell_index = 0; cell_index < cb->block_size; cell_index++) 
+    for (cell_index = 0; cell_index < cb->block_size; cell_index++)
       // free the memory pointed from strings and symbols
       free_cell_pointed_memory(cb->block + cell_index);
-    
+
     free(cb->block);
   }
 }
 
-void cell_stack_free(cell_stack * stack){
-  if(stack){
-    cell_stack_node * act = stack->head;
-    cell_stack_node * tmp;
-    while(act){
+void cell_stack_free(cell_stack *stack) {
+  if (stack) {
+    cell_stack_node *act = stack->head;
+    cell_stack_node *tmp;
+    while (act) {
       tmp = act->next;
       free(act);
       act = tmp;
@@ -540,6 +573,4 @@ void cell_stack_free(cell_stack * stack){
   }
 }
 
-void free_memory(){
-  cell_space_free(memory);
-}
+void free_memory() { cell_space_free(memory); }

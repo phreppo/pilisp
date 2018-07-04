@@ -66,6 +66,10 @@ cell *member(const cell *list);
 cell *nth(const cell *list);
 cell *list(const cell *list);
 
+
+// ==================== MACROS ====================
+cell *setq(const cell * args, cell * env);
+
 #endif // !PIBUILTIN_H
 
 /*@}*/

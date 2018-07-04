@@ -40,10 +40,9 @@ void init_builtin_lambdas() {
   symbol_macro = mk_builtin_lambda("MACRO");
 }
 
-// adds to the list of the language symbols the new sym
-static void add_language_symbol(cell *sym) {
-  // cell *head = mk_cons(sym, LANGUAGE_SYMBOLS);
-  // LANGUAGE_SYMBOLS = head;
+void init_builtin_macros(){
+  builtin_macro_index = 0;
+  symbol_setq = mk_builtin_macro("SETQ");
 }
 
 void init_env() {
@@ -55,48 +54,14 @@ void init_env() {
   // write the basic functions to one file, then load them
   write_program_to_file(
       ".piinit",
-      "(set 'setq (macro (name val) (set name val)))"
       "(set 'defun (macro (name param body) "
       "(list 'set (list 'quote name) (list 'lambda param body))))"
-      "(setq maze1 '("
-      "    (1) "
-      "    (0 3)"
-      "    (3 -1)"
-      "    (1 2) ))"
-      ""
-      "(defun sm1 (maze actualCell exploredCells doors)"
-      "    (cond "
-      "        ( (not doors)"
-      "            nil ) "
-      "        ( t "
-      "            (cond "
-      "                ( (not (solveMazeRec maze (car doors) exploredCells))"
-      "                    (sm1 maze actualCell exploredCells (cdr doors)) ) "
-      "                ( t "
-      "                    (solveMazeRec maze (car doors) exploredCells)"
-      "                ) ) ) ) )"
-      ""
-      "(defun solveMazeRec "
-      "    (maze actualCell exploredCells)"
-      "        (cond "
-      "            ((= actualCell -1)"
-      "                exploredCells"
-      "            ) "
-      "            ((member actualCell exploredCells)     "
-      "                nil)"
-      "            (t"
-      "                (sm1 maze actualCell (cons actualCell exploredCells) "
-      "(nth actualCell maze))"
-      "            ) ) )"
-      ""
-      ""
-      "(defun solveMaze "
-      "    (maze)"
-      " (solveMazeRec maze 0 '()) )");
+      );
   parse_file(".piinit");
 }
 
 void init_pi() {
+  init_builtin_macros();
   init_builtin_lambdas();
   init_memory();
   init_env();

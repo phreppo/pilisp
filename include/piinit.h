@@ -16,6 +16,9 @@
 // array of builtin lambdas
 cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
 size_t builtin_lambda_index;
+// array of builtin macros
+cell BUILTIN_MACROS[N_BUILTIN_MACRO];
+size_t builtin_macro_index;
 
 // list of the builtin symbols: the garbage collector will mark this as used,
 // otherwise they would be collected
@@ -28,6 +31,7 @@ cell *LANGUAGE_SYMBOLS;
 void init_pi();  // always call this before using pilisp
 void init_env(); // inits the global env
 void init_builtin_lambdas();
+void init_builtin_macros();
 cell *load_env(char *init_file_path);
 
 /********************************************************************************
@@ -40,6 +44,7 @@ void free_pi();
  *                                 BUILTIN SYMBOLS
  ********************************************************************************/
 
+// ==================== LAMBDAS ====================
 cell *symbol_car;
 cell *symbol_cdr;
 cell *symbol_cons;
@@ -76,6 +81,9 @@ cell *symbol_dotimes;
 cell *symbol_list;
 cell *symbol_bye;
 cell *symbol_macro;
+
+// ==================== MACROS ====================
+cell *symbol_setq;
 
 #endif // !PIINIT_H
 

@@ -23,5 +23,6 @@
         "functional": "c",
         "ratio": "c",
         "tuple": "c"
-    }
+    },
+    "python.linting.pylintEnabled": false
 }

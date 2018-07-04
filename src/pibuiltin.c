@@ -4,7 +4,8 @@
 int atom(const cell *c) {
   return (c == NULL) // NIL case
          || (c->type == TYPE_SYM || c->type == TYPE_NUM ||
-             c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA);
+             c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA
+             || c->type == TYPE_BUILTINMACRO);
 }
 
 bool eq(const cell *v1, const cell *v2) {
@@ -508,4 +509,15 @@ cell *builtin_eq(const cell *args) {
     res = NULL;
   cell_remove(args, RECURSIVE);
   return res;
+}
+
+cell *setq(const cell * args,cell * env){
+  // TODO check types
+  cell * sym = car(args);
+  cell * val = eval(cadr(args),env);
+  cell * new_args = mk_cons(sym,mk_cons(val,NULL));
+  // TODO FREE MEM
+  cell * ret = set(new_args);
+  cell_remove_args(args);
+  return ret;
 }
