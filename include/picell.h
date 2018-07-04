@@ -63,8 +63,8 @@ cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 /********************************************************************************
-*                                  CELL PROTECTION
-********************************************************************************/
+ *                                  CELL PROTECTION
+ ********************************************************************************/
 
 enum push_remove_mode {
   SINGLE,
@@ -72,11 +72,11 @@ enum push_remove_mode {
 };
 
 void cell_push(cell *c, unsigned char mode);   // mark as used
-void cell_remove(cell *c, unsigned char mode); // mark as not used
+void cell_remove(const cell *c, unsigned char mode); // mark as not used
 void cell_remove_args(
-    cell *args); // removes from the stack the structure of the args
-void cell_remove_pairlis(cell *new_env, cell *old_env);
-void cell_remove_cars(cell *list);
+    const cell *args); // removes from the stack the structure of the args
+void cell_remove_pairlis(const cell *new_env, const cell *old_env);
+void cell_remove_cars(const cell *list);
 
 /********************************************************************************
  *                                CELL IDENTIFICATION
@@ -111,12 +111,12 @@ cell_stack *cell_stack_create();
 cell_stack_node *cell_stack_node_create_node(cell *val);
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode);
-void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
-void cell_stack_remove_args(cell_stack *stack, cell *args);
-void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env, cell *old_env);
+void cell_stack_remove(cell_stack *stack,const cell *val, unsigned char mode);
+void cell_stack_remove_args(cell_stack *stack,const  cell *args);
+void cell_stack_remove_pairlis(cell_stack *stack,const cell *new_env,const cell *old_env);
 void cell_stack_remove_cars(
     cell_stack *stack,
-    cell *list); // recursively eliminates the cars in the list
+    const cell *list); // recursively eliminates the cars in the list
 void cell_stack_free(cell_stack *stack);
 
 /********************************************************************************

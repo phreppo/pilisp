@@ -2,7 +2,7 @@
 
 // returns true if the cell is in the global env. Use it only for print
 // purposes: it's extremely inefficient
-static bool is_in_global_env(cell *global_env, cell *c) {
+static bool is_in_global_env(cell *global_env,const cell *c) {
   if (!global_env)
     // no global env
     return false;
@@ -303,7 +303,7 @@ void print_stack(const cell_stack *stack) {
     cell_stack_node *it = stack->head;
     size_t i = 0;
     while (it) {
-      printf("%u\t", i);
+      printf("%lu\t", i);
       if (!is_in_global_env(memory->global_env, it->c))
         printf(ANSI_COLOR_BLUE);
       else
@@ -326,7 +326,7 @@ void print_stack(const cell_stack *stack) {
 }
 
 void print_global_env(const cell *env) {
-  cell *act = env;
+  const cell *act = env;
   printf("Head : %p\n", act);
   while (act) {
     cell *pair = car(act);

@@ -126,8 +126,7 @@ cell *mk_cons(cell *car, cell *cdr) {
 cell *mk_builtin_lambda(const char *symbol) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
-  lambda->sym = symbol;
-  lambda->str = malloc(strlen(symbol) + 1);
+  lambda->sym = malloc(strlen(symbol) + 1);
   int i = 0;
   strcpy(lambda->str, symbol);
   // case unsensitive
@@ -141,8 +140,7 @@ cell *mk_builtin_lambda(const char *symbol) {
 cell *mk_builtin_macro(const char *symbol) {
   cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
-  macro->sym = symbol;
-  macro->str = malloc(strlen(symbol) + 1);
+  macro->sym = malloc(strlen(symbol) + 1);
   int i = 0;
   strcpy(macro->str, symbol);
   // case unsensitive
@@ -182,7 +180,7 @@ bool is_num(const cell *c) { return c->type == TYPE_NUM; }
 bool is_str(const cell *c) { return c->type == TYPE_STR; }
 bool is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == BUILTIN_MACROS;
+         c->type == TYPE_BUILTINMACRO;
 }
 bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
 bool is_builtin(const cell *c) {
@@ -248,7 +246,7 @@ bool cell_space_is_full(const cell_space *cs) {
 void cell_space_double_capacity_if_full(cell_space *cs) {
   if (cs->cell_space_size >= cs->cell_space_capacity) {
     // double vector->capacity and resize the allocated memory accordingly
-    cs->cell_space_capacity *= 2;
+    cs->cell_space_capacity = ( cs->cell_space_capacity <= 0 ? 1 : cs->cell_space_capacity * 2);
     cs->blocks = (cell_block *)realloc(cs->blocks, sizeof(cell_block) *
                                                        cs->cell_space_capacity);
   }
@@ -261,7 +259,9 @@ void cell_space_grow(cell_space *cs) {
   // append the value and increment vector->size
   size_t index = cs->cell_space_size;
   // the new block will have the double size of the last block
-  cs->blocks[index] = *cell_block_create(cs->blocks[index - 1].block_size * 2);
+  cell_block *new = cell_block_create(cs->blocks[index - 1].block_size * 2);
+  cs->blocks[index] = *new;
+  free(new);
 
   // new cell block
   cell_block *new_cb = &(cs->blocks[index]);
@@ -292,8 +292,11 @@ cell *cell_space_get_cell(cell_space *cs) {
   }
   cs->n_free_cells--;
   cell *new_cell = cs->first_free;
-  new_cell->marked = 0;
-  cs->first_free = new_cell->next_free_cell;
+  if (new_cell) {
+    // there will always be a new cell!
+    new_cell->marked = 0;
+    cs->first_free = new_cell->next_free_cell;
+  }
   cell_push(new_cell, SINGLE);
   return new_cell;
 }
@@ -307,10 +310,9 @@ void collect_garbage(cell_space *cs) {
          "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
-  cell_stack *stack = cs->stack;
   cell_stack_node *node = cs->stack->head;
   while (node) {
-    mark(node->c);
+    mark(*(&node->c));
     node = node->next;
   }
 #if DEBUG_GARBAGE_COLLECTOR_MODE
@@ -401,7 +403,7 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
       cell_stack_push(stack, cdr(val), mode);
   }
 }
-void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
+void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -431,7 +433,6 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
             act->next->prec = prec;
           else {
             // we're removing the tail
-            act->next->prec = prec;
             stack->tail = prec;
           }
         } else {
@@ -479,8 +480,8 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #endif
 }
 
-void cell_stack_remove_args(cell_stack *stack, cell *args) {
-  cell *act = args;
+void cell_stack_remove_args(cell_stack *stack, const cell *args) {
+  const cell *act = args;
   cell *tmp;
   while (act) {
     tmp = cdr(act);
@@ -489,9 +490,9 @@ void cell_stack_remove_args(cell_stack *stack, cell *args) {
   }
 }
 
-void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env,
-                               cell *old_env) {
-  cell *act = new_env;
+void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
+                               const cell *old_env) {
+  const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
@@ -501,8 +502,8 @@ void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env,
   }
 }
 
-void cell_stack_remove_cars(cell_stack *stack, cell *list) {
-  cell *act = list;
+void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
+  const cell *act = list;
   cell *tmp;
   while (act) {
     tmp = cdr(act);
@@ -515,19 +516,19 @@ void cell_push(cell *c, unsigned char mode) {
   cell_stack_push(memory->stack, c, mode);
 }
 
-void cell_remove(cell *c, unsigned char mode) {
+void cell_remove(const cell *c, unsigned char mode) {
   cell_stack_remove(memory->stack, c, mode);
 }
 
-void cell_remove_args(cell *args) {
+void cell_remove_args(const cell *args) {
   cell_stack_remove_args(memory->stack, args);
 }
 
-void cell_remove_pairlis(cell *new_env, cell *old_env) {
+void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   cell_stack_remove_pairlis(memory->stack, new_env, old_env);
 }
 
-void cell_remove_cars(cell *list) {
+void cell_remove_cars(const cell *list) {
   cell_stack_remove_cars(memory->stack, list);
 }
 

@@ -338,7 +338,6 @@ cell *eval(cell *e, cell *a) {
 
     } else if (eq(car(e), symbol_cond)) {
       // COND
-      cell *res;
       evaulated = evcon(cdr(e), a);
       cell_remove(e, SINGLE);
     } else if (eq(car(e), symbol_dotimes)) {
