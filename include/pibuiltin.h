@@ -36,7 +36,7 @@ cell *builtin_car(const cell *args);
 cell *builtin_cdr(const cell *args);
 cell *builtin_cons(const cell *args);
 cell *builtin_atom(const cell *args);
-cell *builtin_eq(const cell * args);
+cell *builtin_eq(const cell *args);
 
 // ==================== LOGIC ====================
 cell * or (const cell *operands);
@@ -66,9 +66,8 @@ cell *member(const cell *list);
 cell *nth(const cell *list);
 cell *list(const cell *list);
 
-
 // ==================== MACROS ====================
-cell *setq(const cell * args, cell * env);
+cell *setq(const cell *args, cell *env);
 
 #endif // !PIBUILTIN_H
 

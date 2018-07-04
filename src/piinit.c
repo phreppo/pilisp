@@ -42,24 +42,23 @@ void init_builtin_lambdas() {
   symbol_symbolp = mk_builtin_lambda("SYMBOLP");
 }
 
-void init_builtin_macros(){
+void init_builtin_macros() {
   builtin_macros_index = 0;
   symbol_setq = mk_builtin_macro("SETQ");
 }
 
 void init_env() {
-
-  memory->global_env = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
-  memory->global_env = mk_cons(mk_cons(mk_sym("f"), mk_str("functions.lisp")),
-                               memory->global_env);
+  memory->global_env = NULL;
+  memory->global_env = mk_cons(mk_cons(mk_sym("t"), mk_str("t")),
+                               NULL);
 
   // write the basic functions to one file, then load them
   write_program_to_file(
-      ".piinit",
-      "(set 'defun (macro (name param body) "
-      "(list 'set (list 'quote name) (list 'lambda param body))))"
-      "(setq d \"test/lisp_programs/diff.lisp\")"
-      );
+      ".piinit", "(set 'defun (macro (name param body) "
+                 "(list 'set (list 'quote name) (list 'lambda param body))))"
+                 "(setq d \"test/lisp_programs/diff.lisp\")"
+                 "(setq p \"a.lisp\")"
+                 "(setq f \"functions.lisp\")");
   parse_file(".piinit");
 }
 

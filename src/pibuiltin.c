@@ -166,11 +166,15 @@ cell *set(cell *args) {
     prec = act;
     act = cdr(act);
   }
-  cell *new = cons(cons(name, val), NULL);
+  cell *pair =cons(name, val);
+  cell *new = cons(pair, NULL);
   if (prec)
     prec->cdr = new;
   else
     memory->global_env = new;
+  cell_remove(name,SINGLE);
+  cell_remove(new,SINGLE);
+  cell_remove(pair,SINGLE);
   cell_remove_args(args);
   return val;
 }
