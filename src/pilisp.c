@@ -18,10 +18,6 @@ int pi_prompt() {
                 "                           " COLOR1
                 "00\n\t0000000000000000000000000000000 \n\n" ANSI_COLOR_RESET);
 
-  // cell *env = load_env(INIT_FILE_PATH_GLOBAL);
-  // printf("env: ");
-  // print_sexpr(env);
-  // puts("");
   bool repeat = true;
   while (repeat) {
     // sets the destination for longjump here if errors were encountered

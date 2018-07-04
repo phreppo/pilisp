@@ -27,14 +27,13 @@
 
 #define DEBUG_GARBAGE_COLLECTOR_MODE                                           \
   0                       // when performing gargabe collection prints messages
-#define DEBUG_EVAL_MODE 1 // describes what appens evaluating sexpressions
+#define DEBUG_EVAL_MODE 0 // describes what appens evaluating sexpressions
 #define DEBUG_PUSH_REMOVE_MODE 0 // when pushing or removing things in the stack
 
 /********************************************************************************
  *                                   INIT
  ********************************************************************************/
-#define INIT_FILE_PATH_GLOBAL                                                  \
-  "../init.lisp" // defines the path to the .lisp init file
+
 #define ERROR_EMPTY_REMOVING                                                   \
   0 // raise an error if trying to remove a cell that is not on the stack
     // (beacuse that cell does not belongs to you)
@@ -42,6 +41,7 @@
 /********************************************************************************
  *                                  LIMITS
  ********************************************************************************/
+
 #define MAX_TOK_LEN 512      // max length of a token
 #define N_BUILTIN_LAMBDA 777 // EXACT number of builtin lambdas
 #define N_BUILTIN_MACRO 777 // EXACT number of builtin lambdas
@@ -49,6 +49,7 @@
 /********************************************************************************
  *                             CONSOLE ANSI COLORS
  ********************************************************************************/
+
 #define ANSI_COLOR_BLACK "\x1b[0;30m"
 #define ANSI_COLOR_BLUE "\x1b[0;34m"
 #define ANSI_COLOR_GREEN "\x1b[0;32m"
@@ -70,5 +71,4 @@
 #define COLOR2 ANSI_COLOR_YELLOW
 
 #endif // !PISETTINGS_H
-
 /*@}*/

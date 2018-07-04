@@ -1,7 +1,7 @@
 #include "piinit.h"
 
 void init_builtin_lambdas() {
-  builtin_lambda_index = 0;
+  builtin_lambdas_index = 0;
   symbol_car = mk_builtin_lambda("CAR");
   symbol_cdr = mk_builtin_lambda("CDR");
   symbol_cons = mk_builtin_lambda("CONS");
@@ -43,7 +43,7 @@ void init_builtin_lambdas() {
 }
 
 void init_builtin_macros(){
-  builtin_macro_index = 0;
+  builtin_macros_index = 0;
   symbol_setq = mk_builtin_macro("SETQ");
 }
 
@@ -68,15 +68,6 @@ void init_pi() {
   init_builtin_lambdas();
   init_memory();
   init_env();
-}
-
-cell *load_env(char *init_file_path) {
-  FILE *fp = fopen("init.lisp", "r");
-  if (fp == NULL) {
-    printf("No init file found\n");
-    return NULL;
-  }
-  return read_sexpr(fp);
 }
 
 void free_pi() { free_memory(); }

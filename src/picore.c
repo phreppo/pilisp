@@ -28,7 +28,6 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
-  // ! UNSAFE
   while (l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
@@ -233,8 +232,6 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
-        // if (eval_args)
-        //   x = evlis(x, a);
         cell *old_env = a;
         a = pairlis(cadr(fn), x, a);
         cell *fn_body = caddr(fn);
@@ -258,7 +255,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
       printf(ANSI_COLOR_RESET "\n");
 #endif
       // function is not an atomic function: something like (lambda (x) (lambda
-      // (y) y)) ! cell * new_env = pairlis(,a)
+      // (y) y))
       if (eval_args)
         x = evlis(x, a);
 
@@ -380,9 +377,7 @@ cell *eval(cell *e, cell *a) {
         evaulated = e;
       } else {
         // apply atom function to evaluated list of parameters
-        // cell *evaulated_args = evlis(cdr(e), a);
         cell *args = cdr(e);
-        // evaulated = apply(car(e), evaulated_args, a,true);
         evaulated = apply(car(e), args, a, true);
         cell_remove(e, SINGLE);   // remove function
         cell_remove_args(cdr(e)); // remove list of args
@@ -398,25 +393,18 @@ cell *eval(cell *e, cell *a) {
     if ((eq(caar(e), symbol_macro))) {
       // MACRO
       cell *old_env = a;
-      // cell *body = car(e);
       cell *body = car(e);
-      // cell *prm = cdr(e);
       cell *prm = cdr(e);
       a = pairlis(cadr(body), prm, a);
-
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
-      // evaulated = eval(evaulated, a);
-      // evaulated = eval(evaulated, a);
-      // evaulated = eval(evaulated, a);
     } else {
-      // composed function
+      // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
       cell_remove(e, SINGLE); // remove function
       cell_remove_args(cdr(e));
     }
   }
-  // remove list of args
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
@@ -438,8 +426,6 @@ cell *evlis(cell *m, cell *a) {
     // empty par list
     return NULL;
   cell *valued_car = eval(car(m), a);
-
-  // cell_push(valued_car); // protect the valued cell: may be not a new cell
   cell *valued_cdr = evlis(cdr(m), a);
   return mk_cons(valued_car, valued_cdr);
 }

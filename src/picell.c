@@ -52,7 +52,7 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
 
 cell *is_symbol_builtin_lambda(const char *symbol) {
   size_t i = 0;
-  for (i = 0; i < builtin_lambda_index; i++) {
+  for (i = 0; i < builtin_lambdas_index; i++) {
 
     if (strcmp(BUILTIN_LAMBDAS[i].sym, symbol) == 0)
       // found!
@@ -64,7 +64,7 @@ cell *is_symbol_builtin_lambda(const char *symbol) {
 
 cell *is_symbol_builtin_macro(const char *symbol) {
   size_t i = 0;
-  for (i = 0; i < builtin_macro_index; i++) {
+  for (i = 0; i < builtin_macros_index; i++) {
 
     if (strcmp(BUILTIN_MACROS[i].sym, symbol) == 0)
       // found!
@@ -79,7 +79,7 @@ cell *mk_sym(const char *symbol) {
   cell *allocated = is_symbol_builtin_lambda(symbol);
   if (allocated)
     return allocated;
-  
+
   allocated = is_symbol_builtin_macro(symbol);
   if (allocated)
     return allocated;
@@ -124,7 +124,7 @@ cell *mk_cons(cell *car, cell *cdr) {
 }
 
 cell *mk_builtin_lambda(const char *symbol) {
-  cell *lambda = &BUILTIN_LAMBDAS[builtin_lambda_index++];
+  cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = symbol;
   lambda->str = malloc(strlen(symbol) + 1);
@@ -139,7 +139,7 @@ cell *mk_builtin_lambda(const char *symbol) {
 }
 
 cell *mk_builtin_macro(const char *symbol) {
-  cell *macro = &BUILTIN_MACROS[builtin_macro_index++];
+  cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
   macro->sym = symbol;
   macro->str = malloc(strlen(symbol) + 1);
@@ -181,14 +181,15 @@ cell *copy_cell(const cell *c) {
 int is_num(const cell *c) { return c->type == TYPE_NUM; }
 int is_str(const cell *c) { return c->type == TYPE_STR; }
 int is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA || c->type == BUILTIN_MACROS;
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
+         c->type == BUILTIN_MACROS;
 }
-int is_builtin(const cell *c) { return is_builtin_lambda(c) || is_builtin_macro(c); }
+int is_cons(const cell *c) { return c->type == TYPE_CONS; }
+int is_builtin(const cell *c) {
+  return is_builtin_lambda(c) || is_builtin_macro(c);
+}
 int is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
 int is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
-
-//||c->type==TYPE_KEYWORD||c->type==TYPE_BUILTINLAMBDA||c->type==TYPE_BUILTINMACRO||c->type==TYPE_BUILTINSTACK||c->type==TYPE_CXR;}
-int is_cons(const cell *c) { return c->type == TYPE_CONS; }
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -203,7 +204,7 @@ void free_cell_pointed_memory(cell *c) {
  *                                  GARBAGE COLLECTOR
  ********************************************************************************/
 
-cell_block *new_cell_block(size_t s) {
+cell_block *cell_block_create(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
   new_cb->block_size = s;
   new_cb->block = (cell *)malloc(s * sizeof(cell));
@@ -227,7 +228,7 @@ void cell_space_init(cell_space *cs) {
   // take the space for blocks
   cs->blocks = (cell_block *)malloc(sizeof(cell_block) * INITIAL_BLOCKS);
   // first block
-  cs->blocks[0] = *new_cell_block(INITIAL_BLOCK_SIZE);
+  cs->blocks[0] = *cell_block_create(INITIAL_BLOCK_SIZE);
   cs->first_free = cs->blocks->block;
   cs->n_cells = cs->blocks[0].block_size;
   cs->n_free_cells = INITIAL_BLOCK_SIZE;
@@ -260,7 +261,7 @@ void cell_space_grow(cell_space *cs) {
   // append the value and increment vector->size
   size_t index = cs->cell_space_size;
   // the new block will have the double size of the last block
-  cs->blocks[index] = *new_cell_block(cs->blocks[index - 1].block_size * 2);
+  cs->blocks[index] = *cell_block_create(cs->blocks[index - 1].block_size * 2);
 
   // new cell block
   cell_block *new_cb = &(cs->blocks[index]);

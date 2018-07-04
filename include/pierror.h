@@ -13,11 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * @brief enum to idenfity the type of the last erro
- *
- */
-enum {
+enum error_types{
   NO_ERROR = -1,    ///< no error occurrred
   LISP_ERROR = 1,   ///< LISP syntax error
   MEMORY_ERROR = 2, ///< memory error
