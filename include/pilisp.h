@@ -18,6 +18,7 @@
 #include "pierror.h"
 #include "piparser.h"
 #include "piprint.h"
+#include "pifile.h"
 #include <ctype.h>
 #include <errno.h>
 #include <error.h>
@@ -36,7 +37,6 @@ jmp_buf env_buf;
  ********************************************************************************/
 
 int pi_prompt();
-cell * parse_file(char * file_path);
 
 #endif // !PILISP_h
 

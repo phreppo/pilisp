@@ -48,25 +48,3 @@ int pi_prompt() {
   }
   return 0;
 }
-
-cell *parse_file(char *file_path) {
-  // execute the file
-  FILE *program_file = fopen(file_path, "r");
-  if (!program_file) {
-    char *err = "file not found: ";
-    char *result = malloc(strlen(err) + strlen(file_path) + 1);
-    strcpy(result, err);
-    strcat(result, file_path);
-    pi_error(LISP_ERROR, result);
-  }
-  cell *res = NULL;
-  while (!feof(program_file)) {
-    cell *sexpr = read_sexpr(program_file);
-    if (sexpr != symbol_file_ended) {
-      res = eval(sexpr, memory->global_env);
-      cell_remove(res, RECURSIVE);
-    }
-  }
-  fclose(program_file);
-  return res;
-}

@@ -274,10 +274,22 @@ test('[LISP] label test', lisp_program_test, args : [
     '33'
 ])
 
+test('[LISP] builtin setq test', lisp_program_test, args : [
+    '(setq fun (lambda (x) x)) fun',
+    '(lambda (x) x)',
+    '331'
+])
+
+test('[LISP] builtin defun test', lisp_program_test, args : [
+    '(defun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'(((a. c) .b)))',
+    'a',
+    '332'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',
-    '3305'
+    '333'
 ])
 
 test('[MACRO] mysetq test', lisp_program_test, args : [
