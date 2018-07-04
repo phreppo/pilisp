@@ -31,7 +31,6 @@ parser_rejected_strings_test = executable(
 test('[REJ] Bad sexpression with closed par test', parser_rejected_strings_test, args : [bad_expressions_path+'closedpar.lisp'])
 test('[REJ] Incomplte sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'unfinished.lisp'])
 test('[REJ] Complicate bad sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'complicate.lisp'])
-test('[REJ] Bad list notation test', parser_rejected_strings_test, args : [bad_expressions_path+'badlistnotation.lisp'])
 
 # Sexpression print tester for self-referencing structures
 recursive_structure_print_test = executable(
@@ -342,13 +341,34 @@ test('[LOAD] first load test', lisp_program_load_test, args : [
 test('[LOAD] set-style maze test', lisp_program_load_test, args : [
     programs_path+'maze_old.lisp',
     '(solveMaze maze1)',
-    '(2 3 1 0))',
+    '(2 3 1 0)',
     '135'
 ])
 
 test('[LOAD] builtin defun and setq maze test', lisp_program_load_test, args : [
     programs_path+'maze.lisp',
     '(solveMaze maze1)',
-    '(2 3 1 0))',
+    '(2 3 1 0)',
     '136'
+])
+
+test('[LOAD] diff calculator: d(33x)', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(d \'(* x 33))',
+    '(+ (* 1 33) (* X 0))',
+    '137'
+])
+
+test('[LOAD] diff calculator: d(x^2)', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(d \'(expt x 2))',
+    '(* (EXPT X . 1) 2)',
+    '138'
+])
+
+test('[LOAD] diff calculator: d( (x^2+1)/cos(x) )', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(d \'(/ (+ (expt x 2) 1) (cos x)))',
+    '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',
+    '139'
 ])

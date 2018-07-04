@@ -161,7 +161,8 @@ cell *read_sexpr_tok(FILE *f, int tok) {
     c = mk_str(token_text);
     break;
   case TOK_SYM:
-    c = (token_text_is_nil() ? 0 : mk_sym(token_text)); // can be a builtin lambda
+    c = (token_text_is_nil() ? 0
+                             : mk_sym(token_text)); // can be a builtin lambda
     break;
   case TOK_CLOSE:
     pi_error(LISP_ERROR, "unexpected )");
@@ -201,8 +202,6 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // what if ((a . NIL) . (b . 2)): token text is stll NIL but the last
         // token was an open par
 
-        //
-
         cell *cdr_head = read_sexpr_tok(f, tok);
         cdr = mk_cons(cdr_head, NULL);
 
@@ -213,12 +212,22 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // (c . (d . NILL))))
         cell *last_cdr = cdr;
         while (tok != TOK_CLOSE) {
-          // create a new level
-          cell *new_cdr = mk_cons(read_sexpr_tok(f, tok), NULL);
-          // update cycle variables
-          last_cdr->cdr = new_cdr;
-          last_cdr = new_cdr;
-          tok = next_token(f);
+
+          if (tok == TOK_DOT) {
+            // something like: ( {list} . => we have to read the last atom and
+            // read a close
+            cell *last_sexpr = read_sexpr(f);
+            last_cdr->cdr = last_sexpr;
+            tok = next_token(f);
+          } else {
+            // create a new level
+            cell *new_cdr = mk_cons(read_sexpr_tok(f, tok), NULL);
+            // update cycle variables
+            last_cdr->cdr = new_cdr;
+            last_cdr = new_cdr;
+            tok = next_token(f);
+          }
+
         }
       }
       // create the cell
