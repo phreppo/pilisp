@@ -45,7 +45,10 @@ cell *assoc(const cell *x, cell *l) {
   return NULL;
 }
 
-cell *apply(cell *fn, cell *x, cell *a) {
+cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
+  if(eval_args){
+    x = evlis(x,a);
+  }
 #if DEBUG_EVAL_MODE
   printf("Applying:\t" ANSI_COLOR_GREEN);
   print_sexpr(fn);
@@ -147,7 +150,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
 
         // CUSTOM FUNCTION
         // does lambda exists?
-        cell *function_body = eval(fn, a); // ! REMOVE THIS ONCE RESOLVED
+        cell *function_body = eval(fn, a);
         if (function_body == NULL) {
           char *err = "unknown function ";
           char *fn_name = fn->sym;
@@ -160,7 +163,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
           pi_error(LISP_ERROR, "trying to apply a non-lambda");
 
         // the env knows the lambda
-        cell *ret = apply(function_body, x, a);
+        cell *ret = apply(function_body, x, a,false);
         return ret;
       }
 
@@ -192,7 +195,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
       // LABEL
       if (eq(car(fn), symbol_label)) {
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
-        cell *res = apply(caddr(fn), x, new_env);
+        cell *res = apply(caddr(fn), x, new_env,false);
         cell_remove(cddr(fn), SINGLE); // cons of the body
         cell_remove(cadr(fn), SINGLE); // symbol to bind
         cell_remove(cdr(fn), SINGLE);  // cons of the top level
@@ -224,7 +227,7 @@ cell *apply(cell *fn, cell *x, cell *a) {
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
       // the env knows the lambda
-      return apply(function_body, x, a);
+      return apply(function_body, x, a,false);
     }
   }
   return NULL; // error?
@@ -323,8 +326,10 @@ cell *eval(cell *e, cell *a) {
           evaulated = e;
         } else {
           // apply atom function to evaluated list of parameters
-          cell *evaulated_args = evlis(cdr(e), a);
-          evaulated = apply(car(e), evaulated_args, a);
+          // cell *evaulated_args = evlis(cdr(e), a);
+          cell *args = cdr(e);
+          // evaulated = apply(car(e), evaulated_args, a,true);
+          evaulated = apply(car(e), args, a,true);
           cell_remove(e, SINGLE);   // remove function
           cell_remove_args(cdr(e)); // remove list of args
           // cell_remove(evaulated_args); // rimuove anche cose che no dovrebbe
@@ -353,7 +358,7 @@ cell *eval(cell *e, cell *a) {
       // evaulated = eval(evaulated, a);
     } else {
       // composed function
-      evaulated = apply(car(e), evlis(cdr(e), a), a);
+      evaulated = apply(car(e), cdr(e), a,true);
       cell_remove(e, SINGLE); // remove function
       cell_remove_args(cdr(e));
     }

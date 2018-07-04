@@ -6,7 +6,6 @@
 (set 'mysetq (macro (name val) (set name val)))
 (set 'mydefun 
     (macro (name param body) 
-        (list 'set (list 'quote name) (list 'lambda param body)))
-)
+        (list 'set (list 'quote name) (list 'lambda param body))) )
 
 ((macro (name val) (set name val)) ciao 1) ; funzia

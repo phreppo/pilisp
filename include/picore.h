@@ -13,7 +13,7 @@
 
 // ==================== LISP CORE FUNCTIONS ====================
 cell *eval(cell *e, cell *a);
-cell *apply(cell *fn, cell *x, cell *a);
+cell *apply(cell *fn, cell *x, cell *a, bool eval_args);
 cell *pairlis(cell *x, cell *y, cell *a);
 cell *assoc(const cell *x, cell *l);
 cell *evlis(cell *m, cell *a);
