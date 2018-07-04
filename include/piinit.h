@@ -81,6 +81,8 @@ cell *symbol_dotimes;
 cell *symbol_list;
 cell *symbol_bye;
 cell *symbol_macro;
+cell *symbol_integerp;
+cell *symbol_symbolp;
 
 // ==================== MACROS ====================
 cell *symbol_setq;

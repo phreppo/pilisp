@@ -38,6 +38,8 @@ void init_builtin_lambdas() {
   symbol_list = mk_builtin_lambda("LIST");
   symbol_bye = mk_builtin_lambda("BYE");
   symbol_macro = mk_builtin_lambda("MACRO");
+  symbol_integerp = mk_builtin_lambda("INTEGERP");
+  symbol_symbolp = mk_builtin_lambda("SYMBOLP");
 }
 
 void init_builtin_macros(){
@@ -56,6 +58,7 @@ void init_env() {
       ".piinit",
       "(set 'defun (macro (name param body) "
       "(list 'set (list 'quote name) (list 'lambda param body))))"
+      "(setq d \"test/lisp_programs/diff.lisp\")"
       );
   parse_file(".piinit");
 }

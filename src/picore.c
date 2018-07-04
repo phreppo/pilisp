@@ -146,6 +146,20 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         if (eq(fn, symbol_list))
           return list(x);
 
+        // RTTI
+        if (eq(fn, symbol_integerp)) {
+          bool ret = is_num(car(x));
+          cell_remove(car(x), RECURSIVE);
+          cell_remove(x, SINGLE);
+          return (ret ? symbol_true : NULL);
+        }
+        if (eq(fn, symbol_symbolp)) {
+          bool ret = is_sym(car(x));
+          cell_remove(car(x), RECURSIVE);
+          cell_remove(x, SINGLE);
+          return (ret ? symbol_true : NULL);
+        }
+
       } else {
         // CUSTOM FUNCTION
         // does lambda exists?
@@ -314,11 +328,11 @@ cell *eval(cell *e, cell *a) {
 
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
-      if (eq(car(e), symbol_setq)) 
+      if (eq(car(e), symbol_setq))
         evaulated = setq(cdr(e), a);
-      cell_remove(e,SINGLE);
-    } 
-    
+      cell_remove(e, SINGLE);
+    }
+
     // ==================== SPECIAL FORMS ====================
     else if (eq(car(e), symbol_quote)) {
       // QUOTE
@@ -383,7 +397,6 @@ cell *eval(cell *e, cell *a) {
 
     if ((eq(caar(e), symbol_macro))) {
       // MACRO
-      // ==================== ! LEAKS MEMORY ====================
       cell *old_env = a;
       // cell *body = car(e);
       cell *body = car(e);
