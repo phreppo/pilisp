@@ -1,11 +1,12 @@
-(setq maze1 '(
+(set 'maze1 '(
     (1) 
     (0 3)
     (3 -1)
     (1 2)
 ))
 
-(defun sm1 (maze actualCell exploredCells doors)
+(set 'sm1 
+    (lambda (maze actualCell exploredCells doors)
     (cond 
         (
             (not doors)
@@ -15,19 +16,20 @@
             t ; at least one door
             (cond 
                 ( (not (solveMazeRec maze (car doors) exploredCells))
+                    ; => the result is not a valid path 
                     (sm1 maze actualCell exploredCells (cdr doors))
                 ) 
-                ( t 
+                ( t ; => the result is a valid path
                     (solveMazeRec maze (car doors) exploredCells)
                 ) 
             )
         )
     )
+    )
 )
 
-
-(defun solveMazeRec 
-    (maze actualCell exploredCells)
+(set 'solveMazeRec 
+    (lambda (maze actualCell exploredCells)
         (cond 
             ((= actualCell -1)
                 ; finished
@@ -42,11 +44,11 @@
             )
         ) 
     )
+)
 
-
-(defun solveMaze 
-    (maze)
+(set 'solveMaze 
+    (lambda (maze)
     (solveMazeRec maze 0 '()))
-
+)
 
 ; (solveMaze maze1)
