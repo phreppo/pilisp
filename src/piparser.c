@@ -195,13 +195,6 @@ cell *read_sexpr_tok(FILE *f, int tok) {
         // you are here: ( [car] [something that is not a dot or a ')', aka a
         // sexpr] ....
 
-        // head of the cdr: we're going to build the tree
-
-        // ! HERE BUG
-
-        // what if ((a . NIL) . (b . 2)): token text is stll NIL but the last
-        // token was an open par
-
         cell *cdr_head = read_sexpr_tok(f, tok);
         cdr = mk_cons(cdr_head, NULL);
 

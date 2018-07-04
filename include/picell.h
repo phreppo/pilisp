@@ -63,22 +63,8 @@ cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 /********************************************************************************
- *                                CELL IDENTIFICATION
- ********************************************************************************/
-
-int is_num(const cell *c);
-int is_str(const cell *c);
-int is_sym(const cell *c);
-int is_cons(const cell *c);
-int is_builtin(const cell *c);
-int is_builtin_lambda(const cell *c);
-int is_builtin_macro(const cell *c);
-cell *is_symbol_builtin_lambda(const char *symbol);
-cell *is_symbol_builtin_macro(const char *symbol);
-
-/********************************************************************************
- *                              STACK GARBAGE COLLECTOR
- ********************************************************************************/
+*                                  CELL PROTECTION
+********************************************************************************/
 
 enum push_remove_mode {
   SINGLE,
@@ -92,6 +78,24 @@ void cell_remove_args(
 void cell_remove_pairlis(cell *new_env, cell *old_env);
 void cell_remove_cars(cell *list);
 
+/********************************************************************************
+ *                                CELL IDENTIFICATION
+ ********************************************************************************/
+
+bool is_num(const cell *c);
+bool is_str(const cell *c);
+bool is_sym(const cell *c);
+bool is_cons(const cell *c);
+bool is_builtin(const cell *c);
+bool is_builtin_lambda(const cell *c);
+bool is_builtin_macro(const cell *c);
+cell *is_symbol_builtin_lambda(const char *symbol);
+cell *is_symbol_builtin_macro(const char *symbol);
+
+/********************************************************************************
+ *                              STACK GARBAGE COLLECTOR
+ ********************************************************************************/
+
 typedef struct cell_stack_node {
   struct cell_stack_node *prec;
   struct cell_stack_node *next;
@@ -104,8 +108,7 @@ typedef struct {
 } cell_stack;
 
 cell_stack *cell_stack_create();
-cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
-                                             cell_stack_node *prec);
+cell_stack_node *cell_stack_node_create_node(cell *val);
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode);
 void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
@@ -149,7 +152,9 @@ void cell_space_grow(cell_space *cs);
 void cell_space_double_capacity_if_full(cell_space *cs);
 // always use this on one allocated cell space before use
 void cell_space_init(cell_space *cs);
+// create a new cell space
 cell_space *cell_space_create();
+// true => no free cells
 bool cell_space_is_full(const cell_space *cs);
 // ALWAYS returns a new cell: if none is present it allocates new space,
 // eventually runs gc
@@ -167,6 +172,7 @@ void cell_space_free(cell_space *cs);
  ********************************************************************************/
 
 cell_space *memory;
+
 void collect_garbage(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);

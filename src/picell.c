@@ -178,18 +178,18 @@ cell *copy_cell(const cell *c) {
   return copy;
 }
 
-int is_num(const cell *c) { return c->type == TYPE_NUM; }
-int is_str(const cell *c) { return c->type == TYPE_STR; }
-int is_sym(const cell *c) {
+bool is_num(const cell *c) { return c->type == TYPE_NUM; }
+bool is_str(const cell *c) { return c->type == TYPE_STR; }
+bool is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
          c->type == BUILTIN_MACROS;
 }
-int is_cons(const cell *c) { return c->type == TYPE_CONS; }
-int is_builtin(const cell *c) {
+bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+bool is_builtin(const cell *c) {
   return is_builtin_lambda(c) || is_builtin_macro(c);
 }
-int is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-int is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -371,13 +371,12 @@ cell_stack *cell_stack_create() {
   return s;
 }
 
-cell_stack_node *cell_stack_node_create_node(cell *val, cell_stack_node *next,
-                                             cell_stack_node *prec) {
+cell_stack_node *cell_stack_node_create_node(cell *val) {
 
   cell_stack_node *n = malloc(sizeof(cell_stack_node));
   n->c = val;
-  n->next = next;
-  n->prec = prec;
+  n->next = NULL;
+  n->prec = NULL;
   return n;
 }
 
@@ -386,7 +385,7 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     return;
   if (is_builtin(val))
     return;
-  cell_stack_node *n = cell_stack_node_create_node(val, NULL, NULL);
+  cell_stack_node *n = cell_stack_node_create_node(val);
   if (stack->head == NULL) {
     stack->head = n;
     stack->tail = n;
@@ -411,12 +410,6 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
   if (!val)
     return;
   if (!is_builtin(val)) {
-#if DEBUG_PUSH_REMOVE_MODE
-    // printf("> Removing from stack: ");
-    // puts("");
-    // print_stack(stack);
-    // puts("");
-#endif
     cell_stack_node *act = stack->head;
     cell_stack_node *prec = NULL;
     while (act) {

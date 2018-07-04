@@ -7,7 +7,6 @@ void parse_prompt() {
     // parsing
     jmp_destination = setjmp(env_buf);
     if (get_last_error() != NO_ERROR) {
-      // pi_message("you just had an error");
       reset_error();
     } else {
       pi_message("everything was ok with last sexpr");
@@ -52,14 +51,10 @@ void eval_prompt() {
     // parsing
     jmp_destination = setjmp(env_buf);
     if (get_last_error() != NO_ERROR) {
-      // pi_message("you just had an error");
       reset_error();
     }
     printf("> ");
     cell *list1 = read_sexpr(stdin);
-    // printf("sexpr> \t");
-    // print_sexpr_mode(list1, SEXPR_PRINT_DEFAULT);
-    // puts("");
     cell *result = eval(list1, env);
     print_sexpr(result);
     puts("");
@@ -78,7 +73,6 @@ void pairlis_prompt() {
     // parsing
     jmp_destination = setjmp(env_buf);
     if (get_last_error() != NO_ERROR) {
-      // pi_message("you just had an error");
       reset_error();
     }
     pi_message("Type labels list: ");

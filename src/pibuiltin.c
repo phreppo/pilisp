@@ -512,12 +512,12 @@ cell *builtin_eq(const cell *args) {
 }
 
 cell *setq(const cell * args,cell * env){
-  // TODO check types
+  check_two_args(args);
   cell * sym = car(args);
+  if(!is_sym(sym))
+    pi_lisp_error("first arg must be a symbol");
   cell * val = eval(cadr(args),env);
-  cell * new_args = mk_cons(sym,mk_cons(val,NULL));
-  // TODO FREE MEM
-  cell * ret = set(new_args);
+  cell * ret = set(mk_cons(sym,mk_cons(val,NULL)));
   cell_remove_args(args);
   return ret;
 }

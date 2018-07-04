@@ -1,9 +1,7 @@
 #include "pilisp.h"
-#include "pitestutils.h" // remove once tests
 
 int main(int argc, char **argv) {
   init_pi();
-  // mem_prompt();
 
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
@@ -20,18 +18,12 @@ int main(int argc, char **argv) {
     unsigned long i = 1;
     for (i = 1; i < argc; i++) {
       cell *res = parse_file(argv[i]);
-      print_sexpr(res);
+      print_sexpr(res); // for every file prints the last result
       puts("");
     }
   } else {
     pi_prompt();
   }
-
-  // FILE * f = fopen("/home/phreppo/pilisp/test/expressions/atom.l","r");
-  // lexer_file(f);
-  // lexer_prompt();
-  // parse_prompt();
-  // eval_prompt();
 
   free_pi();
   return 0;

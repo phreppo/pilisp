@@ -399,14 +399,14 @@ cell *eval(cell *e, cell *a) {
       evaulated = eval(fn_body, a);
 
       cell_remove_pairlis(a, old_env);
-      cell_remove(cdr(e),RECURSIVE);      // params tree
-      cell_remove(cdr(cdar(e)),SINGLE);   // cons of the body
-      cell_remove(cadar(e),RECURSIVE);    // formal params
-      cell_remove(cdar(e),SINGLE);        // cons of params
-      cell_remove(caar(e),SINGLE);        // symbol macro
-      cell_remove(car(e),SINGLE);         // cons of macro
-      cell_remove(e, SINGLE);             // head of everything
-      
+      cell_remove(cdr(e), RECURSIVE);    // params tree
+      cell_remove(cdr(cdar(e)), SINGLE); // cons of the body
+      cell_remove(cadar(e), RECURSIVE);  // formal params
+      cell_remove(cdar(e), SINGLE);      // cons of params
+      cell_remove(caar(e), SINGLE);      // symbol macro
+      cell_remove(car(e), SINGLE);       // cons of macro
+      cell_remove(e, SINGLE);            // head of everything
+
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
@@ -441,23 +441,20 @@ cell *evlis(cell *m, cell *a) {
 
 cell *evcon(cell *c, cell *a) {
   cell *res = eval(caar(c), a);
+  
   if (res != NULL) {
     // result of the last eval
     cell_remove(res, RECURSIVE);
-
     // eval the bod of the cond
     res = eval(cadar(c), a);
-
     // cut off the rest of the sexpressions
     cell_remove(cdr(c), RECURSIVE);
 
   } else {
     // result of the last eval
     cell_remove(res, RECURSIVE);
-
     // remove the unevaluated body
     cell_remove(cadar(c), RECURSIVE);
-
     res = evcon(cdr(c), a);
   }
   // cons of the body
