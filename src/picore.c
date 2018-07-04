@@ -397,7 +397,16 @@ cell *eval(cell *e, cell *a) {
       a = pairlis(cadr(body), prm, a);
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
-      // ! mem leak
+
+      cell_remove_pairlis(a, old_env);
+      cell_remove(cdr(e),RECURSIVE);      // params tree
+      cell_remove(cdr(cdar(e)),SINGLE);   // cons of the body
+      cell_remove(cadar(e),RECURSIVE);    // formal params
+      cell_remove(cdar(e),SINGLE);        // cons of params
+      cell_remove(caar(e),SINGLE);        // symbol macro
+      cell_remove(car(e),SINGLE);         // cons of macro
+      cell_remove(e, SINGLE);             // head of everything
+      
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
