@@ -47,16 +47,52 @@ static void add_language_symbol(cell *sym) {
 }
 
 void init_env() {
-  
+
   memory->global_env = mk_cons(mk_cons(mk_sym("p"), mk_str("a.lisp")), NULL);
   memory->global_env = mk_cons(mk_cons(mk_sym("f"), mk_str("functions.lisp")),
                                memory->global_env);
 
   // write the basic functions to one file, then load them
   write_program_to_file(
-      ".piinit", "(set 'setq (macro (name val) (set name val)))"
-                 "(set 'defun (macro (name param body) "
-                 "(list 'set (list 'quote name) (list 'lambda param body))))");
+      ".piinit",
+      "(set 'setq (macro (name val) (set name val)))"
+      "(set 'defun (macro (name param body) "
+      "(list 'set (list 'quote name) (list 'lambda param body))))"
+      "(setq maze1 '("
+      "    (1) "
+      "    (0 3)"
+      "    (3 -1)"
+      "    (1 2) ))"
+      ""
+      "(defun sm1 (maze actualCell exploredCells doors)"
+      "    (cond "
+      "        ( (not doors)"
+      "            nil ) "
+      "        ( t "
+      "            (cond "
+      "                ( (not (solveMazeRec maze (car doors) exploredCells))"
+      "                    (sm1 maze actualCell exploredCells (cdr doors)) ) "
+      "                ( t "
+      "                    (solveMazeRec maze (car doors) exploredCells)"
+      "                ) ) ) ) )"
+      ""
+      "(defun solveMazeRec "
+      "    (maze actualCell exploredCells)"
+      "        (cond "
+      "            ((= actualCell -1)"
+      "                exploredCells"
+      "            ) "
+      "            ((member actualCell exploredCells)     "
+      "                nil)"
+      "            (t"
+      "                (sm1 maze actualCell (cons actualCell exploredCells) "
+      "(nth actualCell maze))"
+      "            ) ) )"
+      ""
+      ""
+      "(defun solveMaze "
+      "    (maze)"
+      " (solveMazeRec maze 0 '()) )");
   parse_file(".piinit");
 }
 

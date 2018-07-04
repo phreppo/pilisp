@@ -27,7 +27,7 @@
 
 #define DEBUG_GARBAGE_COLLECTOR_MODE                                           \
   0                       // when performing gargabe collection prints messages
-#define DEBUG_EVAL_MODE 0 // describes what appens evaluating sexpressions
+#define DEBUG_EVAL_MODE 1 // describes what appens evaluating sexpressions
 #define DEBUG_PUSH_REMOVE_MODE 0 // when pushing or removing things in the stack
 
 /********************************************************************************

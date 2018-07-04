@@ -6,12 +6,11 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
   print_sexpr(y);
-  printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *result = a;
-  // ! UNSAFE: no checks about cell type
   while (x) {
     cell *left = car(x);
     cell *right = car(y);
@@ -52,7 +51,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
   print_sexpr(x);
-  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
@@ -214,14 +213,14 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
       }
 
       if (eq(car(fn), symbol_macro)) {
-        // direct lambda
+        // (macro .... )
 #if DEBUG_EVAL_MODE
-        printf("LAMBDA:\t\t" ANSI_COLOR_RED);
+        printf("MACRO:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
         printf(ANSI_COLOR_RESET "\n");
 #endif
-        if (eval_args)
-          x = evlis(x, a);
+        // if (eval_args)
+        //   x = evlis(x, a);
         cell *old_env = a;
         a = pairlis(cadr(fn), x, a);
         cell *fn_body = caddr(fn);
@@ -272,7 +271,7 @@ cell *eval(cell *e, cell *a) {
 #if DEBUG_EVAL_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
-  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
   printf(ANSI_COLOR_RESET "\n");
 #endif
@@ -357,7 +356,7 @@ cell *eval(cell *e, cell *a) {
           // lambda "autoquote"
           evaulated = e;
         } else if (eq(car(e), symbol_macro)) {
-          // lambda "autoquote"
+          // macro "autoquote"
           evaulated = e;
         } else {
           // apply atom function to evaluated list of parameters
@@ -391,6 +390,8 @@ cell *eval(cell *e, cell *a) {
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
       // evaulated = eval(evaulated, a);
+      // evaulated = eval(evaulated, a);
+      // evaulated = eval(evaulated, a);
     } else {
       // composed function
       evaulated = apply(car(e), cdr(e), a, true);
@@ -402,7 +403,7 @@ cell *eval(cell *e, cell *a) {
 #if DEBUG_EVAL_MODE
   printf("Evaluated: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
-  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_RED);
+  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_LIGHT_BLUE);
   print_sexpr(evaulated);
   printf(ANSI_COLOR_RESET "\n");
 #endif
