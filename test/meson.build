@@ -339,9 +339,16 @@ test('[LOAD] first load test', lisp_program_load_test, args : [
     '134'
 ])
 
-test('[LOAD] maze test', lisp_program_load_test, args : [
+test('[LOAD] set-style maze test', lisp_program_load_test, args : [
     programs_path+'maze_old.lisp',
     '(solveMaze maze1)',
     '(2 3 1 0))',
     '135'
+])
+
+test('[LOAD] builtin defun and setq maze test', lisp_program_load_test, args : [
+    programs_path+'maze.lisp',
+    '(solveMaze maze1)',
+    '(2 3 1 0))',
+    '136'
 ])

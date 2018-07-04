@@ -37,8 +37,7 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
       printf("\"%s\"", c->str);
       break;
     case TYPE_BUILTINLAMBDA:
-      printf("%s", c->sym);
-      break;
+    case TYPE_BUILTINMACRO:
     case TYPE_SYM:
       printf("%s", c->sym);
       break;
@@ -76,6 +75,7 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
     case TYPE_STR:
       printf("\"%s\"", c->str);
       break;
+    case TYPE_BUILTINMACRO:
     case TYPE_BUILTINLAMBDA:
       printf("%s", c->sym);
       break;
@@ -239,6 +239,7 @@ void print_cell(const cell *cell) {
       printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->str);
       break;
     case TYPE_BUILTINLAMBDA:
+    case TYPE_BUILTINMACRO:
     case TYPE_SYM:
       printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
       break;
@@ -260,6 +261,15 @@ void print_cell_space(const cell_space *cs) {
     if ((i + 1) % 5 == 0)
       puts("");
   }
+
+  printf(ANSI_COLOR_BLUE "\nBUILTIN MACROS\n" ANSI_COLOR_RESET);
+  for (i = 0; i < builtin_macro_index; i++) {
+    printf(ANSI_COLOR_LIGHT_BLUE "%lu" ANSI_COLOR_RESET "\t%s\t", i,
+           BUILTIN_MACROS[i].sym);
+    if ((i + 1) % 5 == 0)
+      puts("");
+  }
+
   puts("");
   printf(ANSI_COLOR_BLUE "GLOBAL ENV\n" ANSI_COLOR_RESET);
   print_global_env(cs->global_env);

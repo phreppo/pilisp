@@ -24,8 +24,8 @@ enum {
   TYPE_STR,
   TYPE_FREE,
   TYPE_BUILTINLAMBDA,
+  TYPE_BUILTINMACRO,
   //   TYPE_KEYWORD,
-  //   TYPE_BUILTINMACRO,
 };
 
 typedef struct cell {
@@ -41,7 +41,7 @@ typedef struct cell {
     struct cell *next_free_cell;
   };
 
-  // TODO: add pointer for funciton for builtin lambda
+  // TODO: add pointer for funciton for builtin lambda and builtin macro
 } cell;
 
 /********************************************************************************
@@ -56,6 +56,7 @@ cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
 cell *mk_builtin_lambda(const char *symbol);
+cell *mk_builtin_macro(const char *symbol);
 cell *copy_cell(const cell *c);
 
 /********************************************************************************
@@ -67,7 +68,10 @@ int is_str(const cell *c);
 int is_sym(const cell *c);
 int is_cons(const cell *c);
 int is_builtin(const cell *c);
+int is_builtin_lambda(const cell *c);
+int is_builtin_macro(const cell *c);
 cell *is_symbol_builtin_lambda(const char *symbol);
+cell *is_symbol_builtin_macro(const char *symbol);
 
 // free the memory pointed by the cell. for example the string for str cells.
 // does nothing if the cell has not pointers
@@ -109,7 +113,7 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
 void cell_stack_remove_args(cell_stack *stack, cell *args);
 void cell_stack_remove_pairlis(cell_stack *stack, cell *new_env, cell *old_env);
 void cell_stack_remove_cars(cell_stack *stack, cell *list);
-void cell_stack_free(cell_stack * stack);
+void cell_stack_free(cell_stack *stack);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
