@@ -226,7 +226,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
       }
 
       if (eq(car(fn), symbol_macro)) {
-        // (macro .... )
+        // ==================== (MACRO ...) ====================
 #if DEBUG_EVAL_MODE
         printf("MACRO:\t\t" ANSI_COLOR_RED);
         print_sexpr(fn);
@@ -239,7 +239,6 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         res = eval(res, a);
         // FREE THINGS
         cell_remove_cars(x);              // deep remove cars
-        cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
         cell_remove(cadr(fn), RECURSIVE); // params
@@ -398,6 +397,7 @@ cell *eval(cell *e, cell *a) {
       a = pairlis(cadr(body), prm, a);
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
+      // ! mem leak
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
