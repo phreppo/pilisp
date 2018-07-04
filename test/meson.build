@@ -274,6 +274,41 @@ test('[LISP] label test', lisp_program_test, args : [
     '33'
 ])
 
+test('[MACRO] simple macro test', lisp_program_test, args : [
+    '((macro (name val) (set name val)) hi 1) hi',
+    '1',
+    '3305'
+])
+
+test('[MACRO] mysetq test', lisp_program_test, args : [
+    '(set \'mysetq (macro (name val) (set name val))) (mysetq ciao 1) ciao',
+    '1',
+    '34'
+])
+
+test('[MACRO] mydefun test 1', lisp_program_test, args : [
+    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun id (x) x) (id "hi")',
+    '"hi"',
+    '35'
+])
+
+test('[MACRO] mydefun test 2', lisp_program_test, args : [
+    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun toz (n) (cond ((eq n 0) 0) (t (toz (- n 1)))) ) (toz 100)',
+    '0',
+    '35'
+])
+
+test('[MACRO] mydefun test 3', lisp_program_test, args : [
+    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'((((a)))))',
+    'a',
+    '36'
+])
+
+test('[MACRO] mydefun test 4', lisp_program_test, args : [
+    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun triple (x) (* x 3) ) (triple 333)',
+    '999',
+    '37'
+])
 
 # (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
 # ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a))
@@ -289,12 +324,12 @@ test('[LOAD] first load test', lisp_program_load_test, args : [
     programs_path+'loadtest.lisp',
     '1',
     '1',
-    '34'
+    '134'
 ])
 
 test('[LOAD] maze test', lisp_program_load_test, args : [
     programs_path+'maze.lisp',
     '(solveMaze maze1)',
     '(2 3 1 0))',
-    '35'
+    '135'
 ])
