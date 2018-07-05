@@ -49,8 +49,8 @@ void init_builtin_macros() {
 
 void init_env() {
   memory->global_env = NULL;
-  memory->global_env = mk_cons(mk_cons(mk_sym("t"), mk_str("t")),
-                               NULL);
+  // memory->global_env = mk_cons(mk_cons(mk_sym("t"), mk_str("t")),
+                              //  NULL);
 
   // write the basic functions to one file, then load them
   write_program_to_file(
@@ -60,6 +60,8 @@ void init_env() {
                  "(setq p \"a.lisp\")"
                  "(setq f \"functions.lisp\")");
   parse_file(".piinit");
+  cell_space_destroy_stack(memory);   // remove thrash
+  collect_garbage(memory);
 }
 
 void init_pi() {

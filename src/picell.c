@@ -315,6 +315,7 @@ void collect_garbage(cell_space *cs) {
     mark(*(&node->c));
     node = node->next;
   }
+  mark(cs->global_env);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          "=================================== After marking "
@@ -569,3 +570,23 @@ void cell_stack_free(cell_stack *stack) {
 }
 
 void free_memory() { cell_space_free(memory); }
+
+bool cell_is_in_global_env(const cell *global_env, const cell *c) {
+  if (!global_env)
+    // no global env
+    return false;
+  if (c == global_env)
+    return true;
+  if (!is_cons(global_env))
+    return false;
+  return cell_is_in_global_env(car(global_env), c) ||
+         cell_is_in_global_env(cdr(global_env), c);
+}
+
+void cell_space_destroy_stack(cell_space *cs){
+  if(cs && cs->stack){
+    cell_stack_free(cs->stack);
+    cs->stack->head = NULL;
+    cs->stack->tail = NULL;
+  }
+}

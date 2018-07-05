@@ -1,19 +1,5 @@
 #include "piprint.h"
 
-// returns true if the cell is in the global env. Use it only for print
-// purposes: it's extremely inefficient
-static bool is_in_global_env(cell *global_env,const cell *c) {
-  if (!global_env)
-    // no global env
-    return false;
-  if (c == global_env)
-    return true;
-  if (!is_cons(global_env))
-    return false;
-  return is_in_global_env(car(global_env), c) ||
-         is_in_global_env(cdr(global_env), c);
-}
-
 static bool cell_was_printed(const cell *c, const cell **printed_cons_cells,
                              unsigned long level) {
   unsigned long i;
@@ -183,7 +169,7 @@ void print_cell_block(const cell_block *block) {
     int i = 0;
     for (i = 0; i < s; i++) {
       printf("%i\t", i);
-      if (!is_in_global_env(memory->global_env, (arr + i)))
+      if (!cell_is_in_global_env(memory->global_env, (arr + i)))
         printf(ANSI_COLOR_GREEN);
       else
         printf(ANSI_COLOR_LIGHT_GREEN);
@@ -304,7 +290,7 @@ void print_stack(const cell_stack *stack) {
     size_t i = 0;
     while (it) {
       printf("%lu\t", i);
-      if (!is_in_global_env(memory->global_env, it->c))
+      if (!cell_is_in_global_env(memory->global_env, it->c))
         printf(ANSI_COLOR_BLUE);
       else
         printf(ANSI_COLOR_LIGHT_GREEN);

@@ -18,7 +18,7 @@
     // size, or will fail tests
 #define INITIAL_BLOCKS 1 // number of blocks initially allocated
 #define NEW_BLOCK_THRESHOLD                                                    \
-  0.5 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
+  0.8 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
       // block
 
 /********************************************************************************
@@ -28,7 +28,7 @@
 #define DEBUG_GARBAGE_COLLECTOR_MODE                                           \
   0                       // when performing gargabe collection prints messages
 #define DEBUG_EVAL_MODE 0 // describes what appens evaluating sexpressions
-#define DEBUG_PUSH_REMOVE_MODE 1 // when pushing or removing things in the stack
+#define DEBUG_PUSH_REMOVE_MODE 0 // when pushing or removing things in the stack
 
 /********************************************************************************
  *                                   INIT

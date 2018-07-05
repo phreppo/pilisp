@@ -366,7 +366,7 @@ test('[LOAD] diff calculator: d(x^2)', lisp_program_load_test, args : [
     '138'
 ])
 
-test('[LOAD] diff calculator: d( (x^2+1)/cos(x) )', lisp_program_load_test, args : [
+test('[LOAD] diff calculator: d((x^2+1)/cos(x))', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
     '(d \'(/ (+ (expt x 2) 1) (cos x)))',
     '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',
