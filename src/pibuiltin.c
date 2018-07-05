@@ -375,7 +375,7 @@ cell *length(const cell *list) {
   unsigned long len = 0;
   const cell *act = car(list);
   if (act && !is_cons(act) && !is_str(act))
-    pi_error(LISP_ERROR, "arg is not a list");
+    pi_error(LISP_ERROR, "arg is not a list or a string");
   /********************************************************************************
    *                                  LEAKS MEMORY
    ********************************************************************************/

@@ -431,7 +431,6 @@ test('[LOAD] factorial 10', lisp_program_load_test, args : [
 
 test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
     programs_path+'factorial.lisp',
-    # why this not? beacuse we can't write in a file an empty cell: it won't write anything
     '(not (factorial -1))',
     't',
     '142'
@@ -447,7 +446,6 @@ test('[LOAD] let maze', lisp_program_load_test, args :  [
 
 test('[LOAD] string include 1', lisp_program_load_test, args :  [
     programs_path+'ibeforee.lisp',
-    # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
     '(not (string-include "ciao" "a"))',
     'T',
     '144'
@@ -455,8 +453,15 @@ test('[LOAD] string include 1', lisp_program_load_test, args :  [
 
 test('[LOAD] string include 2', lisp_program_load_test, args :  [
     programs_path+'ibeforee.lisp',
-    # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
     '(string-include "STRING" "ANOTHER CAPS LOCK STRING")',
     '"STRING"',
     '145'
+])
+
+test('[LOAD] I before E except after C', lisp_program_load_test, args :  [
+    programs_path+'ibeforee.lisp',
+    # challange took from: https://www.reddit.com/r/dailyprogrammer/comments/8q96da/20180611_challenge_363_easy_i_before_e_except/
+    '(map check \'("a" "zombie" "transceiver" "veil" "icier"))',
+    '(t t t NIL NIL)',
+    '146'
 ])
