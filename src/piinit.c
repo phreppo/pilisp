@@ -46,6 +46,8 @@ void init_builtin_lambdas() {
 void init_builtin_macros() {
   builtin_macros_index = 0;
   symbol_setq = mk_builtin_macro("SETQ");
+  symbol_let = mk_builtin_macro("LET");
+  symbol_do = mk_builtin_macro("DO");
 }
 
 void init_env() {
@@ -61,11 +63,11 @@ void init_env() {
                  "(set 'defmacro (macro (name param body) " // check this
                  "(list 'set (list 'quote name) (list 'macro param body))))"
                  
-                 "(setq d \"test/lisp_programs/diff.lisp\")"
+                 "(setq d \"./test/lisp_programs/diff.lisp\")"
                  
-                 "(setq p \"examples/a.lisp\")"
+                 "(setq p \"./examples/a.lisp\")"
                  
-                 "(setq f \"examples/functions.lisp\")");
+                 "(setq f \"./examples/functions.lisp\")");
   parse_file(".piinit");
   cell_space_destroy_stack(memory);   // remove thrash
   collect_garbage(memory);

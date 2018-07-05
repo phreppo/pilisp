@@ -532,7 +532,7 @@ cell *builtin_eq(const cell *args) {
   cell_remove(args, RECURSIVE);
   return res;
 }
-
+// ==================== MACROS ====================
 cell *setq(const cell *args, cell *env) {
   check_two_args(args);
   cell *sym = car(args);
@@ -543,3 +543,30 @@ cell *setq(const cell *args, cell *env) {
   cell_remove_args(args);
   return ret;
 }
+
+cell *let(const cell *args, cell *env) {
+  cell *old_env = env;
+  cell *params = car(args);
+  cell *body = cadr(args); // ok
+  cell *new_env = env;
+
+  cell *val;
+  cell *new_pair;
+
+  while (params) {
+#if DEBUG_EVAL_MODE
+    puts("PARAMETROOO");
+#endif
+    val = eval(cadar(params), env);        // give a value to val
+    new_pair = mk_cons(caar(params), val); // (sym . val)
+    new_env = mk_cons(new_pair,
+                      new_env); // add on the head of the new env the new pair
+    params = cdr(params);
+  }
+#if DEBUG_EVAL_MODE
+  puts("ok");
+#endif
+  cell *res = eval(body, new_env);
+  return res;
+}
+cell *do_(const cell *args, cell *env) { return NULL; }

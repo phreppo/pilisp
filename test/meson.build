@@ -400,3 +400,11 @@ test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
     't',
     '142'
 ])
+
+# test('[LOAD] let maze', lisp_program_load_test, args : # [
+#     programs_path+'maze_let.lisp',
+#     # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
+#     '(solveMaze maze1)',
+#     '(2 3 1 0)',
+#     '143'
+# ])

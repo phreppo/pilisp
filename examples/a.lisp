@@ -1,4 +1,4 @@
-(load "functions.lisp")
+(load "./examples/functions.lisp")
 (set 'n 1)               
 (set 'n2 2)                        
 NIL 
@@ -7,11 +7,6 @@ n2
 44 
 2 
 n
-; to zero function
-;(set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1))))))
-;(set 'toz (lambda (x) ( cond ( (eq x 0) (+ 11 22) ) ( T (toz (- x 1))))))
-;(set 'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x))))))
-;(set 'po (lambda (n) (+ 1 n)))
 
 (dotimes (n 5) (toz 5))
 (ff '(a))
@@ -43,5 +38,53 @@ n
 (dotimes (n 2) 666)
 (dotimes (n 3) 666)
 
-; (d '(cos x) 'x)
-; (* (cos x) 1)
+(let ((l '(1 2 3))(num 0)) (nth num l))
+
+(setq m '(
+    (1) 
+    (0 3)
+    (3 -1)
+    (1 2) ))
+
+
+(defun sm1 (maze actualCell exploredCells doors)
+    (cond 
+        ( (not doors)
+            nil ) 
+        ( t 
+            (cond 
+                ( (not (solveMazeRec maze (car doors) exploredCells))
+                    (sm1 maze actualCell exploredCells (cdr doors)) ) 
+                ( t 
+                    (solveMazeRec maze (car doors) exploredCells)
+                ) ) ) ) )
+
+(defun solveMazeRec 
+    (maze actualCell exploredCells)
+        (cond 
+            ((= actualCell -1)
+                exploredCells) 
+            ((member actualCell exploredCells)     
+                nil)
+            (t
+                (let
+                    ((newExplored (cons actualCell exploredCells))
+                    (doors (nth actualCell maze)))
+                    
+                            (cond 
+        ( (not doors)
+            nil ) 
+        ( t 
+            (cond 
+                ( (not (solveMazeRec maze (car doors) newExplored))
+                    (sm1 maze actualCell newExplored (cdr doors)) ) 
+                ( t 
+                    (solveMazeRec maze (car doors) newExplored)
+                ) ) ) ) ) ) 
+                ))
+
+(defun sm
+    (maze)
+    (solveMazeRec maze 0 '()) )
+
+; (solveMaze maze1)

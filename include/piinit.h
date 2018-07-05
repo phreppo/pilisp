@@ -83,6 +83,9 @@ cell *symbol_write;
 
 // ==================== MACROS ====================
 cell *symbol_setq;
+cell *symbol_let;
+cell *symbol_do;
+
 #endif // !PIINIT_H
 
 /*@}*/

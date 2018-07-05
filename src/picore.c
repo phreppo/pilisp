@@ -6,8 +6,10 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   print_sexpr(x);
   printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
   print_sexpr(y);
+#if DEBUG_EVAL_PRINT_ENV_MODE
   printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
+#endif
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *result = a;
@@ -50,8 +52,10 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
   print_sexpr(x);
+#if DEBUG_EVAL_PRINT_ENV_MODE
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
+#endif
   printf(ANSI_COLOR_RESET "\n");
 #endif
   if (fn) {
@@ -284,8 +288,10 @@ cell *eval(cell *e, cell *a) {
 #if DEBUG_EVAL_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
   print_sexpr(e);
+#if DEBUG_EVAL_PRINT_ENV_MODE
   printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
   print_sexpr(a);
+#endif
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *evaulated = NULL;
@@ -329,6 +335,10 @@ cell *eval(cell *e, cell *a) {
       // ==================== BUILTIN MACRO ====================
       if (eq(car(e), symbol_setq))
         evaulated = setq(cdr(e), a);
+      if (eq(car(e), symbol_let))
+        evaulated = let(cdr(e), a);
+      if (eq(car(e), symbol_do))
+        evaulated = do_(cdr(e), a);
       cell_remove(e, SINGLE);
     }
 

@@ -32,11 +32,3 @@
 (defun solveMaze 
     (maze)
     (solveMazeRec maze 0 '()) )
-
-(defun solveMaze 
-    ()
-    (solveMazeRec '(
-    (1) 
-    (0 3)
-    (3 -1)
-    (1 2) ) 0 '()) )
