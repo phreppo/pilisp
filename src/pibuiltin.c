@@ -3,9 +3,9 @@
 
 int atom(const cell *c) {
   return (c == NULL) // NIL case
-         || (c->type == TYPE_SYM || c->type == TYPE_NUM ||
-             c->type == TYPE_STR || c->type == TYPE_BUILTINLAMBDA
-             || c->type == TYPE_BUILTINMACRO);
+         ||
+         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
 }
 
 bool eq(const cell *v1, const cell *v2) {
@@ -159,22 +159,22 @@ cell *set(cell *args) {
       // found
       car(act)->cdr = val;
       cell_remove_args(args);
-      cell_remove(name,SINGLE);
+      cell_remove(name, SINGLE);
       return cdar(act);
     }
     // iterate
     prec = act;
     act = cdr(act);
   }
-  cell *pair =cons(name, val);
+  cell *pair = cons(name, val);
   cell *new = cons(pair, NULL);
   if (prec)
     prec->cdr = new;
   else
     memory->global_env = new;
-  cell_remove(name,SINGLE);
-  cell_remove(new,SINGLE);
-  cell_remove(pair,SINGLE);
+  cell_remove(name, SINGLE);
+  cell_remove(new, SINGLE);
+  cell_remove(pair, SINGLE);
   cell_remove_args(args);
   return val;
 }
@@ -196,7 +196,7 @@ cell *load(cell *arg, cell **env) {
       cell_remove(last_result, RECURSIVE);
     }
   }
-  cell_remove(name,SINGLE);
+  cell_remove(name, SINGLE);
   cell_remove_args(arg);
   return symbol_true;
 }
@@ -217,10 +217,10 @@ cell *timer(cell *arg, cell **env) {
   return valued;
 }
 
-cell *write(cell *arg){
+cell *write(cell *arg) {
   check_one_arg(arg);
   cell *target = car(arg);
-  printf( ANSI_COLOR_GRAY" > " ANSI_COLOR_RESET);
+  printf(ANSI_COLOR_GRAY " > " ANSI_COLOR_RESET);
   print_sexpr(target);
   puts("");
   cell_remove_args(arg);
@@ -296,6 +296,8 @@ cell *greater(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+  if (!first || !second)
+    pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
   cell *res = NULL;
@@ -313,6 +315,8 @@ cell *greater_eq(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+  if (!first || !second)
+    pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
   cell *res = NULL;
@@ -330,6 +334,8 @@ cell *less(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+  if (!first || !second)
+    pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
   cell *res = NULL;
@@ -347,6 +353,8 @@ cell *less_eq(const cell *operands) {
   check_two_args(operands);
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+  if (!first || !second)
+    pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
   cell *res = NULL;
@@ -525,13 +533,13 @@ cell *builtin_eq(const cell *args) {
   return res;
 }
 
-cell *setq(const cell * args,cell * env){
+cell *setq(const cell *args, cell *env) {
   check_two_args(args);
-  cell * sym = car(args);
-  if(!is_sym(sym))
+  cell *sym = car(args);
+  if (!is_sym(sym))
     pi_lisp_error("first arg must be a symbol");
-  cell * val = eval(cadr(args),env);
-  cell * ret = set(mk_cons(sym,mk_cons(val,NULL)));
+  cell *val = eval(cadr(args), env);
+  cell *ret = set(mk_cons(sym, mk_cons(val, NULL)));
   cell_remove_args(args);
   return ret;
 }
