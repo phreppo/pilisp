@@ -58,6 +58,8 @@ void init_env() {
       "(set 'defmacro (macro (name param body) " // check this
       "(list 'set (list 'quote name) (list 'macro param body))))"
 
+      "(defun 1+ (num) (+ num 1))"
+
       "(setq d \"./test/lisp_programs/diff.lisp\")"
 
       "(setq p \"./examples/a.lisp\")"

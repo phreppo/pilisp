@@ -4,6 +4,7 @@
 #define PIINIT_H
 #include "picell.h"
 #include "piparser.h"
+#include "pisettings.h"
 #include <stdio.h>
 
 // ==================== BUILTIN LAMBDAS STRUCTURE ====================
