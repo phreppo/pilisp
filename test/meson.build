@@ -465,3 +465,11 @@ test('[LOAD] I before E except after C', lisp_program_load_test, args :  [
     '(t t t NIL NIL)',
     '146'
 ])
+
+test('[LOAD] map and maze', lisp_program_load_test, args :  [
+    programs_path+'maze.lisp',
+    # TODO: con il map si rompe tutto: metti a posto
+    '(solvemaze maze3)',
+    '(12 13 9 10 14 15 11 7 6 5 4 0)',
+    '147'
+])

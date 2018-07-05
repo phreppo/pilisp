@@ -1,5 +1,7 @@
 ; CHALLANGE TOOK FROM: https://www.reddit.com/r/dailyprogrammer/comments/8q96da/20180611_challenge_363_easy_i_before_e_except/
-; I before E except after C
+; **********************************************
+; *           I before E except after C
+; **********************************************
 ; Background
 ; "I before E except after C" is perhaps the most famous English spelling rule. For the purpose of this ; challenge, the rule says:
 ; 

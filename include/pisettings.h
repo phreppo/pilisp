@@ -90,7 +90,7 @@
  ********************************************************************************/
 
 // describes what appens evaluating sexpressions
-#define DEBUG_EVAL_MODE 1
+#define DEBUG_EVAL_MODE 0
 
 // gives an output when pushing or removing things in the stack
 #define DEBUG_PUSH_REMOVE_MODE 0
