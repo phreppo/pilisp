@@ -58,7 +58,6 @@ cell *symbol_label;
 cell *symbol_quote;
 cell *symbol_cond;
 cell *symbol_load;
-cell *symbol_timer;
 cell *symbol_or;
 cell *symbol_and;
 cell *symbol_not;
@@ -84,6 +83,7 @@ cell *symbol_write;
 // ==================== MACROS ====================
 cell *symbol_setq;
 cell *symbol_let;
+cell *symbol_timer;
 cell *symbol_defun;
 
 #endif // !PIINIT_H

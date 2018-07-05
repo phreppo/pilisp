@@ -85,8 +85,6 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
           return set(x);
         if (eq(fn, symbol_load))
           return load(x, &a);
-        if (eq(fn, symbol_timer))
-          return timer(x, &a);
         if (eq(fn, symbol_mem_dump)) {
           if (x)
             pi_error_many_args();
@@ -339,6 +337,8 @@ cell *eval(cell *e, cell *a) {
         evaulated = let(cdr(e), a);
       if (eq(car(e), symbol_defun))
         evaulated = defun(cdr(e), a);
+      if (eq(car(e), symbol_timer))
+        evaulated = timer(cdr(e), &a);
       cell_remove(e, SINGLE);
     }
 

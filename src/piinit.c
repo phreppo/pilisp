@@ -19,7 +19,6 @@ void init_builtin_lambdas() {
   symbol_quote = mk_builtin_lambda("QUOTE");
   symbol_cond = mk_builtin_lambda("COND");
   symbol_load = mk_builtin_lambda("LOAD");
-  symbol_timer = mk_builtin_lambda("TIME");
   symbol_or = mk_builtin_lambda("OR");
   symbol_and = mk_builtin_lambda("AND");
   symbol_not = mk_builtin_lambda("NOT");
@@ -48,6 +47,7 @@ void init_builtin_macros() {
   symbol_setq = mk_builtin_macro("SETQ");
   symbol_let = mk_builtin_macro("LET");
   symbol_defun = mk_builtin_macro("DEFUN");
+  symbol_timer = mk_builtin_macro("TIME");
 }
 
 void init_env() {

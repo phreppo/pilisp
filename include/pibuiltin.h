@@ -56,7 +56,6 @@ cell *multiplication(const cell *numbers);
 cell *division(const cell *numbers);
 
 // ==================== UTILITY ====================
-cell *timer(cell *arg, cell **env);
 cell *set(cell *args);
 cell *load(cell *arg, cell **env);
 cell *write(cell *arg);
@@ -71,6 +70,7 @@ cell *list(const cell *list);
 cell *setq(const cell *args, cell *env);
 cell *defun(const cell *args, cell *env);
 cell *let(const cell *args, cell *env);
+cell *timer(cell *arg, cell **env);
 
 #endif // !PIBUILTIN_H
 

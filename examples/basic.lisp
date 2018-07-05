@@ -24,6 +24,3 @@
             (test1 (- num 1)) )
     ) )
 )
-
-;(timer '(test 18000))
-;(timer '(test 17000))
