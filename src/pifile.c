@@ -4,9 +4,8 @@ void write_program_to_file(char *file_name, char *program_text) {
   // write the program in a file
   FILE *program_file_write = fopen(file_name, "w");
   int results = fputs(program_text, program_file_write);
-  if (results == EOF) {
+  if (results == EOF) 
     pi_error(MEMORY_ERROR,"error writing program file");
-  }
   fclose(program_file_write);
 }
 

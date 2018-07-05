@@ -168,14 +168,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         // CUSTOM FUNCTION
         // does lambda exists?
         cell *function_body = eval(fn, a);
-        if (function_body == NULL) {
-          char *err = "unknown function ";
-          char *fn_name = fn->sym;
-          char *result = malloc(strlen(err) + strlen(fn_name) + 1);
-          strcpy(result, err);
-          strcat(result, fn_name);
-          pi_error(LISP_ERROR, result);
-        }
+        if (function_body == NULL) 
+          pi_error(LISP_ERROR, "unknown function ");
         if (!is_cons(function_body))
           pi_error(LISP_ERROR, "trying to apply a non-lambda");
         if ((car(function_body) != symbol_macro) && eval_args)
@@ -265,14 +259,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
 
       cell *function_body = eval(fn, a);
 
-      if (function_body == NULL) {
-        char *err = "unknown function ";
-        char *fn_name = fn->sym;
-        char *result = malloc(strlen(err) + strlen(fn_name) + 1);
-        strcpy(result, err);
-        strcat(result, fn_name);
-        pi_error(LISP_ERROR, result);
-      }
+      if (function_body == NULL) 
+        pi_error(LISP_ERROR, "unknown function ");
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
       // the env knows the lambda

@@ -52,25 +52,19 @@ void init_builtin_macros() {
 
 void init_env() {
   memory->global_env = NULL;
-  // memory->global_env = mk_cons(mk_cons(mk_sym("t"), mk_str("t")),
-                              //  NULL);
-
   // write the basic functions to one file, then load them
   write_program_to_file(
-      ".piinit", 
-      // "(set 'defun (macro (name param body) "
-                //  "(list 'set (list 'quote name) (list 'lambda param body))))"
+      ".piinit",
+      "(set 'defmacro (macro (name param body) " // check this
+      "(list 'set (list 'quote name) (list 'macro param body))))"
 
-                 "(set 'defmacro (macro (name param body) " // check this
-                 "(list 'set (list 'quote name) (list 'macro param body))))"
-                 
-                 "(setq d \"./test/lisp_programs/diff.lisp\")"
-                 
-                 "(setq p \"./examples/a.lisp\")"
-                 
-                 "(setq f \"./examples/functions.lisp\")");
+      "(setq d \"./test/lisp_programs/diff.lisp\")"
+
+      "(setq p \"./examples/a.lisp\")"
+
+      "(setq f \"./examples/functions.lisp\")");
   parse_file(".piinit");
-  cell_space_destroy_stack(memory);   // remove thrash
+  cell_space_destroy_stack(memory); // remove thrash
   collect_garbage(memory);
 }
 
@@ -81,4 +75,15 @@ void init_pi() {
   init_env();
 }
 
-void free_pi() { free_memory(); }
+void free_pi() {
+  free_memory();
+  free_builtin_symbols();
+}
+
+void free_builtin_symbols() {
+  size_t i = 0;
+  for (i = 0; i < builtin_lambdas_index; i++)
+    free_cell_pointed_memory(&BUILTIN_LAMBDAS[i]);
+  for (i = 0; i < builtin_macros_index; i++)
+    free_cell_pointed_memory(&BUILTIN_MACROS[i]);
+}

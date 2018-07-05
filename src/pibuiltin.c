@@ -574,8 +574,6 @@ cell *let(const cell *args, cell *env) {
 cell *defun(const cell *args, cell *env) {
   cell *fun_name = car(args);
   cell *lambda_struct = (cdr(args));
-  cell *params = cadr(args);
-  cell *body = caddr(args);
   cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
   cell *compacted = mk_cons(fun_name, mk_cons(lambda_head, NULL));
   set(compacted);

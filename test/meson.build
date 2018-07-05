@@ -291,10 +291,16 @@ test('[LISP] write function test', lisp_program_test, args : [
     '332'
 ])
 
+test('[LISP] bye test', lisp_program_test, args : [
+    '(BYE)',
+    'BYE',
+    '333'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',
-    '333'
+    '334'
 ])
 
 test('[MACRO] mysetq test', lisp_program_test, args : [
