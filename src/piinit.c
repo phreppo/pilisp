@@ -48,6 +48,7 @@ void init_builtin_macros() {
   symbol_setq = mk_builtin_macro("SETQ");
   symbol_let = mk_builtin_macro("LET");
   symbol_do = mk_builtin_macro("DO");
+  symbol_defun = mk_builtin_macro("DEFUN");
 }
 
 void init_env() {
@@ -57,8 +58,9 @@ void init_env() {
 
   // write the basic functions to one file, then load them
   write_program_to_file(
-      ".piinit", "(set 'defun (macro (name param body) "
-                 "(list 'set (list 'quote name) (list 'lambda param body))))"
+      ".piinit", 
+      // "(set 'defun (macro (name param body) "
+                //  "(list 'set (list 'quote name) (list 'lambda param body))))"
 
                  "(set 'defmacro (macro (name param body) " // check this
                  "(list 'set (list 'quote name) (list 'macro param body))))"

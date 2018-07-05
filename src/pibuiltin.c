@@ -545,6 +545,7 @@ cell *setq(const cell *args, cell *env) {
 }
 
 cell *let(const cell *args, cell *env) {
+  // TODO: leaks memory
   cell *old_env = env;
   cell *params = car(args);
   cell *body = cadr(args); // ok
@@ -568,5 +569,17 @@ cell *let(const cell *args, cell *env) {
 #endif
   cell *res = eval(body, new_env);
   return res;
+}
+
+cell *defun(const cell *args, cell *env){
+  cell * fun_name = car(args);
+  cell * lambda_struct = (cdr(args));
+  cell * params = cadr(args);
+  cell * body = caddr(args);
+  cell * lambda_head = mk_cons(symbol_lambda,lambda_struct);
+  cell * compacted = mk_cons(fun_name,mk_cons(lambda_head,NULL));
+  set(compacted);
+  cell_remove(args,SINGLE);
+  return lambda_head;
 }
 cell *do_(const cell *args, cell *env) { return NULL; }

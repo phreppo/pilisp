@@ -85,6 +85,7 @@ cell *symbol_write;
 cell *symbol_setq;
 cell *symbol_let;
 cell *symbol_do;
+cell *symbol_defun;
 
 #endif // !PIINIT_H
 

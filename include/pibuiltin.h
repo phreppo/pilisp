@@ -69,6 +69,7 @@ cell *list(const cell *list);
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);
+cell *defun(const cell *args, cell *env);
 cell *let(const cell *args, cell *env);
 cell *do_(const cell *args, cell *env);
 
