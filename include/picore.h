@@ -1,12 +1,5 @@
-/** @defgroup picore
- *
- *  @brief Provides LISP core functions: eval and apply
- *
- */
-
 /** @addtogroup picore */
 /*@{*/
-
 #ifndef PICORE_H
 #define PICORE_H
 #include "pilisp.h"
@@ -20,5 +13,4 @@ cell *evlis(cell *m, cell *a);
 cell *evcon(cell *c, cell *a);
 
 #endif // !PICORE_H
-
-/*@}*/
+       /*@}*/

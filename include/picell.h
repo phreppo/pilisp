@@ -1,12 +1,5 @@
-/** @defgroup picell
- *
- *  @brief Provides the data structures for LISP, like cells
- *
- */
-
 /** @addtogroup picell */
 /*@{*/
-
 #ifndef PICELL_H
 #define PICELL_H
 #include <stdbool.h>
@@ -117,7 +110,8 @@ void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode);
 void cell_stack_remove_args(cell_stack *stack, const cell *args);
 void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
                                const cell *old_env);
-void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env, const cell *old_env);
+void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
+                                    const cell *old_env);
 void cell_stack_remove_cars(
     cell_stack *stack,
     const cell *list); // recursively eliminates the cars in the list
@@ -184,5 +178,4 @@ void mark(cell *root);
 void sweep(cell_space *cs);
 
 #endif // !PICELL_H
-
-/*@}*/
+       /*@}*/

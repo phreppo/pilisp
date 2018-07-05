@@ -1,12 +1,5 @@
-/** @defgroup pibuiltin
- *
- *  @brief Provides builtin lambdas: for example car, cdr
- *
- */
-
 /** @addtogroup pibuiltin */
 /*@{*/
-
 #ifndef PIBUILTIN_H
 #define PIBUILTIN_H
 #include "picell.h"
@@ -73,5 +66,4 @@ cell *let(const cell *args, cell *env);
 cell *timer(cell *arg, cell **env);
 
 #endif // !PIBUILTIN_H
-
-/*@}*/
+       /*@}*/

@@ -1,9 +1,3 @@
-/** @defgroup pifile
- *
- * @brief Provides file handling
- *
- */
-
 /** @addtogroup pifile */
 /*@{*/
 #ifndef PIFILE_H
@@ -12,7 +6,7 @@
 #include <stdio.h>
 
 void write_program_to_file(char *file_name, char *program_text);
-cell * parse_file(char * file_path);
+cell *parse_file(char *file_path);
 
-#endif
-/*@}*/
+#endif // !PI_FILE
+       /*@}*/

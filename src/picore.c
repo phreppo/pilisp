@@ -302,7 +302,7 @@ cell *eval(cell *e, cell *a) {
             // the symbol has no value in the env
             char *err = "unknown symbol ";
             char *sym_name = e->sym;
-            char *result = malloc(strlen(err) + strlen(sym_name) + 1);
+            char result[ERROR_MESSAGE_LEN];
             strcpy(result, err);
             strcat(result, sym_name);
             pi_error(LISP_ERROR, result);

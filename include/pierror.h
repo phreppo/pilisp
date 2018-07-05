@@ -1,9 +1,3 @@
-/** @defgroup pierror
- *
- * @brief Provides errors handling
- *
- */
-
 /** @addtogroup pierror */
 /*@{*/
 #ifndef PERROR_H
@@ -13,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum error_types{
+enum error_types {
   NO_ERROR = -1,    ///< no error occurrred
   LISP_ERROR = 1,   ///< LISP syntax error
   MEMORY_ERROR = 2, ///< memory error
@@ -38,4 +32,4 @@ bool had_error();
 void reset_error();
 
 #endif // !PERROR_H
-/*@}*/
+       /*@}*/

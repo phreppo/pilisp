@@ -4,6 +4,66 @@
  *
  */
 
+/** @defgroup piinit
+ *
+ * @brief Provides methods that have to be called before using pilisp
+ *
+ */
+
+/** @defgroup pibuiltin
+ *
+ *  @brief Provides builtin lambdas: for example car, cdr
+ *
+ */
+
+/** @defgroup picell
+ *
+ *  @brief Provides the data structures for LISP, like cells
+ *
+ */
+
+/** @defgroup picore
+ *
+ *  @brief Provides LISP core functions: eval and apply
+ *
+ */
+
+/** @defgroup pierror
+ *
+ * @brief Provides errors handling
+ *
+ */
+
+/** @defgroup pifile
+ *
+ * @brief Provides file handling
+ *
+ */
+
+/** @defgroup pilisp
+ *
+ * @brief Links the other modules of Pilisp
+ *
+ */
+
+/** @defgroup piparser
+ *
+ * @brief Provides lexer and parser
+ *
+ */
+
+/** @defgroup piprint
+ *
+ * @brief Handles printing messages and data structures
+ *
+ */
+
+/** @defgroup pitestutils
+ *
+ * @brief Provides tools like prompts to test some functions of pilisp
+ *
+ */
+
 /** @addtogroup pisettings */
 /*@{*/
 
@@ -13,39 +73,57 @@
 /********************************************************************************
  *                              MEMORY SETTINGS
  ********************************************************************************/
-#define INITIAL_BLOCK_SIZE                                                     \
-  10 // size of the first created block of cells: must be greater than the init
-    // size, or will fail tests
-#define INITIAL_BLOCKS 1 // number of blocks initially allocated
-#define NEW_BLOCK_THRESHOLD                                                    \
-  0.8 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
-      // block
+
+// size of the first created block of cells: must be greater than the init
+// size, or will fail tests
+#define INITIAL_BLOCK_SIZE 10
+
+// number of blocks initially allocated
+#define INITIAL_BLOCKS 1
+
+// (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
+// block
+#define NEW_BLOCK_THRESHOLD 0.8
 
 /********************************************************************************
  *                                 DEBUGGING
  ********************************************************************************/
 
-#define DEBUG_EVAL_MODE 0 // describes what appens evaluating sexpressions
-#define DEBUG_EVAL_PRINT_ENV_MODE 0 // prints the env while in debug eval mode
-#define DEBUG_PUSH_REMOVE_MODE 0 // when pushing or removing things in the stack
-#define DEBUG_GARBAGE_COLLECTOR_MODE                                           \
-  0                       // when performing gargabe collection prints messages
+// describes what appens evaluating sexpressions
+#define DEBUG_EVAL_MODE 0
+
+// gives an output when pushing or removing things in the stack
+#define DEBUG_PUSH_REMOVE_MODE 0
+
+// prints the env while in debug eval mode
+#define DEBUG_EVAL_PRINT_ENV_MODE 0
+
+// when performing gargabe collection prints messages
+#define DEBUG_GARBAGE_COLLECTOR_MODE 0
 
 /********************************************************************************
  *                                   INIT
  ********************************************************************************/
 
-#define ERROR_EMPTY_REMOVING                                                   \
-  1 // raise an error if trying to remove a cell that is not on the stack
-    // (beacuse that cell does not belongs to you)
+// raise an error if trying to remove a cell that is not on the stack
+// (beacuse that cell does not belongs to you)
+#define ERROR_EMPTY_REMOVING 1
 
 /********************************************************************************
  *                                  LIMITS
  ********************************************************************************/
 
-#define MAX_TOK_LEN 512      // max length of a token
-#define N_BUILTIN_LAMBDA 777 // EXACT number of builtin lambdas
-#define N_BUILTIN_MACRO 777 // EXACT number of builtin lambdas
+// max length of a token
+#define MAX_TOK_LEN 512
+
+// max length of a error message
+#define ERROR_MESSAGE_LEN 1024
+
+// EXACT number of builtin lambdas
+#define N_BUILTIN_LAMBDA 777
+
+// EXACT number of builtin lambdas
+#define N_BUILTIN_MACRO 777
 
 /********************************************************************************
  *                             CONSOLE ANSI COLORS
@@ -72,4 +150,4 @@
 #define COLOR2 ANSI_COLOR_YELLOW
 
 #endif // !PISETTINGS_H
-/*@}*/
+       /*@}*/

@@ -1,12 +1,5 @@
-/** @defgroup piinit
- *
- * @brief Provides methods that have to be called before using pilisp
- *
- */
-
 /** @addtogroup piinit */
 /*@{*/
-
 #ifndef PIINIT_H
 #define PIINIT_H
 #include "picell.h"
@@ -88,5 +81,4 @@ cell *symbol_timer;
 cell *symbol_defun;
 
 #endif // !PIINIT_H
-
-/*@}*/
+       /*@}*/
