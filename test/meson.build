@@ -92,161 +92,161 @@ lisp_program_test = executable(
 test('[LISP] +', lisp_program_test, args : [
     '(+ 1 1 1)',
     '3 ',
-    '1'
+    'L+'
 ])
 test('[LISP] -', lisp_program_test, args : [
     '(- 1 1)',
     '0 ',
-    '2'
+    'L-'
 ])
 test('[LISP] *', lisp_program_test, args : [
     '(* -1 -1)',
     '1 ',
-    '3'
+    'L*'
 ])
 test('[LISP] /', lisp_program_test, args : [
     '(/ 8 2 (+ 1 1))',
     '2 ' ,
-    '3'
+    'LFR'
 ])
 test('[LISP] or 1', lisp_program_test, args : [
     '(set \'n 1)(or n "ciao" n NIL)',
     '1 ',
-    '4'
+    'LOR1'
 ])
 test('[LISP] or 2', lisp_program_test, args : [
     '(or NIL NIL NIL NIL NIL)',
     'NIL',
-    '5'
+    'LOR2'
 ])
 test('[LISP] and 1', lisp_program_test, args : [
     '(and 1 NIL)',
     'NIL ' ,
-    '6'
+    'LAND1'
 ])
 test('[LISP] and 2', lisp_program_test, args : [
     '(or "hey" 7 "hey")',
     '"hey"',
-    '7'
+    'LAND2'
 ])
 test('[LISP] not 1', lisp_program_test, args : [
     '(not T)',
     'NIL',
-    '8'
+    'LNOT1'
 ])
 test('[LISP] not 2', lisp_program_test, args : [
     '(not NIL)',
     'T ',
-    '9'
+    'LNOT2'
 ])
 test('[LISP] car 1', lisp_program_test, args : [
     '(car \'(a b))',
     'A ',
-    '10'
+    'LCAR1'
 ])
 test('[LISP] car 2', lisp_program_test, args : [
     '(car \'((a a) b))',
     '(A A) ',
-    '11'
+    'LCAR2'
 ])
 test('[LISP] >', lisp_program_test, args : [
     '(set \'n 1)(> n (- 0 100))',
     'T ',
-    '12'
+    'L>'
 ])
 test('[LISP] >=', lisp_program_test, args : [
     '(set \'n 1)(>= n n)',
     'T ',
-    '13'
+    'L>='
 ])
 test('[LISP] <', lisp_program_test, args : [
     '(set \'n 1)(< (* 100 100) n)',
     'NIL ',
-    '14'
+    'L<'
 ])
 test('[LISP] <=', lisp_program_test, args : [
     '(set \'n 1)(<= n n)',
     'T ',
-    '15'
+    'L<='
 ])
 test('[LISP] lambda: id', lisp_program_test, args : [
     '(set \'str "hi")(set \'id (lambda (x) x)) (id str)',
     '"hi" ',
-    '16'
+    'LLID'
 ])
 test('[LISP] lambda: ff', lisp_program_test, args : [
     '(set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'str "hi") (ff \'(((((str)7)8))))',
     'str ',
-    '17'
+    'LLFF'
 ])
 test('[LISP] nth 1', lisp_program_test, args : [
     '(nth 1 \'(a b c) )',
     'B ',
-    '18'
+    'LNTH1'
 ])
 test('[LISP] nth 2', lisp_program_test, args : [
     '(nth 100 \'(a (1 2) c) )',
     'NIL ',
-    '19'
+    'LNTH2'
 ])
 test('[LISP] member 1', lisp_program_test, args : [
     '(set \'n 1)(member n \'(4 1 2 3) )',
     '(1 2 3) ',
-    '20'
+    'LMEM1'
 ])
 test('[LISP] member 2', lisp_program_test, args : [
     '(set \'n 1)(member n \'(n n2 NIL) )',
     'NIL',
-    '21'
+    'LMEM2'
 ])
 test('[LISP] list', lisp_program_test, args : [
     '(set \'n 1)(list n 1 1)',
     '(1 1 1)',
-    '21.5'
+    'LLIST'
 ])
 test('[LISP] length 1', lisp_program_test, args : [
     '(length \'(NIL NIL NIL) )',
     '3',
-    '22'
+    'LLEN1'
 ])
 test('[LISP] length 2', lisp_program_test, args : [
     '(length NIL )',
     '0',
-    '23'
+    'LLEN2'
 ])
 test('[LISP] load test', lisp_program_test, args : [
     '(load "'+programs_path+'loadtest.lisp")(+ n 1)',
     '2' ,
-    '24'
+    'LLOAD'
 ])
 test('[LISP] env printing test', lisp_program_test, args : [
     '(env)',
     'T',
-    '25'
+    'LENV'
 ])
 
 test('[LISP] set-sum test', lisp_program_test, args : [
     '(+ 1 2) (+ 1 2) (+ 1 2) (set \'n 3) n (+ 1 n)',
     '4',
-    '26'
+    'LSUMSET'
 ])
 
 test('[LISP] set-lambda test 1', lisp_program_test, args : [
     '(set \'id (lambda (x) x)) (set \'n 1) (id 1)',
     '1',
-    '27'
+    'LLSET'
 ])
 
 test('[LISP] set test', lisp_program_test, args : [
     '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (ff \'(((n1 . n2))))',
     'n1',
-    '28'
+    'LSET'
 ])
 
 test('[LISP] dotimes test', lisp_program_test, args : [
     '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100) (ff \'(n1 n2)))',
     'NIL',
-    '29'
+    'LDOTIMES'
 ])
 
 test('[LISP] to zero dotimes test', lisp_program_test, args : [
@@ -258,109 +258,109 @@ test('[LISP] to zero dotimes test', lisp_program_test, args : [
 test('[LISP] cond test', lisp_program_test, args : [
     '(cond (nil nil) ((not nil) 1 ) (t 2) (t 1))',
     '1',
-    '31'
+    'LCOND'
 ])
 
 test('[LISP] stress test 1', lisp_program_test, args : [
     '(set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (set \'iso (lambda (x) (cond ((eq x 1) 1 ) ((eq x 2) 2) (t 666)))) (set \'plo (lambda (n) (+ 1 n))) (dotimes (n 5) (toz 5)) (ff \'(a)) (ff \'((((a) b ) c ) d)) (ff \'((a) b )) ((lambda (x) (cond ((eq x 1) 1 ) ((eq x 2) 2) (t 666))) \'(1)) ((lambda (x) x) \'(1)) ((lambda (x) (lambda (y) y)) 1 ) (((lambda (x) (lambda (y) 2))  ) ) (((lambda (x) (lambda (y) y)) 1 ) 2) (((lambda (x) (lambda (y) y)) 1 2 ) 3) ((((lambda (x) (lambda (y) (lambda (z) z))) 1 ) 2) 3) ( (lambda (x) (+ 1 x ) ) 1 ) (set \'ivar (lambda (x) (set \'var x))) (set \'l \'(nil (1 2) ((1)(2)) nil "ciao")) (or nil nil nil \'(1 2 3) 4) (set \'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1)))))) (dotimes (n 1) (toz n)) (dotimes (n 2) (toz n)) (dotimes (n 3) (toz n)) (dotimes (n 3) (+ 1 n)) (dotimes (n 1) 666) (dotimes (n 2) 666) (dotimes (n 3) 666) NIL',
     'NIL',
-    '32'
+    'LSTRESS'
 ])
 
 test('[LISP] label test', lisp_program_test, args : [
     '((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) \'((a)))',
     'A',
-    '33'
+    'LLABEL'
 ])
 
 test('[LISP] builtin setq test', lisp_program_test, args : [
     '(setq fun (lambda (x) x)) fun',
     '(lambda (x) x)',
-    '331'
+    'LBSETQ'
 ])
 
 test('[LISP] builtin defun test', lisp_program_test, args : [
     '(defun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'(((a. c) .b)))',
     'a',
-    '332'
+    'LBDEFUN'
 ])
 
 test('[LISP] write function test', lisp_program_test, args : [
     '(setq num 1) (write (+ 1 num))',
     '2',
-    '332'
+    'LWRITE'
 ])
 
 test('[LISP] bye test', lisp_program_test, args : [
     '(BYE)',
     'BYE',
-    '333'
+    'LBYE'
 ])
 
 test('[LISP] map test 1', lisp_program_test, args : [
     '(map 1+ \'(99 100 101))',
     '(100 101 102)',
-    '335'
+    'LMAP1'
 ])
 
 test('[LISP] map test 2', lisp_program_test, args : [
     '(map 1+ NIL)',
     'NIL',
-    '3351'
+    'LMAP2'
 ])
 
 test('[LISP] map test 3', lisp_program_test, args : [
     '(map not \'(1 2 NIL NIL "hi"))',
     '(NIL NIL T T NIL)',
-    '3352'
+    'LMAP3'
 ])
 
 test('[LISP] subseq test 1', lisp_program_test, args : [
     '(subseq "ciao" 1 2)',
     '"i"',
-    '3353'
+    'LSUBSEQ1'
 ])
 
 test('[LISP] subseq test 2', lisp_program_test, args : [
     '(subseq "stringa composta" 0 8)',
     '"stringa "',
-    '3354'
+    'LSUBSEQ2'
 ])
 
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',
-    '334'
+    'MMACRO'
 ])
 
 test('[MACRO] mysetq test', lisp_program_test, args : [
     '(set \'mysetq (macro (name val) (set name val))) (mysetq ciao 1) ciao',
     '1',
-    '34'
+    'MMYSETQ'
 ])
 
 test('[MACRO] mydefun test 1', lisp_program_test, args : [
     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun id (x) x) (id "hi")',
     '"hi"',
-    '35'
+    'MMYDEFUN1'
 ])
 
 test('[MACRO] mydefun test 2', lisp_program_test, args : [
     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun toz (n) (cond ((eq n 0) 0) (t (toz (- n 1)))) ) (toz 100)',
     '0',
-    '35'
+    'MMYDEFUN2'
 ])
 
 test('[MACRO] mydefun test 3', lisp_program_test, args : [
     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'((((a)))))',
     'a',
-    '36'
+    'MMYDEFUN3'
 ])
 
 test('[MACRO] mydefun test 4', lisp_program_test, args : [
     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun triple (x) (* x 3) ) (triple 333)',
     '999',
-    '37'
+    'MMYDEFUN4'
 ])
 
 # (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
@@ -377,63 +377,63 @@ test('[LOAD] first load test', lisp_program_load_test, args : [
     programs_path+'loadtest.lisp',
     '1',
     '1',
-    '134'
+    'LOAD'
 ])
 
 test('[LOAD] set-style maze test', lisp_program_load_test, args : [
     programs_path+'maze_old.lisp',
     '(solveMaze maze1)',
     '(2 3 1 0)',
-    '135'
+    'SETMAZE'
 ])
 
 test('[LOAD] builtin defun and setq maze test', lisp_program_load_test, args : [
     programs_path+'maze.lisp',
     '(solveMaze maze1)',
     '(2 3 1 0)',
-    '136'
+    'MAZEBUILTIN'
 ])
 
 test('[LOAD] diff calculator: d(33x)', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
     '(d \'(* x 33))',
     '(+ (* 1 33) (* X 0))',
-    '137'
+    'DIFF1'
 ])
 
 test('[LOAD] diff calculator: d(x^2)', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
     '(d \'(expt x 2))',
     '(* (EXPT X . 1) 2)',
-    '138'
+    'DIFF2'
 ])
 
 test('[LOAD] diff calculator: d((x^2+1)/cos(x))', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
     '(d \'(/ (+ (expt x 2) 1) (cos x)))',
     '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',
-    '139'
+    'DIFF3'
 ])
 
 test('[LOAD] max in list', lisp_program_load_test, args : [
     programs_path+'max.lisp',
     '(list_max (list 1 2 3 4 5 6 7 8 9 1024))',
     '1024',
-    '140'
+    'MAX'
 ])
 
 test('[LOAD] factorial 10', lisp_program_load_test, args : [
     programs_path+'factorial.lisp',
     '(factorial 10)',
     '3628800',
-    '141'
+    'FACT1'
 ])
 
 test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
     programs_path+'factorial.lisp',
     '(not (factorial -1))',
     't',
-    '142'
+    'FACT2'
 ])
 
 test('[LOAD] let maze', lisp_program_load_test, args :  [
@@ -441,21 +441,21 @@ test('[LOAD] let maze', lisp_program_load_test, args :  [
     # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
     '(solveMaze maze1)',
     '(2 3 1 0)',
-    '143'
+    'LETMAZE'
 ])
 
 test('[LOAD] string include 1', lisp_program_load_test, args :  [
     programs_path+'ibeforee.lisp',
     '(not (string-include "ciao" "a"))',
     'T',
-    '144'
+    'STRINGINCLUDE1'
 ])
 
 test('[LOAD] string include 2', lisp_program_load_test, args :  [
     programs_path+'ibeforee.lisp',
     '(string-include "STRING" "ANOTHER CAPS LOCK STRING")',
     '"STRING"',
-    '145'
+    'STRINGINCLUDE2'
 ])
 
 test('[LOAD] I before E except after C', lisp_program_load_test, args :  [
@@ -463,13 +463,21 @@ test('[LOAD] I before E except after C', lisp_program_load_test, args :  [
     # challange took from: https://www.reddit.com/r/dailyprogrammer/comments/8q96da/20180611_challenge_363_easy_i_before_e_except/
     '(map check \'("a" "zombie" "transceiver" "veil" "icier"))',
     '(t t t NIL NIL)',
-    '146'
+    'IBEFEEXCC'
 ])
 
-test('[LOAD] map and maze', lisp_program_load_test, args :  [
+test('[LOAD] map and maze with list', lisp_program_load_test, args :  [
     programs_path+'maze.lisp',
-    # TODO: con il map si rompe tutto: metti a posto
-    '(solvemaze maze3)',
-    '(12 13 9 10 14 15 11 7 6 5 4 0)',
-    '147'
+    '(map solvemaze \'( \'((1) (0 3) (3 -1) (1 2)) \'((3 1) (0 2 4) (1 5) (0 4) (1 3) (2 8) (-1 7) (6 8) (5 7)) ))',
+#'(map solvemaze '( ((1) (0 3) (3 -1) (1 2)) ((3 1) (0 2 4) (1 5) (0 4) (1 3) (2 8) (-1 7) (6 8) (5 7)) ))',
+#    '(map solvemaze '( ((1) (0 3) (3 -1) (1 2)) )',
+    '((2 3 1 0) (6 7 8 5 2 1 4 3 0))',
+    'MAPMAZELIST'
+])
+
+test('[LOAD] map and maze with variables', lisp_program_load_test, args :  [
+    programs_path+'maze.lisp',
+    '(map solvemaze \'(maze1 maze2))',
+    '((2 3 1 0) (6 7 8 5 2 1 4 3 0))',
+    'MAPMAZEVAR'
 ])

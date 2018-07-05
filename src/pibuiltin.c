@@ -599,7 +599,7 @@ cell *map(const cell *args, cell *env) {
   while (list) {
     element = car(list);
     cell_push(func, RECURSIVE); // protect the function
-    val = apply(func, mk_cons(element, NULL), env, false);
+    val = apply(func, mk_cons(eval(element,env), NULL), env, false);
     if (!result) {
       // we're creating the head
       result = last_added = mk_cons(val, NULL);
