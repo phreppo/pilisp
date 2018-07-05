@@ -545,41 +545,41 @@ cell *setq(const cell *args, cell *env) {
 }
 
 cell *let(const cell *args, cell *env) {
-  // TODO: leaks memory
-  cell *old_env = env;
   cell *params = car(args);
   cell *body = cadr(args); // ok
   cell *new_env = env;
 
   cell *val;
   cell *new_pair;
+  cell *tmp;
 
   while (params) {
-#if DEBUG_EVAL_MODE
-    puts("PARAMETROOO");
-#endif
     val = eval(cadar(params), env);        // give a value to val
     new_pair = mk_cons(caar(params), val); // (sym . val)
     new_env = mk_cons(new_pair,
                       new_env); // add on the head of the new env the new pair
-    params = cdr(params);
+    tmp = cdr(params);
+    cell_remove(cdr(cdar(params)), SINGLE);
+    cell_remove(cdar(params), SINGLE);
+    cell_remove(car(params), SINGLE);
+    cell_remove(params, SINGLE);
+    params = tmp;
   }
-#if DEBUG_EVAL_MODE
-  puts("ok");
-#endif
   cell *res = eval(body, new_env);
+  cell_remove_pairlis_deep(new_env, env);
+  cell_remove_args(args);
   return res;
 }
 
-cell *defun(const cell *args, cell *env){
-  cell * fun_name = car(args);
-  cell * lambda_struct = (cdr(args));
-  cell * params = cadr(args);
-  cell * body = caddr(args);
-  cell * lambda_head = mk_cons(symbol_lambda,lambda_struct);
-  cell * compacted = mk_cons(fun_name,mk_cons(lambda_head,NULL));
+cell *defun(const cell *args, cell *env) {
+  cell *fun_name = car(args);
+  cell *lambda_struct = (cdr(args));
+  cell *params = cadr(args);
+  cell *body = caddr(args);
+  cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
+  cell *compacted = mk_cons(fun_name, mk_cons(lambda_head, NULL));
   set(compacted);
-  cell_remove(args,SINGLE);
+  cell_remove(args, SINGLE);
   return lambda_head;
 }
 cell *do_(const cell *args, cell *env) { return NULL; }

@@ -30,6 +30,7 @@ n
 (or nil nil nil '(1 2 3) 4)
 (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( T (toz (- x 1))))))
 (defun id (x) x)
+(let ((x 1)(y 2)) (+ x y))
 
 (dotimes (n 1) (toz n))
 (dotimes (n 2) (toz n))

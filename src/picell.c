@@ -246,7 +246,8 @@ bool cell_space_is_full(const cell_space *cs) {
 void cell_space_double_capacity_if_full(cell_space *cs) {
   if (cs->cell_space_size >= cs->cell_space_capacity) {
     // double vector->capacity and resize the allocated memory accordingly
-    cs->cell_space_capacity = ( cs->cell_space_capacity <= 0 ? 1 : cs->cell_space_capacity * 2);
+    cs->cell_space_capacity =
+        (cs->cell_space_capacity <= 0 ? 1 : cs->cell_space_capacity * 2);
     cs->blocks = (cell_block *)realloc(cs->blocks, sizeof(cell_block) *
                                                        cs->cell_space_capacity);
   }
@@ -583,10 +584,26 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
          cell_is_in_global_env(cdr(global_env), c);
 }
 
-void cell_space_destroy_stack(cell_space *cs){
-  if(cs && cs->stack){
+void cell_space_destroy_stack(cell_space *cs) {
+  if (cs && cs->stack) {
     cell_stack_free(cs->stack);
     cs->stack->head = NULL;
     cs->stack->tail = NULL;
   }
+}
+
+void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
+                                    const cell *old_env) {
+  const cell *act = new_env;
+  while (act != old_env) {
+    // for the head of the pairlis
+    cell *tmp = cdr(act);
+    cell_stack_remove(stack, car(act), RECURSIVE);
+    cell_stack_remove(stack, act, SINGLE);
+    act = tmp;
+  }
+}
+
+void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+  cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
 }
