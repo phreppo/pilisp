@@ -1,6 +1,6 @@
 /** @defgroup pisesttings
  *
- * @brief provides definitions for pilisp settings
+ * @brief Provides definitions for pilisp settings
  *
  */
 

@@ -372,3 +372,24 @@ test('[LOAD] diff calculator: d((x^2+1)/cos(x))', lisp_program_load_test, args :
     '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',
     '139'
 ])
+
+test('[LOAD] max in list', lisp_program_load_test, args : [
+    programs_path+'max.lisp',
+    '(list_max (list 1 2 3 4 5 6 7 8 9 1024))',
+    '1024',
+    '140'
+])
+
+test('[LOAD] factorial 10', lisp_program_load_test, args : [
+    programs_path+'factorial.lisp',
+    '(factorial 10)',
+    '3628800',
+    '141'
+])
+
+# test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
+#     programs_path+'factorial.lisp',
+#     '(factorial -1)',
+#     'NIL',
+#     '142'
+# ])

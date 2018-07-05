@@ -1,6 +1,6 @@
 /** @defgroup pilisp
  *
- * @brief Links the other modules of pilisp
+ * @brief Links the other modules of Pilisp
  *
  */
 
