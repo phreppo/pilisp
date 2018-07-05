@@ -217,6 +217,16 @@ cell *timer(cell *arg, cell **env) {
   return valued;
 }
 
+cell *write(cell *arg){
+  check_one_arg(arg);
+  cell *target = car(arg);
+  printf( ANSI_COLOR_GRAY" > " ANSI_COLOR_RESET);
+  print_sexpr(target);
+  puts("");
+  cell_remove_args(arg);
+  return target;
+}
+
 // ==================== LOGIC ====================
 
 cell * or (const cell *operands) {

@@ -59,6 +59,7 @@ cell *division(const cell *numbers);
 cell *timer(cell *arg, cell **env);
 cell *set(cell *args);
 cell *load(cell *arg, cell **env);
+cell *write(cell *arg);
 
 // ==================== LISTS ====================
 cell *length(const cell *list);

@@ -106,6 +106,9 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         }
         if (eq(fn, symbol_bye))
           return symbol_bye;
+        if (eq(fn, symbol_write)) {
+          return write(x);
+        }
 
         // ARITHMETIC OPERATORS
         if (eq(fn, symbol_addition))
@@ -440,7 +443,7 @@ cell *evlis(cell *m, cell *a) {
 
 cell *evcon(cell *c, cell *a) {
   cell *res = eval(caar(c), a);
-  
+
   if (res != NULL) {
     // result of the last eval
     cell_remove(res, RECURSIVE);

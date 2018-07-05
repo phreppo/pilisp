@@ -79,6 +79,7 @@ cell *symbol_bye;
 cell *symbol_macro;
 cell *symbol_integerp;
 cell *symbol_symbolp;
+cell *symbol_write;
 
 // ==================== MACROS ====================
 cell *symbol_setq;

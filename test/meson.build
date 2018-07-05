@@ -285,6 +285,12 @@ test('[LISP] builtin defun test', lisp_program_test, args : [
     '332'
 ])
 
+test('[LISP] write function test', lisp_program_test, args : [
+    '(setq num 1) (write (+ 1 num))',
+    '2',
+    '332'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',
@@ -387,9 +393,10 @@ test('[LOAD] factorial 10', lisp_program_load_test, args : [
     '141'
 ])
 
-# test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
-#     programs_path+'factorial.lisp',
-#     '(factorial -1)',
-#     'NIL',
-#     '142'
-# ])
+test('[LOAD] factorial -1: NIL', lisp_program_load_test, args : [
+    programs_path+'factorial.lisp',
+    # why this not? beacuse we can't write in a file an empty cell: it won't write anything
+    '(not (factorial -1))',
+    't',
+    '142'
+])
