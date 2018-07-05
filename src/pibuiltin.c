@@ -372,12 +372,18 @@ cell *less_eq(const cell *operands) {
 
 cell *length(const cell *list) {
   check_one_arg(list);
-  if (!is_cons(list))
-    pi_error(LISP_ERROR, "arg is not a list");
   unsigned long len = 0;
   const cell *act = car(list);
-  if (act && !is_cons(act))
+  if (act && !is_cons(act) && !is_str(act))
     pi_error(LISP_ERROR, "arg is not a list");
+  /********************************************************************************
+   *                                  LEAKS MEMORY
+   ********************************************************************************/
+  if (act && is_str(act)) {
+    cell_remove(list, SINGLE); // cons of the argument
+    cell_remove(act,SINGLE);
+    return mk_num(strlen(act->str));
+  }
   cell *tmp;
   while (act) {
     len++;
@@ -594,9 +600,9 @@ cell *map(const cell *args, cell *env) {
     element = car(list);
     cell_push(func, RECURSIVE); // protect the function
     val = apply(func, mk_cons(element, NULL), env, false);
-    if(!result){
+    if (!result) {
       // we're creating the head
-      result=last_added=mk_cons(val, NULL);
+      result = last_added = mk_cons(val, NULL);
     } else {
       // we have at least one element => last_added is a node
       last_added->cdr = mk_cons(val, NULL);
@@ -612,16 +618,31 @@ cell *map(const cell *args, cell *env) {
   return result;
 }
 
-cell *subseq(const cell *list){
-  cell * str = car(list);
-  cell * start = cadr(list);
+cell *subseq(const cell *list) {
+  cell *str = car(list);
+  cell *start = cadr(list);
   size_t s = start->value;
-  cell * end = caddr(list);
-  size_t e = end->value;
-  char* substr = malloc(e-s+1);
-  strncpy(substr, str->str + s, e-s);
-  *(substr + (e-s)) = '\0';
-  cell * ret = mk_str(substr);
-  cell_remove(list,RECURSIVE);
-  return ret;
+  if(s > strlen(str->str))
+    return NULL;
+  if (cddr(list)) {
+    puts("DUE ARGOMENTII");
+
+    cell *end = caddr(list);
+    size_t e = end->value;
+    char *substr = malloc(e - s + 1);
+    strncpy(substr, str->str + s, e - s);
+    *(substr + (e - s)) = '\0';
+    cell *ret = mk_str(substr);
+    cell_remove(list, RECURSIVE);
+    return ret;
+  } else {
+    // just one number
+    size_t e = strlen(str->str);
+    char *substr = malloc(e - s + 1);
+    strncpy(substr, str->str + s, e - s);
+    *(substr + (e - s)) = '\0';
+    cell *ret = mk_str(substr);
+    cell_remove(list, RECURSIVE);
+    return ret;
+  }
 }

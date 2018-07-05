@@ -444,3 +444,19 @@ test('[LOAD] let maze', lisp_program_load_test, args :  [
     '(2 3 1 0)',
     '143'
 ])
+
+test('[LOAD] string include 1', lisp_program_load_test, args :  [
+    programs_path+'ibeforee.lisp',
+    # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
+    '(not (string-include "ciao" "a"))',
+    'T',
+    '144'
+])
+
+test('[LOAD] string include 2', lisp_program_load_test, args :  [
+    programs_path+'ibeforee.lisp',
+    # why this not? beacuse we can't write in a file # an empty cell: it won't write anything
+    '(string-include "STRING" "ANOTHER CAPS LOCK STRING")',
+    '"STRING"',
+    '145'
+])
