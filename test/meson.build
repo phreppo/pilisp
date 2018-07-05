@@ -315,6 +315,18 @@ test('[LISP] map test 3', lisp_program_test, args : [
     '3352'
 ])
 
+test('[LISP] subseq test 1', lisp_program_test, args : [
+    '(subseq "ciao" 1 2)',
+    '"i"',
+    '3353'
+])
+
+test('[LISP] subseq test 2', lisp_program_test, args : [
+    '(subseq "stringa composta" 0 8)',
+    '"stringa "',
+    '3354'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',

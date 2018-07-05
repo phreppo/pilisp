@@ -149,6 +149,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
           return nth(x);
         if (eq(fn, symbol_list))
           return list(x);
+        if (eq(fn, symbol_subseq))
+          return subseq(x);
 
         // RTTI
         if (eq(fn, symbol_integerp)) {

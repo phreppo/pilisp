@@ -58,6 +58,7 @@ cell *length(const cell *list);
 cell *member(const cell *list);
 cell *nth(const cell *list);
 cell *list(const cell *list);
+cell *subseq(const cell *list); // substr
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);

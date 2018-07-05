@@ -40,6 +40,7 @@ void init_builtin_lambdas() {
   symbol_integerp = mk_builtin_lambda("INTEGERP");
   symbol_symbolp = mk_builtin_lambda("SYMBOLP");
   symbol_write = mk_builtin_lambda("WRITE");
+  symbol_subseq = mk_builtin_lambda("SUBSEQ");
 }
 
 void init_builtin_macros() {

@@ -611,3 +611,17 @@ cell *map(const cell *args, cell *env) {
   cell_remove_args(args);
   return result;
 }
+
+cell *subseq(const cell *list){
+  cell * str = car(list);
+  cell * start = cadr(list);
+  size_t s = start->value;
+  cell * end = caddr(list);
+  size_t e = end->value;
+  char* substr = malloc(e-s+1);
+  strncpy(substr, str->str + s, e-s);
+  *(substr + (e-s)) = '\0';
+  cell * ret = mk_str(substr);
+  cell_remove(list,RECURSIVE);
+  return ret;
+}
