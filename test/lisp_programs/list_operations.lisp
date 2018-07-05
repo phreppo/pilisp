@@ -16,3 +16,12 @@
          ((>= i (length ,list)) ans)
        (when (,pred (nth i ,list) ans)
          (setf ans (nth i ,list))))))
+
+(defun list_max_rec (l index act_max pred)
+    (cond
+        ((>= index (length l)) 
+            act_max)
+        ((pred (nth index l) act_max) 
+            (list_max_rec l (+ index 1) (nth index l)))
+        (t
+            (list_max_rec l (+ index 1) act_max))))

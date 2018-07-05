@@ -57,8 +57,14 @@ void init_env() {
   write_program_to_file(
       ".piinit", "(set 'defun (macro (name param body) "
                  "(list 'set (list 'quote name) (list 'lambda param body))))"
+
+                 "(set 'defmacro (macro (name param body) " // check this
+                 "(list 'set (list 'quote name) (list 'macro param body))))"
+                 
                  "(setq d \"test/lisp_programs/diff.lisp\")"
+                 
                  "(setq p \"examples/a.lisp\")"
+                 
                  "(setq f \"examples/functions.lisp\")");
   parse_file(".piinit");
   cell_space_destroy_stack(memory);   // remove thrash
