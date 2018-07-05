@@ -30,10 +30,10 @@ Full code documentation can be found on [github pages](https://parof.github.io/p
 
 ### Installing with Meson ###
 
-These commands should run on any OS. To build the `ninja.build` file run
+These commands should run on any OS. To build the `ninja.build` file run. The `-Dc_args` will add optimizations.
 
 ```
-meson build
+meson build -Dc_args=-Og
 ```
 
 To build the executable in the `build` directory run
@@ -52,4 +52,9 @@ To run tests use
 
 ```
 ninja test -C build
+```
+
+By default Meson won't allow debugging: if you want to run a debbuger you have to write:
+```
+meson build -Db_coverage=true 
 ```
