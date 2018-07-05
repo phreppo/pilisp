@@ -582,4 +582,3 @@ cell *defun(const cell *args, cell *env) {
   cell_remove(args, SINGLE);
   return lambda_head;
 }
-cell *do_(const cell *args, cell *env) { return NULL; }

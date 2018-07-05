@@ -337,8 +337,6 @@ cell *eval(cell *e, cell *a) {
         evaulated = setq(cdr(e), a);
       if (eq(car(e), symbol_let))
         evaulated = let(cdr(e), a);
-      if (eq(car(e), symbol_do))
-        evaulated = do_(cdr(e), a);
       if (eq(car(e), symbol_defun))
         evaulated = defun(cdr(e), a);
       cell_remove(e, SINGLE);

@@ -47,7 +47,6 @@ void init_builtin_macros() {
   builtin_macros_index = 0;
   symbol_setq = mk_builtin_macro("SETQ");
   symbol_let = mk_builtin_macro("LET");
-  symbol_do = mk_builtin_macro("DO");
   symbol_defun = mk_builtin_macro("DEFUN");
 }
 
