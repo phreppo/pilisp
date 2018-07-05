@@ -297,6 +297,24 @@ test('[LISP] bye test', lisp_program_test, args : [
     '333'
 ])
 
+test('[LISP] map test 1', lisp_program_test, args : [
+    '(map 1+ \'(99 100 101))',
+    '(100 101 102)',
+    '335'
+])
+
+test('[LISP] map test 2', lisp_program_test, args : [
+    '(map 1+ NIL)',
+    'NIL',
+    '3351'
+])
+
+test('[LISP] map test 3', lisp_program_test, args : [
+    '(map not \'(1 2 NIL NIL "hi"))',
+    '(NIL NIL T T NIL)',
+    '3352'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',

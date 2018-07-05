@@ -80,6 +80,7 @@ cell *symbol_setq;
 cell *symbol_let;
 cell *symbol_timer;
 cell *symbol_defun;
+cell *symbol_map;
 
 #endif // !PIINIT_H
        /*@}*/

@@ -580,3 +580,34 @@ cell *defun(const cell *args, cell *env) {
   cell_remove(args, SINGLE);
   return lambda_head;
 }
+
+cell *map(const cell *args, cell *env) {
+  cell *func = car(args);
+  cell *list = cadr(args);
+  list = eval(list, env); // extract quote
+  cell *result = NULL;
+  cell *last_added = NULL;
+  cell *val;
+  cell *element;
+  cell *tmp;
+  while (list) {
+    element = car(list);
+    cell_push(func, RECURSIVE); // protect the function
+    val = apply(func, mk_cons(element, NULL), env, false);
+    if(!result){
+      // we're creating the head
+      result=last_added=mk_cons(val, NULL);
+    } else {
+      // we have at least one element => last_added is a node
+      last_added->cdr = mk_cons(val, NULL);
+      last_added = last_added->cdr;
+    }
+    tmp = cdr(list);
+    cell_remove(list, SINGLE);
+    list = tmp;
+  }
+  // (map 1+ '(1 2 3))
+  cell_remove(func, RECURSIVE);
+  cell_remove_args(args);
+  return result;
+}

@@ -168,7 +168,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         // CUSTOM FUNCTION
         // does lambda exists?
         cell *function_body = eval(fn, a);
-        if (function_body == NULL) 
+        if (function_body == NULL)
           pi_error(LISP_ERROR, "unknown function ");
         if (!is_cons(function_body))
           pi_error(LISP_ERROR, "trying to apply a non-lambda");
@@ -259,7 +259,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
 
       cell *function_body = eval(fn, a);
 
-      if (function_body == NULL) 
+      if (function_body == NULL)
         pi_error(LISP_ERROR, "unknown function ");
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
@@ -325,6 +325,8 @@ cell *eval(cell *e, cell *a) {
         evaulated = let(cdr(e), a);
       if (eq(car(e), symbol_defun))
         evaulated = defun(cdr(e), a);
+      if (eq(car(e), symbol_map))
+        evaulated = map(cdr(e), a);
       if (eq(car(e), symbol_timer))
         evaulated = timer(cdr(e), &a);
       cell_remove(e, SINGLE);

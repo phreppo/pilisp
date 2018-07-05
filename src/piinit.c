@@ -48,6 +48,7 @@ void init_builtin_macros() {
   symbol_let = mk_builtin_macro("LET");
   symbol_defun = mk_builtin_macro("DEFUN");
   symbol_timer = mk_builtin_macro("TIME");
+  symbol_map = mk_builtin_macro("MAP");
 }
 
 void init_env() {
