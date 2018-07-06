@@ -30,6 +30,7 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
+  
   while (l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {

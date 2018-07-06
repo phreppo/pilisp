@@ -307,6 +307,7 @@ cell *cell_space_get_cell(cell_space *cs) {
 void init_memory() { memory = cell_space_create(); }
 
 void collect_garbage(cell_space *cs) {
+#if COLLECT_GARBAGE
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          "=================================== Going to collect garbage "
@@ -332,9 +333,11 @@ void collect_garbage(cell_space *cs) {
          "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
+#endif
 }
 
 void mark(cell *root) {
+#if COLLECT_GARBAGE
   if (root) {
     root->marked = 1;
     if (is_cons(root)) {
@@ -342,9 +345,11 @@ void mark(cell *root) {
       mark(cdr(root));
     }
   }
+#endif
 }
 
 void sweep(cell_space *cs) {
+#if COLLECT_GARBAGE
   size_t block_index = 0;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
@@ -360,6 +365,7 @@ void sweep(cell_space *cs) {
       }
     }
   }
+#endif
 }
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
@@ -387,6 +393,7 @@ cell_stack_node *cell_stack_node_create_node(cell *val) {
 }
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
   if (!val)
     return;
   if (is_builtin(val))
@@ -406,8 +413,10 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     if (cdr(val))
       cell_stack_push(stack, cdr(val), mode);
   }
+#endif
 }
 void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -482,9 +491,11 @@ void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
     puts("");
   }
 #endif
+#endif
 }
 
 void cell_stack_remove_args(cell_stack *stack, const cell *args) {
+#if COLLECT_GARBAGE
   const cell *act = args;
   cell *tmp;
   while (act) {
@@ -492,10 +503,13 @@ void cell_stack_remove_args(cell_stack *stack, const cell *args) {
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
   }
+#endif
 }
 
 void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
                                const cell *old_env) {
+#if COLLECT_GARBAGE
+
   const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
@@ -504,9 +518,11 @@ void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
   }
+#endif
 }
 
 void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
+#if COLLECT_GARBAGE
   const cell *act = list;
   cell *tmp;
   while (act) {
@@ -514,26 +530,37 @@ void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
     cell_stack_remove(stack, car(act), RECURSIVE);
     act = tmp;
   }
+#endif
 }
 
 void cell_push(cell *c, unsigned char mode) {
+#if COLLECT_GARBAGE
   cell_stack_push(memory->stack, c, mode);
+#endif
 }
 
 void cell_remove(const cell *c, unsigned char mode) {
+#if COLLECT_GARBAGE
   cell_stack_remove(memory->stack, c, mode);
+#endif
 }
 
 void cell_remove_args(const cell *args) {
+#if COLLECT_GARBAGE
   cell_stack_remove_args(memory->stack, args);
+#endif
 }
 
 void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
+#if COLLECT_GARBAGE
   cell_stack_remove_pairlis(memory->stack, new_env, old_env);
+#endif
 }
 
 void cell_remove_cars(const cell *list) {
+#if COLLECT_GARBAGE
   cell_stack_remove_cars(memory->stack, list);
+#endif
 }
 
 void cell_space_free(cell_space *cs) {

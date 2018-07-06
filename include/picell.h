@@ -40,8 +40,6 @@ typedef struct cell {
     char *str;
     struct cell *next_free_cell;
   };
-
-  // TODO: add pointer for funciton for builtin lambda and builtin macro
 } cell;
 
 /********************************************************************************
