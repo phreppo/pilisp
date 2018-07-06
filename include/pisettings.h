@@ -76,21 +76,21 @@
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
-#define INITIAL_BLOCK_SIZE 1024
+#define INITIAL_BLOCK_SIZE 8
 
 // number of blocks initially allocated
-#define INITIAL_BLOCKS 1
+#define INITIAL_BLOCKS 10
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
-#define NEW_BLOCK_THRESHOLD 0.8
+#define NEW_BLOCK_THRESHOLD 0.5
 
 /********************************************************************************
  *                                 DEBUGGING
  ********************************************************************************/
 
 // describes what appens evaluating sexpressions
-#define DEBUG_EVAL_MODE 0
+#define DEBUG_EVAL_MODE 1
 
 // gives an output when pushing or removing things in the stack
 #define DEBUG_PUSH_REMOVE_MODE 0

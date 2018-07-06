@@ -381,7 +381,7 @@ cell *length(const cell *list) {
    ********************************************************************************/
   if (act && is_str(act)) {
     cell_remove(list, SINGLE); // cons of the argument
-    cell_remove(act,SINGLE);
+    cell_remove(act, SINGLE);
     return mk_num(strlen(act->str));
   }
   cell *tmp;
@@ -599,7 +599,7 @@ cell *map(const cell *args, cell *env) {
   while (list) {
     element = car(list);
     cell_push(func, RECURSIVE); // protect the function
-    val = apply(func, mk_cons(eval(element,env), NULL), env, false);
+    val = apply(func, mk_cons(eval(element, env), NULL), env, false);
     if (!result) {
       // we're creating the head
       result = last_added = mk_cons(val, NULL);
@@ -622,7 +622,7 @@ cell *subseq(const cell *list) {
   cell *str = car(list);
   cell *start = cadr(list);
   size_t s = start->value;
-  if(s > strlen(str->str))
+  if (s > strlen(str->str))
     return NULL;
   if (cddr(list)) {
     puts("DUE ARGOMENTII");
@@ -646,4 +646,22 @@ cell *subseq(const cell *list) {
     cell_remove(list, RECURSIVE);
     return ret;
   }
+}
+
+cell *reverse(const cell *list) {
+  check_one_arg(list);
+  cell *act = car(list);
+  cell *val;
+  cell *tmp;
+  cell *res = NULL;
+  while (act) {
+    tmp = cdr(act);
+    val = car(act);
+    res = mk_cons(val, res);
+    cell_remove(act, SINGLE);
+    act = tmp;
+    // (reverse '(1 2 3))
+  }
+  cell_remove_args(list);
+  return res;
 }

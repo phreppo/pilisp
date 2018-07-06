@@ -75,6 +75,7 @@ cell *symbol_integerp;
 cell *symbol_symbolp;
 cell *symbol_write;
 cell *symbol_subseq;
+cell *symbol_reverse;
 
 // ==================== MACROS ====================
 cell *symbol_setq;

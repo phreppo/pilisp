@@ -41,6 +41,7 @@ void init_builtin_lambdas() {
   symbol_symbolp = mk_builtin_lambda("SYMBOLP");
   symbol_write = mk_builtin_lambda("WRITE");
   symbol_subseq = mk_builtin_lambda("SUBSEQ");
+  symbol_reverse = mk_builtin_lambda("REVERSE");
 }
 
 void init_builtin_macros() {

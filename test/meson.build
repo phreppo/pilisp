@@ -327,6 +327,18 @@ test('[LISP] subseq test 2', lisp_program_test, args : [
     'LSUBSEQ2'
 ])
 
+test('[LISP] reverse test 1', lisp_program_test, args : [
+    '(not (reverse NIL))',
+    'T',
+    'LREVERSE1'
+])
+
+test('[LISP] reverse test 2', lisp_program_test, args : [
+    '(setq l \'(1 2 3 (4 5))) (reverse l)',
+    '((4 5) 3 2 1)',
+    'LREVERSE2'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',

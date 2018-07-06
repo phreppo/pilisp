@@ -151,6 +151,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
           return list(x);
         if (eq(fn, symbol_subseq))
           return subseq(x);
+        if (eq(fn, symbol_reverse))
+          return reverse(x);
 
         // RTTI
         if (eq(fn, symbol_integerp)) {
