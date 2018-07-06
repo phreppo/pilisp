@@ -212,6 +212,11 @@ cell *quote(const cell *args, cell *env) {
   return evaulated;
 }
 
+cell *cond(const cell *arg, cell *env){
+  return evcon(arg, env);
+}
+
+
 cell *write(cell *arg) {
   check_one_arg(arg);
   cell *target = car(arg);

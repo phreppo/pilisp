@@ -74,6 +74,7 @@ cell *let(const cell *args, cell *env);
 cell *map(const cell *args, cell *env);
 cell *quote(const cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
+cell *cond(const cell *arg, cell *env);
 
 #endif // !PIBUILTIN_H
        /*@}*/

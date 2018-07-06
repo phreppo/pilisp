@@ -221,7 +221,6 @@ cell *eval(cell *e, cell *a) {
   //========================= ATOM FUNCTION EVAL =========================//
   else if (atom(car(e))) {
     // car of the cons cell is an atom
-
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
       evaulated = car(e)->bm(cdr(e),a);
@@ -234,11 +233,10 @@ cell *eval(cell *e, cell *a) {
       // QUOTE
       evaulated = quote(cdr(e),a);
       cell_remove(e, SINGLE);
-
     } else 
     if (eq(car(e), symbol_cond)) {
       // COND
-      evaulated = evcon(cdr(e), a);
+      evaulated = cond(cdr(e), a);
       cell_remove(e, SINGLE);
     } else if (eq(car(e), symbol_dotimes)) {
       // DOTIMES

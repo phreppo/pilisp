@@ -50,7 +50,6 @@ cell *symbol_multiplication;
 cell *symbol_division;
 cell *symbol_lambda;
 cell *symbol_label;
-cell *symbol_cond;
 cell *symbol_load;
 cell *symbol_or;
 cell *symbol_and;
@@ -84,6 +83,7 @@ cell *symbol_let;
 cell *symbol_timer;
 cell *symbol_defun;
 cell *symbol_map;
+cell *symbol_cond;
 
 #endif // !PIINIT_H
        /*@}*/
