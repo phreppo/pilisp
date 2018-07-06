@@ -224,29 +224,19 @@ cell *eval(cell *e, cell *a) {
 
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
-      if (eq(car(e), symbol_setq))
-        evaulated = setq(cdr(e), a);
-      if (eq(car(e), symbol_let))
-        evaulated = let(cdr(e), a);
-      if (eq(car(e), symbol_defun))
-        evaulated = defun(cdr(e), a);
-      if (eq(car(e), symbol_map))
-        evaulated = map(cdr(e), a);
-      if (eq(car(e), symbol_timer))
-        evaulated = timer(cdr(e), &a);
-      if (eq(car(e), symbol_load))
-        evaulated = load(cdr(e), a);
+      evaulated = car(e)->bm(cdr(e),a);
       cell_remove(e, SINGLE);
     }
 
     // ==================== SPECIAL FORMS ====================
-    else if (eq(car(e), symbol_quote)) {
+    else 
+    if (eq(car(e), symbol_quote)) {
       // QUOTE
-      evaulated = cadr(e);
+      evaulated = quote(cdr(e),a);
       cell_remove(e, SINGLE);
-      cell_remove(cdr(e), SINGLE);
 
-    } else if (eq(car(e), symbol_cond)) {
+    } else 
+    if (eq(car(e), symbol_cond)) {
       // COND
       evaulated = evcon(cdr(e), a);
       cell_remove(e, SINGLE);

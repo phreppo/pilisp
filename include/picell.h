@@ -57,7 +57,7 @@ cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
 cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*));
-cell *mk_builtin_macro(const char *symbol);
+cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*));
 
 cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);

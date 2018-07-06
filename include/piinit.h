@@ -50,7 +50,6 @@ cell *symbol_multiplication;
 cell *symbol_division;
 cell *symbol_lambda;
 cell *symbol_label;
-cell *symbol_quote;
 cell *symbol_cond;
 cell *symbol_load;
 cell *symbol_or;
@@ -76,6 +75,8 @@ cell *symbol_symbolp;
 cell *symbol_write;
 cell *symbol_subseq;
 cell *symbol_reverse;
+cell *symbol_quote;
+
 
 // ==================== MACROS ====================
 cell *symbol_setq;

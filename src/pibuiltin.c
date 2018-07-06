@@ -190,20 +190,26 @@ cell *mem_dump(cell *arg) {
   return symbol_true;
 }
 
-cell *timer(cell *arg, cell **env) {
+cell *timer(cell *arg, cell *env) {
   check_one_arg(arg);
   cell *to_execute = car(arg);
   clock_t t1, t2;
   long elapsed;
 
   t1 = clock();
-  cell *valued = eval(to_execute, *env);
+  cell *valued = eval(to_execute, env);
   t2 = clock();
 
   elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
   printf("time: %ld ms\n", elapsed);
   cell_remove_args(arg);
   return valued;
+}
+
+cell *quote(const cell *args, cell *env) {
+  cell * evaulated = car(args);
+  cell_remove(args, SINGLE);
+  return evaulated;
 }
 
 cell *write(cell *arg) {
@@ -682,10 +688,9 @@ cell *collect_garbage_call(cell *arg) {
   return symbol_true;
 }
 
-
 cell *load(cell *arg, cell *env) {
   check_one_arg(arg);
-  cell *name = eval(car(arg),env); // extract the name
+  cell *name = eval(car(arg), env); // extract the name
   if (!name || !is_str(name))
     pi_error(LISP_ERROR, "first arg must me a string");
   FILE *file = fopen(((name) ? name->str : ""), "r");

@@ -138,10 +138,11 @@ cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
   return lambda;
 }
 
-cell *mk_builtin_macro(const char *symbol) {
+cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*)) {
   cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
   macro->sym = malloc(strlen(symbol) + 1);
+  macro->bm = function;
   int i = 0;
   strcpy(macro->str, symbol);
   // case unsensitive
