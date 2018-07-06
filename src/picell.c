@@ -123,10 +123,11 @@ cell *mk_cons(cell *car, cell *cdr) {
   return c;
 }
 
-cell *mk_builtin_lambda(const char *symbol) {
+cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = malloc(strlen(symbol) + 1);
+  lambda->bl = function;
   int i = 0;
   strcpy(lambda->str, symbol);
   // case unsensitive

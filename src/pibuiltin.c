@@ -179,7 +179,18 @@ cell *set(cell *args) {
   return val;
 }
 
-cell *load(cell *arg, cell **env) {
+cell *bye(cell *arg) { return symbol_bye; }
+
+cell *mem_dump(cell *arg) {
+  if (arg)
+    pi_error_many_args();
+  printf(ANSI_COLOR_YELLOW "============================== MEMORY "
+                           "==============================\n" ANSI_COLOR_RESET);
+  print_cell_space(memory);
+  return symbol_true;
+}
+
+cell *load(cell *arg, cell *env) {
   check_one_arg(arg);
   cell *name = car(arg);
   if (!name || !is_str(name))
@@ -192,7 +203,7 @@ cell *load(cell *arg, cell **env) {
     cell *sexpr = read_sexpr(file);
     if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
-      last_result = eval(sexpr, *env);
+      last_result = eval(sexpr, env);
       cell_remove(last_result, RECURSIVE);
     }
   }
@@ -664,4 +675,31 @@ cell *reverse(const cell *list) {
   }
   cell_remove_args(list);
   return res;
+}
+
+cell *env(cell *arg) {
+  if (arg)
+    pi_error_many_args();
+  printf(" > env: " ANSI_COLOR_BLUE);
+  print_sexpr(memory->global_env);
+  printf("\n" ANSI_COLOR_RESET);
+  return symbol_true;
+}
+
+cell *integerp(const cell *arg) {
+  bool ret = is_num(car(arg));
+  cell_remove(car(arg), RECURSIVE);
+  cell_remove(arg, SINGLE);
+  return (ret ? symbol_true : NULL);
+}
+cell *symbolp(const cell *arg) {
+  bool ret = is_sym(car(arg));
+  cell_remove(car(arg), RECURSIVE);
+  cell_remove(arg, SINGLE);
+  return (ret ? symbol_true : NULL);
+}
+
+cell *collect_garbage_call(cell *arg) {
+  collect_garbage(memory);
+  return symbol_true;
 }

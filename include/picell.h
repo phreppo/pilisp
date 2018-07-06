@@ -28,7 +28,14 @@ typedef struct cell {
       struct cell *car;
       struct cell *cdr;
     };
-    char *sym;
+    struct {
+      char *sym;
+      union{
+        struct cell* (*bl)(struct cell* args);
+        struct cell* (*bm)(struct cell* args,struct cell* env);
+      };
+    };
+
     int value;
     char *str;
     struct cell *next_free_cell;
@@ -49,7 +56,7 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
-cell *mk_builtin_lambda(const char *symbol);
+cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*));
 cell *mk_builtin_macro(const char *symbol);
 
 cell *copy_cell(const cell *c);

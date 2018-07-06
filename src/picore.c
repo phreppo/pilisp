@@ -67,106 +67,11 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         if (eval_args)
           x = evlis(x, a);
 
-        if (eq(fn, symbol_car))
-          return builtin_car(x);
-        if (eq(fn, symbol_cdr))
-          return builtin_cdr(x);
-        if (eq(fn, symbol_cons))
-          return builtin_cons(x);
-        if (eq(fn, symbol_atom))
-          return builtin_atom(x);
-        if (eq(fn, symbol_true))
-          pi_error(LISP_ERROR, "T is not a function");
-        if (eq(fn, symbol_eq) || eq(fn, symbol_eq_math))
-          return builtin_eq(x);
-
         // UTILITY
-        if (eq(fn, symbol_set))
-          return set(x);
         if (eq(fn, symbol_load))
-          return load(x, &a);
-        if (eq(fn, symbol_mem_dump)) {
-          if (x)
-            pi_error_many_args();
-          printf(ANSI_COLOR_YELLOW
-                 "============================== MEMORY "
-                 "==============================\n" ANSI_COLOR_RESET);
-          print_cell_space(memory);
-          return symbol_true;
-        }
-        if (eq(fn, symbol_env)) {
-          if (x)
-            pi_error_many_args();
-          printf(" > env: " ANSI_COLOR_BLUE);
-          print_sexpr(a);
-          printf("\n" ANSI_COLOR_RESET);
-          return symbol_true;
-        }
-        if (eq(fn, symbol_collect_garbage)) {
-          collect_garbage(memory);
-          return symbol_true;
-        }
-        if (eq(fn, symbol_bye))
-          return symbol_bye;
-        if (eq(fn, symbol_write)) {
-          return write(x);
-        }
-
-        // ARITHMETIC OPERATORS
-        if (eq(fn, symbol_addition))
-          return addition(x);
-        if (eq(fn, symbol_subtraction))
-          return subtraction(x);
-        if (eq(fn, symbol_multiplication))
-          return multiplication(x);
-        if (eq(fn, symbol_division))
-          return division(x);
-
-        // LOGICAL OPERATORS
-        if (eq(fn, symbol_or))
-          return or (x);
-        if (eq(fn, symbol_and))
-          return and(x);
-        if (eq(fn, symbol_not))
-          return not(x);
-
-        // COMPARISON OPERATORS
-        if (eq(fn, symbol_greater))
-          return greater(x);
-        if (eq(fn, symbol_greater_equal))
-          return greater_eq(x);
-        if (eq(fn, symbol_less))
-          return less(x);
-        if (eq(fn, symbol_less_equal))
-          return less_eq(x);
-
-        // LISTS
-        if (eq(fn, symbol_length))
-          return length(x);
-        if (eq(fn, symbol_member))
-          return member(x);
-        if (eq(fn, symbol_nth))
-          return nth(x);
-        if (eq(fn, symbol_list))
-          return list(x);
-        if (eq(fn, symbol_subseq))
-          return subseq(x);
-        if (eq(fn, symbol_reverse))
-          return reverse(x);
-
-        // RTTI
-        if (eq(fn, symbol_integerp)) {
-          bool ret = is_num(car(x));
-          cell_remove(car(x), RECURSIVE);
-          cell_remove(x, SINGLE);
-          return (ret ? symbol_true : NULL);
-        }
-        if (eq(fn, symbol_symbolp)) {
-          bool ret = is_sym(car(x));
-          cell_remove(car(x), RECURSIVE);
-          cell_remove(x, SINGLE);
-          return (ret ? symbol_true : NULL);
-        }
+          return load(x, a);
+        
+        return fn->bl(x);
 
       } else {
         // CUSTOM FUNCTION

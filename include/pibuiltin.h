@@ -41,6 +41,8 @@ cell *greater(const cell *operands);
 cell *greater_eq(const cell *operands);
 cell *less(const cell *operands);
 cell *less_eq(const cell *operands);
+cell *integerp(const cell *arg);
+cell *symbolp(const cell *arg);
 
 // ==================== ARITHMETIC ====================
 cell *addition(const cell *numbers);
@@ -50,8 +52,12 @@ cell *division(const cell *numbers);
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
-cell *load(cell *arg, cell **env);
+cell *load(cell *arg, cell *env);
 cell *write(cell *arg);
+cell *bye(cell *arg);
+cell *mem_dump(cell *arg);
+cell *env(cell *arg);
+cell *collect_garbage_call(cell *arg);
 
 // ==================== LISTS ====================
 cell *length(const cell *list);
