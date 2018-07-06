@@ -123,7 +123,7 @@ cell *mk_cons(cell *car, cell *cdr) {
   return c;
 }
 
-cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = malloc(strlen(symbol) + 1);
@@ -138,7 +138,7 @@ cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
   return lambda;
 }
 
-cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*)) {
+cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *)) {
   cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
   macro->sym = malloc(strlen(symbol) + 1);
@@ -307,6 +307,7 @@ cell *cell_space_get_cell(cell_space *cs) {
 void init_memory() { memory = cell_space_create(); }
 
 void collect_garbage(cell_space *cs) {
+#if COLLECT_GARBAGE
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          "=================================== Going to collect garbage "
@@ -331,6 +332,7 @@ void collect_garbage(cell_space *cs) {
          "=================================== After sweep "
          "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
+#endif
 #endif
 }
 
@@ -387,6 +389,7 @@ cell_stack_node *cell_stack_node_create_node(cell *val) {
 }
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
   if (!val)
     return;
   if (is_builtin(val))
@@ -406,8 +409,11 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     if (cdr(val))
       cell_stack_push(stack, cdr(val), mode);
   }
+#endif
 }
 void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
+
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -481,6 +487,7 @@ void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
     print_sexpr(val);
     puts("");
   }
+#endif
 #endif
 }
 

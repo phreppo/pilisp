@@ -31,8 +31,8 @@ typedef struct cell {
     struct {
       char *sym;
       union{
-        struct cell* (*bl)(struct cell* args);
-        struct cell* (*bm)(struct cell* args,struct cell* env);
+        struct cell* (*bl)(struct cell* args); // pointer to builtin lambda function
+        struct cell* (*bm)(struct cell* args,struct cell* env); // pointer to builtin macro function
       };
     };
 
@@ -40,8 +40,6 @@ typedef struct cell {
     char *str;
     struct cell *next_free_cell;
   };
-
-  // TODO: add pointer for funciton for builtin lambda and builtin macro
 } cell;
 
 /********************************************************************************

@@ -85,6 +85,9 @@
 // block
 #define NEW_BLOCK_THRESHOLD 0.5
 
+// WARNING: if 0 the memory will always be dirty
+#define COLLECT_GARBAGE 0
+
 /********************************************************************************
  *                                 DEBUGGING
  ********************************************************************************/
