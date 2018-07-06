@@ -239,28 +239,7 @@ cell *eval(cell *e, cell *a) {
       evaulated = cond(cdr(e), a);
       cell_remove(e, SINGLE);
     } else if (eq(car(e), symbol_dotimes)) {
-      // DOTIMES
-      size_t n = 0;
-      cell *name_list = car(cdr(e));
-      cell *num = car(cdr(car(cdr(e))));
-      cell *expr = caddr(e);
-      cell *new_env;
-      for (n = 0; n < num->value; n++) {
-        cell *num_list_new = mk_cons(mk_num(n), NULL);
-        new_env = pairlis(name_list, num_list_new, a);
-        if (n > 0)
-          // we have to protect the body of the function
-          cell_push(expr, RECURSIVE);
-        evaulated = eval(expr, new_env);
-        // remove the result
-        cell_remove(evaulated, RECURSIVE);
-        // remove the pair (n [actual_value])
-        cell_remove_pairlis(new_env, a);
-        // remove the just created cell
-        cell_remove(num_list_new, RECURSIVE);
-      }
-      cell_remove(cadr(e),
-                  RECURSIVE); // remove the pair and cons (n [number])
+      dotimes(cdr(e),a);
       cell_remove_args(e);
       return NULL;
     } else {

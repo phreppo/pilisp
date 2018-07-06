@@ -207,15 +207,12 @@ cell *timer(cell *arg, cell *env) {
 }
 
 cell *quote(const cell *args, cell *env) {
-  cell * evaulated = car(args);
+  cell *evaulated = car(args);
   cell_remove(args, SINGLE);
   return evaulated;
 }
 
-cell *cond(const cell *arg, cell *env){
-  return evcon(arg, env);
-}
-
+cell *cond(const cell *arg, cell *env) { return evcon(arg, env); }
 
 cell *write(cell *arg) {
   check_one_arg(arg);
@@ -713,4 +710,29 @@ cell *load(cell *arg, cell *env) {
   cell_remove(name, SINGLE);
   cell_remove_args(arg);
   return symbol_true;
+}
+
+cell *dotimes(const cell *arg, cell *env) {
+  // DOTIMES
+  size_t n = 0;
+  cell *name_list = car(arg);
+  cell *num = car(cdr(car(arg)));
+  cell *expr = cadr(arg);
+  cell *new_env;
+  for (n = 0; n < num->value; n++) {
+    cell *num_list_new = mk_cons(mk_num(n), NULL);
+    new_env = pairlis(name_list, num_list_new, env);
+    if (n > 0)
+      // we have to protect the body of the function
+      cell_push(expr, RECURSIVE);
+    cell*evaulated = eval(expr, new_env);
+    // remove the result
+    cell_remove(evaulated, RECURSIVE);
+    // remove the pair (n [actual_value])
+    cell_remove_pairlis(new_env, env);
+    // remove the just created cell
+    cell_remove(num_list_new, RECURSIVE);
+  }
+  cell_remove(car(arg),
+              RECURSIVE); // remove the pair and cons (n [number])
 }
