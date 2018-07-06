@@ -190,28 +190,6 @@ cell *mem_dump(cell *arg) {
   return symbol_true;
 }
 
-cell *load(cell *arg, cell *env) {
-  check_one_arg(arg);
-  cell *name = car(arg);
-  if (!name || !is_str(name))
-    pi_error(LISP_ERROR, "first arg must me a string");
-  FILE *file = fopen(((name) ? name->str : ""), "r");
-  if (!file)
-    pi_error(LISP_ERROR, "can't find file");
-  cell *last_result;
-  while (!feof(file)) {
-    cell *sexpr = read_sexpr(file);
-    if (sexpr != symbol_file_ended) {
-      // eval only if you didn't read an empty fragment
-      last_result = eval(sexpr, env);
-      cell_remove(last_result, RECURSIVE);
-    }
-  }
-  cell_remove(name, SINGLE);
-  cell_remove_args(arg);
-  return symbol_true;
-}
-
 cell *timer(cell *arg, cell **env) {
   check_one_arg(arg);
   cell *to_execute = car(arg);
@@ -701,5 +679,28 @@ cell *symbolp(const cell *arg) {
 
 cell *collect_garbage_call(cell *arg) {
   collect_garbage(memory);
+  return symbol_true;
+}
+
+
+cell *load(cell *arg, cell *env) {
+  check_one_arg(arg);
+  cell *name = eval(car(arg),env); // extract the name
+  if (!name || !is_str(name))
+    pi_error(LISP_ERROR, "first arg must me a string");
+  FILE *file = fopen(((name) ? name->str : ""), "r");
+  if (!file)
+    pi_error(LISP_ERROR, "can't find file");
+  cell *last_result;
+  while (!feof(file)) {
+    cell *sexpr = read_sexpr(file);
+    if (sexpr != symbol_file_ended) {
+      // eval only if you didn't read an empty fragment
+      last_result = eval(sexpr, env);
+      cell_remove(last_result, RECURSIVE);
+    }
+  }
+  cell_remove(name, SINGLE);
+  cell_remove_args(arg);
   return symbol_true;
 }

@@ -67,10 +67,6 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         if (eval_args)
           x = evlis(x, a);
 
-        // UTILITY
-        if (eq(fn, symbol_load))
-          return load(x, a);
-        
         return fn->bl(x);
 
       } else {
@@ -238,6 +234,8 @@ cell *eval(cell *e, cell *a) {
         evaulated = map(cdr(e), a);
       if (eq(car(e), symbol_timer))
         evaulated = timer(cdr(e), &a);
+      if (eq(car(e), symbol_load))
+        evaulated = load(cdr(e), a);
       cell_remove(e, SINGLE);
     }
 
