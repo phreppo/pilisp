@@ -1,23 +1,6 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
-int atom(const cell *c) {
-  return (c == NULL) // NIL case
-         ||
-         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
-}
-
-bool eq(const cell *v1, const cell *v2) {
-  if (!v1 || !v2)
-    return (v1 == v2);
-  if (is_num(v1) && is_num(v2))
-    return (v1->value == v2->value);
-  if (is_str(v1) && is_str(v2))
-    return (strcmp(v1->str, v2->str) == 0);
-  return (v1 == v2);
-}
-
 cell *addition(const cell *numbers) {
   long result = 0;
   const cell *act = numbers;
@@ -122,29 +105,6 @@ cell *division(const cell *numbers) {
   return mk_num(result);
 }
 
-cell *car(const cell *c) {
-  if (c == NULL)
-    // (car NIL)
-    return NULL;
-  if (atom(c))
-    pi_error(LISP_ERROR, "car applied to an atom");
-  return c->car;
-}
-cell *cdr(const cell *c) {
-  if (c == NULL)
-    // (cdr NIL)
-    return NULL;
-  if (atom(c))
-    pi_error(LISP_ERROR, "cdr applied to an atom");
-  return c->cdr;
-}
-cell *caar(const cell *c) { return car(car(c)); }
-cell *cddr(const cell *c) { return cdr(cdr(c)); }
-cell *cadr(const cell *c) { return car(cdr(c)); }
-cell *cdar(const cell *c) { return cdr(car(c)); }
-cell *cadar(const cell *c) { return car(cdr(car(c))); }
-cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
-cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 cell *set(cell *args) {
   check_two_args(args);
@@ -461,27 +421,6 @@ cell *nth(const cell *list) {
   cell_remove(num, SINGLE);
   cell_remove_args(list);
   return res;
-}
-
-bool total_eq(const cell *c1, const cell *c2) {
-  if (!c1 && !c2)
-    // NILL NILL
-    return true;
-  if (!c1 && c2)
-    // NILL something
-    return false;
-  if (c1 && !c2)
-    // something NILL
-    return false;
-  // something something
-  if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
-    // one is an atom and the other is a cons
-    return false;
-  if (atom(c1) && atom(c2))
-    // equality between two atoms
-    return eq(c1, c2);
-  // cons cons
-  return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
 cell *list(const cell *list) {

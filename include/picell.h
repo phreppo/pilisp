@@ -30,9 +30,9 @@ typedef struct cell {
     };
     struct {
       char *sym;
-      union{
-        struct cell* (*bl)(struct cell* args);
-        struct cell* (*bm)(struct cell* args,struct cell* env);
+      union {
+        struct cell *(*bl)(struct cell *args);
+        struct cell *(*bm)(struct cell *args, struct cell *env);
       };
     };
 
@@ -54,8 +54,8 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
-cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*));
-cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*));
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
+cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
@@ -181,6 +181,55 @@ cell_space *memory;
 void collect_garbage(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
+
+// ==================== BASIC ====================
+inline cell *car(const cell *c) {
+  if (c == NULL)
+    // (car NIL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("car applied to an atom");
+#endif
+  return c->car;
+}
+inline cell *cdr(const cell *c) {
+  if (c == NULL)
+    // (cdr NIL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("cdr applied to an atom");
+#endif
+  return c->cdr;
+}
+inline cell *caar(const cell *c) { return car(car(c)); }
+inline cell *cddr(const cell *c) { return cdr(cdr(c)); }
+inline cell *cadr(const cell *c) { return car(cdr(c)); }
+inline cell *cdar(const cell *c) { return cdr(car(c)); }
+inline cell *cadar(const cell *c) { return car(cdr(car(c))); }
+inline cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
+inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
+
+inline int atom(const cell *c) {
+  return (c == NULL) // NIL case
+         ||
+         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
+}
+
+inline bool eq(const cell *v1, const cell *v2) {
+  if (!v1 || !v2)
+    return (v1 == v2);
+  if (is_num(v1) && is_num(v2))
+    return (v1->value == v2->value);
+  if (is_str(v1) && is_str(v2))
+    return (strcmp(v1->str, v2->str) == 0);
+  return (v1 == v2);
+}
+
+bool total_eq(const cell *c1,
+              const cell *c2); // works also on lists: eq does not
 
 #endif // !PICELL_H
        /*@}*/
