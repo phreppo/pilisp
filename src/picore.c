@@ -238,12 +238,7 @@ cell *eval(cell *e, cell *a) {
       // COND
       evaulated = cond(cdr(e), a);
       cell_remove(e, SINGLE);
-    } else if (eq(car(e), symbol_dotimes)) {
-      dotimes(cdr(e),a);
-      cell_remove_args(e);
-      return NULL;
-    } else {
-
+    } else  {
       if (eq(car(e), symbol_lambda)) {
         // lambda "autoquote"
         evaulated = e;

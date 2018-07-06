@@ -34,7 +34,6 @@ void init_builtin_lambdas() {
   symbol_env = mk_builtin_lambda("ENV",env);
   symbol_mem_dump = mk_builtin_lambda("MD",mem_dump);
   symbol_collect_garbage = mk_builtin_lambda("CG",collect_garbage_call);
-  symbol_dotimes = mk_builtin_lambda("DOTIMES",NULL);
   symbol_bye = mk_builtin_lambda("BYE",bye);
   symbol_macro = mk_builtin_lambda("MACRO",NULL);
   symbol_integerp = mk_builtin_lambda("INTEGERP",integerp);
@@ -51,6 +50,7 @@ void init_builtin_macros() {
   symbol_timer = mk_builtin_macro("TIME",timer);
   symbol_map = mk_builtin_macro("MAP",map);
   symbol_load = mk_builtin_macro("LOAD",load);
+  symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
 }
 
 void init_env() {

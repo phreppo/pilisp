@@ -725,7 +725,7 @@ cell *dotimes(const cell *arg, cell *env) {
     if (n > 0)
       // we have to protect the body of the function
       cell_push(expr, RECURSIVE);
-    cell*evaulated = eval(expr, new_env);
+    cell *evaulated = eval(expr, new_env);
     // remove the result
     cell_remove(evaulated, RECURSIVE);
     // remove the pair (n [actual_value])
@@ -735,4 +735,5 @@ cell *dotimes(const cell *arg, cell *env) {
   }
   cell_remove(car(arg),
               RECURSIVE); // remove the pair and cons (n [number])
+  return NULL;
 }
