@@ -633,6 +633,7 @@ cell *subseq(const cell *list) {
     strncpy(substr, str->str + s, e - s);
     *(substr + (e - s)) = '\0';
     cell *ret = mk_str(substr);
+    free(substr);
     cell_remove(list, RECURSIVE);
     return ret;
   } else {
