@@ -16,7 +16,6 @@ void init_builtin_lambdas() {
   symbol_set = mk_builtin_lambda("SET",set);
   symbol_lambda = mk_builtin_lambda("LAMBDA",NULL);
   symbol_label = mk_builtin_lambda("LABEL",NULL);
-  symbol_cond = mk_builtin_lambda("COND",NULL);
   symbol_or = mk_builtin_lambda("OR",or);
   symbol_and = mk_builtin_lambda("AND",and);
   symbol_not = mk_builtin_lambda("NOT",not);
@@ -39,11 +38,12 @@ void init_builtin_lambdas() {
   symbol_integerp = mk_builtin_lambda("INTEGERP",integerp);
   symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp);
   symbol_write = mk_builtin_lambda("WRITE",write);
-  symbol_quote = mk_builtin_lambda("QUOTE",quote);
+  // symbol_quote = mk_builtin_lambda("QUOTE",quote);
 }
 
 void init_builtin_macros() {
   builtin_macros_index = 0;
+  symbol_quote = mk_builtin_macro("QUOTE",quote);
   symbol_setq = mk_builtin_macro("SETQ",setq);
   symbol_let = mk_builtin_macro("LET",let);
   symbol_defun = mk_builtin_macro("DEFUN",defun);
@@ -51,6 +51,7 @@ void init_builtin_macros() {
   symbol_map = mk_builtin_macro("MAP",map);
   symbol_load = mk_builtin_macro("LOAD",load);
   symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
+  symbol_cond = mk_builtin_macro("COND",cond);
 }
 
 void init_env() {

@@ -74,8 +74,6 @@ cell *symbol_symbolp;
 cell *symbol_write;
 cell *symbol_subseq;
 cell *symbol_reverse;
-cell *symbol_quote;
-
 
 // ==================== MACROS ====================
 cell *symbol_setq;
@@ -84,6 +82,7 @@ cell *symbol_timer;
 cell *symbol_defun;
 cell *symbol_map;
 cell *symbol_cond;
+cell *symbol_quote;
 
 #endif // !PIINIT_H
        /*@}*/

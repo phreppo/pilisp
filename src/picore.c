@@ -140,7 +140,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         a = pairlis(cadr(fn), x, a);
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
-        res = eval(res, a);
+        res = eval(res, a); // raises a buggerino
         // FREE THINGS
         cell_remove_cars(x);              // deep remove cars
         cell_remove_pairlis(a, old_env);  // remove associations
@@ -220,32 +220,17 @@ cell *eval(cell *e, cell *a) {
   }
   //========================= ATOM FUNCTION EVAL =========================//
   else if (atom(car(e))) {
-    // car of the cons cell is an atom
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
       evaulated = car(e)->bm(cdr(e),a);
       cell_remove(e, SINGLE);
     }
-
     // ==================== SPECIAL FORMS ====================
-    else 
-    if (eq(car(e), symbol_quote)) {
-      // QUOTE
-      evaulated = quote(cdr(e),a);
-      cell_remove(e, SINGLE);
-    } else 
-    if (eq(car(e), symbol_cond)) {
-      // COND
-      evaulated = cond(cdr(e), a);
-      cell_remove(e, SINGLE);
-    } else  {
-      if (eq(car(e), symbol_lambda)) {
-        // lambda "autoquote"
+     else  {
+      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro)) 
+        // lambda and macro "autoquote"
         evaulated = e;
-      } else if (eq(car(e), symbol_macro)) {
-        // macro "autoquote"
-        evaulated = e;
-      } else {
+       else {
         // apply atom function to evaluated list of parameters
         cell *args = cdr(e);
         evaulated = apply(car(e), args, a, true);
@@ -259,7 +244,6 @@ cell *eval(cell *e, cell *a) {
   //=========================   ((lambda (x) x) 1)   =========================//
 
   else {
-
     if ((eq(caar(e), symbol_macro))) {
       // MACRO
       cell *old_env = a;
@@ -277,7 +261,6 @@ cell *eval(cell *e, cell *a) {
       cell_remove(caar(e), SINGLE);      // symbol macro
       cell_remove(car(e), SINGLE);       // cons of macro
       cell_remove(e, SINGLE);            // head of everything
-
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
@@ -311,6 +294,7 @@ cell *evlis(cell *m, cell *a) {
 }
 
 cell *evcon(cell *c, cell *a) {
+  
   cell *res = eval(caar(c), a);
 
   if (res != NULL) {
