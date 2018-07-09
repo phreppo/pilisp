@@ -2,6 +2,7 @@
 /*@{*/
 #ifndef PICELL_H
 #define PICELL_H
+#include "pisettings.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,24 +42,6 @@ typedef struct cell {
     struct cell *next_free_cell;
   };
 } cell;
-
-/********************************************************************************
- *                                CELL BASIC OPERATIONS
- ********************************************************************************/
-
-void init_memory();
-void free_memory();
-
-cell *get_cell();
-cell *mk_num(int n);
-cell *mk_str(const char *s);
-cell *mk_sym(const char *symbol);
-cell *mk_cons(cell *car, cell *cdr);
-cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
-cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
-
-cell *copy_cell(const cell *c);
-void free_cell_pointed_memory(cell *c);
 
 /********************************************************************************
  *                                CELL IDENTIFICATION
@@ -171,6 +154,60 @@ void collect_garbage(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
 
+/********************************************************************************
+ *                                CELL BASIC OPERATIONS
+ ********************************************************************************/
+
+void init_memory();
+void free_memory();
+
+inline cell *get_cell() { return cell_space_get_cell(memory); }
+
+inline cell *mk_cons(cell *car, cell *cdr) {
+  cell *c = get_cell();
+  c->type = TYPE_CONS;
+  c->car = car;
+  c->cdr = cdr;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE
+         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+inline cell *mk_num(const int n) {
+  cell *c = get_cell();
+  c->type = TYPE_NUM;
+  c->value = n;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+inline cell *mk_str(const char *s) {
+  cell *c = get_cell();
+  c->type = TYPE_STR;
+  c->str = malloc(strlen(s) + 1);
+  strcpy(c->str, s);
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+cell *mk_sym(const char *symbol);
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
+cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
+cell *copy_cell(const cell *c);
+void free_cell_pointed_memory(cell *c);
+
 // ==================== BASIC ====================
 inline cell *car(const cell *c) {
   if (c == NULL)
@@ -230,13 +267,41 @@ enum push_remove_mode {
   RECURSIVE,
 };
 
-void cell_push(cell *c, unsigned char mode);         // mark as used
-void cell_remove(const cell *c, unsigned char mode); // mark as not used
-void cell_remove_args(
-    const cell *args); // removes from the stack the structure of the args
-void cell_remove_pairlis(const cell *new_env, const cell *old_env);
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
-void cell_remove_cars(const cell *list);
+inline void cell_push(cell *c, unsigned char mode) {
+#if COLLECT_GARBAGE
+  cell_stack_push(memory->stack, c, mode);
+#endif
+}
+
+inline void cell_remove(const cell *c, unsigned char mode) {
+#if COLLECT_GARBAGE
+  cell_stack_remove(memory->stack, c, mode);
+#endif
+}
+
+inline void cell_remove_args(const cell *args) {
+#if COLLECT_GARBAGE
+  cell_stack_remove_args(memory->stack, args);
+#endif
+}
+
+inline void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
+#if COLLECT_GARBAGE
+  cell_stack_remove_pairlis(memory->stack, new_env, old_env);
+#endif
+}
+
+inline void cell_remove_cars(const cell *list) {
+#if COLLECT_GARBAGE
+  cell_stack_remove_cars(memory->stack, list);
+#endif
+}
+
+inline void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+#if COLLECT_GARBAGE
+  cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
+#endif
+}
 
 
 #endif // !PICELL_H
