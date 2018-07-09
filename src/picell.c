@@ -67,6 +67,7 @@ cell *mk_sym(const char *symbol) {
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
+  c->value_list = NULL; // no value to a freshly created symbol
   int i = 0;
   strcpy(c->str, symbol);
   // case unsensitive

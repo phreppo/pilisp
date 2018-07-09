@@ -19,8 +19,8 @@ enum {
   TYPE_FREE,
   TYPE_BUILTINLAMBDA,
   TYPE_BUILTINMACRO,
-  //   TYPE_KEYWORD,
 };
+
 
 typedef struct cell {
   unsigned char type, marked;
@@ -34,6 +34,7 @@ typedef struct cell {
       union {
         struct cell *(*bl)(struct cell *args);
         struct cell *(*bm)(struct cell *args, struct cell *env);
+        struct symbol_value_node * value_list;
       };
     };
 
@@ -42,6 +43,23 @@ typedef struct cell {
     struct cell *next_free_cell;
   };
 } cell;
+
+/********************************************************************************
+*                               Symbol value node
+********************************************************************************/
+
+typedef struct symbol_value_node{
+  cell * assoc;
+  struct symbol_value_node * next;
+}symbol_value_node;
+
+inline symbol_value_node * create_symbol_value_node(cell * value){
+  symbol_value_node * ret = malloc(sizeof(symbol_value_node));
+  ret->assoc = value;
+  ret->next = NULL;
+  return ret;
+}
+
 
 /********************************************************************************
  *                                CELL IDENTIFICATION
