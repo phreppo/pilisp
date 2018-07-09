@@ -76,17 +76,17 @@
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
-#define INITIAL_BLOCK_SIZE 8
+#define INITIAL_BLOCK_SIZE 2048
 
 // number of blocks initially allocated
-#define INITIAL_BLOCKS 10
+#define INITIAL_BLOCKS 1000
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
 #define NEW_BLOCK_THRESHOLD 0.5
 
 // WARNING: if 0 the memory will always be dirty
-#define COLLECT_GARBAGE 0
+#define COLLECT_GARBAGE 1
 
 /********************************************************************************
  *                                 DEBUGGING
