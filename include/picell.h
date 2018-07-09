@@ -44,22 +44,6 @@ typedef struct cell {
   };
 } cell;
 
-/********************************************************************************
-*                               Symbol value node
-********************************************************************************/
-
-typedef struct symbol_value_node{
-  cell * assoc;
-  struct symbol_value_node * next;
-}symbol_value_node;
-
-inline symbol_value_node * create_symbol_value_node(cell * value){
-  symbol_value_node * ret = malloc(sizeof(symbol_value_node));
-  ret->assoc = value;
-  ret->next = NULL;
-  return ret;
-}
-
 
 /********************************************************************************
  *                                CELL IDENTIFICATION
@@ -333,6 +317,20 @@ inline void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
 #endif
 }
 
+/********************************************************************************
+*                               SYMBOL ASSOC
+********************************************************************************/
+
+typedef struct symbol_value_node{
+  cell * assoc;
+  struct symbol_value_node * next;
+}symbol_value_node;
+
+symbol_value_node * create_symbol_value_node(cell * value,symbol_value_node * next);
+symbol_value_node * add_symbol_value(cell * symbol,cell * value);
+void pop_symbol_value(cell * symbol);
+// removes from the list of args the first symbol: use after a pairlis. use for example on (x y z)
+void pop_pairlis(cell * names);
 
 #endif // !PICELL_H
        /*@}*/

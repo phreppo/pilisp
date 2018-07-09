@@ -13,9 +13,15 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *result = a;
+  cell * left;
+  cell * right;
   while (x) {
-    cell *left = car(x);
-    cell *right = car(y);
+    left = car(x);
+    right = car(y);
+
+    // NEW
+    add_symbol_value(left,right);
+
     cell *new_pair = mk_cons(left, right);
     result = mk_cons(new_pair, result);
     x = cdr(x);
@@ -103,6 +109,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
         // FREE THINGS
+        // NEW
+        pop_pairlis(cadr(fn));            // remove the last assoc 
         cell_remove_cars(x);              // deep remove cars
         cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
@@ -143,6 +151,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *res = eval(fn_body, a);
         res = eval(res, a); // raises a buggerino
         // FREE THINGS
+        pop_pairlis(cadr(fn));            // remove the last assoc 
         cell_remove_cars(x);              // deep remove cars
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
@@ -255,7 +264,8 @@ cell *eval(cell *e, cell *a) {
       a = pairlis(cadr(body), prm, a);
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
-
+      
+      pop_pairlis(cadr(body));            // remove the last assoc 
       cell_remove_pairlis(a, old_env);
       cell_remove(cdr(e), RECURSIVE);    // params tree
       cell_remove(cdr(cdar(e)), SINGLE); // cons of the body

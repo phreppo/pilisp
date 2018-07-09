@@ -228,7 +228,7 @@ void print_cell(const cell *cell) {
     case TYPE_BUILTINMACRO:
     case TYPE_SYM:
       printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
-      if (!is_builtin(car(cell))) {
+      if (!is_builtin(cell)) {
         // not builtin symbol
         printf(" => ");
         print_symbol_value_list(cell->value_list);
@@ -329,9 +329,10 @@ void print_global_env(const cell *env) {
 }
 
 void print_symbol_value_list(const symbol_value_node *list) {
-  symbol_value_node *act = list;
+  const symbol_value_node *act = list;
   while (act) {
     print_sexpr(act->assoc);
     printf(" ");
+    act = act->next;
   }
 }

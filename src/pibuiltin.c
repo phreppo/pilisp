@@ -137,6 +137,7 @@ cell *set(cell *args) {
       car(act)->cdr = val;
       cell_remove_args(args);
       cell_remove(name, SINGLE);
+      add_symbol_value(name, val);
       return cdar(act);
     }
     // iterate
@@ -149,6 +150,7 @@ cell *set(cell *args) {
     prec->cdr = new;
   else
     memory->global_env = new;
+  name->value_list = add_symbol_value(name, val);
   cell_remove(name, SINGLE);
   cell_remove(new, SINGLE);
   cell_remove(pair, SINGLE);
@@ -576,6 +578,10 @@ cell *let(const cell *args, cell *env) {
 
   while (params) {
     val = eval(cadar(params), env);        // give a value to val
+    
+    // NEW
+    add_symbol_value(caar(params),val); 
+
     new_pair = mk_cons(caar(params), val); // (sym . val)
     new_env = mk_cons(new_pair,
                       new_env); // add on the head of the new env the new pair
@@ -587,6 +593,13 @@ cell *let(const cell *args, cell *env) {
     params = tmp;
   }
   cell *res = eval(body, new_env);
+  
+  // pop_pairlis(caar(caar(params)));
+  params = car(args);
+  while(params){
+    pop_symbol_value(caar(params));
+    params = cdr(params); 
+  }
   cell_remove_pairlis_deep(new_env, env);
   cell_remove_args(args);
   return res;
@@ -767,6 +780,10 @@ cell *dotimes(const cell *arg, cell *env) {
       // we have to protect the body of the function
       cell_push(expr, RECURSIVE);
     cell *evaulated = eval(expr, new_env);
+
+    // NEW
+    pop_pairlis(name_list); // remove the last assoc
+
     // remove the result
     cell_remove(evaulated, RECURSIVE);
     // remove the pair (n [actual_value])

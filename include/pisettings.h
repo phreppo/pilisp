@@ -112,7 +112,7 @@
 // (beacuse that cell does not belongs to you)
 #define ERROR_EMPTY_REMOVING 1
 
-#define CHECKS 0
+#define CHECKS 1
 
 /********************************************************************************
  *                                  LIMITS

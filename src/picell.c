@@ -557,3 +557,36 @@ bool total_eq(const cell *c1, const cell *c2) {
   // cons cons
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
+
+symbol_value_node * create_symbol_value_node(cell * value,symbol_value_node * next){
+  symbol_value_node * ret = malloc(sizeof(symbol_value_node));
+  ret->assoc = value;
+  ret->next = next;
+  return ret;
+}
+
+symbol_value_node * add_symbol_value(cell * symbol,cell * value){
+  symbol_value_node * ret = create_symbol_value_node(value,symbol->value_list);
+  symbol->value_list = ret;
+  return ret;
+}
+
+void pop_symbol_value(cell * symbol){
+  symbol_value_node * popped = symbol->value_list;
+#if CHECKS
+  if(!popped)
+    pi_lisp_error("You're trying to remove a cell from a symbol, but none found");
+#endif
+  symbol->value_list = popped->next;
+  free(popped);
+  // ! HERE maybe a remove? or maybe not, pairlis remove will provide
+}
+
+// removes from the list of args the first symbol: use after a pairlis. use for example on (x y z)
+void pop_pairlis(cell * names){
+  cell * act = names;
+  while(act){
+    pop_symbol_value(car(act));
+    act = cdr(act);
+  }
+}

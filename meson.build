@@ -12,7 +12,7 @@ project(
 cc = meson.get_compiler('c')
 # arguments for the coverage
 arguments = ['-O3','-faggressive-loop-optimizations']
-#arguments = []
+# arguments = []
 add_global_arguments(arguments, language : 'c')
 
 # Dependencies
