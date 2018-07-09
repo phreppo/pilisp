@@ -79,8 +79,20 @@ typedef struct {
   cell_stack_node *tail;
 } cell_stack;
 
-cell_stack *cell_stack_create();
-cell_stack_node *cell_stack_node_create_node(cell *val);
+inline cell_stack *cell_stack_create() {
+  cell_stack *s = malloc(sizeof(cell_stack));
+  s->head = NULL;
+  s->tail = NULL;
+  return s;
+}
+
+inline cell_stack_node *cell_stack_node_create_node(cell *val) {
+  cell_stack_node *n = malloc(sizeof(cell_stack_node));
+  n->c = val;
+  n->next = NULL;
+  n->prec = NULL;
+  return n;
+}
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode);
 void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode);

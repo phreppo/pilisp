@@ -325,22 +325,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->n_free_cells++;
 }
 
-cell_stack *cell_stack_create() {
-  cell_stack *s = malloc(sizeof(cell_stack));
-  s->head = NULL;
-  s->tail = NULL;
-  return s;
-}
-
-cell_stack_node *cell_stack_node_create_node(cell *val) {
-
-  cell_stack_node *n = malloc(sizeof(cell_stack_node));
-  n->c = val;
-  n->next = NULL;
-  n->prec = NULL;
-  return n;
-}
-
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
   if (!val)
