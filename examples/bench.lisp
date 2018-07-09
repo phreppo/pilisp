@@ -137,10 +137,10 @@
         (* x x))))
 
 (write "map")
-(time (dotimes (n 1000000))
+(time (dotimes (n 1000000))     (map 1+ '(1 2 3 4 5)))
 ; segfault without gc
 ; (time (dotimes (n 10000000))
-    (map 1+ '(1 2 3 4 5)))
+
 
 (write "diff")
 (time (dotimes (n 1000000))

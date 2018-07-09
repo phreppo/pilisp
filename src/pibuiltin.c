@@ -619,9 +619,9 @@ cell *defun(const cell *args, cell *env) {
 }
 
 cell *map(const cell *args, cell *env) {
-#if CHECKS
-  check_two_args(args);
-#endif
+// #if CHECKS
+//   check_two_args(args);
+// #endif
   cell *func = car(args);
   cell *list = cadr(args);
   list = eval(list, env); // extract quote

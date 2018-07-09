@@ -41,6 +41,7 @@ cell *assoc(const cell *x, cell *l) {
   }
   cell_push(x->value_list->assoc, RECURSIVE); // protect the value. if it s a
                                               // list protect all the members
+  cell_remove(x, SINGLE);
   return x->value_list->assoc;
 }
 
