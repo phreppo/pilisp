@@ -61,33 +61,22 @@ cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 /********************************************************************************
- *                                  CELL PROTECTION
- ********************************************************************************/
-
-enum push_remove_mode {
-  SINGLE,
-  RECURSIVE,
-};
-
-void cell_push(cell *c, unsigned char mode);         // mark as used
-void cell_remove(const cell *c, unsigned char mode); // mark as not used
-void cell_remove_args(
-    const cell *args); // removes from the stack the structure of the args
-void cell_remove_pairlis(const cell *new_env, const cell *old_env);
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
-void cell_remove_cars(const cell *list);
-
-/********************************************************************************
  *                                CELL IDENTIFICATION
  ********************************************************************************/
 
-bool is_num(const cell *c);
-bool is_str(const cell *c);
-bool is_sym(const cell *c);
-bool is_cons(const cell *c);
-bool is_builtin(const cell *c);
-bool is_builtin_lambda(const cell *c);
-bool is_builtin_macro(const cell *c);
+inline bool is_num(const cell *c) { return c->type == TYPE_NUM; }
+inline bool is_str(const cell *c) { return c->type == TYPE_STR; }
+inline bool is_sym(const cell *c) {
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
+         c->type == TYPE_BUILTINMACRO;
+}
+inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+inline bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+inline bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+inline bool is_builtin(const cell *c) {
+  return is_builtin_lambda(c) || is_builtin_macro(c);
+}
+
 cell *is_symbol_builtin_lambda(const char *symbol);
 cell *is_symbol_builtin_macro(const char *symbol);
 bool cell_is_in_global_env(const cell *global_env, const cell *c);
@@ -230,6 +219,25 @@ inline bool eq(const cell *v1, const cell *v2) {
 
 bool total_eq(const cell *c1,
               const cell *c2); // works also on lists: eq does not
+
+
+/********************************************************************************
+ *                                  CELL PROTECTION
+ ********************************************************************************/
+
+enum push_remove_mode {
+  SINGLE,
+  RECURSIVE,
+};
+
+void cell_push(cell *c, unsigned char mode);         // mark as used
+void cell_remove(const cell *c, unsigned char mode); // mark as not used
+void cell_remove_args(
+    const cell *args); // removes from the stack the structure of the args
+void cell_remove_pairlis(const cell *new_env, const cell *old_env);
+void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
+void cell_remove_cars(const cell *list);
+
 
 #endif // !PICELL_H
        /*@}*/

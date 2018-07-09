@@ -64,4 +64,7 @@
 (time (dotimes (n 1000000) (+  n n )))
 
 (write "Doing to zero")
-(time (dotimes (n 15000) (toz n)))
+(time (dotimes (n 150) (toz n)))
+
+(write "Doing to integerp")
+(time (dotimes (n 1000000) (integerp n)))

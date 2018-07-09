@@ -178,18 +178,8 @@ cell *copy_cell(const cell *c) {
   return copy;
 }
 
-bool is_num(const cell *c) { return c->type == TYPE_NUM; }
-bool is_str(const cell *c) { return c->type == TYPE_STR; }
-bool is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
-}
-bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
-bool is_builtin(const cell *c) {
-  return is_builtin_lambda(c) || is_builtin_macro(c);
-}
-bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+
+
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -634,7 +624,9 @@ void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
 }
 
 void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+#if COLLECT_GARBAGE
   cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
+#endif
 }
 
 bool total_eq(const cell *c1, const cell *c2) {
