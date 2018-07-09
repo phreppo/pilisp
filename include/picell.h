@@ -221,6 +221,14 @@ cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 // ==================== BASIC ====================
+
+inline int atom(const cell *c) {
+  return (c == NULL) // NIL case
+         ||
+         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
+}
+
 inline cell *car(const cell *c) {
   if (c == NULL)
     // (car NIL)
@@ -248,14 +256,6 @@ inline cell *cdar(const cell *c) { return cdr(car(c)); }
 inline cell *cadar(const cell *c) { return car(cdr(car(c))); }
 inline cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
-
-inline int atom(const cell *c) {
-  return (c == NULL) // NIL case
-         ||
-         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
-}
-
 inline bool eq(const cell *v1, const cell *v2) {
   if (!v1 || !v2)
     return (v1 == v2);

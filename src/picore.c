@@ -30,7 +30,7 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
-  
+
   while (l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
@@ -223,15 +223,16 @@ cell *eval(cell *e, cell *a) {
   else if (atom(car(e))) {
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
-      evaulated = car(e)->bm(cdr(e),a);
+      evaulated = car(e)->bm(cdr(e), a);
       cell_remove(e, SINGLE);
     }
     // ==================== SPECIAL FORMS ====================
-     else  {
-      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro)) 
+    else {
+      // ==
+      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro))
         // lambda and macro "autoquote"
         evaulated = e;
-       else {
+      else {
         // apply atom function to evaluated list of parameters
         cell *args = cdr(e);
         evaulated = apply(car(e), args, a, true);
@@ -295,7 +296,7 @@ cell *evlis(cell *m, cell *a) {
 }
 
 cell *evcon(cell *c, cell *a) {
-  
+
   cell *res = eval(caar(c), a);
 
   if (res != NULL) {
