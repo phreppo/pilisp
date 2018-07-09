@@ -784,7 +784,7 @@ cell *dotimes(const cell *arg, cell *env) {
     cell *evaulated = eval(expr, new_env);
 
     // NEW
-    pop_pairlis(name_list); // remove the last assoc
+    pop_pairlis(name_list); // remove the last assoc. could be a simple pop (every time just an arg)
 
     // remove the result
     cell_remove(evaulated, RECURSIVE);
