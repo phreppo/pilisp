@@ -36,20 +36,20 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
-
-  while (l) {
-    // we extract the first element in the pair
-    if (eq(x, car(car(l)))) {
-      // right pair
-      cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
-                                     // protect all the members
-      cell_remove(x,
-                  SINGLE); // don't need no more the symbol: we have the value
-      return l->car;
-    }
-    l = l->cdr;
-  }
-  return NULL;
+  return x->value_list->assoc;
+  // while (l) {
+  //   // we extract the first element in the pair
+  //   if (eq(x, car(car(l)))) {
+  //     // right pair
+  //     cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
+  //                                    // protect all the members
+  //     cell_remove(x,
+  //                 SINGLE); // don't need no more the symbol: we have the value
+  //     return l->car;
+  //   }
+  //   l = l->cdr;
+  // }
+  // return NULL;
 }
 
 cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
@@ -212,18 +212,19 @@ cell *eval(cell *e, cell *a) {
         if (e == symbol_true)
           evaulated = symbol_true;
         else {
-          cell *pair = assoc(e, a);
-          cell *symbol_value = cdr(pair);
-          if (!pair) {
-            // the symbol has no value in the env
-            char *err = "unknown symbol ";
-            char *sym_name = e->sym;
-            char result[ERROR_MESSAGE_LEN];
-            strcpy(result, err);
-            strcat(result, sym_name);
-            pi_error(LISP_ERROR, result);
-          } else
-            // the symbol has a value in the env
+          // cell *pair = assoc(e, a);
+          // cell *symbol_value = cdr(pair);
+          cell *symbol_value = assoc(e, a);
+          // if (!pair) {
+          //   // the symbol has no value in the env
+          //   char *err = "unknown symbol ";
+          //   char *sym_name = e->sym;
+          //   char result[ERROR_MESSAGE_LEN];
+          //   strcpy(result, err);
+          //   strcat(result, sym_name);
+          //   pi_error(LISP_ERROR, result);
+          // } else
+          //   // the symbol has a value in the env
             evaulated = symbol_value;
         }
       }
