@@ -89,7 +89,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
     } else {
       //========================= COMPOSED FUNCTION =========================//
       //================= ( (lambda (x y z) (....)) param) ==================//
-      if (eq(car(fn), symbol_lambda)) {
+      if (car(fn) == symbol_lambda) {
         // direct lambda
 #if DEBUG_EVAL_MODE
         printf("LAMBDA:\t\t" ANSI_COLOR_RED);
@@ -114,7 +114,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         return res;
       }
       // LABEL
-      if (eq(car(fn), symbol_label)) {
+      if (car(fn) == symbol_label) {
         if (eval_args)
           x = evlis(x, a);
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
@@ -130,7 +130,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         return res;
       }
 
-      if (eq(car(fn), symbol_macro)) {
+      if (car(fn) == symbol_macro) {
         // ==================== (MACRO ...) ====================
 #if DEBUG_EVAL_MODE
         printf("MACRO:\t\t" ANSI_COLOR_RED);
@@ -164,11 +164,12 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         x = evlis(x, a);
 
       cell *function_body = eval(fn, a);
-
+#if CHECKS
       if (function_body == NULL)
         pi_error(LISP_ERROR, "unknown function ");
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
+#endif
       // the env knows the lambda
       return apply(function_body, x, a, false);
     }
@@ -229,7 +230,7 @@ cell *eval(cell *e, cell *a) {
     // ==================== SPECIAL FORMS ====================
     else {
       // ==
-      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro))
+      if ((car(e) == symbol_lambda) || (car(e) ==  symbol_macro))
         // lambda and macro "autoquote"
         evaulated = e;
       else {
@@ -246,7 +247,7 @@ cell *eval(cell *e, cell *a) {
   //=========================   ((lambda (x) x) 1)   =========================//
 
   else {
-    if ((eq(caar(e), symbol_macro))) {
+    if (caar(e) == symbol_macro) {
       // MACRO
       cell *old_env = a;
       cell *body = car(e);
