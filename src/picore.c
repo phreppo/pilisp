@@ -13,14 +13,14 @@ cell *pairlis(cell *x, cell *y, cell *a) {
   printf(ANSI_COLOR_RESET "\n");
 #endif
   cell *result = a;
-  cell * left;
-  cell * right;
+  cell *left;
+  cell *right;
   while (x) {
     left = car(x);
     right = car(y);
 
     // NEW
-    add_symbol_value(left,right);
+    add_symbol_value(left, right);
 
     cell *new_pair = mk_cons(left, right);
     result = mk_cons(new_pair, result);
@@ -36,20 +36,12 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
+  if (!x->value_list) {
+    pi_lisp_error("unknown symbol");
+  }
+  cell_push(x->value_list->assoc, RECURSIVE); // protect the value. if it s a
+                                              // list protect all the members
   return x->value_list->assoc;
-  // while (l) {
-  //   // we extract the first element in the pair
-  //   if (eq(x, car(car(l)))) {
-  //     // right pair
-  //     cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
-  //                                    // protect all the members
-  //     cell_remove(x,
-  //                 SINGLE); // don't need no more the symbol: we have the value
-  //     return l->car;
-  //   }
-  //   l = l->cdr;
-  // }
-  // return NULL;
 }
 
 cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
@@ -110,7 +102,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *res = eval(fn_body, a);
         // FREE THINGS
         // NEW
-        pop_pairlis(cadr(fn));            // remove the last assoc 
+        pop_pairlis(cadr(fn));            // remove the last assoc
         cell_remove_cars(x);              // deep remove cars
         cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
@@ -126,7 +118,9 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         if (eval_args)
           x = evlis(x, a);
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
+        add_symbol_value(cadr(fn), caddr(fn));
         cell *res = apply(caddr(fn), x, new_env, false);
+        pop_symbol_value(cadr(fn));
         cell_remove(cddr(fn), SINGLE); // cons of the body
         cell_remove(cadr(fn), SINGLE); // symbol to bind
         cell_remove(cdr(fn), SINGLE);  // cons of the top level
@@ -151,7 +145,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *res = eval(fn_body, a);
         res = eval(res, a); // raises a buggerino
         // FREE THINGS
-        pop_pairlis(cadr(fn));            // remove the last assoc 
+        pop_pairlis(cadr(fn));            // remove the last assoc
         cell_remove_cars(x);              // deep remove cars
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
@@ -225,7 +219,7 @@ cell *eval(cell *e, cell *a) {
           //   pi_error(LISP_ERROR, result);
           // } else
           //   // the symbol has a value in the env
-            evaulated = symbol_value;
+          evaulated = symbol_value;
         }
       }
     }
@@ -240,7 +234,7 @@ cell *eval(cell *e, cell *a) {
     // ==================== SPECIAL FORMS ====================
     else {
       // ==
-      if ((car(e) == symbol_lambda) || (car(e) ==  symbol_macro))
+      if ((car(e) == symbol_lambda) || (car(e) == symbol_macro))
         // lambda and macro "autoquote"
         evaulated = e;
       else {
@@ -265,8 +259,8 @@ cell *eval(cell *e, cell *a) {
       a = pairlis(cadr(body), prm, a);
       cell *fn_body = caddr(body);
       evaulated = eval(fn_body, a);
-      
-      pop_pairlis(cadr(body));            // remove the last assoc 
+
+      pop_pairlis(cadr(body)); // remove the last assoc
       cell_remove_pairlis(a, old_env);
       cell_remove(cdr(e), RECURSIVE);    // params tree
       cell_remove(cdr(cdar(e)), SINGLE); // cons of the body
