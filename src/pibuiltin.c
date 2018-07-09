@@ -774,7 +774,9 @@ cell *dotimes(const cell *arg, cell *env) {
   cell *expr = cadr(arg);
   cell *new_env;
   for (n = 0; n < num->value; n++) {
-    cell *num_list_new = mk_cons(mk_num(n), NULL);
+    cell * new_num = mk_num(n);
+    cell *num_list_new = mk_cons(new_num, NULL);
+    add_symbol_value(car(name_list),new_num);
     new_env = pairlis(name_list, num_list_new, env);
     if (n > 0)
       // we have to protect the body of the function
