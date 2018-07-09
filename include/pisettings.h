@@ -86,7 +86,7 @@
 #define NEW_BLOCK_THRESHOLD 0.5
 
 // collect garbage?
-#define COLLECT_GARBAGE 1
+#define COLLECT_GARBAGE 0
 
 /********************************************************************************
  *                                 DEBUGGING
