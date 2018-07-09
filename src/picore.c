@@ -37,7 +37,13 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 
 cell *assoc(const cell *x, cell *l) {
   if (!x->value_list) {
-    pi_lisp_error("unknown symbol");
+      // the symbol has no value in the env
+      char *err = "unknown symbol ";
+      char *sym_name = x->sym;
+      char result[ERROR_MESSAGE_LEN];
+      strcpy(result, err);
+      strcat(result, sym_name);
+      pi_error(LISP_ERROR, result);
   }
   cell_push(x->value_list->assoc, RECURSIVE); // protect the value. if it s a
                                               // list protect all the members
