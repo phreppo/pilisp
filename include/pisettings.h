@@ -95,9 +95,6 @@
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0
 
-// gives an output when pushing or removing things in the stack
-#define DEBUG_PUSH_REMOVE_MODE 0
-
 // prints the env while in debug eval mode
 #define DEBUG_EVAL_PRINT_ENV_MODE 0
 
@@ -108,8 +105,6 @@
  *                                   INIT
  ********************************************************************************/
 
-// raise an error if trying to remove a cell that is not on the stack
-// (beacuse that cell does not belongs to you)
 #define ERROR_EMPTY_REMOVING 1
 
 /********************************************************************************

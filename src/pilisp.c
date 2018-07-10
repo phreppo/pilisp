@@ -39,8 +39,6 @@ int pi_prompt() {
     puts("");
     if (result == symbol_bye) 
       repeat = false;
-    else
-      cell_remove(result, RECURSIVE);
   }
   return 0;
 }

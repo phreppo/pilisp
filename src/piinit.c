@@ -70,7 +70,6 @@ void init_env() {
 
       "(setq f \"./examples/functions.lisp\")");
   parse_file(".piinit");
-  cell_space_destroy_stack(memory); // remove thrash
   collect_garbage(memory);
 }
 
