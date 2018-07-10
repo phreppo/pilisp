@@ -622,8 +622,6 @@ cell *subseq(const cell *list) {
   if (s > strlen(str->str))
     return NULL;
   if (cddr(list)) {
-    puts("DUE ARGOMENTII");
-
     cell *end = caddr(list);
     size_t e = end->value;
     char *substr = malloc(e - s + 1);
