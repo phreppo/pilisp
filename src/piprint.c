@@ -182,7 +182,7 @@ void print_cell_block(const cell_block *block) {
 
 void print_cell(const cell *cell) {
   if (cell) {
-    printf(ANSI_COLOR_DARK_GRAY "%d " ANSI_COLOR_RESET, cell->marked);
+    printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked, cell->marks);
     switch (cell->type) {
     case TYPE_CONS:
       printf("CONS\t" ANSI_COLOR_LIGHT_BLUE "( " ANSI_COLOR_RESET);

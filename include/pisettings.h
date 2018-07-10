@@ -76,7 +76,7 @@
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
-#define INITIAL_BLOCK_SIZE 2048
+#define INITIAL_BLOCK_SIZE 8
 
 // number of blocks initially allocated
 #define INITIAL_BLOCKS 1000

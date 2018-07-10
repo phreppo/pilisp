@@ -208,10 +208,15 @@ cell_block *cell_block_create(size_t s) {
   cell_block *new_cb = (cell_block *)malloc(sizeof(cell_block));
   new_cb->block_size = s;
   new_cb->block = (cell *)malloc(s * sizeof(cell));
+
   size_t i = 0;
   for (i = 0; i < s - 1; i++) {
     (new_cb->block[i]).type = TYPE_FREE;
     (new_cb->block[i]).marked = 0;
+
+    // NEW
+    (new_cb->block[i]).marks = 0;
+
     // set the next next cell as the next free
     (new_cb->block[i]).next_free_cell = (new_cb->block) + i + 1;
   }
@@ -395,6 +400,10 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
   if (is_builtin(val))
     return;
   cell_stack_node *n = cell_stack_node_create_node(val);
+  
+  // NEW
+  val->marks++;
+
   if (stack->head == NULL) {
     stack->head = n;
     stack->tail = n;
@@ -411,7 +420,7 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
   }
 #endif
 }
-void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
+void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
 
 #if DEBUG_PUSH_REMOVE_MODE
@@ -431,6 +440,10 @@ void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
         // is it's a cons we have to remove also their sons
         cell *car1 = NULL;
         cell *cdr1 = NULL;
+
+        // NEW
+        val->marks--;
+
         if (mode == RECURSIVE && is_cons(val)) {
           car1 = car(val);
           cdr1 = cdr(val);

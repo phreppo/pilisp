@@ -23,6 +23,7 @@ enum {
 
 typedef struct cell {
   unsigned char type, marked;
+  unsigned short marks;
   union {
     struct {
       struct cell *car;
@@ -35,7 +36,6 @@ typedef struct cell {
         struct cell* (*bm)(struct cell* args,struct cell* env); // pointer to builtin macro function
       };
     };
-
     int value;
     char *str;
     struct cell *next_free_cell;
@@ -111,7 +111,7 @@ cell_stack *cell_stack_create();
 cell_stack_node *cell_stack_node_create_node(cell *val);
 
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode);
-void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode);
+void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
 void cell_stack_remove_args(cell_stack *stack, const cell *args);
 void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
                                const cell *old_env);
