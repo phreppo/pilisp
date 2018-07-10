@@ -7,21 +7,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-// ==================== BASIC ====================
-cell *car(const cell *c);
-cell *cdr(const cell *c);
-cell *caar(const cell *c);
-cell *cadr(const cell *c);
-cell *cdar(const cell *c);
-cell *cddr(const cell *c);
-cell *cadar(const cell *c);
-cell *caddr(const cell *c);
-cell *cons(cell *car, cell *cdr);
-int atom(const cell *c);
-bool eq(const cell *v1, const cell *v2);
-bool total_eq(const cell *c1,
-              const cell *c2); // works also on lists: eq does not
-
 // ==================== BASIC APPLY ====================
 // differences from the first basic block: these functions can be called from
 // the apply, because they do cell_remove and cell_push and check for args error
@@ -41,6 +26,8 @@ cell *greater(const cell *operands);
 cell *greater_eq(const cell *operands);
 cell *less(const cell *operands);
 cell *less_eq(const cell *operands);
+cell *integerp(const cell *arg);
+cell *symbolp(const cell *arg);
 
 // ==================== ARITHMETIC ====================
 cell *addition(const cell *numbers);
@@ -50,8 +37,12 @@ cell *division(const cell *numbers);
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
-cell *load(cell *arg, cell **env);
+cell *load(cell *arg, cell *env);
 cell *write(cell *arg);
+cell *bye(cell *arg);
+cell *mem_dump(cell *arg);
+cell *env(cell *arg);
+cell *collect_garbage_call(cell *arg);
 
 // ==================== LISTS ====================
 cell *length(const cell *list);
@@ -66,7 +57,10 @@ cell *setq(const cell *args, cell *env);
 cell *defun(const cell *args, cell *env);
 cell *let(const cell *args, cell *env);
 cell *map(const cell *args, cell *env);
-cell *timer(cell *arg, cell **env);
+cell *quote(const cell *args, cell *env);
+cell *timer(cell *arg, cell *env);
+cell *cond(const cell *arg, cell *env);
+cell *dotimes(const cell*arg,cell * env);
 
 #endif // !PIBUILTIN_H
        /*@}*/

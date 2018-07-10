@@ -79,11 +79,14 @@
 #define INITIAL_BLOCK_SIZE 8
 
 // number of blocks initially allocated
-#define INITIAL_BLOCKS 10
+#define INITIAL_BLOCKS 1000
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
 #define NEW_BLOCK_THRESHOLD 0.5
+
+// collect garbage?
+#define COLLECT_GARBAGE 1
 
 /********************************************************************************
  *                                 DEBUGGING
@@ -102,12 +105,14 @@
 #define DEBUG_GARBAGE_COLLECTOR_MODE 0
 
 /********************************************************************************
- *                                   INIT
+ *                                   ERRORS
  ********************************************************************************/
 
 // raise an error if trying to remove a cell that is not on the stack
 // (beacuse that cell does not belongs to you)
 #define ERROR_EMPTY_REMOVING 1
+
+#define CHECKS 0
 
 /********************************************************************************
  *                                  LIMITS

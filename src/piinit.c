@@ -2,55 +2,56 @@
 
 void init_builtin_lambdas() {
   builtin_lambdas_index = 0;
-  symbol_car = mk_builtin_lambda("CAR");
-  symbol_cdr = mk_builtin_lambda("CDR");
-  symbol_cons = mk_builtin_lambda("CONS");
-  symbol_atom = mk_builtin_lambda("ATOM");
-  symbol_eq = mk_builtin_lambda("EQ");
-  symbol_eq_math = mk_builtin_lambda("=");
-  symbol_true = mk_builtin_lambda("T");
-  symbol_addition = mk_builtin_lambda("+");
-  symbol_subtraction = mk_builtin_lambda("-");
-  symbol_multiplication = mk_builtin_lambda("*");
-  symbol_division = mk_builtin_lambda("/");
-  symbol_set = mk_builtin_lambda("SET");
-  symbol_lambda = mk_builtin_lambda("LAMBDA");
-  symbol_label = mk_builtin_lambda("LABEL");
-  symbol_quote = mk_builtin_lambda("QUOTE");
-  symbol_cond = mk_builtin_lambda("COND");
-  symbol_load = mk_builtin_lambda("LOAD");
-  symbol_or = mk_builtin_lambda("OR");
-  symbol_and = mk_builtin_lambda("AND");
-  symbol_not = mk_builtin_lambda("NOT");
-  symbol_greater = mk_builtin_lambda(">");
-  symbol_greater_equal = mk_builtin_lambda(">=");
-  symbol_less = mk_builtin_lambda("<");
-  symbol_less_equal = mk_builtin_lambda("<=");
-  symbol_length = mk_builtin_lambda("LENGTH");
-  symbol_member = mk_builtin_lambda("MEMBER");
-  symbol_nth = mk_builtin_lambda("NTH");
-  symbol_file_ended = mk_builtin_lambda("FEOF");
-  symbol_env = mk_builtin_lambda("ENV");
-  symbol_mem_dump = mk_builtin_lambda("MD");
-  symbol_collect_garbage = mk_builtin_lambda("CG");
-  symbol_dotimes = mk_builtin_lambda("DOTIMES");
-  symbol_list = mk_builtin_lambda("LIST");
-  symbol_bye = mk_builtin_lambda("BYE");
-  symbol_macro = mk_builtin_lambda("MACRO");
-  symbol_integerp = mk_builtin_lambda("INTEGERP");
-  symbol_symbolp = mk_builtin_lambda("SYMBOLP");
-  symbol_write = mk_builtin_lambda("WRITE");
-  symbol_subseq = mk_builtin_lambda("SUBSEQ");
-  symbol_reverse = mk_builtin_lambda("REVERSE");
+  symbol_car = mk_builtin_lambda("CAR",builtin_car);
+  symbol_cdr = mk_builtin_lambda("CDR",builtin_cdr);
+  symbol_cons = mk_builtin_lambda("CONS",builtin_cons);
+  symbol_atom = mk_builtin_lambda("ATOM",builtin_atom);
+  symbol_eq = mk_builtin_lambda("EQ",builtin_eq);
+  symbol_eq_math = mk_builtin_lambda("=",builtin_eq);
+  symbol_true = mk_builtin_lambda("T",symbol_true);
+  symbol_addition = mk_builtin_lambda("+",addition);
+  symbol_subtraction = mk_builtin_lambda("-",subtraction);
+  symbol_multiplication = mk_builtin_lambda("*",multiplication);
+  symbol_division = mk_builtin_lambda("/",division);
+  symbol_set = mk_builtin_lambda("SET",set);
+  symbol_lambda = mk_builtin_lambda("LAMBDA",NULL);
+  symbol_label = mk_builtin_lambda("LABEL",NULL);
+  symbol_or = mk_builtin_lambda("OR",or);
+  symbol_and = mk_builtin_lambda("AND",and);
+  symbol_not = mk_builtin_lambda("NOT",not);
+  symbol_greater = mk_builtin_lambda(">",greater);
+  symbol_greater_equal = mk_builtin_lambda(">=",greater_eq);
+  symbol_less = mk_builtin_lambda("<",less);
+  symbol_less_equal = mk_builtin_lambda("<=",less_eq);
+  symbol_length = mk_builtin_lambda("LENGTH",length);
+  symbol_member = mk_builtin_lambda("MEMBER",member);
+  symbol_nth = mk_builtin_lambda("NTH",nth);
+  symbol_list = mk_builtin_lambda("LIST",list);
+  symbol_subseq = mk_builtin_lambda("SUBSEQ",subseq);
+  symbol_reverse = mk_builtin_lambda("REVERSE",reverse);
+  symbol_file_ended = mk_builtin_lambda("FEOF",NULL);
+  symbol_env = mk_builtin_lambda("ENV",env);
+  symbol_mem_dump = mk_builtin_lambda("MD",mem_dump);
+  symbol_collect_garbage = mk_builtin_lambda("CG",collect_garbage_call);
+  symbol_bye = mk_builtin_lambda("BYE",bye);
+  symbol_macro = mk_builtin_lambda("MACRO",NULL);
+  symbol_integerp = mk_builtin_lambda("INTEGERP",integerp);
+  symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp);
+  symbol_write = mk_builtin_lambda("WRITE",write);
+  // symbol_quote = mk_builtin_lambda("QUOTE",quote);
 }
 
 void init_builtin_macros() {
   builtin_macros_index = 0;
-  symbol_setq = mk_builtin_macro("SETQ");
-  symbol_let = mk_builtin_macro("LET");
-  symbol_defun = mk_builtin_macro("DEFUN");
-  symbol_timer = mk_builtin_macro("TIME");
-  symbol_map = mk_builtin_macro("MAP");
+  symbol_quote = mk_builtin_macro("QUOTE",quote);
+  symbol_setq = mk_builtin_macro("SETQ",setq);
+  symbol_let = mk_builtin_macro("LET",let);
+  symbol_defun = mk_builtin_macro("DEFUN",defun);
+  symbol_timer = mk_builtin_macro("TIME",timer);
+  symbol_map = mk_builtin_macro("MAP",map);
+  symbol_load = mk_builtin_macro("LOAD",load);
+  symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
+  symbol_cond = mk_builtin_macro("COND",cond);
 }
 
 void init_env() {
@@ -66,6 +67,8 @@ void init_env() {
       "(setq d \"./test/lisp_programs/diff.lisp\")"
 
       "(setq p \"./examples/a.lisp\")"
+
+      "(setq b \"./examples/bench.lisp\")"
 
       "(setq f \"./examples/functions.lisp\")");
   parse_file(".piinit");

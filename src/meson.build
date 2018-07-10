@@ -32,5 +32,6 @@ executable(
     sources: sources,
     include_directories : inc,
     dependencies : dependencies,
+    c_args: arguments,
     install: true
 )

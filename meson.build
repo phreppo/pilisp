@@ -11,8 +11,9 @@ project(
 # Compiler
 cc = meson.get_compiler('c')
 # arguments for the coverage
-# coverage_arguments = ['--coverage', '-fprofile-arcs', '-ftest-coverage', '-fPIC', '-O0']
-# add_global_arguments(coverage_arguments, language : 'c')
+arguments = ['-O3','-faggressive-loop-optimizations']
+# arguments = []
+add_global_arguments(arguments, language : 'c')
 
 # Dependencies
 thread_dep = dependency('threads')                # pthreads

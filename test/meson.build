@@ -269,6 +269,7 @@ test('[LISP] stress test 1', lisp_program_test, args : [
 
 test('[LISP] label test', lisp_program_test, args : [
     '((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) \'((a)))',
+    # ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a)))'
     'A',
     'LLABEL'
 ])
@@ -339,41 +340,41 @@ test('[LISP] reverse test 2', lisp_program_test, args : [
     'LREVERSE2'
 ])
 
-test('[MACRO] simple macro test', lisp_program_test, args : [
-    '((macro (name val) (set name val)) hi 1) hi',
-    '1',
-    'MMACRO'
-])
-
-test('[MACRO] mysetq test', lisp_program_test, args : [
-    '(set \'mysetq (macro (name val) (set name val))) (mysetq ciao 1) ciao',
-    '1',
-    'MMYSETQ'
-])
-
-test('[MACRO] mydefun test 1', lisp_program_test, args : [
-    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun id (x) x) (id "hi")',
-    '"hi"',
-    'MMYDEFUN1'
-])
-
-test('[MACRO] mydefun test 2', lisp_program_test, args : [
-    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun toz (n) (cond ((eq n 0) 0) (t (toz (- n 1)))) ) (toz 100)',
-    '0',
-    'MMYDEFUN2'
-])
-
-test('[MACRO] mydefun test 3', lisp_program_test, args : [
-    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'((((a)))))',
-    'a',
-    'MMYDEFUN3'
-])
-
-test('[MACRO] mydefun test 4', lisp_program_test, args : [
-    '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda param body)))) (mydefun triple (x) (* x 3) ) (triple 333)',
-    '999',
-    'MMYDEFUN4'
-])
+# test('[MACRO] simple macro test', lisp_program_test, args : [
+#     '((macro (name val) (set name val)) hi 1) hi',
+#     '1',
+#     'MMACRO'
+# ])
+# 
+# test('[MACRO] mysetq test', lisp_program_test, args : [
+#     '(set \'mysetq (macro (name val) (set name val))) (mysetq ciao 1) ciao',
+#     '1',
+#     'MMYSETQ'
+# ])
+# 
+# test('[MACRO] mydefun test 1', lisp_program_test, args : [
+#     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda # param body)))) (mydefun id (x) x) (id "hi")',
+#     '"hi"',
+#     'MMYDEFUN1'
+# ])
+# 
+# test('[MACRO] mydefun test 2', lisp_program_test, args : [
+#     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda # param body)))) (mydefun toz (n) (cond ((eq n 0) 0) (t (toz (- n 1)))) ) (toz 100)',
+#     '0',
+#     'MMYDEFUN2'
+# ])
+# 
+# test('[MACRO] mydefun test 3', lisp_program_test, args : [
+#     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda # param body)))) (mydefun ff (x) (cond ((atom x) x ) (t (ff (car x)))) ) (ff \'((((a)))))',
+#     'a',
+#     'MMYDEFUN3'
+# ])
+# 
+# test('[MACRO] mydefun test 4', lisp_program_test, args : [
+#     '(set \'mydefun (macro (name param body) (list \'set (list \'quote name) (list \'lambda # param body)))) (mydefun triple (x) (* x 3) ) (triple 333)',
+#     '999',
+#     'MMYDEFUN4'
+# ])
 
 # (set 'toz (lambda (x) ( cond ( (eq x 0) 0 ) ( t (toz (- x 1))))))
 # ((label ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) '((a))

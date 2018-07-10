@@ -1,33 +1,6 @@
 #include "picell.h"
 #include "pierror.h"
 
-cell *get_cell() { return cell_space_get_cell(memory); }
-
-cell *mk_num(const int n) {
-  cell *c = get_cell();
-  c->type = TYPE_NUM;
-  c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
-cell *mk_str(const char *s) {
-  cell *c = get_cell();
-  c->type = TYPE_STR;
-  c->str = malloc(strlen(s) + 1);
-  strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
 static cell *is_symbol_allocated(const char *symbol) {
   return cell_space_is_symbol_allocated(memory, symbol);
 }
@@ -94,6 +67,7 @@ cell *mk_sym(const char *symbol) {
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
+  c->value_list = NULL; // no value to a freshly created symbol
   int i = 0;
   strcpy(c->str, symbol);
   // case unsensitive
@@ -109,24 +83,11 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_cons(cell *car, cell *cdr) {
-  cell *c = get_cell();
-  c->type = TYPE_CONS;
-  c->car = car;
-  c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
-cell *mk_builtin_lambda(const char *symbol) {
+cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = malloc(strlen(symbol) + 1);
+  lambda->bl = function;
   int i = 0;
   strcpy(lambda->str, symbol);
   // case unsensitive
@@ -137,10 +98,11 @@ cell *mk_builtin_lambda(const char *symbol) {
   return lambda;
 }
 
-cell *mk_builtin_macro(const char *symbol) {
+cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*)) {
   cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
   macro->sym = malloc(strlen(symbol) + 1);
+  macro->bm = function;
   int i = 0;
   strcpy(macro->str, symbol);
   // case unsensitive
@@ -176,18 +138,8 @@ cell *copy_cell(const cell *c) {
   return copy;
 }
 
-bool is_num(const cell *c) { return c->type == TYPE_NUM; }
-bool is_str(const cell *c) { return c->type == TYPE_STR; }
-bool is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
-}
-bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
-bool is_builtin(const cell *c) {
-  return is_builtin_lambda(c) || is_builtin_macro(c);
-}
-bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+
+
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -305,6 +257,7 @@ cell *cell_space_get_cell(cell_space *cs) {
 void init_memory() { memory = cell_space_create(); }
 
 void collect_garbage(cell_space *cs) {
+#if COLLECT_GARBAGE
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          "=================================== Going to collect garbage "
@@ -330,9 +283,11 @@ void collect_garbage(cell_space *cs) {
          "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
+#endif
 }
 
 void mark(cell *root) {
+#if COLLECT_GARBAGE
   if (root) {
     root->marked = 1;
     if (is_cons(root)) {
@@ -340,9 +295,11 @@ void mark(cell *root) {
       mark(cdr(root));
     }
   }
+#endif
 }
 
 void sweep(cell_space *cs) {
+#if COLLECT_GARBAGE
   size_t block_index = 0;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
@@ -358,6 +315,7 @@ void sweep(cell_space *cs) {
       }
     }
   }
+#endif
 }
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
@@ -368,23 +326,8 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->n_free_cells++;
 }
 
-cell_stack *cell_stack_create() {
-  cell_stack *s = malloc(sizeof(cell_stack));
-  s->head = NULL;
-  s->tail = NULL;
-  return s;
-}
-
-cell_stack_node *cell_stack_node_create_node(cell *val) {
-
-  cell_stack_node *n = malloc(sizeof(cell_stack_node));
-  n->c = val;
-  n->next = NULL;
-  n->prec = NULL;
-  return n;
-}
-
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
   if (!val)
     return;
   if (is_builtin(val))
@@ -404,8 +347,10 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     if (cdr(val))
       cell_stack_push(stack, cdr(val), mode);
   }
+#endif
 }
 void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
+#if COLLECT_GARBAGE
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -480,9 +425,11 @@ void cell_stack_remove(cell_stack *stack, const cell *val, unsigned char mode) {
     puts("");
   }
 #endif
+#endif
 }
 
 void cell_stack_remove_args(cell_stack *stack, const cell *args) {
+#if COLLECT_GARBAGE
   const cell *act = args;
   cell *tmp;
   while (act) {
@@ -490,10 +437,13 @@ void cell_stack_remove_args(cell_stack *stack, const cell *args) {
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
   }
+#endif
 }
 
 void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
                                const cell *old_env) {
+#if COLLECT_GARBAGE
+
   const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
@@ -502,9 +452,11 @@ void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
   }
+#endif
 }
 
 void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
+#if COLLECT_GARBAGE
   const cell *act = list;
   cell *tmp;
   while (act) {
@@ -512,26 +464,7 @@ void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
     cell_stack_remove(stack, car(act), RECURSIVE);
     act = tmp;
   }
-}
-
-void cell_push(cell *c, unsigned char mode) {
-  cell_stack_push(memory->stack, c, mode);
-}
-
-void cell_remove(const cell *c, unsigned char mode) {
-  cell_stack_remove(memory->stack, c, mode);
-}
-
-void cell_remove_args(const cell *args) {
-  cell_stack_remove_args(memory->stack, args);
-}
-
-void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
-  cell_stack_remove_pairlis(memory->stack, new_env, old_env);
-}
-
-void cell_remove_cars(const cell *list) {
-  cell_stack_remove_cars(memory->stack, list);
+#endif
 }
 
 void cell_space_free(cell_space *cs) {
@@ -604,6 +537,56 @@ void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
   }
 }
 
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
-  cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
+bool total_eq(const cell *c1, const cell *c2) {
+  if (!c1 && !c2)
+    // NILL NILL
+    return true;
+  if (!c1 && c2)
+    // NILL something
+    return false;
+  if (c1 && !c2)
+    // something NILL
+    return false;
+  // something something
+  if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
+    // one is an atom and the other is a cons
+    return false;
+  if (atom(c1) && atom(c2))
+    // equality between two atoms
+    return eq(c1, c2);
+  // cons cons
+  return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
+}
+
+symbol_value_node * create_symbol_value_node(cell * value,symbol_value_node * next){
+  symbol_value_node * ret = malloc(sizeof(symbol_value_node));
+  ret->assoc = value;
+  ret->next = next;
+  return ret;
+}
+
+symbol_value_node * add_symbol_value(cell * symbol,cell * value){
+  symbol_value_node * ret = create_symbol_value_node(value,symbol->value_list);
+  symbol->value_list = ret;
+  return ret;
+}
+
+void pop_symbol_value(cell * symbol){
+  symbol_value_node * popped = symbol->value_list;
+#if CHECKS
+  if(!popped)
+    pi_lisp_error("You're trying to remove a cell from a symbol, but none found");
+#endif
+  symbol->value_list = popped->next;
+  free(popped);
+  // ! HERE maybe a remove? or maybe not, pairlis remove will provide
+}
+
+// removes from the list of args the first symbol: use after a pairlis. use for example on (x y z)
+void pop_pairlis(cell * names){
+  cell * act = names;
+  while(act){
+    pop_symbol_value(car(act));
+    act = cdr(act);
+  }
 }

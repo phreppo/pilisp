@@ -192,9 +192,9 @@ void print_cell(const cell *cell) {
           printf("NILL");
         else if (is_str(car(cell)))
           printf("%s", car(cell)->str);
-        else if (is_sym(car(cell)))
+        else if (is_sym(car(cell))) {
           printf("%s", car(cell)->sym);
-        else if (is_num(car(cell)))
+        } else if (is_num(car(cell)))
           printf("%i", car(cell)->value);
       } else {
         // points to something we can't print
@@ -228,6 +228,11 @@ void print_cell(const cell *cell) {
     case TYPE_BUILTINMACRO:
     case TYPE_SYM:
       printf("SYM" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
+      if (!is_builtin(cell)) {
+        // not builtin symbol
+        printf(" => ");
+        print_symbol_value_list(cell->value_list);
+      }
       break;
     case TYPE_FREE:
       printf("FREE" ANSI_COLOR_LIGHT_BLUE "\t%p" ANSI_COLOR_RESET,
@@ -320,5 +325,14 @@ void print_global_env(const cell *env) {
     print_sexpr(cdr(pair));
     puts("");
     act = cdr(act);
+  }
+}
+
+void print_symbol_value_list(const symbol_value_node *list) {
+  const symbol_value_node *act = list;
+  while (act) {
+    print_sexpr(act->assoc);
+    printf(" ");
+    act = act->next;
   }
 }
