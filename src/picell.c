@@ -319,11 +319,11 @@ void collect_garbage(cell_space *cs) {
          "===================================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
 #endif
-  cell_stack_node *node = cs->stack->head;
-  while (node) {
-    mark(*(&node->c));
-    node = node->next;
-  }
+  // cell_stack_node *node = cs->stack->head;
+  // while (node) {
+  //   mark(*(&node->c));
+  //   node = node->next;
+  // }
   mark(cs->global_env);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
@@ -360,7 +360,7 @@ void sweep(cell_space *cs) {
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       cell *current_cell = current_block->block + cell_index;
-      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) {
+      if (current_cell->marks < 1 && !current_cell->marked && !(current_cell->type == TYPE_FREE)) {
         cell_space_mark_cell_as_free(cs, current_cell);
       } else {
         current_cell->marked = 0;
@@ -399,19 +399,10 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     return;
   if (is_builtin(val))
     return;
-  cell_stack_node *n = cell_stack_node_create_node(val);
-  
   // NEW
-  val->marks++;
+  if (val->marks < MARKS_LIMIT)
+    val->marks++;
 
-  if (stack->head == NULL) {
-    stack->head = n;
-    stack->tail = n;
-  } else {
-    stack->head->prec = n;
-    n->next = stack->head;
-    stack->head = n;
-  }
   if (mode == RECURSIVE && val && is_cons(val)) {
     if (car(val))
       cell_stack_push(stack, car(val), mode);
@@ -420,6 +411,7 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
   }
 #endif
 }
+
 void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
 
@@ -431,72 +423,40 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
   if (!val)
     return;
   if (!is_builtin(val)) {
-    cell_stack_node *act = stack->head;
-    cell_stack_node *prec = NULL;
-    while (act) {
-      if (act->c == val) {
-        // found
 
-        // is it's a cons we have to remove also their sons
-        cell *car1 = NULL;
-        cell *cdr1 = NULL;
+    cell *car1 = NULL;
+    cell *cdr1 = NULL;
 
-        // NEW
-        val->marks--;
-
-        if (mode == RECURSIVE && is_cons(val)) {
-          car1 = car(val);
-          cdr1 = cdr(val);
-        }
-        if (prec) {
-          // was not the first in the list
-          prec->next = act->next;
-          if (act->next)
-            // we're not removing the tail
-            act->next->prec = prec;
-          else {
-            // we're removing the tail
-            stack->tail = prec;
-          }
-        } else {
-          // was the first in the list
-          stack->head = act->next;
-          if (!stack->head)
-            // was the only in the tail
-            stack->tail = NULL;
-        }
-#if DEBUG_PUSH_REMOVE_MODE
-        printf(ANSI_COLOR_GREEN
-               " > Removed from the stack:  " ANSI_COLOR_RESET);
-        print_sexpr(val);
-        puts("");
+    // NEW
+    if (val->marks > 0 && val->marks < MARKS_LIMIT - 2)
+      val->marks--;
+#if ERROR_EMPTY_REMOVING
+    else
+      pi_error(MEMORY_ERROR, "you have no more access to that cell");
 #endif
-        free(act); // no mem leak: it s justa a pointer -> gc will free the
-                   // pointed mem
-        if (mode == RECURSIVE) {
-          if (car1)
-            cell_stack_remove(stack, car1, mode);
-          if (cdr1)
-            cell_stack_remove(stack, cdr1, mode);
-        }
-        return;
-      }
-      prec = act;
-      act = act->next;
+
+    if (mode == RECURSIVE && is_cons(val)) {
+      car1 = car(val);
+      cdr1 = cdr(val);
     }
+
 #if DEBUG_PUSH_REMOVE_MODE
-    printf(ANSI_COLOR_RED " > Can't find in the stack: " ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
 #endif
-#if ERROR_EMPTY_REMOVING
-    pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
+    if (mode == RECURSIVE) {
+      if (car1)
+        cell_stack_remove(stack, car1, mode);
+      if (cdr1)
+        cell_stack_remove(stack, cdr1, mode);
+    }
+    return;
   }
 #if DEBUG_PUSH_REMOVE_MODE
   else {
     printf(ANSI_COLOR_DARK_GRAY
-           " > Trying to remove a builtin lambda: " ANSI_COLOR_RESET);
+           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
   }

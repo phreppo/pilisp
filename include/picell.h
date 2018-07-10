@@ -23,7 +23,7 @@ enum {
 
 typedef struct cell {
   unsigned char type, marked;
-  unsigned short marks;
+  unsigned long marks;
   union {
     struct {
       struct cell *car;
