@@ -1,17 +1,17 @@
 #include "picell.h"
 #include "pierror.h"
 
+void collect_garbage(cell_space * cs){
+  
+}
+
+
 cell *get_cell() { return cell_space_get_cell(memory); }
 
 cell *mk_num(const int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -20,11 +20,6 @@ cell *mk_str(const char *s) {
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
   strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -99,11 +94,6 @@ cell *mk_sym(const char *symbol) {
     c->str[i] = toupper(c->str[i]);
     i++;
   }
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a sym: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -112,12 +102,6 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -209,7 +193,6 @@ cell_block *cell_block_create(size_t s) {
   size_t i = 0;
   for (i = 0; i < s - 1; i++) {
     (new_cb->block[i]).type = TYPE_FREE;
-    (new_cb->block[i]).marked = 0;
     // set the next next cell as the next free
     (new_cb->block[i]).next_free_cell = (new_cb->block) + i + 1;
   }
@@ -294,45 +277,12 @@ cell *cell_space_get_cell(cell_space *cs) {
   cell *new_cell = cs->first_free;
   if (new_cell) {
     // there will always be a new cell!
-    new_cell->marked = 0;
     cs->first_free = new_cell->next_free_cell;
   }
   return new_cell;
 }
 
 void init_memory() { memory = cell_space_create(); }
-
-void collect_garbage(cell_space *cs) {
-
-}
-
-void mark(cell *root) {
-  if (root) {
-    root->marked = 1;
-    if (is_cons(root)) {
-      mark(car(root));
-      mark(cdr(root));
-    }
-  }
-}
-
-void sweep(cell_space *cs) {
-  size_t block_index = 0;
-  for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
-
-    size_t cell_index = 0;
-    cell_block *current_block = cs->blocks + block_index;
-
-    for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
-      cell *current_cell = current_block->block + cell_index;
-      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) {
-        cell_space_mark_cell_as_free(cs, current_cell);
-      } else {
-        current_cell->marked = 0;
-      }
-    }
-  }
-}
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);

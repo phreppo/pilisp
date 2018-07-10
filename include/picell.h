@@ -18,11 +18,10 @@ enum {
   TYPE_FREE,
   TYPE_BUILTINLAMBDA,
   TYPE_BUILTINMACRO,
-  //   TYPE_KEYWORD,
 };
 
 typedef struct cell {
-  unsigned char type, marked;
+  unsigned char type;
   union {
     struct {
       struct cell *car;
@@ -129,9 +128,7 @@ void cell_space_free(cell_space *cs);
 
 cell_space *memory;
 
-void collect_garbage(cell_space *cs);
-void mark(cell *root);
-void sweep(cell_space *cs);
+void collect_garbage(cell_space * cs);
 
 #endif // !PICELL_H
        /*@}*/
