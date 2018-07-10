@@ -39,6 +39,8 @@ int pi_prompt() {
     puts("");
     if (result == symbol_bye) 
       repeat = false;
+    // else 
+      // unmark_cell(result);
   }
   return 0;
 }

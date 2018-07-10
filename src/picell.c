@@ -1,10 +1,7 @@
 #include "picell.h"
 #include "pierror.h"
 
-void collect_garbage(cell_space * cs){
-  
-}
-
+void collect_garbage(cell_space *cs) {}
 
 cell *get_cell() { return cell_space_get_cell(memory); }
 
@@ -82,6 +79,7 @@ cell *mk_sym(const char *symbol) {
   // was the symbol allocated but no builtin?
   allocated = is_symbol_allocated(symbol);
   if (allocated) {
+    allocated->refs++;
     return allocated;
   }
   cell *c = get_cell();
@@ -102,6 +100,12 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
+  unmark_cell(car);
+  // if (c->car)
+  //   c->car->refs--;
+  // if (c->cdr)
+  //   c->cdr->refs--;
+  // unmark_cell(cdr);
   return c;
 }
 
@@ -193,6 +197,8 @@ cell_block *cell_block_create(size_t s) {
   size_t i = 0;
   for (i = 0; i < s - 1; i++) {
     (new_cb->block[i]).type = TYPE_FREE;
+    (new_cb->block[i]).marked = 0;
+    (new_cb->block[i]).refs = 0;
     // set the next next cell as the next free
     (new_cb->block[i]).next_free_cell = (new_cb->block) + i + 1;
   }
@@ -277,6 +283,7 @@ cell *cell_space_get_cell(cell_space *cs) {
   cell *new_cell = cs->first_free;
   if (new_cell) {
     // there will always be a new cell!
+    (new_cell->refs)++;
     cs->first_free = new_cell->next_free_cell;
   }
   return new_cell;
@@ -291,7 +298,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->first_free = c;
   cs->n_free_cells++;
 }
-
 
 void cell_space_free(cell_space *cs) {
   if (cs) {
@@ -327,4 +333,25 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
     return false;
   return cell_is_in_global_env(car(global_env), c) ||
          cell_is_in_global_env(cdr(global_env), c);
+}
+
+
+void mark_cell(cell *c) {
+  // todo: controllo dell overflow
+  if (c)
+    c->refs++;
+  else 
+    exit(666);
+}
+
+void unmark_cell(cell *c) {
+  if(!c)
+    // unmarking NIL
+    return;
+  if(is_builtin(c))
+    return;
+  if (c->refs > 0)
+    c->refs--;
+  else
+    pi_lisp_error("unmarking a cell that is not marked");
 }

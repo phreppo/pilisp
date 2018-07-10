@@ -22,6 +22,8 @@ enum {
 
 typedef struct cell {
   unsigned char type;
+  unsigned char marked;
+  unsigned long refs;
   union {
     struct {
       struct cell *car;
@@ -29,9 +31,12 @@ typedef struct cell {
     };
     struct {
       char *sym;
-      union{
-        struct cell* (*bl)(struct cell* args); // pointer to builtin lambda function
-        struct cell* (*bm)(struct cell* args,struct cell* env); // pointer to builtin macro function
+      union {
+        struct cell *(*bl)(
+            struct cell *args); // pointer to builtin lambda function
+        struct cell *(*bm)(
+            struct cell *args,
+            struct cell *env); // pointer to builtin macro function
       };
     };
 
@@ -53,12 +58,11 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
-cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*));
-cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*));
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
+cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
-
 
 /********************************************************************************
  *                                CELL IDENTIFICATION
@@ -128,7 +132,11 @@ void cell_space_free(cell_space *cs);
 
 cell_space *memory;
 
-void collect_garbage(cell_space * cs);
+void collect_garbage(cell_space *cs);
+
+void mark_cell(cell *c);
+
+void unmark_cell(cell *c);
 
 #endif // !PICELL_H
        /*@}*/
