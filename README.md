@@ -56,5 +56,5 @@ ninja test -C build
 
 By default Meson won't allow debugging: if you want to run a debbuger you have to write:
 ```
-meson build -Db_coverage=true 
+meson build -Db_coverage=true
 ```
