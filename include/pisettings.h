@@ -116,7 +116,7 @@
 
 // 0 => no checks about types nor errors, just segfaults => use ONLY when
 // testing performances on correct programs
-#define CHECKS 0
+#define CHECKS 1
 
 /********************************************************************************
  *                                  LIMITS

@@ -50,13 +50,63 @@ typedef struct cell {
 inline void unsafe_cell_remove(cell *c) { c->marks--; }
 
 /********************************************************************************
+ *                                  GARBAGE COLLECTOR
+ ********************************************************************************/
+
+// cells array
+typedef struct {
+  size_t block_size;
+  cell *block;
+} cell_block;
+
+cell_block *cell_block_create(size_t s);
+void cell_block_free(cell_block *cb);
+
+// cells space: array of cell blocks. Just one of this will be instantiated: the
+// pointer "memory" that represents the allocated cells in the interpreter
+typedef struct {
+  size_t cell_space_size;
+  size_t cell_space_capacity;
+  size_t n_cells;
+  size_t n_free_cells;
+  cell *first_free;
+  cell *global_env;
+  cell_block *blocks;
+} cell_space;
+
+cell_space *memory;
+
+// allocates a new block and links the last free cell with the first free in the
+// cell space
+void cell_space_grow(cell_space *cs);
+// doubles the capacity of the cell spce
+void cell_space_double_capacity_if_full(cell_space *cs);
+// always use this on one allocated cell space before use
+void cell_space_init(cell_space *cs);
+// create a new cell space
+cell_space *cell_space_create();
+// true => no free cells
+bool cell_space_is_full(const cell_space *cs);
+// ALWAYS returns a new cell: if none is present it allocates new space,
+// eventually runs gc
+cell *cell_space_get_cell(cell_space *cs);
+// checks if the symbol is present in the cell space
+cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
+// marks the cell as free and updates the first cel, in the cs. cell must be in
+// the cell space
+void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
+// releases the full content of the cs
+void cell_space_free(cell_space *cs);
+
+/********************************************************************************
  *                                CELL BASIC OPERATIONS
  ********************************************************************************/
 
 void init_memory();
 void free_memory();
 
-cell *get_cell();
+inline cell *get_cell() { return cell_space_get_cell(memory); }
+
 
 inline cell *mk_num(const int n) {
   cell *c = get_cell();
@@ -180,57 +230,8 @@ void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
 void cell_remove_cars(const cell *list);
 
 /********************************************************************************
- *                                  GARBAGE COLLECTOR
- ********************************************************************************/
-
-// cells array
-typedef struct {
-  size_t block_size;
-  cell *block;
-} cell_block;
-
-cell_block *cell_block_create(size_t s);
-void cell_block_free(cell_block *cb);
-
-// cells space: array of cell blocks. Just one of this will be instantiated: the
-// pointer "memory" that represents the allocated cells in the interpreter
-typedef struct {
-  size_t cell_space_size;
-  size_t cell_space_capacity;
-  size_t n_cells;
-  size_t n_free_cells;
-  cell *first_free;
-  cell *global_env;
-  cell_block *blocks;
-} cell_space;
-
-// allocates a new block and links the last free cell with the first free in the
-// cell space
-void cell_space_grow(cell_space *cs);
-// doubles the capacity of the cell spce
-void cell_space_double_capacity_if_full(cell_space *cs);
-// always use this on one allocated cell space before use
-void cell_space_init(cell_space *cs);
-// create a new cell space
-cell_space *cell_space_create();
-// true => no free cells
-bool cell_space_is_full(const cell_space *cs);
-// ALWAYS returns a new cell: if none is present it allocates new space,
-// eventually runs gc
-cell *cell_space_get_cell(cell_space *cs);
-// checks if the symbol is present in the cell space
-cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
-// marks the cell as free and updates the first cel, in the cs. cell must be in
-// the cell space
-void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
-// releases the full content of the cs
-void cell_space_free(cell_space *cs);
-
-/********************************************************************************
  *                                 CORE OF THE GC
  ********************************************************************************/
-
-cell_space *memory;
 
 void collect_garbage(cell_space *cs);
 void mark_memory(cell_space *cs);

@@ -1,23 +1,6 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
-int atom(const cell *c) {
-  return (c == NULL) // NIL case
-         ||
-         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
-}
-
-bool eq(const cell *v1, const cell *v2) {
-  if (!v1 || !v2)
-    return (v1 == v2);
-  if (is_num(v1) && is_num(v2))
-    return (v1->value == v2->value);
-  if (is_str(v1) && is_str(v2))
-    return (strcmp(v1->str, v2->str) == 0);
-  return (v1 == v2);
-}
-
 cell *addition(const cell *numbers) {
   long result = 0;
   const cell *act = numbers;

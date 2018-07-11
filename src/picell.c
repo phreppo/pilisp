@@ -1,8 +1,6 @@
 #include "picell.h"
 #include "pierror.h"
 
-cell *get_cell() { return cell_space_get_cell(memory); }
-
 static cell *is_symbol_allocated(const char *symbol) {
   return cell_space_is_symbol_allocated(memory, symbol);
 }
@@ -252,11 +250,9 @@ cell *cell_space_get_cell(cell_space *cs) {
   }
   cs->n_free_cells--;
   cell *new_cell = cs->first_free;
-  if (new_cell) {
-    // there will always be a new cell!
-    new_cell->marked = 0;
-    cs->first_free = new_cell->next_free_cell;
-  }
+  new_cell->marked = 0;
+  new_cell->marks = 0;
+  cs->first_free = new_cell->next_free_cell;
   cell_push(new_cell);
   return new_cell;
 }
@@ -323,7 +319,7 @@ void sweep(cell_space *cs) {
       current_cell = current_block->block + cell_index;
       if (!current_cell->marked && !(current_cell->type == TYPE_FREE))
         cell_space_mark_cell_as_free(cs, current_cell);
-      else 
+      else
         current_cell->marked = 0;
     }
   }
@@ -418,7 +414,8 @@ void cell_remove_args(const cell *args) {
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    unsafe_cell_remove(act); // only not empty cons cells, we can use unsafe remove
+    unsafe_cell_remove(
+        act); // only not empty cons cells, we can use unsafe remove
     act = tmp;
   }
 }
@@ -437,7 +434,7 @@ void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
 
 void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
   const cell *act = new_env;
-  cell * tmp;
+  cell *tmp;
   while (act != old_env) {
     // for the head of the pairlis
     tmp = cdr(act);
