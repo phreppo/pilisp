@@ -238,7 +238,6 @@ void cell_space_init(cell_space *cs) {
   cs->first_free = cs->blocks->block;
   cs->n_cells = cs->blocks[0].block_size;
   cs->n_free_cells = INITIAL_BLOCK_SIZE;
-  cs->stack = cell_stack_create();
 }
 
 cell_space *cell_space_create() {
@@ -389,21 +388,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->n_free_cells++;
 }
 
-cell_stack *cell_stack_create() {
-  cell_stack *s = malloc(sizeof(cell_stack));
-  s->head = NULL;
-  s->tail = NULL;
-  return s;
-}
-
-cell_stack_node *cell_stack_node_create_node(cell *val) {
-  cell_stack_node *n = malloc(sizeof(cell_stack_node));
-  n->c = val;
-  n->next = NULL;
-  n->prec = NULL;
-  return n;
-}
-
 void cell_push(cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
   if (!val)
@@ -535,9 +519,6 @@ void cell_space_free(cell_space *cs) {
     for (block_index = 0; block_index < cs->cell_space_size; block_index++)
       cell_block_free((cs->blocks) + block_index);
     free(cs->blocks);
-
-    cell_stack_free(cs->stack);
-
     free(cs);
   }
 }
@@ -553,18 +534,6 @@ void cell_block_free(cell_block *cb) {
   }
 }
 
-void cell_stack_free(cell_stack *stack) {
-  if (stack) {
-    cell_stack_node *act = stack->head;
-    cell_stack_node *tmp;
-    while (act) {
-      tmp = act->next;
-      free(act);
-      act = tmp;
-    }
-  }
-}
-
 void free_memory() { cell_space_free(memory); }
 
 bool cell_is_in_global_env(const cell *global_env, const cell *c) {
@@ -577,12 +546,4 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
     return false;
   return cell_is_in_global_env(car(global_env), c) ||
          cell_is_in_global_env(cdr(global_env), c);
-}
-
-void cell_space_destroy_stack(cell_space *cs) {
-  if (cs && cs->stack) {
-    cell_stack_free(cs->stack);
-    cs->stack->head = NULL;
-    cs->stack->tail = NULL;
-  }
 }

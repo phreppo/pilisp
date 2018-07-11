@@ -10,7 +10,6 @@ void pi_error(int CODE, char *message) {
   printf(ANSI_COLOR_LIGHT_RED ":(" ANSI_COLOR_RESET " %s\n", message);
   last_error = CODE;
   // free(message);
-  cell_space_destroy_stack(memory);
   longjmp(env_buf, jmp_destination); // jumps to the last saved destination
 }
 

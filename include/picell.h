@@ -93,36 +93,6 @@ cell *is_symbol_builtin_macro(const char *symbol);
 bool cell_is_in_global_env(const cell *global_env, const cell *c);
 
 /********************************************************************************
- *                              STACK GARBAGE COLLECTOR
- ********************************************************************************/
-
-typedef struct cell_stack_node {
-  struct cell_stack_node *prec;
-  struct cell_stack_node *next;
-  cell *c;
-} cell_stack_node;
-
-typedef struct {
-  cell_stack_node *head;
-  cell_stack_node *tail;
-} cell_stack;
-
-cell_stack *cell_stack_create();
-cell_stack_node *cell_stack_node_create_node(cell *val);
-
-// void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode);
-// void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode);
-// void cell_stack_remove_args(cell_stack *stack, const cell *args);
-// void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
-//                                const cell *old_env);
-// void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
-//                                     const cell *old_env);
-// void cell_stack_remove_cars(
-//     cell_stack *stack,
-//     const cell *list); // recursively eliminates the cars in the list
-void cell_stack_free(cell_stack *stack);
-
-/********************************************************************************
  *                                  GARBAGE COLLECTOR
  ********************************************************************************/
 
@@ -145,7 +115,6 @@ typedef struct {
   cell *first_free;
   cell *global_env;
   cell_block *blocks;
-  cell_stack *stack;
 } cell_space;
 
 // allocates a new block and links the last free cell with the first free in the
@@ -169,8 +138,6 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
 // releases the full content of the cs
 void cell_space_free(cell_space *cs);
-// releases the entire memory in the stack: use only on error
-void cell_space_destroy_stack(cell_space *cs);
 
 /********************************************************************************
  *                                 CORE OF THE GC
