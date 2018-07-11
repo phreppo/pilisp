@@ -35,8 +35,8 @@ cell *assoc(const cell *x, cell *l) {
     if (eq(x, car(car(l)))) {
       // right pair
       cell_push_recursive(cdar(l)); // protect the value. if it s a list
-                                     // protect all the members
-      cell_remove(x); // don't need no more the symbol: we have the value
+                                    // protect all the members
+      unsafe_cell_remove(x); // don't need no more the symbol: we have the value
       return l->car;
     }
     l = l->cdr;
@@ -104,11 +104,11 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell_remove_cars(x);             // deep remove cars
         cell_remove_args(x);             // remove args cons
         cell_remove_pairlis(a, old_env); // remove associations
-        cell_remove(car(fn));            // function name
+        unsafe_cell_remove(car(fn));     // function name
         cell_remove_recursive(cadr(fn)); // params
-        cell_remove(cddr(fn));           // cons pointing to body
-        cell_remove(cdr(fn));            // cons poining to param
-        cell_remove(fn);                 // cons pointing to lambda sym
+        unsafe_cell_remove(cddr(fn));    // cons pointing to body
+        unsafe_cell_remove(cdr(fn));     // cons poining to param
+        unsafe_cell_remove(fn);          // cons pointing to lambda sym
         return res;
       }
       // LABEL
@@ -117,13 +117,13 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
           x = evlis(x, a);
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
         cell *res = apply(caddr(fn), x, new_env, false);
-        cell_remove(cddr(fn));     // cons of the body
-        cell_remove(cadr(fn));     // symbol to bind
-        cell_remove(cdr(fn));      // cons of the top level
-        cell_remove(car(fn));      // symbol label
-        cell_remove(fn);           // cons of everything
-        cell_remove(car(new_env)); // new cons of the pair of the new env
-        cell_remove(new_env);      // head of new env
+        unsafe_cell_remove(cddr(fn));     // cons of the body
+        unsafe_cell_remove(cadr(fn));     // symbol to bind
+        unsafe_cell_remove(cdr(fn));      // cons of the top level
+        unsafe_cell_remove(car(fn));      // symbol label
+        unsafe_cell_remove(fn);           // cons of everything
+        unsafe_cell_remove(car(new_env)); // new cons of the pair of the new env
+        cell_remove(new_env);             // head of new env
         return res;
       }
 
@@ -142,11 +142,11 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         // FREE THINGS
         cell_remove_cars(x);             // deep remove cars
         cell_remove_pairlis(a, old_env); // remove associations
-        cell_remove(car(fn));            // function name
+        unsafe_cell_remove(car(fn));     // function name
         cell_remove_recursive(cadr(fn)); // params
-        cell_remove(cddr(fn));           // cons pointing to body
-        cell_remove(cdr(fn));            // cons poining to param
-        cell_remove(fn);                 // cons pointing to lambda sym
+        unsafe_cell_remove(cddr(fn));    // cons pointing to body
+        unsafe_cell_remove(cdr(fn));     // cons poining to param
+        unsafe_cell_remove(fn);          // cons pointing to lambda sym
         return res;
       }
 
@@ -221,7 +221,7 @@ cell *eval(cell *e, cell *a) {
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
       evaulated = car(e)->bm(cdr(e), a);
-      cell_remove(e);
+      unsafe_cell_remove(e); // cons of the expression
     }
     // ==================== SPECIAL FORMS ====================
     else {
@@ -232,7 +232,7 @@ cell *eval(cell *e, cell *a) {
         // apply atom function to evaluated list of parameters
         cell *args = cdr(e);
         evaulated = apply(car(e), args, a, true);
-        cell_remove(e);           // remove function
+        unsafe_cell_remove(e);    // remove cons of the expression
         cell_remove_args(cdr(e)); // remove list of args
       }
     }
@@ -253,16 +253,16 @@ cell *eval(cell *e, cell *a) {
 
       cell_remove_pairlis(a, old_env);
       cell_remove_recursive(cdr(e));   // params tree
-      cell_remove(cdr(cdar(e)));       // cons of the body
+      unsafe_cell_remove(cdr(cdar(e)));       // cons of the body
       cell_remove_recursive(cadar(e)); // formal params
-      cell_remove(cdar(e));            // cons of params
+      unsafe_cell_remove(cdar(e));            // cons of params
       cell_remove(caar(e));            // symbol macro
-      cell_remove(car(e));             // cons of macro
-      cell_remove(e);                  // head of everything
+      unsafe_cell_remove(car(e));             // cons of macro
+      unsafe_cell_remove(e);                  // head of everything
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);
-      cell_remove(e); // remove function
+      unsafe_cell_remove(e); // remove function
       cell_remove_args(cdr(e));
     }
   }
@@ -312,11 +312,11 @@ cell *evcon(cell *c, cell *a) {
     cell_remove_recursive(cadar(c));
   }
   // cons of the body
-  cell_remove(cdar(c));
+  unsafe_cell_remove(cdar(c));
   // cons of the pair (cond [body])
-  cell_remove(car(c));
+  unsafe_cell_remove(car(c));
   // head of the list
-  cell_remove(c);
+  unsafe_cell_remove(c);
 
   return ret;
 }
