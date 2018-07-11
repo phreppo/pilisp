@@ -296,21 +296,22 @@ cell *evlis(cell *m, cell *a) {
 cell *evcon(cell *c, cell *a) {
   
   cell *res = eval(caar(c), a);
-
+  cell *ret;
   if (res != NULL) {
+    ret = eval(cadar(c), a);
     // result of the last eval
     cell_remove(res, RECURSIVE);
     // eval the bod of the cond
-    res = eval(cadar(c), a);
     // cut off the rest of the sexpressions
     cell_remove(cdr(c), RECURSIVE);
 
   } else {
+    ret = evcon(cdr(c), a);
+
     // result of the last eval
     cell_remove(res, RECURSIVE);
     // remove the unevaluated body
     cell_remove(cadar(c), RECURSIVE);
-    res = evcon(cdr(c), a);
   }
   // cons of the body
   cell_remove(cdar(c), SINGLE);
@@ -319,5 +320,5 @@ cell *evcon(cell *c, cell *a) {
   // head of the list
   cell_remove(c, SINGLE);
 
-  return res;
+  return ret;
 }

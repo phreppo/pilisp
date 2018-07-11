@@ -88,7 +88,7 @@
 // WARNING: if 0 the memory will always be dirty
 #define COLLECT_GARBAGE 1
 
-#define MARKS_LIMIT 1000000
+#define MARKS_LIMIT 1000
 
 /********************************************************************************
  *                                 DEBUGGING
@@ -112,7 +112,7 @@
 
 // raise an error if trying to remove a cell that is not on the stack
 // (beacuse that cell does not belongs to you)
-#define ERROR_EMPTY_REMOVING 1
+#define ERROR_EMPTY_REMOVING 0
 
 /********************************************************************************
  *                                  LIMITS
