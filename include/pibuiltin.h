@@ -8,12 +8,6 @@
 #include <time.h>
 
 // ==================== BASIC ====================
-cell *caar(const cell *c);
-cell *cadr(const cell *c);
-cell *cdar(const cell *c);
-cell *cddr(const cell *c);
-cell *cadar(const cell *c);
-cell *caddr(const cell *c);
 cell *cons(cell *car, cell *cdr);
 int atom(const cell *c);
 bool eq(const cell *v1, const cell *v2);
@@ -41,6 +35,14 @@ inline cell *cdr(const cell *c) {
 #endif
   return c->cdr;
 }
+
+// not usable in the interpreter: no checks! => use only in the eval
+inline cell *caar(const cell *c) { return c->car->car; }
+inline cell *cddr(const cell *c) { return c->cdr->cdr; }
+inline cell *cadr(const cell *c) { return c->cdr->car; }
+inline cell *cdar(const cell *c) { return c->car->cdr; }
+inline cell *cadar(const cell *c) { return c->car->cdr->car; }
+inline cell *caddr(const cell *c) { return c->cdr->cdr->car; }
 
 // ==================== BASIC APPLY ====================
 // differences from the first basic block: these functions can be called from

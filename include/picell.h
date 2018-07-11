@@ -2,6 +2,7 @@
 /*@{*/
 #ifndef PICELL_H
 #define PICELL_H
+#include "pisettings.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,10 +57,48 @@ void init_memory();
 void free_memory();
 
 cell *get_cell();
-cell *mk_num(int n);
-cell *mk_str(const char *s);
+
+inline cell *mk_num(const int n) {
+  cell *c = get_cell();
+  c->type = TYPE_NUM;
+  c->value = n;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+inline cell *mk_str(const char *s) {
+  cell *c = get_cell();
+  c->type = TYPE_STR;
+  c->str = malloc(strlen(s) + 1);
+  strcpy(c->str, s);
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
 cell *mk_sym(const char *symbol);
-cell *mk_cons(cell *car, cell *cdr);
+
+inline cell *mk_cons(cell *car, cell *cdr) {
+  cell *c = get_cell();
+  c->type = TYPE_CONS;
+  c->car = car;
+  c->cdr = cdr;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE
+         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
 cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
 cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
@@ -67,33 +106,78 @@ cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
 
 /********************************************************************************
+ *                                CELL IDENTIFICATION
+ ********************************************************************************/
+
+inline bool is_num(const cell *c) { return c->type == TYPE_NUM; }
+inline bool is_str(const cell *c) { return c->type == TYPE_STR; }
+inline bool is_sym(const cell *c) {
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
+         c->type == TYPE_BUILTINMACRO;
+}
+inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+inline bool is_builtin(const cell *c) {
+  return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
+}
+inline bool is_builtin_lambda(const cell *c) {
+  return c->type == TYPE_BUILTINLAMBDA;
+}
+inline bool is_builtin_macro(const cell *c) {
+  return c->type == TYPE_BUILTINMACRO;
+}
+cell *is_symbol_builtin_lambda(const char *symbol);
+cell *is_symbol_builtin_macro(const char *symbol);
+bool cell_is_in_global_env(const cell *global_env, const cell *c);
+
+/********************************************************************************
  *                                  CELL PROTECTION
  ********************************************************************************/
 
-void cell_push(cell *c);             // mark as used
-void cell_push_recursive(cell *c);   // mark as used
-void cell_remove(cell *c);           // mark as not used
+inline void cell_push(cell *val) {
+#if COLLECT_GARBAGE
+  val->marks++;
+#endif
+}
+void cell_push_recursive(cell *c); // mark as used
+inline void cell_remove(cell *val) {
+#if COLLECT_GARBAGE
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
+  print_sexpr(val);
+  puts("");
+#endif
+  if (!val)
+    return;
+  if (!is_builtin(val)) {
+    // NEW
+    if (val->marks > 0)
+      val->marks--;
+#if ERROR_EMPTY_REMOVING
+    else
+      pi_error(MEMORY_ERROR, "you have no more access to that cell");
+#endif
+#if DEBUG_PUSH_REMOVE_MODE
+    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+#endif
+  }
+#if DEBUG_PUSH_REMOVE_MODE
+  else {
+    printf(ANSI_COLOR_DARK_GRAY
+           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+  }
+#endif
+#endif
+}
 void cell_remove_recursive(cell *c); // faster: no check about the mode
 void cell_remove_args(
     const cell *args); // removes from the stack the structure of the args
 void cell_remove_pairlis(const cell *new_env, const cell *old_env);
 void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
 void cell_remove_cars(const cell *list);
-
-/********************************************************************************
- *                                CELL IDENTIFICATION
- ********************************************************************************/
-
-bool is_num(const cell *c);
-bool is_str(const cell *c);
-bool is_sym(const cell *c);
-bool is_cons(const cell *c);
-bool is_builtin(const cell *c);
-bool is_builtin_lambda(const cell *c);
-bool is_builtin_macro(const cell *c);
-cell *is_symbol_builtin_lambda(const char *symbol);
-cell *is_symbol_builtin_macro(const char *symbol);
-bool cell_is_in_global_env(const cell *global_env, const cell *c);
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR

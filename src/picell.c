@@ -3,31 +3,6 @@
 
 cell *get_cell() { return cell_space_get_cell(memory); }
 
-cell *mk_num(const int n) {
-  cell *c = get_cell();
-  c->type = TYPE_NUM;
-  c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
-cell *mk_str(const char *s) {
-  cell *c = get_cell();
-  c->type = TYPE_STR;
-  c->str = malloc(strlen(s) + 1);
-  strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
 static cell *is_symbol_allocated(const char *symbol) {
   return cell_space_is_symbol_allocated(memory, symbol);
 }
@@ -109,20 +84,6 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_cons(cell *car, cell *cdr) {
-  cell *c = get_cell();
-  c->type = TYPE_CONS;
-  c->car = car;
-  c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
 cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
@@ -177,19 +138,6 @@ cell *copy_cell(const cell *c) {
     copy = mk_cons(copy_cell(car(c)), copy_cell(cdr(c)));
   return copy;
 }
-
-bool is_num(const cell *c) { return c->type == TYPE_NUM; }
-bool is_str(const cell *c) { return c->type == TYPE_STR; }
-bool is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
-}
-bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
-bool is_builtin(const cell *c) {
-  return is_builtin_lambda(c) || is_builtin_macro(c);
-}
-bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -390,14 +338,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->n_free_cells++;
 }
 
-void cell_push(cell *val) {
-#if COLLECT_GARBAGE
-  if (is_builtin(val))
-    return;
-  val->marks++;
-#endif
-}
-
 void cell_push_recursive(cell *val) {
 #if COLLECT_GARBAGE
   if (!val || is_builtin(val))
@@ -446,41 +386,6 @@ void cell_remove_recursive(cell *val) {
       if (cdr1)
         cell_remove_recursive(cdr1);
     }
-#if DEBUG_PUSH_REMOVE_MODE
-    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-#endif
-  }
-#if DEBUG_PUSH_REMOVE_MODE
-  else {
-    printf(ANSI_COLOR_DARK_GRAY
-           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-  }
-#endif
-#endif
-}
-
-void cell_remove(cell *val) {
-#if COLLECT_GARBAGE
-
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
-  print_sexpr(val);
-  puts("");
-#endif
-  if (!val)
-    return;
-  if (!is_builtin(val)) {
-    // NEW
-    if (val->marks > 0)
-      val->marks--;
-#if ERROR_EMPTY_REMOVING
-    else
-      pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
 #if DEBUG_PUSH_REMOVE_MODE
     printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);

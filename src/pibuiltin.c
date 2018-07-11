@@ -140,12 +140,7 @@ cell *division(const cell *numbers) {
   }
   return mk_num(result);
 }
-cell *caar(const cell *c) { return car(car(c)); }
-cell *cddr(const cell *c) { return cdr(cdr(c)); }
-cell *cadr(const cell *c) { return car(cdr(c)); }
-cell *cdar(const cell *c) { return cdr(car(c)); }
-cell *cadar(const cell *c) { return car(cdr(car(c))); }
-cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
+
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 cell *set(cell *args) {
