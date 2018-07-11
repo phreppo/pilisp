@@ -72,10 +72,12 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         // CUSTOM FUNCTION
         // does lambda exists?
         cell *function_body = eval(fn, a);
+#if CHECKS
         if (function_body == NULL)
           pi_error(LISP_ERROR, "unknown function ");
         if (!is_cons(function_body))
           pi_error(LISP_ERROR, "trying to apply a non-lambda");
+#endif
         if ((car(function_body) != symbol_macro) && eval_args)
           // eval args only if it s not a macro
           x = evlis(x, a);
@@ -161,11 +163,12 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         x = evlis(x, a);
 
       cell *function_body = eval(fn, a);
-
+#if CHECKS
       if (function_body == NULL)
         pi_error(LISP_ERROR, "unknown function ");
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
+#endif
       // the env knows the lambda
       return apply(function_body, x, a, false);
     }
@@ -200,7 +203,8 @@ cell *eval(cell *e, cell *a) {
           evaulated = symbol_true;
         else {
           cell *pair = assoc(e, a);
-          cell *symbol_value = cdr(pair);
+          cell *symbol_value = cdr(assoc(e,a));
+#if CHECKS
           if (!pair) {
             // the symbol has no value in the env
             char *err = "unknown symbol ";
@@ -210,6 +214,7 @@ cell *eval(cell *e, cell *a) {
             strcat(result, sym_name);
             pi_error(LISP_ERROR, result);
           } else
+#endif
             // the symbol has a value in the env
             evaulated = symbol_value;
         }
@@ -252,13 +257,13 @@ cell *eval(cell *e, cell *a) {
       evaulated = eval(fn_body, a);
 
       cell_remove_pairlis(a, old_env);
-      cell_remove_recursive(cdr(e));   // params tree
-      unsafe_cell_remove(cdr(cdar(e)));       // cons of the body
-      cell_remove_recursive(cadar(e)); // formal params
-      unsafe_cell_remove(cdar(e));            // cons of params
-      cell_remove(caar(e));            // symbol macro
-      unsafe_cell_remove(car(e));             // cons of macro
-      unsafe_cell_remove(e);                  // head of everything
+      cell_remove_recursive(cdr(e));    // params tree
+      unsafe_cell_remove(cdr(cdar(e))); // cons of the body
+      cell_remove_recursive(cadar(e));  // formal params
+      unsafe_cell_remove(cdar(e));      // cons of params
+      cell_remove(caar(e));             // symbol macro
+      unsafe_cell_remove(car(e));       // cons of macro
+      unsafe_cell_remove(e);            // head of everything
     } else {
       // ==================== COMPOSED FUNCTION ====================
       evaulated = apply(car(e), cdr(e), a, true);

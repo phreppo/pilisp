@@ -23,10 +23,12 @@ cell *addition(const cell *numbers) {
   const cell *act = numbers;
   cell *tmp;
   while (act) {
+#if CHECKS
     if (!is_cons(act))
       pi_error(LISP_ERROR, "impossible to perform addition");
     if (!is_num(car(act)))
       pi_error(LISP_ERROR, "added a non-number");
+#endif
     result += car(act)->value;
     tmp = cdr(act);
     unsafe_cell_remove(car(act)); // num used: we don't need it anymore
@@ -37,35 +39,43 @@ cell *addition(const cell *numbers) {
 }
 
 cell *subtraction(const cell *numbers) {
+#if CHECKS
   if (!numbers)
     // we need 1 argument at least
     pi_error_few_args();
+#endif
 
   if (!cdr(numbers)) {
-    // (- number) => we have to invert the result
+// (- number) => we have to invert the result
+#if CHECKS
     if (!is_cons(numbers))
       pi_error(LISP_ERROR, "impossible to perform subtraction");
     if (!is_num(car(numbers)))
       pi_error(LISP_ERROR, "changing the number of a non-number");
+#endif
     int ret = -(car(numbers)->value);
     unsafe_cell_remove(car(numbers));
     unsafe_cell_remove(numbers);
     return mk_num(ret);
   } else {
+#if CHECKS
     if (!is_cons(numbers) || !is_cons(cdr(numbers)))
       pi_error(LISP_ERROR, "impossible to perform subtraction");
     if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
       pi_error(LISP_ERROR, "subtracted a non-number");
+#endif
     long result = car(numbers)->value;
     const cell *act = cdr(numbers);
     unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
     unsafe_cell_remove(numbers);
     cell *tmp;
     while (act) {
+#if CHECKS
       if (!is_cons(act))
         pi_error(LISP_ERROR, "impossible to perform subtraction");
       if (!is_num(car(act)))
         pi_error(LISP_ERROR, "subtracted a non-number");
+#endif
       result -= car(act)->value;
       tmp = cdr(act);
       unsafe_cell_remove(car(act)); // num used: we don't need it anymore
@@ -81,10 +91,12 @@ cell *multiplication(const cell *numbers) {
   const cell *act = numbers;
   cell *tmp;
   while (act) {
+#if CHECKS
     if (!is_cons(act))
       pi_error(LISP_ERROR, "impossible to perform multiplication");
     if (!is_num(car(act)))
       pi_error(LISP_ERROR, "multiplicated a non-number");
+#endif
     result *= car(act)->value;
 
     tmp = cdr(act);
@@ -96,24 +108,27 @@ cell *multiplication(const cell *numbers) {
 }
 
 cell *division(const cell *numbers) {
+#if CHECKS
   if (!numbers || !cdr(numbers))
     // we need 2 numbers at least
     pi_error_few_args();
-
   if (!is_cons(numbers) || !is_cons(cdr(numbers)))
     pi_error(LISP_ERROR, "impossible to perform division");
   if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
     pi_error(LISP_ERROR, "divided a non-number");
+#endif
   double result = (double)car(numbers)->value;
   const cell *act = cdr(numbers);
   unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
   unsafe_cell_remove(numbers);
   cell *tmp;
   while (act) {
+#if CHECKS
     if (!is_cons(act))
       pi_error(LISP_ERROR, "impossible to perform division");
     if (!is_num(car(act)))
       pi_error(LISP_ERROR, "divided a non-number");
+#endif
     if (car(act)->value == 0)
       pi_error(LISP_ERROR, "division by 0");
     result /= (double)car(act)->value;
@@ -130,16 +145,20 @@ cell *car(const cell *c) {
   if (c == NULL)
     // (car NIL)
     return NULL;
+#if CHECKS
   if (atom(c))
     pi_error(LISP_ERROR, "car applied to an atom");
+#endif
   return c->car;
 }
 cell *cdr(const cell *c) {
   if (c == NULL)
     // (cdr NIL)
     return NULL;
+#if CHECKS
   if (atom(c))
     pi_error(LISP_ERROR, "cdr applied to an atom");
+#endif
   return c->cdr;
 }
 cell *caar(const cell *c) { return car(car(c)); }
@@ -151,11 +170,15 @@ cell *caddr(const cell *c) { return car(cdr(cdr(c))); }
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 cell *set(cell *args) {
+#if CHECKS
   check_two_args(args);
+#endif
   cell *name = car(args);
   cell *val = cadr(args);
+#if CHECKS
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");
+#endif
   cell *prec = NULL;
   cell *act = memory->global_env;
   while (act) {
@@ -188,8 +211,10 @@ cell *set(cell *args) {
 cell *bye(cell *arg) { return symbol_bye; }
 
 cell *mem_dump(cell *arg) {
+#if CHECKS
   if (arg)
     pi_error_many_args();
+#endif
   printf(ANSI_COLOR_YELLOW "============================== MEMORY "
                            "==============================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
@@ -197,8 +222,9 @@ cell *mem_dump(cell *arg) {
 }
 
 cell *timer(cell *arg, cell *env) {
+#if CHECKS
   check_one_arg(arg);
-
+#endif
   cell *to_execute = car(arg);
   clock_t t1, t2;
   long elapsed;
@@ -222,7 +248,9 @@ cell *quote(const cell *args, cell *env) {
 cell *cond(const cell *arg, cell *env) { return evcon(arg, env); }
 
 cell *write(cell *arg) {
+#if CHECKS
   check_one_arg(arg);
+#endif
   cell *target = car(arg);
   printf(ANSI_COLOR_GRAY " > " ANSI_COLOR_RESET);
   print_sexpr(target);
@@ -283,10 +311,12 @@ cell * and (const cell *operands) {
 }
 
 cell * not(const cell *operands) {
+#if CHECKS
   if (!operands)
     pi_error_few_args();
   if (cdr(operands))
     pi_error_many_args();
+#endif
   if (car(operands)) {
     cell_remove_recursive(operands);
     return NULL;
@@ -299,13 +329,17 @@ cell * not(const cell *operands) {
 // ==================== COMPARISON ====================
 
 cell *greater(const cell *operands) {
+#if CHECKS
   check_two_args(operands);
+#endif
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+#if CHECKS
   if (!first || !second)
     pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+#endif
   cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value > second->value) ? symbol_true : NULL);
@@ -318,13 +352,17 @@ cell *greater(const cell *operands) {
 }
 
 cell *greater_eq(const cell *operands) {
+#if CHECKS
   check_two_args(operands);
+#endif
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+#if CHECKS
   if (!first || !second)
     pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+#endif
   cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value >= second->value) ? symbol_true : NULL);
@@ -337,13 +375,17 @@ cell *greater_eq(const cell *operands) {
 }
 
 cell *less(const cell *operands) {
+#if CHECKS
   check_two_args(operands);
+#endif
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+#if CHECKS
   if (!first || !second)
     pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+#endif
   cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value < second->value) ? symbol_true : NULL);
@@ -356,13 +398,17 @@ cell *less(const cell *operands) {
 }
 
 cell *less_eq(const cell *operands) {
+#if CHECKS
   check_two_args(operands);
+#endif
   const cell *first = car(operands);
   const cell *second = cadr(operands);
+#if CHECKS
   if (!first || !second)
     pi_lisp_error("NIL not allowed as arg");
   if (first->type != second->type)
     pi_error(LISP_ERROR, "incompatible types");
+#endif
   cell *res = NULL;
   if (is_num(first)) {
     res = ((first->value <= second->value) ? symbol_true : NULL);
@@ -377,11 +423,15 @@ cell *less_eq(const cell *operands) {
 // ==================== LISTS ====================
 
 cell *length(const cell *list) {
+#if CHECKS
   check_one_arg(list);
+#endif
   unsigned long len = 0;
   const cell *act = car(list);
+#if CHECKS
   if (act && !is_cons(act) && !is_str(act))
     pi_error(LISP_ERROR, "arg is not a list or a string");
+#endif
   /********************************************************************************
    *                                  LEAKS MEMORY
    ********************************************************************************/
@@ -404,12 +454,16 @@ cell *length(const cell *list) {
 }
 
 cell *member(const cell *list) {
+#if CHECKS
   check_two_args(
       list); // the first is the member and che second is the true list
+#endif
   const cell *who = car(list);
   const cell *l = cadr(list);
+#if CHECKS
   if (l && !is_cons(l))
     pi_error(LISP_ERROR, "second arg must be a list");
+#endif
   cell *res = NULL;
   cell *head = NULL;
   bool found = false;
@@ -443,13 +497,19 @@ cell *member(const cell *list) {
 }
 
 cell *nth(const cell *list) {
+#if CHECKS
   check_two_args(list);
+#endif
   const cell *num = car(list);
+#if CHECKS
   if (!is_num(num))
     pi_error(LISP_ERROR, "first arg must be a number");
+#endif
   const cell *l = cadr(list);
+#if CHECKS
   if (l && !is_cons(l))
     pi_error(LISP_ERROR, "second arg must be a list");
+#endif
 
   cell *res = NULL;
   unsigned long index = num->value;
@@ -503,7 +563,9 @@ cell *list(const cell *list) {
 // ==================== BASIC APPLY ====================
 
 cell *builtin_car(const cell *args) {
+#if CHECKS
   check_one_arg(args);
+#endif
   cell *res = caar(args);
   cell_remove_recursive(cdar(args)); // remove the rest of the arg
   cell_remove(car(args));
@@ -511,7 +573,9 @@ cell *builtin_car(const cell *args) {
   return res;
 }
 cell *builtin_cdr(const cell *args) {
+#if CHECKS
   check_one_arg(args);
+#endif
   cell *res = cdar(args);
   cell_remove_recursive(caar(args)); // remove the car of the lists
   cell_remove(car(args));
@@ -519,14 +583,18 @@ cell *builtin_cdr(const cell *args) {
   return res;
 }
 cell *builtin_cons(const cell *args) {
+#if CHECKS
   check_two_args(args);
+#endif
   cell *res = cons(car(args), cadr(args));
   cell_remove_args(args);
   return res;
 }
 
 cell *builtin_atom(const cell *args) {
+#if CHECKS
   check_one_arg(args);
+#endif
   cell *res;
   if (atom(car(args)))
     res = symbol_true;
@@ -536,7 +604,9 @@ cell *builtin_atom(const cell *args) {
   return res;
 }
 cell *builtin_eq(const cell *args) {
+#if CHECKS
   check_two_args(args);
+#endif
   cell *res;
   if (eq(car(args), cadr(args)))
     res = symbol_true;
@@ -547,10 +617,14 @@ cell *builtin_eq(const cell *args) {
 }
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env) {
+#if CHECKS
   check_two_args(args);
+#endif
   cell *sym = car(args);
+#if CHECKS
   if (!is_sym(sym))
     pi_lisp_error("first arg must be a symbol");
+#endif
   cell *val = eval(cadr(args), env);
   cell *ret = set(mk_cons(sym, mk_cons(val, NULL)));
   cell_remove_args(args);
@@ -573,8 +647,8 @@ cell *let(const cell *args, cell *env) {
                       new_env); // add on the head of the new env the new pair
     tmp = cdr(params);
     cell_remove(cdr(cdar(params)));
-    cell_remove(cdar(params)); // maybe null
-    unsafe_cell_remove(car(params)); // cons 
+    cell_remove(cdar(params));       // maybe null
+    unsafe_cell_remove(car(params)); // cons
     unsafe_cell_remove(params);
     params = tmp;
   }
@@ -654,7 +728,9 @@ cell *subseq(const cell *list) {
 }
 
 cell *reverse(const cell *list) {
+#if CHECKS
   check_one_arg(list);
+#endif
   cell *act = car(list);
   cell *val;
   cell *tmp;
@@ -672,8 +748,10 @@ cell *reverse(const cell *list) {
 }
 
 cell *env(cell *arg) {
+#if CHECKS
   if (arg)
     pi_error_many_args();
+#endif
   printf(" > env: " ANSI_COLOR_BLUE);
   print_sexpr(memory->global_env);
   printf("\n" ANSI_COLOR_RESET);
@@ -699,10 +777,14 @@ cell *collect_garbage_call(cell *arg) {
 }
 
 cell *load(cell *arg, cell *env) {
+#if CHECKS
   check_one_arg(arg);
+#endif
   cell *name = eval(car(arg), env); // extract the name
+#if CHECKS
   if (!name || !is_str(name))
     pi_error(LISP_ERROR, "first arg must me a string");
+#endif
   FILE *file = fopen(((name) ? name->str : ""), "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");

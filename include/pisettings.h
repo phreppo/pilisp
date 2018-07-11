@@ -76,7 +76,7 @@
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
-#define INITIAL_BLOCK_SIZE 10000000
+#define INITIAL_BLOCK_SIZE 8
 
 // number of blocks initially allocated
 #define INITIAL_BLOCKS 1000
@@ -113,6 +113,10 @@
 // raise an error if trying to remove a cell that is not on the stack
 // (beacuse that cell does not belongs to you)
 #define ERROR_EMPTY_REMOVING 1
+
+// 0 => no checks about types nor errors, just segfaults => use ONLY when
+// testing performances on correct programs
+#define CHECKS 1
 
 /********************************************************************************
  *                                  LIMITS
