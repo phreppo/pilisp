@@ -338,22 +338,24 @@ void collect_garbage(cell_space *cs) {
 
 void mark_memory(cell_space *cs) {
   size_t block_index = 0;
+  cell_block *current_block;
+  cell *current_cell;
+  size_t cell_index;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
-    size_t cell_index = 0;
-    cell_block *current_block = cs->blocks + block_index;
+    cell_index = 0;
+    current_block = cs->blocks + block_index;
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
-      cell *current_cell = current_block->block + cell_index;
-      if (current_cell->marks > 0 && !(current_cell->type == TYPE_FREE)) {
+      current_cell = current_block->block + cell_index;
+      if (current_cell->marks > 0 && !(current_cell->type == TYPE_FREE))
         mark(current_cell);
-      }
     }
   }
 }
 
 void mark(cell *root) {
-  if (root) {
+  if (root && (!root->marked)) {
     root->marked = 1;
     if (is_cons(root)) {
       mark(car(root));
@@ -364,23 +366,23 @@ void mark(cell *root) {
 
 void sweep(cell_space *cs) {
   size_t block_index = 0;
+  cell_block *current_block;
+  cell *current_cell;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
     size_t cell_index = 0;
-    cell_block *current_block = cs->blocks + block_index;
+    current_block = cs->blocks + block_index;
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
-      cell *current_cell = current_block->block + cell_index;
-      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) {
+      current_cell = current_block->block + cell_index;
+      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) 
         cell_space_mark_cell_as_free(cs, current_cell);
-      }
     }
   }
 }
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);
-  c->marks = 0;
   c->type = TYPE_FREE;
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
@@ -395,7 +397,6 @@ cell_stack *cell_stack_create() {
 }
 
 cell_stack_node *cell_stack_node_create_node(cell *val) {
-
   cell_stack_node *n = malloc(sizeof(cell_stack_node));
   n->c = val;
   n->next = NULL;
@@ -409,7 +410,7 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
     return;
   if (is_builtin(val))
     return;
-  // NEW
+    
   if (val->marks < MARKS_LIMIT)
     val->marks++;
 

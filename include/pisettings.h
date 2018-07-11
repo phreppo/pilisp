@@ -83,12 +83,12 @@
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
-#define NEW_BLOCK_THRESHOLD 0.8
+#define NEW_BLOCK_THRESHOLD 0.5
 
 // WARNING: if 0 the memory will always be dirty
 #define COLLECT_GARBAGE 1
 
-#define MARKS_LIMIT 1000
+#define MARKS_LIMIT 100000
 
 /********************************************************************************
  *                                 DEBUGGING
