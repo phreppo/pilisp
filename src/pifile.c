@@ -24,7 +24,7 @@ cell *parse_file(char *file_path) {
     cell *sexpr = read_sexpr(program_file);
     if (sexpr != symbol_file_ended) {
       res = eval(sexpr, memory->global_env);
-      cell_remove(res, RECURSIVE);
+      cell_remove_recursive(res);
     }
   }
   fclose(program_file);

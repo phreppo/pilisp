@@ -106,7 +106,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell_remove_args(x);              // remove args cons
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
-        cell_remove(cadr(fn), RECURSIVE); // params
+        cell_remove_recursive(cadr(fn)); // params
         cell_remove(cddr(fn), SINGLE);    // cons pointing to body
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
@@ -145,7 +145,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell_remove_cars(x);              // deep remove cars
         cell_remove_pairlis(a, old_env);  // remove associations
         cell_remove(car(fn), SINGLE);     // function name
-        cell_remove(cadr(fn), RECURSIVE); // params
+        cell_remove_recursive(cadr(fn)); // params
         cell_remove(cddr(fn), SINGLE);    // cons pointing to body
         cell_remove(cdr(fn), SINGLE);     // cons poining to param
         cell_remove(fn, SINGLE);          // cons pointing to lambda sym
@@ -254,9 +254,9 @@ cell *eval(cell *e, cell *a) {
       evaulated = eval(fn_body, a);
 
       cell_remove_pairlis(a, old_env);
-      cell_remove(cdr(e), RECURSIVE);    // params tree
+      cell_remove_recursive(cdr(e));    // params tree
       cell_remove(cdr(cdar(e)), SINGLE); // cons of the body
-      cell_remove(cadar(e), RECURSIVE);  // formal params
+      cell_remove_recursive(cadar(e));  // formal params
       cell_remove(cdar(e), SINGLE);      // cons of params
       cell_remove(caar(e), SINGLE);      // symbol macro
       cell_remove(car(e), SINGLE);       // cons of macro
@@ -300,18 +300,18 @@ cell *evcon(cell *c, cell *a) {
   if (res != NULL) {
     ret = eval(cadar(c), a);
     // result of the last eval
-    cell_remove(res, RECURSIVE);
+    cell_remove_recursive(res);
     // eval the bod of the cond
     // cut off the rest of the sexpressions
-    cell_remove(cdr(c), RECURSIVE);
+    cell_remove_recursive(cdr(c));
 
   } else {
     ret = evcon(cdr(c), a);
 
     // result of the last eval
-    cell_remove(res, RECURSIVE);
+    cell_remove_recursive(res);
     // remove the unevaluated body
-    cell_remove(cadar(c), RECURSIVE);
+    cell_remove_recursive(cadar(c));
   }
   // cons of the body
   cell_remove(cdar(c), SINGLE);

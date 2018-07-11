@@ -324,7 +324,6 @@ void collect_garbage(cell_space *cs) {
   mem_dump(NULL);
 #endif
   mark_memory(memory);
-
   sweep(memory);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
@@ -374,7 +373,7 @@ void sweep(cell_space *cs) {
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       current_cell = current_block->block + cell_index;
-      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) 
+      if (!current_cell->marked && !(current_cell->type == TYPE_FREE))
         cell_space_mark_cell_as_free(cs, current_cell);
     }
   }
@@ -394,7 +393,7 @@ void cell_push(cell *val, unsigned char mode) {
     return;
   if (is_builtin(val))
     return;
-    
+
   if (val->marks < MARKS_LIMIT)
     val->marks++;
 
@@ -404,6 +403,55 @@ void cell_push(cell *val, unsigned char mode) {
     if (cdr(val))
       cell_push(cdr(val), mode);
   }
+#endif
+}
+
+void cell_remove_recursive(cell *val) {
+#if COLLECT_GARBAGE
+
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
+  print_sexpr(val);
+  puts("");
+#endif
+  if (!val)
+    return;
+  if (!is_builtin(val)) {
+
+    // if you have errors place these to null
+    cell *car1;
+    cell *cdr1;
+
+    // NEW
+    if (val->marks > 0 && val->marks < MARKS_LIMIT - 2)
+      val->marks--;
+#if ERROR_EMPTY_REMOVING
+    else
+      pi_error(MEMORY_ERROR, "you have no more access to that cell");
+#endif
+
+    if (is_cons(val)) {
+      car1 = car(val);
+      cdr1 = cdr(val);
+      if (car1)
+        cell_remove_recursive(car1);
+      if (cdr1)
+        cell_remove_recursive(cdr1);
+    }
+#if DEBUG_PUSH_REMOVE_MODE
+    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+#endif
+  }
+#if DEBUG_PUSH_REMOVE_MODE
+  else {
+    printf(ANSI_COLOR_DARK_GRAY
+           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
+    print_sexpr(val);
+    puts("");
+  }
+#endif
 #endif
 }
 
@@ -464,7 +512,7 @@ void cell_remove_cars(const cell *list) {
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_remove(car(act), RECURSIVE);
+    cell_remove_recursive(car(act));
     act = tmp;
   }
 }
@@ -479,8 +527,7 @@ void cell_remove_args(const cell *args) {
   }
 }
 
-void cell_remove_pairlis(const cell *new_env,
-                               const cell *old_env) {
+void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
@@ -491,13 +538,12 @@ void cell_remove_pairlis(const cell *new_env,
   }
 }
 
-void cell_remove_pairlis_deep(const cell *new_env,
-                                    const cell *old_env) {
+void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
   const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
-    cell_remove(car(act), RECURSIVE);
+    cell_remove_recursive(car(act));
     cell_remove(act, SINGLE);
     act = tmp;
   }
@@ -508,7 +554,7 @@ void cell_stack_remove_cars(const cell *list) {
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_remove(car(act), RECURSIVE);
+    cell_remove_recursive(car(act));
     act = tmp;
   }
 }

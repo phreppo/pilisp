@@ -157,7 +157,7 @@ cell *set(cell *args) {
   while (act) {
     if (eq(name, caar(act))) {
       // found
-      cell_remove(car(act)->cdr,RECURSIVE); // remove old val
+      cell_remove_recursive(car(act)->cdr); // remove old val
       car(act)->cdr = val;
       cell_push(val,RECURSIVE);
       cell_remove(name, SINGLE);
@@ -234,7 +234,7 @@ cell * or (const cell *operands) {
   cell *tmp;
   while (act) {
     if (atom) {
-      cell_remove(cdr(act), RECURSIVE);
+      cell_remove_recursive(cdr(act));
       cell_remove(act, SINGLE);
       return atom;
     }
@@ -256,16 +256,16 @@ cell * and (const cell *operands) {
   while (act) {
     if (!atom) {
       // NIL found
-      cell_remove(car(prev), RECURSIVE); // release the prev memory
-      cell_remove(cdr(act), RECURSIVE);  // release the rest of the list
+      cell_remove_recursive(car(prev)); // release the prev memory
+      cell_remove_recursive(cdr(act));  // release the rest of the list
       cell_remove(act, SINGLE);          // release the act cons
       return NULL;
     }
-    cell_remove(car(prev), RECURSIVE);
+    cell_remove_recursive(car(prev));
     prev = act;
     cell_push(car(prev), RECURSIVE); // protect the last value
     tmp = cdr(act);
-    cell_remove(car(act), RECURSIVE);
+    cell_remove_recursive(car(act));
     cell_remove(act, SINGLE);
     act = tmp;
     atom = car(act);
@@ -281,7 +281,7 @@ cell * not(const cell *operands) {
   if (cdr(operands))
     pi_error_many_args();
   if (car(operands)) {
-    cell_remove(operands, RECURSIVE);
+    cell_remove_recursive(operands);
     return NULL;
   } else {
     cell_remove(operands, SINGLE);
@@ -306,7 +306,7 @@ cell *greater(const cell *operands) {
     res = ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands, RECURSIVE);
+  cell_remove_recursive(operands);
   return res;
 }
 
@@ -325,7 +325,7 @@ cell *greater_eq(const cell *operands) {
     res = ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands, RECURSIVE);
+  cell_remove_recursive(operands);
   return res;
 }
 
@@ -344,7 +344,7 @@ cell *less(const cell *operands) {
     res = ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands, RECURSIVE);
+  cell_remove_recursive(operands);
   return res;
 }
 
@@ -363,7 +363,7 @@ cell *less_eq(const cell *operands) {
     res = ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
   } else
     pi_error(LISP_ERROR, "non-comparable args");
-  cell_remove(operands, RECURSIVE);
+  cell_remove_recursive(operands);
   return res;
 }
 
@@ -388,7 +388,7 @@ cell *length(const cell *list) {
   while (act) {
     len++;
     tmp = cdr(act);
-    cell_remove(car(act), RECURSIVE); // remove sublist
+    cell_remove_recursive(car(act)); // remove sublist
     cell_remove(act, SINGLE);         // remove cons of the sublis
     act = tmp;
   }
@@ -425,11 +425,11 @@ cell *member(const cell *list) {
       res = res->cdr;
     }
     tmp = cdr(l);
-    cell_remove(car(l), RECURSIVE);
+    cell_remove_recursive(car(l));
     cell_remove(l, SINGLE);
     l = tmp;
   }
-  cell_remove(who, RECURSIVE);
+  cell_remove_recursive(who);
   cell_remove_args(list); // cons of the two args
 
   return head;
@@ -450,7 +450,7 @@ cell *nth(const cell *list) {
   cell *tmp;
   while (l && act < index) {
     tmp = cdr(l);
-    cell_remove(car(l), RECURSIVE);
+    cell_remove_recursive(car(l));
     cell_remove(l, SINGLE);
     l = tmp;
     act++;
@@ -458,7 +458,7 @@ cell *nth(const cell *list) {
   if (l) { // cell is in the range: we can return it and free the rest of the
            // list
     res = car(l);
-    cell_remove(cdr(l), RECURSIVE); // remove the rest of the list
+    cell_remove_recursive(cdr(l)); // remove the rest of the list
     cell_remove(l, SINGLE);         // remove the cons of the result
   }
   cell_remove(num, SINGLE);
@@ -489,7 +489,7 @@ bool total_eq(const cell *c1, const cell *c2) {
 
 cell *list(const cell *list) {
   cell *tmp = copy_cell(list);
-  cell_remove(list, RECURSIVE);
+  cell_remove_recursive(list);
   return tmp;
 }
 
@@ -498,7 +498,7 @@ cell *list(const cell *list) {
 cell *builtin_car(const cell *args) {
   check_one_arg(args);
   cell *res = caar(args);
-  cell_remove(cdar(args), RECURSIVE); // remove the rest of the arg
+  cell_remove_recursive(cdar(args)); // remove the rest of the arg
   cell_remove(car(args), SINGLE);
   cell_remove_args(args);
   return res;
@@ -506,7 +506,7 @@ cell *builtin_car(const cell *args) {
 cell *builtin_cdr(const cell *args) {
   check_one_arg(args);
   cell *res = cdar(args);
-  cell_remove(caar(args), RECURSIVE); // remove the car of the lists
+  cell_remove_recursive(caar(args)); // remove the car of the lists
   cell_remove(car(args), SINGLE);
   cell_remove_args(args);
   return res;
@@ -525,7 +525,7 @@ cell *builtin_atom(const cell *args) {
     res = symbol_true;
   else
     res = NULL;
-  cell_remove(args, RECURSIVE);
+  cell_remove_recursive(args);
   return res;
 }
 cell *builtin_eq(const cell *args) {
@@ -535,7 +535,7 @@ cell *builtin_eq(const cell *args) {
     res = symbol_true;
   else
     res = NULL;
-  cell_remove(args, RECURSIVE);
+  cell_remove_recursive(args);
   return res;
 }
 // ==================== MACROS ====================
@@ -613,7 +613,7 @@ cell *map(const cell *args, cell *env) {
     list = tmp;
   }
   // (map 1+ '(1 2 3))
-  cell_remove(func, RECURSIVE);
+  cell_remove_recursive(func);
   cell_remove_args(args);
   return result;
 }
@@ -632,7 +632,7 @@ cell *subseq(const cell *list) {
     *(substr + (e - s)) = '\0';
     cell *ret = mk_str(substr);
     free(substr);
-    cell_remove(list, RECURSIVE);
+    cell_remove_recursive(list);
     return ret;
   } else {
     // just one number
@@ -641,7 +641,7 @@ cell *subseq(const cell *list) {
     strncpy(substr, str->str + s, e - s);
     *(substr + (e - s)) = '\0';
     cell *ret = mk_str(substr);
-    cell_remove(list, RECURSIVE);
+    cell_remove_recursive(list);
     return ret;
   }
 }
@@ -675,13 +675,13 @@ cell *env(cell *arg) {
 
 cell *integerp(const cell *arg) {
   bool ret = is_num(car(arg));
-  cell_remove(car(arg), RECURSIVE);
+  cell_remove_recursive(car(arg));
   cell_remove(arg, SINGLE);
   return (ret ? symbol_true : NULL);
 }
 cell *symbolp(const cell *arg) {
   bool ret = is_sym(car(arg));
-  cell_remove(car(arg), RECURSIVE);
+  cell_remove_recursive(car(arg));
   cell_remove(arg, SINGLE);
   return (ret ? symbol_true : NULL);
 }
@@ -705,7 +705,7 @@ cell *load(cell *arg, cell *env) {
     if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
       last_result = eval(sexpr, env);
-      cell_remove(last_result, RECURSIVE);
+      cell_remove_recursive(last_result);
     }
   }
   cell_remove(name, SINGLE);
@@ -728,13 +728,12 @@ cell *dotimes(const cell *arg, cell *env) {
     new_env = pairlis(name_list, num_list_new, env);
     cell *evaulated = eval(expr, new_env);
     // remove the result
-    cell_remove(evaulated, RECURSIVE);
+    cell_remove_recursive(evaulated);
     // remove the pair (n [actual_value])
     cell_remove_pairlis(new_env, env);
     // remove the just created cell
-    cell_remove(num_list_new, RECURSIVE);
+    cell_remove_recursive(num_list_new);
   }
-  cell_remove(car(arg),
-              RECURSIVE); // remove the pair and cons (n [number])
+  cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
   return NULL;
 }

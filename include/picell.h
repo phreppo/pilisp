@@ -70,7 +70,8 @@ enum push_remove_mode {
 };
 
 void cell_push(cell *c, unsigned char mode);         // mark as used
-void cell_remove(cell *c, unsigned char mode); // mark as not used
+void cell_remove(cell *c, unsigned char mode);       // mark as not used
+void cell_remove_recursive(cell *c);                 // faster: no check about the mode
 void cell_remove_args(
     const cell *args); // removes from the stack the structure of the args
 void cell_remove_pairlis(const cell *new_env, const cell *old_env);
