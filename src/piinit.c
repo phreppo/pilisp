@@ -57,23 +57,24 @@ void init_builtin_macros() {
 void init_env() {
   memory->global_env = NULL;
   // write the basic functions to one file, then load them
-  write_program_to_file(
-      ".piinit",
-      "(set 'defmacro (macro (name param body) " // check this
-      "(list 'set (list 'quote name) (list 'macro param body))))"
+  // write_program_to_file(
+  //     ".piinit",
+  //     "(set 'defmacro (macro (name param body) " // check this
+  //     "(list 'set (list 'quote name) (list 'macro param body))))"
 
-      "(defun 1+ (num) (+ num 1))"
+  //     "(defun 1+ (num) (+ num 1))"
 
-      "(setq d \"./test/lisp_programs/diff.lisp\")"
+  //     "(setq d \"./test/lisp_programs/diff.lisp\")"
 
-      "(setq p \"./examples/a.lisp\")"
+  //     "(setq p \"./examples/a.lisp\")"
 
-      "(setq b \"./examples/bench.lisp\")"
+  //     "(setq b \"./examples/bench.lisp\")"
 
-      "(setq f \"./examples/functions.lisp\")");
-  parse_file(".piinit");
-  cell_space_destroy_stack(memory); // remove thrash
-  collect_garbage(memory);
+  //     "(setq f \"./examples/functions.lisp\")"
+  //     );
+  // parse_file(".piinit");
+  // cell_space_destroy_stack(memory); // remove thrash
+  // collect_garbage(memory);
 }
 
 void init_pi() {
