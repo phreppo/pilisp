@@ -88,7 +88,7 @@ cell *mk_sym(const char *symbol) {
   allocated = is_symbol_allocated(symbol);
   if (allocated) {
     // the symbol was allocated
-    cell_push(allocated, SINGLE);
+    cell_push(allocated);
     return allocated;
   }
   cell *c = get_cell();
@@ -309,7 +309,7 @@ cell *cell_space_get_cell(cell_space *cs) {
     new_cell->marked = 0;
     cs->first_free = new_cell->next_free_cell;
   }
-  cell_push(new_cell, SINGLE);
+  cell_push(new_cell);
   return new_cell;
 }
 
@@ -381,13 +381,14 @@ void sweep(cell_space *cs) {
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);
+  c->marked = 0;
   c->type = TYPE_FREE;
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
   cs->n_free_cells++;
 }
 
-void cell_push(cell *val, unsigned char mode) {
+void cell_push(cell *val) {
 #if COLLECT_GARBAGE
   if (!val)
     return;
@@ -395,14 +396,7 @@ void cell_push(cell *val, unsigned char mode) {
     return;
 
   // if (val->marks < MARKS_LIMIT)
-    val->marks++;
-
-  if (mode == RECURSIVE && val && is_cons(val)) {
-    if (car(val))
-      cell_push(car(val), mode);
-    if (cdr(val))
-      cell_push(cdr(val), mode);
-  }
+  val->marks++;
 #endif
 }
 
@@ -414,7 +408,7 @@ void cell_push_recursive(cell *val) {
     return;
 
   // if (val->marks < MARKS_LIMIT)
-    val->marks++;
+  val->marks++;
 
   if (is_cons(val)) {
     if (car(val))

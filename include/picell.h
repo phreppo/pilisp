@@ -64,12 +64,7 @@ void free_cell_pointed_memory(cell *c);
  *                                  CELL PROTECTION
  ********************************************************************************/
 
-enum push_remove_mode {
-  SINGLE,
-  RECURSIVE,
-};
-
-void cell_push(cell *c, unsigned char mode);         // mark as used
+void cell_push(cell *c);         // mark as used
 void cell_push_recursive(cell *c);         // mark as used
 void cell_remove(cell *c);       // mark as not used
 void cell_remove_recursive(cell *c);                 // faster: no check about the mode
