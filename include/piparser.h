@@ -1,3 +1,9 @@
+/** @defgroup piparser
+ *
+ * @brief Provides lexer and parser
+ *
+ */
+
 /** @addtogroup piparser */
 /*@{*/
 #ifndef PIPARSER_H

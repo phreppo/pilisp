@@ -1,3 +1,9 @@
+/** @defgroup pitestutils
+ *
+ * @brief Provides tools like prompts to test some functions of pilisp
+ *
+ */
+
 /** @addtogroup pitestutils */
 /*@{*/
 

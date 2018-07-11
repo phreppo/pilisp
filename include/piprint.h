@@ -1,3 +1,9 @@
+/** @defgroup piprint
+ *
+ * @brief Handles printing messages and data structures
+ *
+ */
+
 /** @addtogroup pilisp */
 /*@{*/
 #ifndef PIPRINT_H

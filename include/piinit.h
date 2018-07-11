@@ -1,3 +1,9 @@
+/** @defgroup piinit
+ *
+ * @brief Provides methods that have to be called before using pilisp
+ *
+ */
+
 /** @addtogroup piinit */
 /*@{*/
 #ifndef PIINIT_H

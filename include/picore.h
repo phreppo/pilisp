@@ -1,5 +1,12 @@
+/** @defgroup picore
+ *
+ *  @brief Provides LISP core functions: eval and apply
+ *
+ */
+
 /** @addtogroup picore */
 /*@{*/
+
 #ifndef PICORE_H
 #define PICORE_H
 #include "pilisp.h"

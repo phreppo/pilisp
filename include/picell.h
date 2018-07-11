@@ -1,3 +1,9 @@
+/** @defgroup picell
+ *
+ *  @brief Provides the data structures for LISP, like cells
+ *
+ */
+
 /** @addtogroup picell */
 /*@{*/
 #ifndef PICELL_H

@@ -1,3 +1,9 @@
+/** @defgroup pibuiltin
+ *
+ *  @brief Provides builtin lambdas: for example car, cdr
+ *
+ */
+
 /** @addtogroup pibuiltin */
 /*@{*/
 #ifndef PIBUILTIN_H

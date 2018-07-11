@@ -1,3 +1,9 @@
+/** @defgroup pifile
+ *
+ * @brief Provides file handling
+ *
+ */
+
 /** @addtogroup pifile */
 /*@{*/
 #ifndef PIFILE_H

@@ -444,16 +444,6 @@ void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
   }
 }
 
-void cell_stack_remove_cars(const cell *list) {
-  const cell *act = list;
-  cell *tmp;
-  while (act) {
-    tmp = cdr(act);
-    cell_remove_recursive(car(act));
-    act = tmp;
-  }
-}
-
 void cell_space_free(cell_space *cs) {
   if (cs) {
     size_t block_index;

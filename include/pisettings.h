@@ -4,71 +4,16 @@
  *
  */
 
-/** @defgroup piinit
- *
- * @brief Provides methods that have to be called before using pilisp
- *
- */
-
-/** @defgroup pibuiltin
- *
- *  @brief Provides builtin lambdas: for example car, cdr
- *
- */
-
-/** @defgroup picell
- *
- *  @brief Provides the data structures for LISP, like cells
- *
- */
-
-/** @defgroup picore
- *
- *  @brief Provides LISP core functions: eval and apply
- *
- */
-
-/** @defgroup pierror
- *
- * @brief Provides errors handling
- *
- */
-
-/** @defgroup pifile
- *
- * @brief Provides file handling
- *
- */
-
-/** @defgroup pilisp
- *
- * @brief Links the other modules of Pilisp
- *
- */
-
-/** @defgroup piparser
- *
- * @brief Provides lexer and parser
- *
- */
-
-/** @defgroup piprint
- *
- * @brief Handles printing messages and data structures
- *
- */
-
-/** @defgroup pitestutils
- *
- * @brief Provides tools like prompts to test some functions of pilisp
- *
- */
-
 /** @addtogroup pisettings */
 /*@{*/
 
 #ifndef PISETTINGS_H
 #define PISETTINGS_H
+
+/********************************************************************************
+*                               GENERAL SETTINGS
+********************************************************************************/
+#define PERFORMANCES 1
 
 /********************************************************************************
  *                              MEMORY SETTINGS
@@ -86,7 +31,11 @@
 #define NEW_BLOCK_THRESHOLD 0.5
 
 // WARNING: if 0 the memory will always be dirty
+#if PERFORMANCES
 #define COLLECT_GARBAGE 1
+#else 
+#define COLLECT_GARBAGE 1
+#endif
 
 #define MARKS_LIMIT 100000
 
@@ -116,7 +65,11 @@
 
 // 0 => no checks about types nor errors, just segfaults => use ONLY when
 // testing performances on correct programs
+#if PERFORMANCES
+#define CHECKS 0
+#else 
 #define CHECKS 1
+#endif
 
 /********************************************************************************
  *                                  LIMITS
@@ -126,13 +79,13 @@
 #define MAX_TOK_LEN 512
 
 // max length of a error message
-#define ERROR_MESSAGE_LEN 1024
+#define ERROR_MESSAGE_LEN 512
 
 // EXACT number of builtin lambdas
-#define N_BUILTIN_LAMBDA 777
+#define N_BUILTIN_LAMBDA 50
 
 // EXACT number of builtin lambdas
-#define N_BUILTIN_MACRO 777
+#define N_BUILTIN_MACRO 50
 
 /********************************************************************************
  *                             CONSOLE ANSI COLORS

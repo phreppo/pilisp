@@ -1,3 +1,9 @@
+/** @defgroup pilisp
+ *
+ * @brief Links the other modules of Pilisp
+ *
+ */
+
 /** @addtogroup pilisp */
 /*@{*/
 
