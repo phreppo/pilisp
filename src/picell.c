@@ -324,6 +324,8 @@ void collect_garbage(cell_space *cs) {
          "===================================\n" ANSI_COLOR_RESET);
   mem_dump(NULL);
 #endif
+  mark_memory(memory);
+
   sweep(memory);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
@@ -332,6 +334,22 @@ void collect_garbage(cell_space *cs) {
   mem_dump(NULL);
 #endif
 #endif
+}
+
+void mark_memory(cell_space *cs) {
+  size_t block_index = 0;
+  for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
+
+    size_t cell_index = 0;
+    cell_block *current_block = cs->blocks + block_index;
+
+    for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
+      cell *current_cell = current_block->block + cell_index;
+      if (current_cell->marks > 0 && !(current_cell->type == TYPE_FREE)) {
+        mark(current_cell);
+      }
+    }
+  }
 }
 
 void mark(cell *root) {
@@ -353,7 +371,7 @@ void sweep(cell_space *cs) {
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       cell *current_cell = current_block->block + cell_index;
-      if (current_cell->marks < 1 && !(current_cell->type == TYPE_FREE)) {
+      if (!current_cell->marked && !(current_cell->type == TYPE_FREE)) {
         cell_space_mark_cell_as_free(cs, current_cell);
       }
     }

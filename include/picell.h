@@ -179,6 +179,7 @@ void cell_space_destroy_stack(cell_space *cs);
 cell_space *memory;
 
 void collect_garbage(cell_space *cs);
+void mark_memory(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
 
