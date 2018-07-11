@@ -222,6 +222,7 @@ cell_block *cell_block_create(size_t s) {
   }
   // last cell
   (new_cb->block[s - 1]).type = TYPE_FREE;
+  (new_cb->block[s - 1]).marks = 0;
   (new_cb->block[s - 1]).next_free_cell = NULL;
   return new_cb;
 }
@@ -292,11 +293,15 @@ cell *cell_space_get_cell(cell_space *cs) {
   if (!cs->first_free) {
     // then collect garbage
     collect_garbage(cs);
-    if ((double)((double)cs->n_free_cells / (double)cs->n_cells) <=
-        NEW_BLOCK_THRESHOLD)
+    if ((double)((double)cs->n_free_cells / (double)cs->n_cells) <
+        NEW_BLOCK_THRESHOLD) {
+#if DEBUG_GARBAGE_COLLECTOR_MODE
+      printf(" > Allocating a new block\n");
+#endif
       // free/n->cells is smaller than the threshold to allocate a new block =>
       // allocate!
       cell_space_grow(cs);
+    }
   }
   cs->n_free_cells--;
   cell *new_cell = cs->first_free;
@@ -317,26 +322,14 @@ void collect_garbage(cell_space *cs) {
   printf(ANSI_COLOR_YELLOW
          "=================================== Going to collect garbage "
          "===================================\n" ANSI_COLOR_RESET);
-  print_cell_space(memory);
-#endif
-  // cell_stack_node *node = cs->stack->head;
-  // while (node) {
-  //   mark(*(&node->c));
-  //   node = node->next;
-  // }
-  mark(cs->global_env);
-#if DEBUG_GARBAGE_COLLECTOR_MODE
-  printf(ANSI_COLOR_YELLOW
-         "=================================== After marking "
-         "===================================\n" ANSI_COLOR_RESET);
-  print_cell_space(memory);
+  mem_dump(NULL);
 #endif
   sweep(memory);
 #if DEBUG_GARBAGE_COLLECTOR_MODE
   printf(ANSI_COLOR_YELLOW
          "=================================== After sweep "
          "===================================\n" ANSI_COLOR_RESET);
-  print_cell_space(memory);
+  mem_dump(NULL);
 #endif
 #endif
 }
@@ -360,10 +353,8 @@ void sweep(cell_space *cs) {
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       cell *current_cell = current_block->block + cell_index;
-      if (current_cell->marks < 1 && !current_cell->marked && !(current_cell->type == TYPE_FREE)) {
+      if (current_cell->marks < 1 && !(current_cell->type == TYPE_FREE)) {
         cell_space_mark_cell_as_free(cs, current_cell);
-      } else {
-        current_cell->marked = 0;
       }
     }
   }
@@ -371,6 +362,7 @@ void sweep(cell_space *cs) {
 
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);
+  c->marks = 0;
   c->type = TYPE_FREE;
   c->next_free_cell = cs->first_free;
   cs->first_free = c;

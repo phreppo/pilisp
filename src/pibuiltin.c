@@ -157,9 +157,11 @@ cell *set(cell *args) {
   while (act) {
     if (eq(name, caar(act))) {
       // found
+      cell_remove(car(act)->cdr,RECURSIVE); // remove old val
       car(act)->cdr = val;
-      cell_remove_args(args);
+      cell_push(val,RECURSIVE);
       cell_remove(name, SINGLE);
+      cell_remove_args(args);
       return cdar(act);
     }
     // iterate
@@ -167,13 +169,13 @@ cell *set(cell *args) {
     act = cdr(act);
   }
   cell *pair = cons(name, val);
+  cell_push(pair, RECURSIVE);
   cell *new = cons(pair, NULL);
   if (prec)
     prec->cdr = new;
   else
     memory->global_env = new;
   cell_remove(name, SINGLE);
-  cell_remove(new, SINGLE);
   cell_remove(pair, SINGLE);
   cell_remove_args(args);
   return val;
@@ -232,14 +234,14 @@ cell * or (const cell *operands) {
   cell *tmp;
   while (act) {
     if (atom) {
-      cell_remove(act, SINGLE);
       cell_remove(cdr(act), RECURSIVE);
+      cell_remove(act, SINGLE);
       return atom;
     }
 
     tmp = cdr(act);
-    cell_remove(act, SINGLE);
     cell_remove(car(act), SINGLE);
+    cell_remove(act, SINGLE);
     act = tmp;
     atom = car(act);
   }
@@ -263,8 +265,8 @@ cell * and (const cell *operands) {
     prev = act;
     cell_push(car(prev), RECURSIVE); // protect the last value
     tmp = cdr(act);
-    cell_remove(act, SINGLE);
     cell_remove(car(act), RECURSIVE);
+    cell_remove(act, SINGLE);
     act = tmp;
     atom = car(act);
   }
@@ -377,9 +379,10 @@ cell *length(const cell *list) {
    *                                  LEAKS MEMORY
    ********************************************************************************/
   if (act && is_str(act)) {
+    cell * ret = mk_num(strlen(act->str));
     cell_remove(list, SINGLE); // cons of the argument
     cell_remove(act, SINGLE);
-    return mk_num(strlen(act->str));
+    return ret;
   }
   cell *tmp;
   while (act) {
@@ -422,8 +425,8 @@ cell *member(const cell *list) {
       res = res->cdr;
     }
     tmp = cdr(l);
-    cell_remove(l, SINGLE);
     cell_remove(car(l), RECURSIVE);
+    cell_remove(l, SINGLE);
     l = tmp;
   }
   cell_remove(who, RECURSIVE);
@@ -455,8 +458,8 @@ cell *nth(const cell *list) {
   if (l) { // cell is in the range: we can return it and free the rest of the
            // list
     res = car(l);
-    cell_remove(l, SINGLE);         // remove the cons of the result
     cell_remove(cdr(l), RECURSIVE); // remove the rest of the list
+    cell_remove(l, SINGLE);         // remove the cons of the result
   }
   cell_remove(num, SINGLE);
   cell_remove_args(list);
@@ -495,16 +498,16 @@ cell *list(const cell *list) {
 cell *builtin_car(const cell *args) {
   check_one_arg(args);
   cell *res = caar(args);
-  cell_remove(car(args), SINGLE);
   cell_remove(cdar(args), RECURSIVE); // remove the rest of the arg
+  cell_remove(car(args), SINGLE);
   cell_remove_args(args);
   return res;
 }
 cell *builtin_cdr(const cell *args) {
   check_one_arg(args);
   cell *res = cdar(args);
-  cell_remove(car(args), SINGLE);
   cell_remove(caar(args), RECURSIVE); // remove the car of the lists
+  cell_remove(car(args), SINGLE);
   cell_remove_args(args);
   return res;
 }
@@ -594,8 +597,8 @@ cell *map(const cell *args, cell *env) {
   cell *element;
   cell *tmp;
   while (list) {
-    element = car(list);
     cell_push(func, RECURSIVE); // protect the function
+    element = car(list);
     val = apply(func, mk_cons(eval(element, env), NULL), env, false);
     if (!result) {
       // we're creating the head
@@ -718,11 +721,11 @@ cell *dotimes(const cell *arg, cell *env) {
   cell *expr = cadr(arg);
   cell *new_env;
   for (n = 0; n < num->value; n++) {
-    cell *num_list_new = mk_cons(mk_num(n), NULL);
-    new_env = pairlis(name_list, num_list_new, env);
     if (n > 0)
       // we have to protect the body of the function
       cell_push(expr, RECURSIVE);
+    cell *num_list_new = mk_cons(mk_num(n), NULL);
+    new_env = pairlis(name_list, num_list_new, env);
     cell *evaulated = eval(expr, new_env);
     // remove the result
     cell_remove(evaulated, RECURSIVE);
