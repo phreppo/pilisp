@@ -394,7 +394,7 @@ void cell_push(cell *val, unsigned char mode) {
   if (is_builtin(val))
     return;
 
-  if (val->marks < MARKS_LIMIT)
+  // if (val->marks < MARKS_LIMIT)
     val->marks++;
 
   if (mode == RECURSIVE && val && is_cons(val)) {
@@ -423,7 +423,7 @@ void cell_remove_recursive(cell *val) {
     cell *cdr1;
 
     // NEW
-    if (val->marks > 0 && val->marks < MARKS_LIMIT - 2)
+    if (val->marks > 0)
       val->marks--;
 #if ERROR_EMPTY_REMOVING
     else
@@ -467,7 +467,7 @@ void cell_remove(cell *val) {
     return;
   if (!is_builtin(val)) {
     // NEW
-    if (val->marks > 0 && val->marks < MARKS_LIMIT - 2)
+    if (val->marks > 0)
       val->marks--;
 #if ERROR_EMPTY_REMOVING
     else
