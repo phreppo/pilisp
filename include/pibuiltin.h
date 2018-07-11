@@ -8,8 +8,6 @@
 #include <time.h>
 
 // ==================== BASIC ====================
-cell *car(const cell *c);
-cell *cdr(const cell *c);
 cell *caar(const cell *c);
 cell *cadr(const cell *c);
 cell *cdar(const cell *c);
@@ -21,6 +19,28 @@ int atom(const cell *c);
 bool eq(const cell *v1, const cell *v2);
 bool total_eq(const cell *c1,
               const cell *c2); // works also on lists: eq does not
+
+inline cell *car(const cell *c) {
+  if (c == NULL)
+    // (car NIL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_error(LISP_ERROR, "car applied to an atom");
+#endif
+  return c->car;
+}
+
+inline cell *cdr(const cell *c) {
+  if (c == NULL)
+    // (cdr NIL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_error(LISP_ERROR, "cdr applied to an atom");
+#endif
+  return c->cdr;
+}
 
 // ==================== BASIC APPLY ====================
 // differences from the first basic block: these functions can be called from
@@ -65,7 +85,7 @@ cell *member(const cell *list);
 cell *nth(const cell *list);
 cell *list(const cell *list);
 cell *subseq(const cell *list); // substr
-cell *reverse(const cell *list); 
+cell *reverse(const cell *list);
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);
@@ -75,7 +95,7 @@ cell *map(const cell *args, cell *env);
 cell *quote(const cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
 cell *cond(const cell *arg, cell *env);
-cell *dotimes(const cell*arg,cell * env);
+cell *dotimes(const cell *arg, cell *env);
 
 #endif // !PIBUILTIN_H
        /*@}*/

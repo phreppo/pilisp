@@ -140,27 +140,6 @@ cell *division(const cell *numbers) {
   }
   return mk_num(result);
 }
-
-cell *car(const cell *c) {
-  if (c == NULL)
-    // (car NIL)
-    return NULL;
-#if CHECKS
-  if (atom(c))
-    pi_error(LISP_ERROR, "car applied to an atom");
-#endif
-  return c->car;
-}
-cell *cdr(const cell *c) {
-  if (c == NULL)
-    // (cdr NIL)
-    return NULL;
-#if CHECKS
-  if (atom(c))
-    pi_error(LISP_ERROR, "cdr applied to an atom");
-#endif
-  return c->cdr;
-}
 cell *caar(const cell *c) { return car(car(c)); }
 cell *cddr(const cell *c) { return cdr(cdr(c)); }
 cell *cadr(const cell *c) { return car(cdr(c)); }

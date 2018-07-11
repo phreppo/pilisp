@@ -112,11 +112,11 @@
 
 // raise an error if trying to remove a cell that is not on the stack
 // (beacuse that cell does not belongs to you)
-#define ERROR_EMPTY_REMOVING 1
+#define ERROR_EMPTY_REMOVING 0
 
 // 0 => no checks about types nor errors, just segfaults => use ONLY when
 // testing performances on correct programs
-#define CHECKS 1
+#define CHECKS 0
 
 /********************************************************************************
  *                                  LIMITS

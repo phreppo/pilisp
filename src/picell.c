@@ -417,7 +417,6 @@ void cell_push_recursive(cell *val) {
 
 void cell_remove_recursive(cell *val) {
 #if COLLECT_GARBAGE
-
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
   print_sexpr(val);
@@ -482,7 +481,6 @@ void cell_remove(cell *val) {
     else
       pi_error(MEMORY_ERROR, "you have no more access to that cell");
 #endif
-
 #if DEBUG_PUSH_REMOVE_MODE
     printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);
