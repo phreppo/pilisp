@@ -11,9 +11,11 @@
 #define PISETTINGS_H
 
 /********************************************************************************
-*                               GENERAL SETTINGS
-********************************************************************************/
-#define PERFORMANCES 1
+ *                               GENERAL SETTINGS
+ ********************************************************************************/
+// WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
+// really slow
+#define PERFORMANCES 0
 
 /********************************************************************************
  *                              MEMORY SETTINGS
@@ -21,7 +23,11 @@
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
+#if PERFORMANCES
+#define INITIAL_BLOCK_SIZE 100000000
+#else
 #define INITIAL_BLOCK_SIZE 8
+#endif
 
 // number of blocks initially allocated
 #define INITIAL_BLOCKS 10000
@@ -33,7 +39,7 @@
 // WARNING: if 0 the memory will always be dirty
 #if PERFORMANCES
 #define COLLECT_GARBAGE 1
-#else 
+#else
 #define COLLECT_GARBAGE 1
 #endif
 
@@ -67,7 +73,7 @@
 // testing performances on correct programs
 #if PERFORMANCES
 #define CHECKS 0
-#else 
+#else
 #define CHECKS 1
 #endif
 
