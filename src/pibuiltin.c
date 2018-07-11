@@ -447,6 +447,8 @@ cell *builtin_cdr(const cell *args) {
 }
 cell *builtin_cons(const cell *args) {
   check_two_args(args);
+  mark(car(args));
+  mark(cadr(args));
   cell *res = cons(car(args), cadr(args));
   return res;
 }

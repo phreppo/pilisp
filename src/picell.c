@@ -9,6 +9,11 @@ cell *mk_num(const int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
+#if DEBUG_MARK_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE " > marking: \t" ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -17,6 +22,11 @@ cell *mk_str(const char *s) {
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
   strcpy(c->str, s);
+#if DEBUG_MARK_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE " > marking: \t" ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -79,7 +89,13 @@ cell *mk_sym(const char *symbol) {
   // was the symbol allocated but no builtin?
   allocated = is_symbol_allocated(symbol);
   if (allocated) {
-    allocated->refs++;
+    // allocated->refs++;
+    mark(allocated);
+#if DEBUG_MARK_MODE
+    printf(ANSI_COLOR_LIGHT_BLUE " > marking: \t" ANSI_COLOR_RESET);
+    print_sexpr(allocated);
+    puts("");
+#endif
     return allocated;
   }
   cell *c = get_cell();
@@ -92,6 +108,11 @@ cell *mk_sym(const char *symbol) {
     c->str[i] = toupper(c->str[i]);
     i++;
   }
+#if DEBUG_MARK_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE " > marking: \t" ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
   return c;
 }
 
@@ -100,12 +121,17 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
-  unmark_cell(car);
-  // if (c->car)
-  //   c->car->refs--;
-  // if (c->cdr)
-  //   c->cdr->refs--;
-  // unmark_cell(cdr);
+#if DEBUG_MARK_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE " > marking: \t" ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+  printf(ANSI_COLOR_YELLOW " > unmarking car and cdr\n" ANSI_COLOR_RESET);
+#endif
+  unmark(car);
+  unmark(cdr);
+#if DEBUG_MARK_MODE
+  puts("");
+#endif
   return c;
 }
 
@@ -283,7 +309,8 @@ cell *cell_space_get_cell(cell_space *cs) {
   cell *new_cell = cs->first_free;
   if (new_cell) {
     // there will always be a new cell!
-    (new_cell->refs)++;
+    // (new_cell->refs)++;
+    mark(new_cell);
     cs->first_free = new_cell->next_free_cell;
   }
   return new_cell;
@@ -335,23 +362,36 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
          cell_is_in_global_env(cdr(global_env), c);
 }
 
-
-void mark_cell(cell *c) {
+void mark(cell *c) {
   // todo: controllo dell overflow
   if (c)
     c->refs++;
-  else 
-    exit(666);
+  else
+    pi_lisp_error(ANSI_COLOR_RED " > marking an empty cell\n" ANSI_COLOR_RESET);
 }
 
-void unmark_cell(cell *c) {
-  if(!c)
+void unmark(cell *c) {
+#if DEBUG_MARK_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE " > unmarking: \t" ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  if (!c)
     // unmarking NIL
     return;
-  if(is_builtin(c))
+  if (is_builtin(c))
     return;
   if (c->refs > 0)
     c->refs--;
+#if ERROR_EMPTY_REMOVING
   else
     pi_lisp_error("unmarking a cell that is not marked");
+#else
+  else {
+    printf(ANSI_COLOR_RED
+           " > WARNING: removing an unmarked cell: " ANSI_COLOR_RESET);
+    print_sexpr(c);
+    puts("");
+  }
+#endif
 }

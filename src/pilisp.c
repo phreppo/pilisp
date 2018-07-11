@@ -33,14 +33,22 @@ int pi_prompt() {
     }
     printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
     cell *sexpression = read_sexpr(stdin);
+#if DEBUG_MARK_MODE
+    printf(ANSI_COLOR_LIGHT_GREEN
+           " > finished reading sexpression: \t" ANSI_COLOR_RESET);
+    print_sexpr(sexpression);
+    puts("");
+    mem_dump(NULL);
+    puts("");
+#endif
     cell *result = eval(sexpression, memory->global_env);
     printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
-    if (result == symbol_bye) 
+    if (result == symbol_bye)
       repeat = false;
-    // else 
-      // unmark_cell(result);
+    else
+      unmark(result);
   }
   return 0;
 }

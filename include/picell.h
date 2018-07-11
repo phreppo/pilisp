@@ -134,9 +134,9 @@ cell_space *memory;
 
 void collect_garbage(cell_space *cs);
 
-void mark_cell(cell *c);
+void mark(cell *c);
 
-void unmark_cell(cell *c);
+void unmark(cell *c);
 
 #endif // !PICELL_H
        /*@}*/

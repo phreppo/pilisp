@@ -92,6 +92,8 @@
  *                                 DEBUGGING
  ********************************************************************************/
 
+#define DEBUG_MARK_MODE 1
+
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0
 
@@ -105,7 +107,7 @@
  *                                   INIT
  ********************************************************************************/
 
-#define ERROR_EMPTY_REMOVING 1
+#define ERROR_EMPTY_REMOVING 0
 
 /********************************************************************************
  *                                  LIMITS

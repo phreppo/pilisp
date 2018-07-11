@@ -218,9 +218,10 @@ cell *read_sexpr_tok(FILE *f, int tok) {
             // update cycle variables
             last_cdr->cdr = new_cdr;
             last_cdr = new_cdr;
+            // we have just appended a cdr to a cons: we have to unmark it!
+            unmark(new_cdr);
             tok = next_token(f);
           }
-
         }
       }
       // create the cell

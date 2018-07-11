@@ -193,14 +193,14 @@ cell *eval(cell *e, cell *a) {
   else if (atom(car(e))) {
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
-      evaulated = car(e)->bm(cdr(e),a);
+      evaulated = car(e)->bm(cdr(e), a);
     }
     // ==================== SPECIAL FORMS ====================
-     else  {
-      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro)) 
+    else {
+      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro))
         // lambda and macro "autoquote"
         evaulated = e;
-       else {
+      else {
         // apply atom function to evaluated list of parameters
         cell *args = cdr(e);
         evaulated = apply(car(e), args, a, true);
@@ -242,16 +242,22 @@ cell *evlis(cell *m, cell *a) {
   printf(ANSI_COLOR_RESET);
   puts("");
 #endif
+#if DEBUG_MARK_MODE
+  printf("Evlis: \t\t" ANSI_COLOR_GREEN);
+  print_sexpr(m);
+  printf(ANSI_COLOR_RESET);
+  puts("");
+#endif
   if (!m)
     // empty par list
     return NULL;
-  cell *valued_car = eval(car(m), a);
-  cell *valued_cdr = evlis(cdr(m), a);
+  cell *valued_car = eval(car(m), a); // this should be marked
+  cell *valued_cdr = evlis(cdr(m), a); // this should be marked
   return mk_cons(valued_car, valued_cdr);
 }
 
 cell *evcon(cell *c, cell *a) {
-  
+
   cell *res = eval(caar(c), a);
 
   if (res != NULL) {
