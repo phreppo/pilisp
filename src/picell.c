@@ -375,6 +375,8 @@ void sweep(cell_space *cs) {
       current_cell = current_block->block + cell_index;
       if (!current_cell->marked && !(current_cell->type == TYPE_FREE))
         cell_space_mark_cell_as_free(cs, current_cell);
+      else 
+        current_cell->marked = 0;
     }
   }
 }
