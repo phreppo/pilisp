@@ -404,7 +404,7 @@ cell_stack_node *cell_stack_node_create_node(cell *val) {
   return n;
 }
 
-void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
+void cell_push(cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
   if (!val)
     return;
@@ -416,14 +416,14 @@ void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
 
   if (mode == RECURSIVE && val && is_cons(val)) {
     if (car(val))
-      cell_stack_push(stack, car(val), mode);
+      cell_push(car(val), mode);
     if (cdr(val))
-      cell_stack_push(stack, cdr(val), mode);
+      cell_push(cdr(val), mode);
   }
 #endif
 }
 
-void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
+void cell_remove(cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
 
 #if DEBUG_PUSH_REMOVE_MODE
@@ -458,9 +458,9 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #endif
     if (mode == RECURSIVE) {
       if (car1)
-        cell_stack_remove(stack, car1, mode);
+        cell_remove(car1, mode);
       if (cdr1)
-        cell_stack_remove(stack, cdr1, mode);
+        cell_remove(cdr1, mode);
     }
     return;
   }
@@ -475,56 +475,58 @@ void cell_stack_remove(cell_stack *stack, cell *val, unsigned char mode) {
 #endif
 }
 
-void cell_stack_remove_args(cell_stack *stack, const cell *args) {
-  const cell *act = args;
+void cell_remove_cars(const cell *list) {
+  const cell *act = list;
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_stack_remove(stack, act, SINGLE);
+    cell_remove(car(act), RECURSIVE);
     act = tmp;
   }
 }
 
-void cell_stack_remove_pairlis(cell_stack *stack, const cell *new_env,
+void cell_remove_args(const cell *args) {
+  const cell *act = args;
+  cell *tmp;
+  while (act) {
+    tmp = cdr(act);
+    cell_remove(act, SINGLE);
+    act = tmp;
+  }
+}
+
+void cell_remove_pairlis(const cell *new_env,
                                const cell *old_env) {
   const cell *act = new_env;
   while (act != old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
-    cell_stack_remove(stack, car(act), SINGLE);
-    cell_stack_remove(stack, act, SINGLE);
+    cell_remove(car(act), SINGLE);
+    cell_remove(act, SINGLE);
     act = tmp;
   }
 }
 
-void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
+void cell_remove_pairlis_deep(const cell *new_env,
+                                    const cell *old_env) {
+  const cell *act = new_env;
+  while (act != old_env) {
+    // for the head of the pairlis
+    cell *tmp = cdr(act);
+    cell_remove(car(act), RECURSIVE);
+    cell_remove(act, SINGLE);
+    act = tmp;
+  }
+}
+
+void cell_stack_remove_cars(const cell *list) {
   const cell *act = list;
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_stack_remove(stack, car(act), RECURSIVE);
+    cell_remove(car(act), RECURSIVE);
     act = tmp;
   }
-}
-
-void cell_push(cell *c, unsigned char mode) {
-  cell_stack_push(memory->stack, c, mode);
-}
-
-void cell_remove(const cell *c, unsigned char mode) {
-  cell_stack_remove(memory->stack, c, mode);
-}
-
-void cell_remove_args(const cell *args) {
-  cell_stack_remove_args(memory->stack, args);
-}
-
-void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
-  cell_stack_remove_pairlis(memory->stack, new_env, old_env);
-}
-
-void cell_remove_cars(const cell *list) {
-  cell_stack_remove_cars(memory->stack, list);
 }
 
 void cell_space_free(cell_space *cs) {
@@ -583,20 +585,4 @@ void cell_space_destroy_stack(cell_space *cs) {
     cs->stack->head = NULL;
     cs->stack->tail = NULL;
   }
-}
-
-void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
-                                    const cell *old_env) {
-  const cell *act = new_env;
-  while (act != old_env) {
-    // for the head of the pairlis
-    cell *tmp = cdr(act);
-    cell_stack_remove(stack, car(act), RECURSIVE);
-    cell_stack_remove(stack, act, SINGLE);
-    act = tmp;
-  }
-}
-
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
-  cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
 }
