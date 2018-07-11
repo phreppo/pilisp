@@ -390,21 +390,15 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
 
 void cell_push(cell *val) {
 #if COLLECT_GARBAGE
-  if (!val)
-    return;
   if (is_builtin(val))
     return;
-
-  // if (val->marks < MARKS_LIMIT)
   val->marks++;
 #endif
 }
 
 void cell_push_recursive(cell *val) {
 #if COLLECT_GARBAGE
-  if (!val)
-    return;
-  if (is_builtin(val))
+  if (!val || is_builtin(val))
     return;
 
   // if (val->marks < MARKS_LIMIT)
@@ -519,29 +513,31 @@ void cell_remove_args(const cell *args) {
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_remove(act);
+    unsafe_cell_remove(act); // only not empty cons cells, we can use unsafe remove
     act = tmp;
   }
 }
 
 void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   const cell *act = new_env;
+  cell *tmp;
   while (act != old_env) {
     // for the head of the pairlis
-    cell *tmp = cdr(act);
-    cell_remove(car(act));
-    cell_remove(act);
+    tmp = cdr(act);
+    unsafe_cell_remove(car(act)); // only not empty cons
+    unsafe_cell_remove(act);      // only not empty cons
     act = tmp;
   }
 }
 
 void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
   const cell *act = new_env;
+  cell * tmp;
   while (act != old_env) {
     // for the head of the pairlis
-    cell *tmp = cdr(act);
+    tmp = cdr(act);
     cell_remove_recursive(car(act));
-    cell_remove(act);
+    unsafe_cell_remove(act);
     act = tmp;
   }
 }

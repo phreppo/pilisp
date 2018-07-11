@@ -18,7 +18,6 @@ enum {
   TYPE_FREE,
   TYPE_BUILTINLAMBDA,
   TYPE_BUILTINMACRO,
-  //   TYPE_KEYWORD,
 };
 
 typedef struct cell {
@@ -31,9 +30,12 @@ typedef struct cell {
     };
     struct {
       char *sym;
-      union{
-        struct cell* (*bl)(struct cell* args); // pointer to builtin lambda function
-        struct cell* (*bm)(struct cell* args,struct cell* env); // pointer to builtin macro function
+      union {
+        struct cell *(*bl)(
+            struct cell *args); // pointer to builtin lambda function
+        struct cell *(*bm)(
+            struct cell *args,
+            struct cell *env); // pointer to builtin macro function
       };
     };
     int value;
@@ -41,6 +43,10 @@ typedef struct cell {
     struct cell *next_free_cell;
   };
 } cell;
+
+// unsafe unmark: no checks if cell is empty or a builtin! use only if you are
+// sure that cell exists and is not a builtin symbol. it's faster
+inline void unsafe_cell_remove(cell *c) { c->marks--; }
 
 /********************************************************************************
  *                                CELL BASIC OPERATIONS
@@ -54,8 +60,8 @@ cell *mk_num(int n);
 cell *mk_str(const char *s);
 cell *mk_sym(const char *symbol);
 cell *mk_cons(cell *car, cell *cdr);
-cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*));
-cell *mk_builtin_macro(const char *symbol, cell* (*function)(cell*,cell*));
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
+cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(const cell *c);
 void free_cell_pointed_memory(cell *c);
@@ -64,10 +70,10 @@ void free_cell_pointed_memory(cell *c);
  *                                  CELL PROTECTION
  ********************************************************************************/
 
-void cell_push(cell *c);         // mark as used
-void cell_push_recursive(cell *c);         // mark as used
-void cell_remove(cell *c);       // mark as not used
-void cell_remove_recursive(cell *c);                 // faster: no check about the mode
+void cell_push(cell *c);             // mark as used
+void cell_push_recursive(cell *c);   // mark as used
+void cell_remove(cell *c);           // mark as not used
+void cell_remove_recursive(cell *c); // faster: no check about the mode
 void cell_remove_args(
     const cell *args); // removes from the stack the structure of the args
 void cell_remove_pairlis(const cell *new_env, const cell *old_env);
