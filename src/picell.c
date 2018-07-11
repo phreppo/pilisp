@@ -365,15 +365,6 @@ void cell_remove_recursive(cell *val) {
     // if you have errors place these to null
     cell *car1;
     cell *cdr1;
-
-    // NEW
-    if (val->marks > 0)
-      val->marks--;
-#if ERROR_EMPTY_REMOVING
-    else
-      pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
-
     if (is_cons(val)) {
       car1 = car(val);
       cdr1 = cdr(val);
@@ -382,6 +373,13 @@ void cell_remove_recursive(cell *val) {
       if (cdr1)
         cell_remove_recursive(cdr1);
     }
+    // NEW
+    if (val->marks > 0)
+      val->marks--;
+#if ERROR_EMPTY_REMOVING
+    else
+      pi_error(MEMORY_ERROR, "you have no more access to that cell");
+#endif
 #if DEBUG_PUSH_REMOVE_MODE
     printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);

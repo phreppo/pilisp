@@ -24,7 +24,7 @@
 #define INITIAL_BLOCK_SIZE 8
 
 // number of blocks initially allocated
-#define INITIAL_BLOCKS 1000
+#define INITIAL_BLOCKS 10000
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
