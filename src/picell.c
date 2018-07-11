@@ -455,7 +455,7 @@ void cell_remove_recursive(cell *val) {
 #endif
 }
 
-void cell_remove(cell *val, unsigned char mode) {
+void cell_remove(cell *val) {
 #if COLLECT_GARBAGE
 
 #if DEBUG_PUSH_REMOVE_MODE
@@ -466,10 +466,6 @@ void cell_remove(cell *val, unsigned char mode) {
   if (!val)
     return;
   if (!is_builtin(val)) {
-
-    cell *car1 = NULL;
-    cell *cdr1 = NULL;
-
     // NEW
     if (val->marks > 0 && val->marks < MARKS_LIMIT - 2)
       val->marks--;
@@ -478,23 +474,11 @@ void cell_remove(cell *val, unsigned char mode) {
       pi_error(MEMORY_ERROR, "you have no more access to that cell");
 #endif
 
-    if (mode == RECURSIVE && is_cons(val)) {
-      car1 = car(val);
-      cdr1 = cdr(val);
-    }
-
 #if DEBUG_PUSH_REMOVE_MODE
     printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);
     puts("");
 #endif
-    if (mode == RECURSIVE) {
-      if (car1)
-        cell_remove(car1, mode);
-      if (cdr1)
-        cell_remove(cdr1, mode);
-    }
-    return;
   }
 #if DEBUG_PUSH_REMOVE_MODE
   else {
@@ -522,7 +506,7 @@ void cell_remove_args(const cell *args) {
   cell *tmp;
   while (act) {
     tmp = cdr(act);
-    cell_remove(act, SINGLE);
+    cell_remove(act);
     act = tmp;
   }
 }
@@ -532,8 +516,8 @@ void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   while (act != old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
-    cell_remove(car(act), SINGLE);
-    cell_remove(act, SINGLE);
+    cell_remove(car(act));
+    cell_remove(act);
     act = tmp;
   }
 }
@@ -544,7 +528,7 @@ void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
     // for the head of the pairlis
     cell *tmp = cdr(act);
     cell_remove_recursive(car(act));
-    cell_remove(act, SINGLE);
+    cell_remove(act);
     act = tmp;
   }
 }

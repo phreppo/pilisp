@@ -28,8 +28,8 @@ cell *addition(const cell *numbers) {
       pi_error(LISP_ERROR, "added a non-number");
     result += car(act)->value;
     cell *tmp = cdr(act);
-    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
-    cell_remove(act, SINGLE);
+    cell_remove(car(act)); // num used: we don't need it anymore
+    cell_remove(act);
     act = tmp;
   }
   return mk_num(result);
@@ -47,8 +47,8 @@ cell *subtraction(const cell *numbers) {
     if (!is_num(car(numbers)))
       pi_error(LISP_ERROR, "changing the number of a non-number");
     int ret = -(car(numbers)->value);
-    cell_remove(car(numbers), SINGLE);
-    cell_remove(numbers, SINGLE);
+    cell_remove(car(numbers));
+    cell_remove(numbers);
     return mk_num(ret);
   } else {
     if (!is_cons(numbers) || !is_cons(cdr(numbers)))
@@ -57,8 +57,8 @@ cell *subtraction(const cell *numbers) {
       pi_error(LISP_ERROR, "subtracted a non-number");
     long result = car(numbers)->value;
     const cell *act = cdr(numbers);
-    cell_remove(car(numbers), SINGLE); // num used: we don't need it anymore
-    cell_remove(numbers, SINGLE);
+    cell_remove(car(numbers)); // num used: we don't need it anymore
+    cell_remove(numbers);
     while (act) {
       if (!is_cons(act))
         pi_error(LISP_ERROR, "impossible to perform subtraction");
@@ -66,8 +66,8 @@ cell *subtraction(const cell *numbers) {
         pi_error(LISP_ERROR, "subtracted a non-number");
       result -= car(act)->value;
       cell *tmp = cdr(act);
-      cell_remove(car(act), SINGLE); // num used: we don't need it anymore
-      cell_remove(act, SINGLE);
+      cell_remove(car(act)); // num used: we don't need it anymore
+      cell_remove(act);
       act = tmp;
     }
     return mk_num(result);
@@ -85,8 +85,8 @@ cell *multiplication(const cell *numbers) {
     result *= car(act)->value;
 
     cell *tmp = cdr(act);
-    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
-    cell_remove(act, SINGLE);
+    cell_remove(car(act)); // num used: we don't need it anymore
+    cell_remove(act);
     act = tmp;
   }
   return mk_num(result);
@@ -103,8 +103,8 @@ cell *division(const cell *numbers) {
     pi_error(LISP_ERROR, "divided a non-number");
   double result = (double)car(numbers)->value;
   const cell *act = cdr(numbers);
-  cell_remove(car(numbers), SINGLE); // num used: we don't need it anymore
-  cell_remove(numbers, SINGLE);
+  cell_remove(car(numbers)); // num used: we don't need it anymore
+  cell_remove(numbers);
   while (act) {
     if (!is_cons(act))
       pi_error(LISP_ERROR, "impossible to perform division");
@@ -115,8 +115,8 @@ cell *division(const cell *numbers) {
     result /= (double)car(act)->value;
 
     cell *tmp = cdr(act);
-    cell_remove(car(act), SINGLE); // num used: we don't need it anymore
-    cell_remove(act, SINGLE);
+    cell_remove(car(act)); // num used: we don't need it anymore
+    cell_remove(act);
     act = tmp;
   }
   return mk_num(result);
@@ -159,8 +159,8 @@ cell *set(cell *args) {
       // found
       cell_remove_recursive(car(act)->cdr); // remove old val
       car(act)->cdr = val;
-      cell_push(val,RECURSIVE);
-      cell_remove(name, SINGLE);
+      cell_push(val, RECURSIVE);
+      cell_remove(name);
       cell_remove_args(args);
       return cdar(act);
     }
@@ -175,8 +175,8 @@ cell *set(cell *args) {
     prec->cdr = new;
   else
     memory->global_env = new;
-  cell_remove(name, SINGLE);
-  cell_remove(pair, SINGLE);
+  cell_remove(name);
+  cell_remove(pair);
   cell_remove_args(args);
   return val;
 }
@@ -210,7 +210,7 @@ cell *timer(cell *arg, cell *env) {
 
 cell *quote(const cell *args, cell *env) {
   cell *evaulated = car(args);
-  cell_remove(args, SINGLE);
+  cell_remove(args);
   return evaulated;
 }
 
@@ -235,13 +235,13 @@ cell * or (const cell *operands) {
   while (act) {
     if (atom) {
       cell_remove_recursive(cdr(act));
-      cell_remove(act, SINGLE);
+      cell_remove(act);
       return atom;
     }
 
     tmp = cdr(act);
-    cell_remove(car(act), SINGLE);
-    cell_remove(act, SINGLE);
+    cell_remove(car(act));
+    cell_remove(act);
     act = tmp;
     atom = car(act);
   }
@@ -258,7 +258,7 @@ cell * and (const cell *operands) {
       // NIL found
       cell_remove_recursive(car(prev)); // release the prev memory
       cell_remove_recursive(cdr(act));  // release the rest of the list
-      cell_remove(act, SINGLE);          // release the act cons
+      cell_remove(act);                 // release the act cons
       return NULL;
     }
     cell_remove_recursive(car(prev));
@@ -266,7 +266,7 @@ cell * and (const cell *operands) {
     cell_push(car(prev), RECURSIVE); // protect the last value
     tmp = cdr(act);
     cell_remove_recursive(car(act));
-    cell_remove(act, SINGLE);
+    cell_remove(act);
     act = tmp;
     atom = car(act);
   }
@@ -284,7 +284,7 @@ cell * not(const cell *operands) {
     cell_remove_recursive(operands);
     return NULL;
   } else {
-    cell_remove(operands, SINGLE);
+    cell_remove(operands);
     return symbol_true;
   }
 }
@@ -379,9 +379,9 @@ cell *length(const cell *list) {
    *                                  LEAKS MEMORY
    ********************************************************************************/
   if (act && is_str(act)) {
-    cell * ret = mk_num(strlen(act->str));
-    cell_remove(list, SINGLE); // cons of the argument
-    cell_remove(act, SINGLE);
+    cell *ret = mk_num(strlen(act->str));
+    cell_remove(list); // cons of the argument
+    cell_remove(act);
     return ret;
   }
   cell *tmp;
@@ -389,10 +389,10 @@ cell *length(const cell *list) {
     len++;
     tmp = cdr(act);
     cell_remove_recursive(car(act)); // remove sublist
-    cell_remove(act, SINGLE);         // remove cons of the sublis
+    cell_remove(act);                // remove cons of the sublis
     act = tmp;
   }
-  cell_remove(list, SINGLE); // cons of the argument
+  cell_remove(list); // cons of the argument
   return mk_num(len);
 }
 
@@ -426,7 +426,7 @@ cell *member(const cell *list) {
     }
     tmp = cdr(l);
     cell_remove_recursive(car(l));
-    cell_remove(l, SINGLE);
+    cell_remove(l);
     l = tmp;
   }
   cell_remove_recursive(who);
@@ -451,7 +451,7 @@ cell *nth(const cell *list) {
   while (l && act < index) {
     tmp = cdr(l);
     cell_remove_recursive(car(l));
-    cell_remove(l, SINGLE);
+    cell_remove(l);
     l = tmp;
     act++;
   }
@@ -459,9 +459,9 @@ cell *nth(const cell *list) {
            // list
     res = car(l);
     cell_remove_recursive(cdr(l)); // remove the rest of the list
-    cell_remove(l, SINGLE);         // remove the cons of the result
+    cell_remove(l);                // remove the cons of the result
   }
-  cell_remove(num, SINGLE);
+  cell_remove(num);
   cell_remove_args(list);
   return res;
 }
@@ -499,7 +499,7 @@ cell *builtin_car(const cell *args) {
   check_one_arg(args);
   cell *res = caar(args);
   cell_remove_recursive(cdar(args)); // remove the rest of the arg
-  cell_remove(car(args), SINGLE);
+  cell_remove(car(args));
   cell_remove_args(args);
   return res;
 }
@@ -507,7 +507,7 @@ cell *builtin_cdr(const cell *args) {
   check_one_arg(args);
   cell *res = cdar(args);
   cell_remove_recursive(caar(args)); // remove the car of the lists
-  cell_remove(car(args), SINGLE);
+  cell_remove(car(args));
   cell_remove_args(args);
   return res;
 }
@@ -565,10 +565,10 @@ cell *let(const cell *args, cell *env) {
     new_env = mk_cons(new_pair,
                       new_env); // add on the head of the new env the new pair
     tmp = cdr(params);
-    cell_remove(cdr(cdar(params)), SINGLE);
-    cell_remove(cdar(params), SINGLE);
-    cell_remove(car(params), SINGLE);
-    cell_remove(params, SINGLE);
+    cell_remove(cdr(cdar(params)));
+    cell_remove(cdar(params));
+    cell_remove(car(params));
+    cell_remove(params);
     params = tmp;
   }
   cell *res = eval(body, new_env);
@@ -583,7 +583,7 @@ cell *defun(const cell *args, cell *env) {
   cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
   cell *compacted = mk_cons(fun_name, mk_cons(lambda_head, NULL));
   set(compacted);
-  cell_remove(args, SINGLE);
+  cell_remove(args);
   return lambda_head;
 }
 
@@ -609,7 +609,7 @@ cell *map(const cell *args, cell *env) {
       last_added = last_added->cdr;
     }
     tmp = cdr(list);
-    cell_remove(list, SINGLE);
+    cell_remove(list);
     list = tmp;
   }
   // (map 1+ '(1 2 3))
@@ -656,7 +656,7 @@ cell *reverse(const cell *list) {
     tmp = cdr(act);
     val = car(act);
     res = mk_cons(val, res);
-    cell_remove(act, SINGLE);
+    cell_remove(act);
     act = tmp;
     // (reverse '(1 2 3))
   }
@@ -676,13 +676,13 @@ cell *env(cell *arg) {
 cell *integerp(const cell *arg) {
   bool ret = is_num(car(arg));
   cell_remove_recursive(car(arg));
-  cell_remove(arg, SINGLE);
+  cell_remove(arg);
   return (ret ? symbol_true : NULL);
 }
 cell *symbolp(const cell *arg) {
   bool ret = is_sym(car(arg));
   cell_remove_recursive(car(arg));
-  cell_remove(arg, SINGLE);
+  cell_remove(arg);
   return (ret ? symbol_true : NULL);
 }
 
@@ -708,7 +708,7 @@ cell *load(cell *arg, cell *env) {
       cell_remove_recursive(last_result);
     }
   }
-  cell_remove(name, SINGLE);
+  cell_remove(name);
   cell_remove_args(arg);
   return symbol_true;
 }
