@@ -406,6 +406,25 @@ void cell_push(cell *val, unsigned char mode) {
 #endif
 }
 
+void cell_push_recursive(cell *val) {
+#if COLLECT_GARBAGE
+  if (!val)
+    return;
+  if (is_builtin(val))
+    return;
+
+  // if (val->marks < MARKS_LIMIT)
+    val->marks++;
+
+  if (is_cons(val)) {
+    if (car(val))
+      cell_push_recursive(car(val));
+    if (cdr(val))
+      cell_push_recursive(cdr(val));
+  }
+#endif
+}
+
 void cell_remove_recursive(cell *val) {
 #if COLLECT_GARBAGE
 

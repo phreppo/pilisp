@@ -159,7 +159,7 @@ cell *set(cell *args) {
       // found
       cell_remove_recursive(car(act)->cdr); // remove old val
       car(act)->cdr = val;
-      cell_push(val, RECURSIVE);
+      cell_push_recursive(val);
       cell_remove(name);
       cell_remove_args(args);
       return cdar(act);
@@ -169,7 +169,7 @@ cell *set(cell *args) {
     act = cdr(act);
   }
   cell *pair = cons(name, val);
-  cell_push(pair, RECURSIVE);
+  cell_push_recursive(pair);
   cell *new = cons(pair, NULL);
   if (prec)
     prec->cdr = new;
@@ -263,7 +263,7 @@ cell * and (const cell *operands) {
     }
     cell_remove_recursive(car(prev));
     prev = act;
-    cell_push(car(prev), RECURSIVE); // protect the last value
+    cell_push_recursive(car(prev)); // protect the last value
     tmp = cdr(act);
     cell_remove_recursive(car(act));
     cell_remove(act);
@@ -597,7 +597,7 @@ cell *map(const cell *args, cell *env) {
   cell *element;
   cell *tmp;
   while (list) {
-    cell_push(func, RECURSIVE); // protect the function
+    cell_push_recursive(func); // protect the function
     element = car(list);
     val = apply(func, mk_cons(eval(element, env), NULL), env, false);
     if (!result) {
@@ -723,7 +723,7 @@ cell *dotimes(const cell *arg, cell *env) {
   for (n = 0; n < num->value; n++) {
     if (n > 0)
       // we have to protect the body of the function
-      cell_push(expr, RECURSIVE);
+      cell_push_recursive(expr);
     cell *num_list_new = mk_cons(mk_num(n), NULL);
     new_env = pairlis(name_list, num_list_new, env);
     cell *evaulated = eval(expr, new_env);

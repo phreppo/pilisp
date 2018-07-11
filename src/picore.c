@@ -34,7 +34,7 @@ cell *assoc(const cell *x, cell *l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
       // right pair
-      cell_push(cdar(l), RECURSIVE); // protect the value. if it s a list
+      cell_push_recursive(cdar(l)); // protect the value. if it s a list
                                      // protect all the members
       cell_remove(x); // don't need no more the symbol: we have the value
       return l->car;
