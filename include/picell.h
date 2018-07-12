@@ -43,6 +43,7 @@ typedef struct cell {
         struct cell *(*bm)(
             struct cell *args,
             struct cell *env); // pointer to builtin macro function
+        struct cell * next_symbol;
       };
     };
     int value;
