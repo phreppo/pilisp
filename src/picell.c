@@ -2,11 +2,23 @@
 #include "pierror.h"
 
 cell *is_symbol_allocated(const char *symbol) {
-  cell *s = last_allocated_symbol;
-  while (s) {
-    if (strcmp(s->sym, symbol) == 0)
-      return s;
-    s = s->next_symbol;
+  return cell_space_is_symbol_allocated(memory, symbol);
+}
+
+cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
+  size_t block_index = 0;
+  for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
+
+    size_t cell_index = 0;
+    cell_block *current_block = cs->blocks + block_index;
+
+    for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
+      cell *current_cell = current_block->block + cell_index;
+      if (is_sym(current_cell) && strcmp(current_cell->sym, symbol) == 0) {
+        // found!
+        return current_cell;
+      }
+    }
   }
   return NULL;
 }
@@ -55,8 +67,6 @@ cell *mk_sym(const char *symbol) {
   cell *c = get_cell();
   c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
-  c->next_symbol = last_allocated_symbol;
-  last_allocated_symbol = c;
   int i = 0;
   strcpy(c->str, symbol);
   // case unsensitive
