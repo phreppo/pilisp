@@ -358,6 +358,10 @@ void deep_sweep(cell_space *cs) {
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);
   c->marked = 0;
+#if !PERFORMANCE
+  // NOT PERFORMANCE: this is useful to mark free cells preperly only after an error, not necessary for correctness
+  c->marks = 0;
+#endif
   c->type = TYPE_FREE;
   c->next_free_cell = cs->first_free;
   cs->first_free = c;
@@ -429,51 +433,6 @@ void cell_remove_recursive(cell *val) {
 #else
   cell_remove(val);
 #endif
-}
-
-void cell_remove_cars(const cell *list) {
-  const cell *act = list;
-  cell *tmp;
-  while (act) {
-    tmp = cdr(act);
-    cell_remove_recursive(car(act));
-    act = tmp;
-  }
-}
-
-void cell_remove_args(const cell *args) {
-  const cell *act = args;
-  cell *tmp;
-  while (act) {
-    tmp = cdr(act);
-    unsafe_cell_remove(
-        act); // only not empty cons cells, we can use unsafe remove
-    act = tmp;
-  }
-}
-
-void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
-  const cell *act = new_env;
-  cell *tmp;
-  while (act != old_env) {
-    // for the head of the pairlis
-    tmp = cdr(act);
-    unsafe_cell_remove(car(act)); // only not empty cons
-    unsafe_cell_remove(act);      // only not empty cons
-    act = tmp;
-  }
-}
-
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
-  const cell *act = new_env;
-  cell *tmp;
-  while (act != old_env) {
-    // for the head of the pairlis
-    tmp = cdr(act);
-    cell_remove_recursive(car(act));
-    unsafe_cell_remove(act);
-    act = tmp;
-  }
 }
 
 void cell_space_free(cell_space *cs) {

@@ -194,11 +194,50 @@ inline void cell_remove(cell *val) {
 #endif
 }
 void cell_remove_recursive(cell *c);
-void cell_remove_args(const cell *args);
-void cell_remove_pairlis(const cell *new_env, const cell *old_env);
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
-void cell_remove_cars(const cell *list);
+inline void cell_remove_args(const cell *args) {
+  const cell *act = args;
+  cell *tmp;
+  while (act) {
+    tmp = act->cdr;
+    unsafe_cell_remove(
+        act); // only not empty cons cells, we can use unsafe remove
+    act = tmp;
+  }
+}
 
+inline void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
+  const cell *act = new_env;
+  cell *tmp;
+  while (act != old_env) {
+    // for the head of the pairlis
+    tmp = act->cdr;
+    unsafe_cell_remove(act->car); // only not empty cons
+    unsafe_cell_remove(act);      // only not empty cons
+    act = tmp;
+  }
+}
+
+inline void cell_remove_cars(const cell *list) {
+  const cell *act = list;
+  cell *tmp;
+  while (act) {
+    tmp = act->cdr;
+    cell_remove_recursive(act->car);
+    act = tmp;
+  }
+}
+
+inline void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+  const cell *act = new_env;
+  cell *tmp;
+  while (act != old_env) {
+    // for the head of the pairlis
+    tmp = act->cdr;
+    cell_remove_recursive(act->car);
+    unsafe_cell_remove(act);
+    act = tmp;
+  }
+}
 /********************************************************************************
  *                                 CORE OF THE GC
  ********************************************************************************/
