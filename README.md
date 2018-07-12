@@ -58,3 +58,8 @@ By default Meson won't allow debugging: if you want to run a debbuger you have t
 ```
 meson build -Db_coverage=true
 ```
+
+Run with Valngrid:
+```
+meson test --wrap=valgrind 'testname'
+```

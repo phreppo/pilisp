@@ -81,38 +81,24 @@ typedef struct {
 } cell_space;
 
 cell_space *memory;
+void init_memory();
+void free_memory();
 
-// allocates a new block and links the last free cell with the first free in the
-// cell space
-void cell_space_grow(cell_space *cs);
-// doubles the capacity of the cell spce
-void cell_space_double_capacity_if_full(cell_space *cs);
-// always use this on one allocated cell space before use
-void cell_space_init(cell_space *cs);
-// create a new cell space
 cell_space *cell_space_create();
-// true => no free cells
-bool cell_space_is_full(const cell_space *cs);
-// ALWAYS returns a new cell: if none is present it allocates new space,
-// eventually runs gc
 cell *cell_space_get_cell(cell_space *cs);
-// checks if the symbol is present in the cell space
 cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol);
-// marks the cell as free and updates the first cel, in the cs. cell must be in
-// the cell space
+void cell_space_init(cell_space *cs);
+void cell_space_grow(cell_space *cs);
+void cell_space_double_capacity_if_full(cell_space *cs);
 void cell_space_mark_cell_as_free(cell_space *cs, cell *c);
-// releases the full content of the cs
 void cell_space_free(cell_space *cs);
+bool cell_space_is_full(const cell_space *cs);
 
 /********************************************************************************
  *                                CELL BASIC OPERATIONS
  ********************************************************************************/
 
-void init_memory();
-void free_memory();
-
 inline cell *get_cell() { return cell_space_get_cell(memory); }
-
 
 inline cell *mk_num(const int n) {
   cell *c = get_cell();
@@ -139,8 +125,6 @@ inline cell *mk_str(const char *s) {
   return c;
 }
 
-cell *mk_sym(const char *symbol);
-
 inline cell *mk_cons(cell *car, cell *cdr) {
   cell *c = get_cell();
   c->type = TYPE_CONS;
@@ -155,6 +139,7 @@ inline cell *mk_cons(cell *car, cell *cdr) {
   return c;
 }
 
+cell *mk_sym(const char *symbol);
 cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
 cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
@@ -167,11 +152,11 @@ void free_cell_pointed_memory(cell *c);
 
 inline bool is_num(const cell *c) { return c->type == TYPE_NUM; }
 inline bool is_str(const cell *c) { return c->type == TYPE_STR; }
+inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
 inline bool is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
          c->type == TYPE_BUILTINMACRO;
 }
-inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
 inline bool is_builtin(const cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
 }
@@ -195,42 +180,21 @@ inline void cell_push(cell *val) {
 #endif
 }
 void cell_push_recursive(cell *c); // mark as used
+
 inline void cell_remove(cell *val) {
 #if COLLECT_GARBAGE
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
-  print_sexpr(val);
-  puts("");
-#endif
-  if (!val)
+  if (!val || is_builtin(val))
     return;
-  if (!is_builtin(val)) {
-    // NEW
-    if (val->marks > 0)
-      val->marks--;
+  if (val->marks > 0)
+    val->marks--;
 #if ERROR_EMPTY_REMOVING
-    else
-      pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
-#if DEBUG_PUSH_REMOVE_MODE
-    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-#endif
-  }
-#if DEBUG_PUSH_REMOVE_MODE
-  else {
-    printf(ANSI_COLOR_DARK_GRAY
-           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-  }
+  else
+    pi_error(MEMORY_ERROR, "you have no more access to that cell");
 #endif
 #endif
 }
-void cell_remove_recursive(cell *c); // faster: no check about the mode
-void cell_remove_args(
-    const cell *args); // removes from the stack the structure of the args
+void cell_remove_recursive(cell *c);
+void cell_remove_args(const cell *args);
 void cell_remove_pairlis(const cell *new_env, const cell *old_env);
 void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env);
 void cell_remove_cars(const cell *list);

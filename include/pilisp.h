@@ -28,7 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ==================== VARIABLES FOR HANDLING ERRORS ====================
+/********************************************************************************
+*                            VARIABLES FOR HANDLING ERRORS
+********************************************************************************/
 int jmp_destination;
 jmp_buf env_buf;
 

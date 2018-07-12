@@ -6,6 +6,7 @@
 
 /** @addtogroup piinit */
 /*@{*/
+
 #ifndef PIINIT_H
 #define PIINIT_H
 #include "picell.h"
@@ -40,8 +41,6 @@ void free_builtin_symbols();
 /********************************************************************************
  *                                 BUILTIN SYMBOLS
  ********************************************************************************/
-
-cell * last_allocated_symbol;
 
 // ==================== LAMBDAS ====================
 cell *symbol_car;

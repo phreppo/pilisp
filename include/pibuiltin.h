@@ -3,7 +3,6 @@
  *  @brief Provides builtin lambdas: for example car, cdr
  *
  */
-
 /** @addtogroup pibuiltin */
 /*@{*/
 #ifndef PIBUILTIN_H
@@ -13,49 +12,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-// ==================== BASIC ====================
-cell *cons(cell *car, cell *cdr);
-inline int atom(const cell *c) {
-  return (c == NULL) // NIL case
-         ||
-         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
-}
-inline bool eq(const cell *v1, const cell *v2) {
-  if (!v1 || !v2)
-    return (v1 == v2);
-  if (is_num(v1) && is_num(v2))
-    return (v1->value == v2->value);
-  if (is_str(v1) && is_str(v2))
-    return (strcmp(v1->str, v2->str) == 0);
-  return (v1 == v2);
-}
-
-bool total_eq(const cell *c1,
-              const cell *c2); // works also on lists: eq does not
-
-inline cell *car(const cell *c) {
-  if (c == NULL)
-    // (car NIL)
-    return NULL;
-#if CHECKS
-  if (atom(c))
-    pi_lisp_error("car applied to an atom");
-#endif
-  return c->car;
-}
-
-inline cell *cdr(const cell *c) {
-  if (c == NULL)
-    // (cdr NIL)
-    return NULL;
-#if CHECKS
-  if (atom(c))
-    pi_lisp_error("cdr applied to an atom");
-#endif
-  return c->cdr;
-}
-
+// ==================== INLINE FUNCTIONS FOR EVAL ====================
 // not usable in the interpreter: no checks! => use only in the eval
 inline cell *caar(const cell *c) { return c->car->car; }
 inline cell *cddr(const cell *c) { return c->cdr->cdr; }
@@ -118,6 +75,49 @@ cell *quote(const cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
 cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
+
+// ==================== BASIC FUNCTIONS ====================
+
+inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
+
+inline int atom(const cell *c) {
+  return (c == NULL) ||
+         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
+}
+
+inline bool eq(const cell *v1, const cell *v2) {
+  if (!v1 || !v2)
+    return (v1 == v2);
+  if (is_num(v1) && is_num(v2))
+    return (v1->value == v2->value);
+  if (is_str(v1) && is_str(v2))
+    return (strcmp(v1->str, v2->str) == 0);
+  return (v1 == v2);
+}
+
+// works also on lists: eq does not, but 'it's slower
+bool total_eq(const cell *c1, const cell *c2);
+
+inline cell *car(const cell *c) {
+  if (c == NULL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("car applied to an atom");
+#endif
+  return c->car;
+}
+
+inline cell *cdr(const cell *c) {
+  if (c == NULL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("cdr applied to an atom");
+#endif
+  return c->cdr;
+}
 
 #endif // !PIBUILTIN_H
        /*@}*/

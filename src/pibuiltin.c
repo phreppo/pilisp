@@ -124,8 +124,6 @@ cell *division(const cell *numbers) {
   return mk_num(result);
 }
 
-cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
-
 cell *set(cell *args) {
 #if CHECKS
   check_two_args(args);
