@@ -8,6 +8,8 @@ static int last_error = NO_ERROR;
 
 void pi_error(int CODE, char *message) {
   printf(ANSI_COLOR_LIGHT_RED ":(" ANSI_COLOR_RESET " %s\n", message);
+  mark(memory->global_env);
+  sweep(memory);
   last_error = CODE;
   // free(message);
   longjmp(env_buf, jmp_destination); // jumps to the last saved destination

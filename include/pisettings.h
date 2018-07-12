@@ -15,7 +15,7 @@
  ********************************************************************************/
 // WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
 // really slow
-#define PERFORMANCES 1
+#define PERFORMANCES 0
 
 #if PERFORMANCES
 // dangerous, will cause segfault
