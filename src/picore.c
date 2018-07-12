@@ -65,9 +65,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
       if (fn->type == TYPE_BUILTINLAMBDA) { // BASIC OPERATIONS
         if (eval_args)
           x = evlis(x, a);
-
         return fn->bl(x);
-
       } else {
         // CUSTOM FUNCTION
         // does lambda exists?

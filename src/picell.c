@@ -279,6 +279,13 @@ void collect_garbage(cell_space *cs) {
 #endif
 }
 
+void deep_collect_garbage(cell_space *cs) {
+#if COLLECT_GARBAGE
+  mark_memory(memory);
+  deep_sweep(memory);
+#endif
+}
+
 void mark_memory(cell_space *cs) {
   size_t block_index = 0;
   cell_block *current_block;
@@ -321,6 +328,28 @@ void sweep(cell_space *cs) {
       if (!current_cell->marked && !(current_cell->type == TYPE_FREE))
         cell_space_mark_cell_as_free(cs, current_cell);
       else
+        current_cell->marked = 0;
+    }
+  }
+}
+
+void deep_sweep(cell_space *cs) {
+  size_t block_index = 0;
+  cell_block *current_block;
+  cell *current_cell;
+  for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
+
+    size_t cell_index = 0;
+    current_block = cs->blocks + block_index;
+
+    for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
+      current_cell = current_block->block + cell_index;
+      if (!current_cell->marked && !(current_cell->type == TYPE_FREE) ||
+          (!cell_is_in_global_env(memory->global_env, current_cell) &&
+           current_cell->marks)) {
+        cell_space_mark_cell_as_free(cs, current_cell);
+        current_cell->marks = 0;
+      } else
         current_cell->marked = 0;
     }
   }

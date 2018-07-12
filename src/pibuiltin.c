@@ -727,7 +727,7 @@ cell *symbolp(const cell *arg) {
 }
 
 cell *collect_garbage_call(cell *arg) {
-  collect_garbage(memory);
+  deep_collect_garbage(memory);
   return symbol_true;
 }
 

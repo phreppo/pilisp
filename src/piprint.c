@@ -169,10 +169,13 @@ void print_cell_block(const cell_block *block) {
     int i = 0;
     for (i = 0; i < s; i++) {
       printf("%i\t", i);
-      if (!cell_is_in_global_env(memory->global_env, (arr + i)))
+      if (!cell_is_in_global_env(memory->global_env, (arr + i)) && !(arr+i)->marks)
         printf(ANSI_COLOR_GREEN);
+      else if((!cell_is_in_global_env(memory->global_env, (arr + i)) && (arr+i)->marks))
+        printf(ANSI_COLOR_RED);
       else
         printf(ANSI_COLOR_LIGHT_GREEN);
+        
       printf("%p\t" ANSI_COLOR_RESET, arr + i);
       print_cell(arr + i);
       puts("");
@@ -259,6 +262,7 @@ void print_cell_space(const cell_space *cs) {
   puts("");
   printf(ANSI_COLOR_BLUE "GLOBAL ENV\n" ANSI_COLOR_RESET);
   print_global_env(cs->global_env);
+
   for (i = 0; i < cs->cell_space_size; i++) {
     printf(ANSI_COLOR_RED "Block %lu\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);

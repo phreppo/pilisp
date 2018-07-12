@@ -204,9 +204,11 @@ void cell_remove_cars(const cell *list);
  ********************************************************************************/
 
 void collect_garbage(cell_space *cs);
+void deep_collect_garbage(cell_space *cs);
 void mark_memory(cell_space *cs);
 void mark(cell *root);
 void sweep(cell_space *cs);
+void deep_sweep(cell_space *cs);
 
 #endif // !PICELL_H
        /*@}*/

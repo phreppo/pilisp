@@ -17,6 +17,11 @@
 // really slow
 #define PERFORMANCES 0
 
+#if PERFORMANCES
+// dangerous, will cause segfault
+#define EXTREME_PERF 0
+#endif
+
 /********************************************************************************
  *                              MEMORY SETTINGS
  ********************************************************************************/
@@ -24,7 +29,11 @@
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
 #if PERFORMANCES
-#define INITIAL_BLOCK_SIZE 100000000
+#if EXTREME_PERF
+#define INITIAL_BLOCK_SIZE 134217728
+#else
+#define INITIAL_BLOCK_SIZE 134217728
+#endif
 #else
 #define INITIAL_BLOCK_SIZE 8
 #endif
@@ -38,7 +47,11 @@
 
 // WARNING: if 0 the memory will always be dirty
 #if PERFORMANCES
+#if EXTREME_PERF
+#define COLLECT_GARBAGE 0
+#else
 #define COLLECT_GARBAGE 1
+#endif
 #else
 #define COLLECT_GARBAGE 1
 #endif
