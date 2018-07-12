@@ -1,5 +1,12 @@
+/** @defgroup piinit
+ *
+ * @brief Provides methods that have to be called before using pilisp
+ *
+ */
+
 /** @addtogroup piinit */
 /*@{*/
+
 #ifndef PIINIT_H
 #define PIINIT_H
 #include "picell.h"
@@ -50,8 +57,6 @@ cell *symbol_multiplication;
 cell *symbol_division;
 cell *symbol_lambda;
 cell *symbol_label;
-cell *symbol_quote;
-cell *symbol_cond;
 cell *symbol_load;
 cell *symbol_or;
 cell *symbol_and;
@@ -83,6 +88,8 @@ cell *symbol_let;
 cell *symbol_timer;
 cell *symbol_defun;
 cell *symbol_map;
+cell *symbol_cond;
+cell *symbol_quote;
 
 #endif // !PIINIT_H
        /*@}*/

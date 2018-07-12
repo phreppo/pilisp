@@ -1,3 +1,9 @@
+/** @defgroup piparser
+ *
+ * @brief Provides lexer and parser
+ *
+ */
+
 /** @addtogroup piparser */
 /*@{*/
 #ifndef PIPARSER_H
@@ -6,7 +12,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-// ==================== Parser and lexer ====================
+/********************************************************************************
+*                               PARSER AND LEXER
+********************************************************************************/
+
 enum {
   TOK_NONE,  ///< empty file token
   TOK_OPEN,  ///< open par token

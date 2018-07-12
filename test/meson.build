@@ -245,6 +245,11 @@ test('[LISP] set test', lisp_program_test, args : [
 
 test('[LISP] dotimes test', lisp_program_test, args : [
     '(set \'n1 1) (set \'n2 2) (set \'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100) (ff \'(n1 n2)))',
+    # (set 'n1 1) 
+    # (set 'n2 2) 
+    # (set 'ff (lambda (x) (cond ((atom x) x ) 
+    # (t (ff (car x)))))) (dotimes (n 100) (ff '(n1 n2)))'
+    # (set 'n1 1) (set 'n2 2) (set 'ff (lambda (x) (cond ((atom x) x ) (t (ff (car x)))))) (dotimes (n 100) (ff '(n1 n2)))
     'NIL',
     'LDOTIMES'
 ])
@@ -344,7 +349,7 @@ test('[MACRO] simple macro test', lisp_program_test, args : [
     '1',
     'MMACRO'
 ])
-
+ 
 test('[MACRO] mysetq test', lisp_program_test, args : [
     '(set \'mysetq (macro (name val) (set name val))) (mysetq ciao 1) ciao',
     '1',

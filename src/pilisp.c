@@ -40,7 +40,7 @@ int pi_prompt() {
     if (result == symbol_bye) 
       repeat = false;
     else
-      cell_remove(result, RECURSIVE);
+      cell_remove_recursive(result);
   }
   return 0;
 }

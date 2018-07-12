@@ -4,66 +4,6 @@
  *
  */
 
-/** @defgroup piinit
- *
- * @brief Provides methods that have to be called before using pilisp
- *
- */
-
-/** @defgroup pibuiltin
- *
- *  @brief Provides builtin lambdas: for example car, cdr
- *
- */
-
-/** @defgroup picell
- *
- *  @brief Provides the data structures for LISP, like cells
- *
- */
-
-/** @defgroup picore
- *
- *  @brief Provides LISP core functions: eval and apply
- *
- */
-
-/** @defgroup pierror
- *
- * @brief Provides errors handling
- *
- */
-
-/** @defgroup pifile
- *
- * @brief Provides file handling
- *
- */
-
-/** @defgroup pilisp
- *
- * @brief Links the other modules of Pilisp
- *
- */
-
-/** @defgroup piparser
- *
- * @brief Provides lexer and parser
- *
- */
-
-/** @defgroup piprint
- *
- * @brief Handles printing messages and data structures
- *
- */
-
-/** @defgroup pitestutils
- *
- * @brief Provides tools like prompts to test some functions of pilisp
- *
- */
-
 /** @addtogroup pisettings */
 /*@{*/
 
@@ -71,19 +11,39 @@
 #define PISETTINGS_H
 
 /********************************************************************************
+ *                               GENERAL SETTINGS
+ ********************************************************************************/
+// WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
+// really slow
+#define PERFORMANCES 0
+
+/********************************************************************************
  *                              MEMORY SETTINGS
  ********************************************************************************/
 
 // size of the first created block of cells: must be greater than the init
 // size, or will fail tests
+#if PERFORMANCES
+#define INITIAL_BLOCK_SIZE 100000000
+#else
 #define INITIAL_BLOCK_SIZE 8
+#endif
 
 // number of blocks initially allocated
-#define INITIAL_BLOCKS 10
+#define INITIAL_BLOCKS 10000
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
 #define NEW_BLOCK_THRESHOLD 0.5
+
+// WARNING: if 0 the memory will always be dirty
+#if PERFORMANCES
+#define COLLECT_GARBAGE 1
+#else
+#define COLLECT_GARBAGE 1
+#endif
+
+#define MARKS_LIMIT 100000
 
 /********************************************************************************
  *                                 DEBUGGING
@@ -107,7 +67,15 @@
 
 // raise an error if trying to remove a cell that is not on the stack
 // (beacuse that cell does not belongs to you)
-#define ERROR_EMPTY_REMOVING 1
+#define ERROR_EMPTY_REMOVING 0
+
+// 0 => no checks about types nor errors, just segfaults => use ONLY when
+// testing performances on correct programs
+#if PERFORMANCES
+#define CHECKS 0
+#else
+#define CHECKS 1
+#endif
 
 /********************************************************************************
  *                                  LIMITS
@@ -117,13 +85,13 @@
 #define MAX_TOK_LEN 512
 
 // max length of a error message
-#define ERROR_MESSAGE_LEN 1024
+#define ERROR_MESSAGE_LEN 512
 
 // EXACT number of builtin lambdas
-#define N_BUILTIN_LAMBDA 777
+#define N_BUILTIN_LAMBDA 50
 
 // EXACT number of builtin lambdas
-#define N_BUILTIN_MACRO 777
+#define N_BUILTIN_MACRO 50
 
 /********************************************************************************
  *                             CONSOLE ANSI COLORS

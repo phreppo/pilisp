@@ -182,7 +182,7 @@ void print_cell_block(const cell_block *block) {
 
 void print_cell(const cell *cell) {
   if (cell) {
-    printf(ANSI_COLOR_DARK_GRAY "%d " ANSI_COLOR_RESET, cell->marked);
+    printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked, cell->marks);
     switch (cell->type) {
     case TYPE_CONS:
       printf("CONS\t" ANSI_COLOR_LIGHT_BLUE "( " ANSI_COLOR_RESET);
@@ -263,8 +263,6 @@ void print_cell_space(const cell_space *cs) {
     printf(ANSI_COLOR_RED "Block %lu\n" ANSI_COLOR_RESET, i);
     print_cell_block(&cs->blocks[i]);
   }
-  printf(ANSI_COLOR_PURPLE " > Stack: \n" ANSI_COLOR_RESET);
-  print_stack(cs->stack);
   printf(ANSI_COLOR_YELLOW " > Free cells: \t\t%lu\n" ANSI_COLOR_RESET,
          cs->n_free_cells);
   printf(ANSI_COLOR_YELLOW " > First free cell: \t%p\n" ANSI_COLOR_RESET,
@@ -280,34 +278,6 @@ void print_free_cells(const cell_space *cs) {
            i, free, free->next_free_cell);
     i++;
     free = free->next_free_cell;
-  }
-}
-
-void print_stack(const cell_stack *stack) {
-  if (stack) {
-
-    cell_stack_node *it = stack->head;
-    size_t i = 0;
-    while (it) {
-      printf("%lu\t", i);
-      if (!cell_is_in_global_env(memory->global_env, it->c))
-        printf(ANSI_COLOR_BLUE);
-      else
-        printf(ANSI_COLOR_LIGHT_GREEN);
-      printf("cell:  %p" ANSI_COLOR_RESET, it->c);
-
-      printf("\tprec: %p\t", it->prec);
-      if (!it->prec)
-        printf("\t");
-      printf("next: %p\t", it->next);
-      if (!it->next)
-        printf("\t");
-
-      print_cell(it->c);
-      puts("");
-      it = it->next;
-      i++;
-    }
   }
 }
 

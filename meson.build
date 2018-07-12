@@ -11,7 +11,7 @@ project(
 # Compiler
 cc = meson.get_compiler('c')
 # arguments for the coverage
-# coverage_arguments = ['--coverage', '-fprofile-arcs', '-ftest-coverage', '-fPIC', '-O0']
+# coverage_arguments = ['-O3']
 # add_global_arguments(coverage_arguments, language : 'c')
 
 # Dependencies

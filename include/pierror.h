@@ -1,3 +1,9 @@
+/** @defgroup pierror
+ *
+ * @brief Provides errors handling
+ *
+ */
+
 /** @addtogroup pierror */
 /*@{*/
 #ifndef PERROR_H
