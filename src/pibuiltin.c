@@ -602,7 +602,7 @@ cell *let(const cell *args, cell *env) {
                       new_env); // add on the head of the new env the new pair
     tmp = cdr(params);
     cell_remove(cdr(cdar(params)));
-    cell_remove(cdar(params));       // maybe null
+    cell_remove_recursive(cdar(params));       // maybe null
     unsafe_cell_remove(car(params)); // cons
     unsafe_cell_remove(params);
     params = tmp;
@@ -778,6 +778,8 @@ cell *dotimes(const cell *arg, cell *env) {
     // remove the just created cell
     cell_remove_recursive(num_list_new);
   }
+  // unsafe_cell_remove(expr);
+  unsafe_cell_remove(cdr(arg));
   cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
   return NULL;
 }

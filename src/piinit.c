@@ -56,7 +56,6 @@ void init_builtin_macros() {
 
 void init_env() {
   memory->global_env = NULL;
-  last_allocated_symbol = NULL;
   // write the basic functions to one file, then load them
   write_program_to_file(
       ".piinit",
