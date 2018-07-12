@@ -101,9 +101,9 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
         // FREE THINGS
-        cell_remove_cars(x);             // deep remove cars
-        cell_remove_args(x);             // remove args cons
-        cell_remove_pairlis(a, old_env); // remove associations
+        cell_remove_cars(x); // deep remove cars
+        cell_remove_args(x); // remove args cons
+        cell_remove_pairlis_deep(a, old_env); // remove associations
         unsafe_cell_remove(car(fn));     // function name
         cell_remove_recursive(cadr(fn)); // params
         unsafe_cell_remove(cddr(fn));    // cons pointing to body
@@ -141,7 +141,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         res = eval(res, a); // raises a buggerino
         // FREE THINGS
         cell_remove_cars(x);             // deep remove cars
-        cell_remove_pairlis(a, old_env); // remove associations
+        cell_remove_pairlis_deep(a, old_env); // remove associations
         unsafe_cell_remove(car(fn));     // function name
         cell_remove_recursive(cadr(fn)); // params
         unsafe_cell_remove(cddr(fn));    // cons pointing to body
@@ -201,7 +201,7 @@ cell *eval(cell *e, cell *a) {
           evaulated = symbol_true;
         else {
           cell *pair = assoc(e, a);
-          cell *symbol_value = cdr(assoc(e,a));
+          cell *symbol_value = cdr(assoc(e, a));
 #if CHECKS
           if (!pair) {
             // the symbol has no value in the env

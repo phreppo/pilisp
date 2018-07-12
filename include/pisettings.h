@@ -15,12 +15,17 @@
  ********************************************************************************/
 // WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
 // really slow
-#define PERFORMANCES 0
+#define PERFORMANCES 1
 
 #if PERFORMANCES
 // dangerous, will cause segfault
 #define EXTREME_PERF 0
 #endif
+
+// 0 => the memory will be dirty => segfault
+// anyway a good amount of programs could run anyway
+// in the middle between gc and no gc
+#define DEEP_REMOVE 1
 
 /********************************************************************************
  *                              MEMORY SETTINGS

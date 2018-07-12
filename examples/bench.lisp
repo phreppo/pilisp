@@ -108,6 +108,8 @@
 
 (defun second (list) (car (cdr list)))
 
+(defun listoperations (l) (list (nth 0 l) 1 2 3 4 l))
+
 (write "maze")
 (time (dotimes (n 5) (solvemaze maze)))
 
@@ -155,3 +157,13 @@
 (write "grammar game")
 (time (dotimes (n 10000)
     (map check '("a" "zombie" "transceiver" "veil" "icier"))))
+
+(write "logical operations")
+(time (dotimes (n 4000000) 
+    (or n n n (and n (not n)))))
+
+(write "list operations")
+(time (dotimes (n 1000000) (listoperations '(1 2 3 4 "ciao"))))
+
+(write "setq")
+(time (dotimes (n 10000000) (setq var n)))

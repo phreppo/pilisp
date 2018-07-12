@@ -382,6 +382,7 @@ void cell_push_recursive(cell *val) {
 }
 
 void cell_remove_recursive(cell *val) {
+#if DEEP_REMOVE
 #if COLLECT_GARBAGE
 #if DEBUG_PUSH_REMOVE_MODE
   printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
@@ -424,6 +425,9 @@ void cell_remove_recursive(cell *val) {
     puts("");
   }
 #endif
+#endif
+#else
+  cell_remove(val);
 #endif
 }
 
