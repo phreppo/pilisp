@@ -24,7 +24,7 @@
 
 // 0 => the memory will be dirty => segfault
 // anyway a good amount of programs could run anyway
-// in the middle between gc and no gc
+// in the middle between gc and no gc. 1 suggested.
 #define DEEP_REMOVE 1
 
 /********************************************************************************
@@ -48,7 +48,7 @@
 
 // (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
 // block
-#define NEW_BLOCK_THRESHOLD 0.5
+#define NEW_BLOCK_THRESHOLD 0.8
 
 // WARNING: if 0 the memory will always be dirty
 #if PERFORMANCES

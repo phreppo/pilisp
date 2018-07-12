@@ -195,7 +195,7 @@ inline void cell_remove(cell *val) {
 }
 void cell_remove_recursive(cell *c);
 inline void cell_remove_args(const cell *args) {
-  const cell *act = args;
+  cell *act = args;
   cell *tmp;
   while (act) {
     tmp = act->cdr;
@@ -206,7 +206,7 @@ inline void cell_remove_args(const cell *args) {
 }
 
 inline void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
-  const cell *act = new_env;
+  cell *act = new_env;
   cell *tmp;
   while (act != old_env) {
     // for the head of the pairlis
@@ -228,7 +228,7 @@ inline void cell_remove_cars(const cell *list) {
 }
 
 inline void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
-  const cell *act = new_env;
+  cell *act = new_env;
   cell *tmp;
   while (act != old_env) {
     // for the head of the pairlis
