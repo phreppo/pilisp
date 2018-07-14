@@ -86,6 +86,7 @@ void free_pi() {
   free_builtin_symbols();
 }
 
+
 void free_builtin_symbols() {
   size_t i = 0;
   for (i = 0; i < builtin_lambdas_index; i++)
