@@ -68,6 +68,8 @@ void init_env() {
 
       "(setq p \"./examples/a.lisp\")"
 
+      "(setq b \"./examples/bench.lisp\")"
+
       "(setq f \"./examples/functions.lisp\")");
   parse_file(".piinit");
   cell_space_destroy_stack(memory); // remove thrash

@@ -30,7 +30,7 @@ cell *pairlis(cell *x, cell *y, cell *a) {
 }
 
 cell *assoc(const cell *x, cell *l) {
-  
+
   while (l) {
     // we extract the first element in the pair
     if (eq(x, car(car(l)))) {
@@ -89,7 +89,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
     } else {
       //========================= COMPOSED FUNCTION =========================//
       //================= ( (lambda (x y z) (....)) param) ==================//
-      if (eq(car(fn), symbol_lambda)) {
+      if (car(fn) == symbol_lambda) {
         // direct lambda
 #if DEBUG_EVAL_MODE
         printf("LAMBDA:\t\t" ANSI_COLOR_RED);
@@ -114,7 +114,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         return res;
       }
       // LABEL
-      if (eq(car(fn), symbol_label)) {
+      if (car(fn) == symbol_label) {
         if (eval_args)
           x = evlis(x, a);
         cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
@@ -130,7 +130,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         return res;
       }
 
-      if (eq(car(fn), symbol_macro)) {
+      if (car(fn) == symbol_macro) {
         // ==================== (MACRO ...) ====================
 #if DEBUG_EVAL_MODE
         printf("MACRO:\t\t" ANSI_COLOR_RED);
@@ -164,11 +164,12 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         x = evlis(x, a);
 
       cell *function_body = eval(fn, a);
-
+#if CHECKS
       if (function_body == NULL)
         pi_error(LISP_ERROR, "unknown function ");
       if (!is_cons(function_body))
         pi_error(LISP_ERROR, "trying to apply a non-lambda");
+#endif
       // the env knows the lambda
       return apply(function_body, x, a, false);
     }
@@ -223,15 +224,16 @@ cell *eval(cell *e, cell *a) {
   else if (atom(car(e))) {
     if (is_builtin_macro(car(e))) {
       // ==================== BUILTIN MACRO ====================
-      evaulated = car(e)->bm(cdr(e),a);
+      evaulated = car(e)->bm(cdr(e), a);
       cell_remove(e, SINGLE);
     }
     // ==================== SPECIAL FORMS ====================
-     else  {
-      if (eq(car(e), symbol_lambda) || eq(car(e), symbol_macro)) 
+    else {
+      // ==
+      if ((car(e) == symbol_lambda) || (car(e) ==  symbol_macro))
         // lambda and macro "autoquote"
         evaulated = e;
-       else {
+      else {
         // apply atom function to evaluated list of parameters
         cell *args = cdr(e);
         evaulated = apply(car(e), args, a, true);
@@ -245,7 +247,7 @@ cell *eval(cell *e, cell *a) {
   //=========================   ((lambda (x) x) 1)   =========================//
 
   else {
-    if ((eq(caar(e), symbol_macro))) {
+    if (caar(e) == symbol_macro) {
       // MACRO
       cell *old_env = a;
       cell *body = car(e);
@@ -295,7 +297,7 @@ cell *evlis(cell *m, cell *a) {
 }
 
 cell *evcon(cell *c, cell *a) {
-  
+
   cell *res = eval(caar(c), a);
 
   if (res != NULL) {

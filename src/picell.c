@@ -1,33 +1,6 @@
 #include "picell.h"
 #include "pierror.h"
 
-cell *get_cell() { return cell_space_get_cell(memory); }
-
-cell *mk_num(const int n) {
-  cell *c = get_cell();
-  c->type = TYPE_NUM;
-  c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
-cell *mk_str(const char *s) {
-  cell *c = get_cell();
-  c->type = TYPE_STR;
-  c->str = malloc(strlen(s) + 1);
-  strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
 static cell *is_symbol_allocated(const char *symbol) {
   return cell_space_is_symbol_allocated(memory, symbol);
 }
@@ -109,20 +82,6 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_cons(cell *car, cell *cdr) {
-  cell *c = get_cell();
-  c->type = TYPE_CONS;
-  c->car = car;
-  c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
-  return c;
-}
-
 cell *mk_builtin_lambda(const char *symbol, cell* (*function)(cell*)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
@@ -178,18 +137,8 @@ cell *copy_cell(const cell *c) {
   return copy;
 }
 
-bool is_num(const cell *c) { return c->type == TYPE_NUM; }
-bool is_str(const cell *c) { return c->type == TYPE_STR; }
-bool is_sym(const cell *c) {
-  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
-}
-bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
-bool is_builtin(const cell *c) {
-  return is_builtin_lambda(c) || is_builtin_macro(c);
-}
-bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+
+
 
 void free_cell_pointed_memory(cell *c) {
   if (c) {
@@ -376,22 +325,6 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   cs->n_free_cells++;
 }
 
-cell_stack *cell_stack_create() {
-  cell_stack *s = malloc(sizeof(cell_stack));
-  s->head = NULL;
-  s->tail = NULL;
-  return s;
-}
-
-cell_stack_node *cell_stack_node_create_node(cell *val) {
-
-  cell_stack_node *n = malloc(sizeof(cell_stack_node));
-  n->c = val;
-  n->next = NULL;
-  n->prec = NULL;
-  return n;
-}
-
 void cell_stack_push(cell_stack *stack, cell *val, unsigned char mode) {
 #if COLLECT_GARBAGE
   if (!val)
@@ -533,36 +466,6 @@ void cell_stack_remove_cars(cell_stack *stack, const cell *list) {
 #endif
 }
 
-void cell_push(cell *c, unsigned char mode) {
-#if COLLECT_GARBAGE
-  cell_stack_push(memory->stack, c, mode);
-#endif
-}
-
-void cell_remove(const cell *c, unsigned char mode) {
-#if COLLECT_GARBAGE
-  cell_stack_remove(memory->stack, c, mode);
-#endif
-}
-
-void cell_remove_args(const cell *args) {
-#if COLLECT_GARBAGE
-  cell_stack_remove_args(memory->stack, args);
-#endif
-}
-
-void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
-#if COLLECT_GARBAGE
-  cell_stack_remove_pairlis(memory->stack, new_env, old_env);
-#endif
-}
-
-void cell_remove_cars(const cell *list) {
-#if COLLECT_GARBAGE
-  cell_stack_remove_cars(memory->stack, list);
-#endif
-}
-
 void cell_space_free(cell_space *cs) {
   if (cs) {
     size_t block_index;
@@ -631,10 +534,6 @@ void cell_stack_remove_pairlis_deep(cell_stack *stack, const cell *new_env,
     cell_stack_remove(stack, act, SINGLE);
     act = tmp;
   }
-}
-
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
-  cell_stack_remove_pairlis_deep(memory->stack, new_env, old_env);
 }
 
 bool total_eq(const cell *c1, const cell *c2) {
