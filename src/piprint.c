@@ -168,24 +168,56 @@ void print_cell_block(const cell_block *block) {
     cell *arr = block->block;
     int i = 0;
     for (i = 0; i < s; i++) {
+#if PRINT_FREE_CELLS
       printf("%i\t", i);
-      if (!cell_is_in_global_env(memory->global_env, (arr + i)) && !(arr+i)->marks)
+      if (!cell_is_in_global_env(memory->global_env, (arr + i)) &&
+          !(arr + i)->marks)
         printf(ANSI_COLOR_GREEN);
-      else if((!cell_is_in_global_env(memory->global_env, (arr + i)) && (arr+i)->marks))
+      else if ((!cell_is_in_global_env(memory->global_env, (arr + i)) &&
+                (arr + i)->marks))
         printf(ANSI_COLOR_RED);
       else
         printf(ANSI_COLOR_LIGHT_GREEN);
-        
+
       printf("%p\t" ANSI_COLOR_RESET, arr + i);
       print_cell(arr + i);
       puts("");
+#elif PRINT_ONLY_DANGLING_CELLS
+      if ((arr + i)->type != TYPE_FREE &&
+          (!cell_is_in_global_env(memory->global_env, (arr + i)) &&
+           (arr + i)->marks)) {
+        printf("%i\t", i);
+        printf(ANSI_COLOR_RED);
+        printf("%p\t" ANSI_COLOR_RESET, arr + i);
+        print_cell(arr + i);
+        puts("");
+      }
+#else
+      if ((arr + i)->type != TYPE_FREE) {
+        printf("%i\t", i);
+
+        if (!cell_is_in_global_env(memory->global_env, (arr + i)) &&
+            !(arr + i)->marks)
+          printf(ANSI_COLOR_GREEN);
+        else if ((!cell_is_in_global_env(memory->global_env, (arr + i)) &&
+                  (arr + i)->marks))
+          printf(ANSI_COLOR_RED);
+        else
+          printf(ANSI_COLOR_LIGHT_GREEN);
+
+        printf("%p\t" ANSI_COLOR_RESET, arr + i);
+        print_cell(arr + i);
+        puts("");
+      }
+#endif
     }
   }
 }
 
 void print_cell(const cell *cell) {
   if (cell) {
-    printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked, cell->marks);
+    printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked,
+           cell->marks);
     switch (cell->type) {
     case TYPE_CONS:
       printf("CONS\t" ANSI_COLOR_LIGHT_BLUE "( " ANSI_COLOR_RESET);

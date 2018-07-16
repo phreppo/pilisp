@@ -101,6 +101,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *fn_body = caddr(fn);
         cell *res = eval(fn_body, a);
         // FREE THINGS
+        cell_remove_recursive(a->car->cdr);
         cell_remove_cars(x); // deep remove cars
         cell_remove_args(x); // remove args cons
         cell_remove_pairlis_deep(a, old_env); // remove associations

@@ -37,7 +37,7 @@
 #if EXTREME_PERF
 #define INITIAL_BLOCK_SIZE 134217728
 #else
-#define INITIAL_BLOCK_SIZE 134217728
+#define INITIAL_BLOCK_SIZE 40000
 #endif
 #else
 #define INITIAL_BLOCK_SIZE 8
@@ -66,6 +66,10 @@
 /********************************************************************************
  *                                 DEBUGGING
  ********************************************************************************/
+
+// in (md) prints free cells
+#define PRINT_FREE_CELLS 0
+#define PRINT_ONLY_DANGLING_CELLS 1 
 
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0

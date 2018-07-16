@@ -602,8 +602,8 @@ cell *let(const cell *args, cell *env) {
                       new_env); // add on the head of the new env the new pair
     tmp = cdr(params);
     cell_remove(cdr(cdar(params)));
-    cell_remove_recursive(cdar(params));       // maybe null
-    unsafe_cell_remove(car(params)); // cons
+    cell_remove_recursive(cdar(params)); // maybe null
+    unsafe_cell_remove(car(params));     // cons
     unsafe_cell_remove(params);
     params = tmp;
   }
@@ -765,10 +765,13 @@ cell *dotimes(const cell *arg, cell *env) {
   cell *expr = cadr(arg);
   cell *new_env;
   for (n = 0; n < num->value; n++) {
-    if (n > 0)
+    if (n > 0) {
       // we have to protect the body of the function
       cell_push_recursive(expr);
-    cell *num_list_new = mk_cons(mk_num(n), NULL);
+      // cell_push(caar(arg)); // name of the parameter (n)
+    }
+    cell *actual_n_value = mk_num(n);
+    cell *num_list_new = mk_cons(actual_n_value, NULL);
     new_env = pairlis(name_list, num_list_new, env);
     cell *evaulated = eval(expr, new_env);
     // remove the result
@@ -777,9 +780,12 @@ cell *dotimes(const cell *arg, cell *env) {
     cell_remove_pairlis(new_env, env);
     // remove the just created cell
     cell_remove_recursive(num_list_new);
+    // REMOVE THE ACTUAL VALUE OF N
+    // unsafe_cell_remove(actual_n_value);
   }
-  // unsafe_cell_remove(expr);
+  // cons of the pair
   unsafe_cell_remove(cdr(arg));
+  cell_remove(arg);
   cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
   return NULL;
 }
