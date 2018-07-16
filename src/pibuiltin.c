@@ -658,8 +658,10 @@ cell *subseq(const cell *list) {
   cell *str = car(list);
   cell *start = cadr(list);
   size_t s = start->value;
-  if (s > strlen(str->str))
+  if (s > strlen(str->str)) {
+    cell_remove_recursive(list);
     return NULL;
+  }
   if (cddr(list)) {
     cell *end = caddr(list);
     size_t e = end->value;

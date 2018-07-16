@@ -32,14 +32,7 @@ test('[REJ] Bad sexpression with closed par test', parser_rejected_strings_test,
 test('[REJ] Incomplte sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'unfinished.lisp'])
 test('[REJ] Complicate bad sexpression test', parser_rejected_strings_test, args : [bad_expressions_path+'complicate.lisp'])
 
-# Sexpression print tester for self-referencing structures
-recursive_structure_print_test = executable(
-    'recursive_structure_print_test', 'recursive_structure_print_test.c',
-    include_directories : inc,
-    link_with : pilisplib
-)
-# Cases for parser for rejected sexpressions
-test('[PRINT] Print self-referencing structures test', recursive_structure_print_test)
+
 
 # Print test for accepted sexpressions
 print_test = executable(

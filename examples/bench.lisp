@@ -117,16 +117,16 @@
 (time (dotimes (n 50000) (ff '(((((((((((a)))))))))))) ))
 
 (write "list")
-(time (dotimes (n 1000000) (list  n n n n n)))
+(time (dotimes (n 1000000) (list  1 1 1 1 1)))
 
 (write "additions")
-(time (dotimes (n 1000000) (+  n n )))
+(time (dotimes (n 1000000) (+  1 1)))
 
 (write "to zero")
-(time (dotimes (n 1000) (toz n)))
+(time (dotimes (n 1000) (toz 100)))
 
 (write "to integerp")
-(time (dotimes (n 1000000) (integerp n)))
+(time (dotimes (n 1000000) (integerp 20)))
 
 (write "my mult")
 (time (dotimes (n 1000000) 
@@ -160,10 +160,10 @@
 
 (write "logical operations")
 (time (dotimes (n 4000000) 
-    (or n n n (and n (not n)))))
+    (or 1 2 3 (and 4 (not 5)))))
 
 (write "list operations")
 (time (dotimes (n 1000000) (listoperations '(1 2 3 4 "ciao"))))
 
 (write "setq")
-(time (dotimes (n 10000000) (setq var n)))
+(time (dotimes (n 10000000) (setq var 30)))
