@@ -11,7 +11,6 @@ void pi_error(int CODE, char *message) {
   mark(memory->global_env);
   sweep(memory);
   last_error = CODE;
-  // free(message);
   longjmp(env_buf, jmp_destination); // jumps to the last saved destination
 }
 

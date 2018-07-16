@@ -469,3 +469,48 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
   return cell_is_in_global_env(car(global_env), c) ||
          cell_is_in_global_env(cdr(global_env), c);
 }
+
+void cell_remove_args(const cell *args) {
+  cell *act = args;
+  cell *tmp;
+  while (act) {
+    tmp = act->cdr;
+    unsafe_cell_remove(
+        act); // only not empty cons cells, we can use unsafe remove
+    act = tmp;
+  }
+}
+
+void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
+  cell *act = new_env;
+  cell *tmp;
+  while (act != old_env) {
+    // for the head of the pairlis
+    tmp = act->cdr;
+    unsafe_cell_remove(act->car); // only not empty cons
+    unsafe_cell_remove(act);      // only not empty cons
+    act = tmp;
+  }
+}
+
+void cell_remove_cars(const cell *list) {
+  const cell *act = list;
+  cell *tmp;
+  while (act) {
+    tmp = act->cdr;
+    cell_remove_recursive(act->car);
+    act = tmp;
+  }
+}
+
+void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+  cell *act = new_env;
+  cell *tmp;
+  while (act != old_env) {
+    // for the head of the pairlis
+    tmp = act->cdr;
+    cell_remove_recursive(act->car);
+    unsafe_cell_remove(act);
+    act = tmp;
+  }
+}
