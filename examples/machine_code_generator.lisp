@@ -47,7 +47,7 @@
 (defun build_remaining_machine_code_string_char (compiled_expression)
     (concatenate 'string 
         ( get_instruction_code compiled_expression) 
-        ( extract_machine_code_string (cdr compiled_expression))))
+        ( extract_machine_code_string ( next compiled_expression))))
 
 (defun get_instruction_code (compiled_expression)
     ( translate_instruction_code 
@@ -91,4 +91,4 @@
         ((eq args_number 15) "X")
         ((eq args_number 15) "Y")
         ((eq args_number 15) "Z")
-        (( else) "__ERROR:TOO_MUCH_ARGS__")))
+        (( else) "__ERROR:TOO_MANY_ARGS__")))

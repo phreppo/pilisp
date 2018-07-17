@@ -7,6 +7,9 @@
 ;      :cbs[0-3] -> call builtin stack with 0-3 params
 ;      :cbsn -> call builtin stack with n > 3 params
 
+(setq builtin_stack_lambdas 
+    '( car cdr cons atom eq list))
+
 ; why not directly compile? because (cc '1) would give back 
 ; (:loadconst 1) instead of ((:loadconst 1)) 
 (defun first_compile (expr)
@@ -22,23 +25,18 @@
 
 (defun _compile (expr)
     (cond
-        ; atom -> just load it
         ((atom expr)
             ( compile_atom expr))
         
-        ; quote -> just load it
         (( is_quoted_expression expr)
             ( compile_quote expr))
 
-        ; atom function
         ((atom (car expr))
             ( compile_atom_function expr)) 
 
-        ;; (()) 
+        (( else )
+            "_ERROR:UNRECOGNIZED_FUNCTION_") 
     ))
-
-(defun is_quoted_expression (expr)
-    (and (atom (car expr)) (eq 'quote (car expr))))
 
 ;; ==================== Atom or Quote Compiling ====================
 
@@ -68,18 +66,10 @@
             nil)))
 
 (defun is_builtin_stack (fun)
-    (cond 
-        ((eq fun 'car) t)
-        ((eq fun 'cdr) t)
-        ((eq fun 'cdr) t)
-        ((eq fun 'cons) t)
-        ((eq fun 'atom) t)
-        ((eq fun 'eq) t)
-        ((eq fun 'list) t)
-        (t nil)))
+    (member fun builtin_stack_lambdas))
 
 (defun compile_builtin_stack (fun args_list)
-    ( compile_args_and_append_builtin_stack fun args_list ( args_number args_list)))
+    ( compile_args_and_append_builtin_stack fun args_list ( count_args args_list)))
 
 ; why keep passing fun? -> no list surgery, but when found the botton
 ; naturally append the function apply
@@ -96,28 +86,26 @@
     ( _compile (car args_list)))
 
 (defun compile_remaining_list_and_append_builtin_stack (fun args_list initial_args_number)
-    ( compile_args_and_append_builtin_stack fun (cdr args_list) initial_args_number))
+    ( compile_args_and_append_builtin_stack fun ( next args_list) initial_args_number))
 
 (defun create_builtin_stack_trailer (fun initial_args_number)
     (cond 
-    
-    (( is_builtin_args_number initial_args_number)
-        ( create_builtin_stack_trailer_builtin_args fun initial_args_number))
-
-    (( is_not_builtin_args_number initial_args_number)
-        ( create_builtin_stack_trailer_not_builtin_args fun initial_args_number))))
+        (( is_builtin_args_number initial_args_number)
+            ( create_builtin_stack_trailer_builtin_args fun initial_args_number))
+        (( is_not_builtin_args_number initial_args_number)
+            ( create_builtin_stack_trailer_not_builtin_args fun initial_args_number))))
 
 (defun create_builtin_stack_trailer_builtin_args (fun args_number)
     (list (cons 
         ( get_builtin_stack_instruction args_number)
-        fun)))
+          fun)))
 
 ; -> (:cbs0 . [FUN_NAME]) (:argsnum . [ARGS_NUMBER])
 (defun create_builtin_stack_trailer_not_builtin_args (fun args_number)
     (list 
         (cons 
             ( get_builtin_stack_instruction args_number)
-            fun)
+              fun)
         ( get_params_trailer args_number)))
 
 (defun get_params_trailer (args_number)
@@ -141,7 +129,11 @@
 
 ;; ==================== Utility ====================
 
-(defun args_number (args_list) 
+(defun is_quoted_expression (expr)
+    (and (atom (car expr)) (eq 'quote (car expr))))
+
+(defun count_args (args_list) 
     (length args_list))
 
 (defun else () t)
+(defun next (l) (cdr l))
