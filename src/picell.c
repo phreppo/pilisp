@@ -65,11 +65,15 @@ cell *mk_sym(const char *symbol) {
     return allocated;
   }
   cell *c = get_cell();
-  c->type = TYPE_SYM;
   c->str = malloc(strlen(symbol) + 1);
-  int i = 0;
   strcpy(c->str, symbol);
+  c->type = TYPE_SYM;
+  // could be a keyword
+  if (c->str[0] == ':')
+    c->type = TYPE_KEYWORD;
+
   // case unsensitive
+  int i = 0;
   while ((c->str)[i]) {
     c->str[i] = toupper(c->str[i]);
     i++;
@@ -359,7 +363,8 @@ void cell_space_mark_cell_as_free(cell_space *cs, cell *c) {
   free_cell_pointed_memory(c);
   c->marked = 0;
 #if !PERFORMANCE
-  // NOT PERFORMANCE: this is useful to mark free cells preperly only after an error, not necessary for correctness
+  // NOT PERFORMANCE: this is useful to mark free cells preperly only after an
+  // error, not necessary for correctness
   c->marks = 0;
 #endif
   c->type = TYPE_FREE;
@@ -570,12 +575,8 @@ bool is_sym(const cell *c) {
 bool is_builtin(const cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
 }
-bool is_builtin_lambda(const cell *c) {
-  return c->type == TYPE_BUILTINLAMBDA;
-}
-bool is_builtin_macro(const cell *c) {
-  return c->type == TYPE_BUILTINMACRO;
-}
+bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
 
 void cell_push(cell *val) {
 #if COLLECT_GARBAGE

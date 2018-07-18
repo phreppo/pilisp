@@ -25,6 +25,7 @@ enum {
   TYPE_FREE,
   TYPE_BUILTINLAMBDA,
   TYPE_BUILTINMACRO,
+  TYPE_KEYWORD,
 };
 
 typedef struct cell {
