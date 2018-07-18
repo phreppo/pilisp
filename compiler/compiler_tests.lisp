@@ -10,24 +10,24 @@
 (terpri )
 
 (write 
-    (cc '1))
+    (plc '1))
 (terpri)
 
 (write 
-    (cc 'x))
+    (plc 'x))
 (terpri)
 
 (write 
-    (cc ''(a b c)))
+    (plc ''(a b c)))
 (terpri)
 
 
 (write 
-    (cc '(car '(a b c))))
+    (plc '(car '(a b c))))
 (terpri)
 
 (write 
-    (cc '(cdr '(a b c))))
+    (plc '(cdr '(a b c))))
 (terpri)
 
 (write 
@@ -35,11 +35,11 @@
 (terpri)
 
 (write 
-    ( cc '(atom 33)))
+    ( plc '(atom 33)))
 (terpri )
 
 (write 
-    ( cc '(list 1 2 3 4 5 6 7 8 9 10 11)))
+    ( plc '(list 1 2 3 4 5 6 7 8 9 10 11)))
 (terpri )
 
 (terpri )
@@ -51,7 +51,8 @@
 ; ((#lambdalap (1 . 0) ("11C" cons) 100)
 ; ((#lambda (2 . 0) (#lap "12C" cons) 100 200)
 ; ((#lambdalap(4 . 0)("1230DAE" list)) 1 2 3 4)
-; 
+; ((#lambdalap (1.0) ("1!C" 1 +)) 2)
+
 ; (setq ll '(#lambdalap (2.0) ("12C" cons)))
 ; (#lap "!!c" 100 100 ll) ; questo non va ma dovrebbe andare
 ; questo non va bene

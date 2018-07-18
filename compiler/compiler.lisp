@@ -1,9 +1,16 @@
-; (cc '[EXPRESSION]) -> (lap [LAP_STRING] {ARGS_LIST})
-(defun cc (not_evaluated_expression)
+;; ****************************************************************
+;; *====================== Pilisp Compiler =======================*
+;; **************************************************************** 
+
+; (plc '[EXPRESSION]) -> (lap [LAP_STRING] {ARGS_LIST})
+(defun plc (not_evaluated_expression)
     ( get_interpretable_code 
         ( first_compile not_evaluated_expression)))
 
-;; ==================== Instructions Generator ====================
+;; ****************************************************************
+;; *=================== Instructions Generator ===================*
+;; ****************************************************************
+
 
 ; Instructions:
 ;      :loadconst
@@ -15,7 +22,7 @@
 (setq builtin_stack_lambdas 
     '( car cdr cons atom eq list))
 
-; why not directly compile? because (cc '1) would give back 
+; why not directly compile? because (plc '1) would give back 
 ; (:loadconst 1) instead of ((:loadconst 1)) 
 (defun first_compile (expr)
     (cond 
@@ -69,11 +76,18 @@
     (cond 
         (( is_builtin_stack fun) 
             ( compile_builtin_stack fun args))
-        ((not ( is_builtin_stack fun)) 
+        (( is_lambda fun)
+            ( compile_lambda fun args))
+        (( else) 
             nil)))
 
 (defun is_builtin_stack (fun)
     (member fun builtin_stack_lambdas))
+
+(defun is_lambda (fun)
+    (eq fun 'lambda))
+
+;; Builtin stack compiling
 
 (defun compile_builtin_stack (fun args_list)
     ( compile_args_and_append_builtin_stack fun args_list ( count_args args_list)))
@@ -124,8 +138,7 @@
         ((eq initial_args_number 1) :cbs1)
         ((eq initial_args_number 2) :cbs2)
         ((eq initial_args_number 3) :cbs3)
-        (( else) :cbsn))
-)
+        (( else) :cbsn)))
 
 (defun is_builtin_args_number (args_number)
     (<= args_number 3))
@@ -133,20 +146,15 @@
 (defun is_not_builtin_args_number (args_number)
     (> args_number 3))
 
+;; TODO: Compile Lambda
+(defun compile_lambda (fun args)
+    (list 
+        (cons 1 0) ; param number 
+        'x))       ; ap body
 
-;; ==================== Utility ====================
-
-(defun is_quoted_expression (expr)
-    (and (atom (car expr)) (eq 'quote (car expr))))
-
-(defun count_args (args_list) 
-    (length args_list))
-
-(defun else () t)
-(defun next (l) (cdr l))
-
-
-;; ==================== Machine Code Generation ====================
+;; *****************************************************************
+;; *=================== Machine Code Generation ===================*
+;; *****************************************************************
 
 ; ((:[INSTRUCTION] . [PARAM]) {(:[INSTRUCTION] . [PARAM])} ) 
 ;           -> (LAP "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
@@ -240,3 +248,19 @@
         ((eq args_number 15) "Y")
         ((eq args_number 15) "Z")
         (( else) "__ERROR:TOO_MANY_ARGS__")))
+
+
+
+;; *************************************************
+;; *=================== Utility ===================*
+;; *************************************************
+
+
+(defun is_quoted_expression (expr)
+    (and (atom (car expr)) (eq 'quote (car expr))))
+
+(defun count_args (args_list) 
+    (length args_list))
+
+(defun else () t)
+(defun next (l) (cdr l))
