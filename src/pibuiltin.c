@@ -791,3 +791,48 @@ cell *dotimes(const cell *arg, cell *env) {
   cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
   return NULL;
 }
+#if !INLINE_FUNCTIONS
+cell *caar(const cell *c) { return c->car->car; }
+cell *cddr(const cell *c) { return c->cdr->cdr; }
+cell *cadr(const cell *c) { return c->cdr->car; }
+cell *cdar(const cell *c) { return c->car->cdr; }
+cell *cadar(const cell *c) { return c->car->cdr->car; }
+cell *caddr(const cell *c) { return c->cdr->cdr->car; }
+cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
+
+int atom(const cell *c) {
+  return (c == NULL) ||
+         (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
+}
+
+bool eq(const cell *v1, const cell *v2) {
+  if (!v1 || !v2)
+    return (v1 == v2);
+  if (is_num(v1) && is_num(v2))
+    return (v1->value == v2->value);
+  if (is_str(v1) && is_str(v2))
+    return (strcmp(v1->str, v2->str) == 0);
+  return (v1 == v2);
+}
+
+cell *car(const cell *c) {
+  if (c == NULL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("car applied to an atom");
+#endif
+  return c->car;
+}
+
+cell *cdr(const cell *c) {
+  if (c == NULL)
+    return NULL;
+#if CHECKS
+  if (atom(c))
+    pi_lisp_error("cdr applied to an atom");
+#endif
+  return c->cdr;
+}
+#endif

@@ -14,12 +14,21 @@
 
 // ==================== INLINE FUNCTIONS FOR EVAL ====================
 // not usable in the interpreter: no checks! => use only in the eval
+#if INLINE_FUNCTIONS
 inline cell *caar(const cell *c) { return c->car->car; }
 inline cell *cddr(const cell *c) { return c->cdr->cdr; }
 inline cell *cadr(const cell *c) { return c->cdr->car; }
 inline cell *cdar(const cell *c) { return c->car->cdr; }
 inline cell *cadar(const cell *c) { return c->car->cdr->car; }
 inline cell *caddr(const cell *c) { return c->cdr->cdr->car; }
+#else
+cell *caar(const cell *c);
+cell *cddr(const cell *c);
+cell *cadr(const cell *c);
+cell *cdar(const cell *c);
+cell *cadar(const cell *c);
+cell *caddr(const cell *c);
+#endif
 
 // ==================== BASIC APPLY ====================
 // differences from the first basic block: these functions can be called from
@@ -77,7 +86,10 @@ cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
 
 // ==================== BASIC FUNCTIONS ====================
+// works also on lists: eq does not, but 'it's slower
+bool total_eq(const cell *c1, const cell *c2);
 
+#if INLINE_FUNCTIONS
 inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 inline int atom(const cell *c) {
@@ -118,6 +130,15 @@ inline cell *cdr(const cell *c) {
 #endif
   return c->cdr;
 }
+#else
+
+cell *cons(cell *car, cell *cdr);
+int atom(const cell *c);
+bool eq(const cell *v1, const cell *v2);
+cell *car(const cell *c);
+cell *cdr(const cell *c);
+
+#endif
 
 #endif // !PIBUILTIN_H
        /*@}*/

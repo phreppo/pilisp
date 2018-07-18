@@ -13,6 +13,13 @@
 /********************************************************************************
  *                               GENERAL SETTINGS
  ********************************************************************************/
+
+// many functions will be declared inline, however the code won't compile in
+// many compilers and the builtd directory generated with meson must be
+// generated with: meson build -Dc_args=-Og. The compiler flag -O3 soulh be set
+// to be correctly compiled. Use only for testing performances
+#define INLINE_FUNCTIONS 0
+
 // WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
 // really slow
 #define PERFORMANCES 0
@@ -69,7 +76,7 @@
 
 // in (md) prints free cells
 #define PRINT_FREE_CELLS 0
-#define PRINT_ONLY_DANGLING_CELLS 1 
+#define PRINT_ONLY_DANGLING_CELLS 1
 
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0

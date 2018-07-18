@@ -53,7 +53,11 @@ typedef struct cell {
 
 // unsafe unmark: no checks if cell is empty or a builtin! use only if you are
 // sure that cell exists and is not a builtin symbol. it's faster
+#if INLINE_FUNCTIONS
 inline void unsafe_cell_remove(cell *c) { c->marks--; }
+#else
+void unsafe_cell_remove(cell *c);
+#endif
 
 /********************************************************************************
  *                                  GARBAGE COLLECTOR
@@ -98,6 +102,7 @@ bool cell_space_is_full(const cell_space *cs);
  *                                CELL BASIC OPERATIONS
  ********************************************************************************/
 
+#if INLINE_FUNCTIONS
 inline cell *get_cell() { return cell_space_get_cell(memory); }
 
 inline cell *mk_num(const int n) {
@@ -138,6 +143,12 @@ inline cell *mk_cons(cell *car, cell *cdr) {
 #endif
   return c;
 }
+#else
+cell *get_cell();
+cell *mk_num(const int n);
+cell *mk_str(const char *s);
+cell *mk_cons(cell *car, cell *cdr);
+#endif
 
 cell *mk_sym(const char *symbol);
 cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
@@ -149,7 +160,7 @@ void free_cell_pointed_memory(cell *c);
 /********************************************************************************
  *                                CELL IDENTIFICATION
  ********************************************************************************/
-
+#if INLINE_FUNCTIONS
 inline bool is_num(const cell *c) { return c->type == TYPE_NUM; }
 inline bool is_str(const cell *c) { return c->type == TYPE_STR; }
 inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
@@ -166,6 +177,15 @@ inline bool is_builtin_lambda(const cell *c) {
 inline bool is_builtin_macro(const cell *c) {
   return c->type == TYPE_BUILTINMACRO;
 }
+#else
+bool is_num(const cell *c);
+bool is_str(const cell *c);
+bool is_cons(const cell *c);
+bool is_sym(const cell *c);
+bool is_builtin(const cell *c);
+bool is_builtin_lambda(const cell *c);
+bool is_builtin_macro(const cell *c);
+#endif
 cell *is_symbol_builtin_lambda(const char *symbol);
 cell *is_symbol_builtin_macro(const char *symbol);
 bool cell_is_in_global_env(const cell *global_env, const cell *c);
@@ -174,12 +194,12 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c);
  *                                  CELL PROTECTION
  ********************************************************************************/
 
+#if INLINE_FUNCTIONS
 inline void cell_push(cell *val) {
 #if COLLECT_GARBAGE
   val->marks++;
 #endif
 }
-void cell_push_recursive(cell *c); // mark as used
 
 inline void cell_remove(cell *val) {
 #if COLLECT_GARBAGE
@@ -193,6 +213,11 @@ inline void cell_remove(cell *val) {
 #endif
 #endif
 }
+#else
+inline void cell_push(cell *val);
+inline void cell_remove(cell *val);
+#endif
+void cell_push_recursive(cell *c); // mark as used
 void cell_remove_recursive(cell *c);
 void cell_remove_args(const cell *args);
 void cell_remove_pairlis(const cell *new_env, const cell *old_env);

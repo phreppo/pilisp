@@ -514,3 +514,85 @@ void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
     act = tmp;
   }
 }
+
+#if !INLINE_FUNCTIONS
+
+void unsafe_cell_remove(cell *c) { c->marks--; }
+
+cell *get_cell() { return cell_space_get_cell(memory); }
+
+cell *mk_num(const int n) {
+  cell *c = get_cell();
+  c->type = TYPE_NUM;
+  c->value = n;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+cell *mk_str(const char *s) {
+  cell *c = get_cell();
+  c->type = TYPE_STR;
+  c->str = malloc(strlen(s) + 1);
+  strcpy(c->str, s);
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+cell *mk_cons(cell *car, cell *cdr) {
+  cell *c = get_cell();
+  c->type = TYPE_CONS;
+  c->car = car;
+  c->cdr = cdr;
+#if DEBUG_PUSH_REMOVE_MODE
+  printf(ANSI_COLOR_LIGHT_BLUE
+         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
+  print_sexpr(c);
+  puts("");
+#endif
+  return c;
+}
+
+bool is_num(const cell *c) { return c->type == TYPE_NUM; }
+bool is_str(const cell *c) { return c->type == TYPE_STR; }
+bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+bool is_sym(const cell *c) {
+  return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
+         c->type == TYPE_BUILTINMACRO;
+}
+bool is_builtin(const cell *c) {
+  return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
+}
+bool is_builtin_lambda(const cell *c) {
+  return c->type == TYPE_BUILTINLAMBDA;
+}
+bool is_builtin_macro(const cell *c) {
+  return c->type == TYPE_BUILTINMACRO;
+}
+
+void cell_push(cell *val) {
+#if COLLECT_GARBAGE
+  val->marks++;
+#endif
+}
+
+void cell_remove(cell *val) {
+#if COLLECT_GARBAGE
+  if (!val || is_builtin(val))
+    return;
+  if (val->marks > 0)
+    val->marks--;
+#if ERROR_EMPTY_REMOVING
+  else
+    pi_error(MEMORY_ERROR, "you have no more access to that cell");
+#endif
+#endif
+}
+#endif // ! INLINE_FUNCTIONS
