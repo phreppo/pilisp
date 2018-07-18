@@ -110,41 +110,12 @@
     ( compile_args_and_append_builtin_stack fun ( next args_list) initial_args_number))
 
 (defun create_builtin_stack_trailer (fun initial_args_number)
-    (cond 
-        (( is_builtin_args_number initial_args_number)
-            ( create_builtin_stack_trailer_builtin_args fun initial_args_number))
-        (( is_not_builtin_args_number initial_args_number)
-            ( create_builtin_stack_trailer_not_builtin_args fun initial_args_number))))
-
-(defun create_builtin_stack_trailer_builtin_args (fun args_number)
-    (list (cons 
-        ( get_builtin_stack_instruction args_number)
-          fun)))
-
-; -> (:cbs0 . [FUN_NAME]) (:argsnum . [ARGS_NUMBER])
-(defun create_builtin_stack_trailer_not_builtin_args (fun args_number)
     (list 
-        (cons 
-            ( get_builtin_stack_instruction args_number)
-              fun)
-        ( get_params_trailer args_number)))
+        (cons :cbs fun)
+        ( get_params_trailer initial_args_number)))
 
 (defun get_params_trailer (args_number)
     (cons :argsnum args_number))
-
-(defun get_builtin_stack_instruction (initial_args_number)
-    (cond 
-        ((eq initial_args_number 0) :cbs0)
-        ((eq initial_args_number 1) :cbs1)
-        ((eq initial_args_number 2) :cbs2)
-        ((eq initial_args_number 3) :cbs3)
-        (( else) :cbsn)))
-
-(defun is_builtin_args_number (args_number)
-    (<= args_number 3))
-
-(defun is_not_builtin_args_number (args_number)
-    (> args_number 3))
 
 ;; TODO: Compile Lambda
 (defun compile_lambda (fun args)
@@ -214,17 +185,17 @@
 (defun translate_instruction_code (code arg)
     (cond 
         ((eq code :loadconst) "!")
-        ((eq code :loadsymbol) "7")
-        ((eq code :cbs0) "A")
-        ((eq code :cbs1) "B")
-        ((eq code :cbs2) "C")
-        ((eq code :cbs3) "D")
-        ((eq code :cbsn) "A")
+        ((eq code :loadsymbol) "?")
+        ((eq code :cbs) "$")
         ((eq code :argsnum) ( get_instruction_code_for_n_args arg))
         (( else) "__ERROR:UNKNOWN_INSTRUCTION_CODE__")))
 
 (defun get_instruction_code_for_n_args (args_number)
     (cond
+        ((eq args_number 0) "A")
+        ((eq args_number 1) "B")
+        ((eq args_number 2) "C")
+        ((eq args_number 3) "D")
         ((eq args_number 4) "E")
         ((eq args_number 5) "F")
         ((eq args_number 6) "G")
@@ -237,16 +208,16 @@
         ((eq args_number 13) "n")
         ((eq args_number 14) "O")
         ((eq args_number 15) "P")
-        ((eq args_number 15) "Q")
-        ((eq args_number 15) "R")
-        ((eq args_number 15) "S")
-        ((eq args_number 15) "T")
-        ((eq args_number 15) "U")
-        ((eq args_number 15) "V")
-        ((eq args_number 15) "W")
-        ((eq args_number 15) "X")
-        ((eq args_number 15) "Y")
-        ((eq args_number 15) "Z")
+        ((eq args_number 16) "Q")
+        ((eq args_number 17) "R")
+        ((eq args_number 18) "S")
+        ((eq args_number 19) "T")
+        ((eq args_number 20) "U")
+        ((eq args_number 21) "V")
+        ((eq args_number 22) "W")
+        ((eq args_number 23) "X")
+        ((eq args_number 24) "Y")
+        ((eq args_number 25) "Z")
         (( else) "__ERROR:TOO_MANY_ARGS__")))
 
 

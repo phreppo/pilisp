@@ -550,7 +550,7 @@ test('[COMP] string const', lisp_program_test, args : [
 
 test('[COMP] symbol', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp") (plc \'x)',
-    '(LAP "7" x)',
+    '(LAP "?" x)',
     'CSYM'
 ])
 
@@ -559,7 +559,7 @@ test('[COMP] 0 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car))',
 
-    '(LAP "A" CAR)',
+    '(LAP "$A" CAR)',
     'CBSPAR0'
 ])
 
@@ -567,7 +567,7 @@ test('[COMP] 1 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car \'(a)))',
 
-    '(LAP "!B" (a) CAR)',
+    '(LAP "!$B" (a) CAR)',
     'CBSPAR1'
 ])
 
@@ -575,7 +575,7 @@ test('[COMP] 2 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(cons 1 x))',
 
-    '(LAP "!7C" 1 X CONS)',
+    '(LAP "!?$C" 1 X CONS)',
     'CBSPAR2'
 ])
 
@@ -583,7 +583,7 @@ test('[COMP] 3 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3))',
 
-    '(LAP "!!!D" 1 2 3 LIST)',
+    '(LAP "!!!$D" 1 2 3 LIST)',
     'CBSPAR3'
 ])
 
@@ -591,7 +591,7 @@ test('[COMP] 4 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4))',
 
-    '(LAP "!!!!AE" 1 2 3 4 LIST)',
+    '(LAP "!!!!$E" 1 2 3 4 LIST)',
     'CBSPAR4'
 ])
 
@@ -599,6 +599,6 @@ test('[COMP] N par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4 5 6 7))',
 
-    '(LAP "!!!!!!!AH" 1 2 3 4 5 6 7 LIST)',
+    '(LAP "!!!!!!!$H" 1 2 3 4 5 6 7 LIST)',
     'CBSPARN'
 ])
