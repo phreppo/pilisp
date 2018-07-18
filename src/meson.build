@@ -14,6 +14,7 @@ sources = [
     'pilisp.c',
     'piparser.c',
     'piprint.c',
+    'pistack.c',
     'pitestutils.c',
 ]
 

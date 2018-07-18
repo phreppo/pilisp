@@ -29,6 +29,7 @@ size_t builtin_macros_index; // first free cell
 void init_pi();  // always call this before using pilisp
 void init_builtin_macros();
 void init_builtin_lambdas();
+void init_stack();
 void init_env(); // inits the global env
 void init_symbols();
 
@@ -83,6 +84,7 @@ cell *symbol_write;
 cell *symbol_subseq;
 cell *symbol_reverse;
 cell *symbol_concatenate;
+cell *symbol_lap;
 
 // ==================== KEYWORD SYMBOLS ====================
 cell *symbol_string;

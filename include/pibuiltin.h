@@ -9,6 +9,7 @@
 #define PIBUILTIN_H
 #include "picell.h"
 #include "pilisp.h"
+#include "pistack.h"
 #include <stdbool.h>
 #include <time.h>
 
@@ -85,6 +86,9 @@ cell *quote(const cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
 cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
+
+// ==================== COMPILER FUNCTIONS ====================
+cell * lap(cell * args);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower

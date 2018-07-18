@@ -333,3 +333,13 @@ void print_global_env(const cell *env) {
     act = cdr(act);
   }
 }
+
+void print_stack(){
+  printf(ANSI_COLOR_GREEN "** Stack **\n" ANSI_COLOR_RESET);
+  size_t i =0;
+  for(i=0;i<stack_pointer;i++){
+    printf("%lu \t",i);
+    print_sexpr(*(stack+i));
+    puts("");
+  }
+}

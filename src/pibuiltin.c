@@ -1,6 +1,39 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
+static void execute_code(char instruction, cell ** args){
+  
+  switch (instruction)
+  {
+    case '!':
+      stack_push((*args)->car);
+      // go to next arg
+      break;
+  
+    default:
+      pi_lisp_error("unknown machine code");
+      break;
+  }
+}
+
+cell *lap(cell *args) {
+  cell *machine_code_cell = args->car;
+  args = args->cdr;
+#if CHECKS
+  if (!is_str(machine_code_cell))
+    pi_lisp_error("first arg of lap must be a machine code string");
+#endif
+  char *machine_code = machine_code_cell->str;
+  size_t i = 0;
+  for (i = 0; i < strlen(machine_code); i++) {
+    printf("%c", machine_code[i]);
+    execute_code(machine_code[i],&args);
+    print_stack();
+  }
+  puts("");
+  return NULL;
+}
+
 // handles only strings
 cell *concatenate(const cell *list) {
 #if CHECKS
@@ -16,8 +49,8 @@ cell *concatenate(const cell *list) {
     pi_lisp_error("second arg must be a string");
   if (!is_str(second_string))
     pi_lisp_error("third arg must be a string");
-  // if (symbol_type != symbol_string)
-  //   pi_lisp_error("you can concatenate only strings");
+    // if (symbol_type != symbol_string)
+    //   pi_lisp_error("you can concatenate only strings");
 #endif
   char *first = first_string->str;
   char *second = second_string->str;

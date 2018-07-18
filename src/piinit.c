@@ -60,6 +60,11 @@ void init_builtin_lambdas() {
   symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp);
   symbol_write = mk_builtin_lambda("WRITE",write);
   symbol_concatenate = mk_builtin_lambda("CONCATENATE",concatenate);
+  symbol_lap = mk_builtin_lambda("LAP",lap);
+}
+
+void init_stack(){
+  stack_pointer = 0;
 }
 
 void init_env() {
