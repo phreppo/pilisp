@@ -1,6 +1,39 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
+// handles only strings
+cell *concatenate(const cell *list) {
+#if CHECKS
+  check_three_args(list);
+#endif
+  cell *symbol_type = car(list);
+  cell *first_string = cadr(list);
+  cell *second_string = caddr(list);
+#if CHECKS
+  if (!is_sym(symbol_type))
+    pi_lisp_error("first arg must be a symbol");
+  if (!is_str(first_string))
+    pi_lisp_error("second arg must be a string");
+  if (!is_str(second_string))
+    pi_lisp_error("third arg must be a string");
+  if (symbol_type != symbol_string)
+    pi_lisp_error("you can concatenate only strings");
+#endif
+  char *first = first_string->str;
+  char *second = second_string->str;
+  char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
+  strcpy(new_str, first);
+  strcat(new_str, second);
+  unsafe_cell_remove(first_string);
+  unsafe_cell_remove(second_string);
+  // unsafe_cell_remove(symbol_type); // why don t remove? it a global symbol
+  // that is not in one protected zone, so we can t unmark it
+  cell_remove_args(list);
+  return mk_str(new_str);
+}
+
+// (concatenate 'string "ciao " "sono pazzo")
+
 cell *addition(const cell *numbers) {
   long result = 0;
   const cell *act = numbers;
@@ -803,7 +836,8 @@ cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 int atom(const cell *c) {
   return (c == NULL) ||
          (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD);
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO ||
+          c->type == TYPE_KEYWORD);
 }
 
 bool eq(const cell *v1, const cell *v2) {

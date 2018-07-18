@@ -1,5 +1,26 @@
 #include "piinit.h"
 
+void init_pi() {
+  init_builtin_macros();
+  init_builtin_lambdas();
+  init_memory();
+  init_env();
+  init_symbols();
+}
+
+void init_builtin_macros() {
+  builtin_macros_index = 0;
+  symbol_quote = mk_builtin_macro("QUOTE",quote);
+  symbol_setq = mk_builtin_macro("SETQ",setq);
+  symbol_let = mk_builtin_macro("LET",let);
+  symbol_defun = mk_builtin_macro("DEFUN",defun);
+  symbol_timer = mk_builtin_macro("TIME",timer);
+  symbol_map = mk_builtin_macro("MAP",map);
+  symbol_load = mk_builtin_macro("LOAD",load);
+  symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
+  symbol_cond = mk_builtin_macro("COND",cond);
+}
+
 void init_builtin_lambdas() {
   builtin_lambdas_index = 0;
   symbol_car = mk_builtin_lambda("CAR",builtin_car);
@@ -38,20 +59,7 @@ void init_builtin_lambdas() {
   symbol_integerp = mk_builtin_lambda("INTEGERP",integerp);
   symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp);
   symbol_write = mk_builtin_lambda("WRITE",write);
-  // symbol_quote = mk_builtin_lambda("QUOTE",quote);
-}
-
-void init_builtin_macros() {
-  builtin_macros_index = 0;
-  symbol_quote = mk_builtin_macro("QUOTE",quote);
-  symbol_setq = mk_builtin_macro("SETQ",setq);
-  symbol_let = mk_builtin_macro("LET",let);
-  symbol_defun = mk_builtin_macro("DEFUN",defun);
-  symbol_timer = mk_builtin_macro("TIME",timer);
-  symbol_map = mk_builtin_macro("MAP",map);
-  symbol_load = mk_builtin_macro("LOAD",load);
-  symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
-  symbol_cond = mk_builtin_macro("COND",cond);
+  symbol_concatenate = mk_builtin_lambda("CONCATENATE",concatenate);
 }
 
 void init_env() {
@@ -78,11 +86,8 @@ void init_env() {
   collect_garbage(memory);
 }
 
-void init_pi() {
-  init_builtin_macros();
-  init_builtin_lambdas();
-  init_memory();
-  init_env();
+void init_symbols(){
+  symbol_string = mk_sym("string");
 }
 
 void free_pi() {

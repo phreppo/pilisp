@@ -361,6 +361,19 @@ test('[LISP] keyword test 3', lisp_program_test, args : [
     'LKEYW3'
 ])
 
+test('[LISP] concatenate test 1', lisp_program_test, args : [
+    '(concatenate \'string "Hi " "my friend")',
+    '"Hi my friend"',
+    'LCONCAT1'
+])
+
+test('[LISP] concatenate test 2', lisp_program_test, args : [
+    '(setq str1 "one") (setq str2 "")(concatenate \'string str1 str2)',
+    '"one"',
+    'LCONCAT2'
+])
+
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',

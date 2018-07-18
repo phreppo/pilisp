@@ -27,10 +27,13 @@ void pi_error_few_args();          // throws "too few args"
 void pi_error_many_args();         // throws "too many args"
 
 // ==================== CHECKS ====================
-// checks that the list args has exaclty 2 args
-void check_two_args(const cell *args);
+
 // checks that the list args has exaclty 1 args
 void check_one_arg(const cell *args);
+// checks that the list args has exaclty 2 args
+void check_two_args(const cell *args);
+// checks that the list args has exaclty 3 args
+void check_three_args(const cell *args);
 
 // ==================== LAST ERROR ====================
 int get_last_error();
