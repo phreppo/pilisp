@@ -26,7 +26,8 @@ void stack_cdr(size_t stack_base, unsigned char nargs) {
 void stack_list(size_t stack_base, unsigned char nargs) {
   cell *head = NULL;
   cell *last_created = NULL;
-  for (int i = 0; i < nargs; i++) {
+  size_t i=0;
+  for (i = 0; i < nargs; i++) {
     stack_pointer--;
     if (i == 0) {
       last_created = head = mk_cons(stack[stack_base + i], NULL);
