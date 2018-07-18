@@ -6,6 +6,7 @@ test_path = meson.source_root()+'/test/'
 expressions_path = test_path+'expressions/'
 programs_path = test_path+'lisp_programs/'
 bad_expressions_path = expressions_path+'badexpressions/'
+compiler_path = test_path+'../compiler/'
 
 # Parser test for accepted sexpressions
 parser_accepted_strings_test = executable(
@@ -527,4 +528,77 @@ test('[LOAD] map and maze with variables', lisp_program_load_test, args :  [
     '(map solvemaze \'(maze1 maze2))',
     '((2 3 1 0) (6 7 8 5 2 1 4 3 0))',
     'MAPMAZEVAR'
+])
+
+test('[COMP] load compiler', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp") t',
+    't',
+    'CLOAD'
+])
+
+test('[COMP] number const', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp") (cc \'1)',
+    '(LAP "!" 1)',
+    'CCONSTNUM'
+])
+
+test('[COMP] string const', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp") (cc \'"hi")',
+    '(LAP "!" "hi")',
+    'CCONSTSTR'
+])
+
+test('[COMP] symbol', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp") (cc \'x)',
+    '(LAP "7" x)',
+    'CSYM'
+])
+
+
+test('[COMP] 0 par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(car))',
+
+    '(LAP "A" CAR)',
+    'CBSPAR0'
+])
+
+test('[COMP] 1 par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(car \'(a)))',
+
+    '(LAP "!B" (a) CAR)',
+    'CBSPAR1'
+])
+
+test('[COMP] 2 par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(cons 1 x))',
+
+    '(LAP "!7C" 1 X CONS)',
+    'CBSPAR2'
+])
+
+test('[COMP] 3 par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(list 1 2 3))',
+
+    '(LAP "!!!D" 1 2 3 LIST)',
+    'CBSPAR3'
+])
+
+test('[COMP] 4 par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(list 1 2 3 4))',
+
+    '(LAP "!!!!AE" 1 2 3 4 LIST)',
+    'CBSPAR4'
+])
+
+test('[COMP] N par BS', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(cc \'(list 1 2 3 4 5 6 7))',
+
+    '(LAP "!!!!!!!AH" 1 2 3 4 5 6 7 LIST)',
+    'CBSPARN'
 ])
