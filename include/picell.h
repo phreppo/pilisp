@@ -165,9 +165,10 @@ void free_cell_pointed_memory(cell *c);
 inline bool is_num(const cell *c) { return c->type == TYPE_NUM; }
 inline bool is_str(const cell *c) { return c->type == TYPE_STR; }
 inline bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+inline bool is_keyword(const cell *c) { return c->type == TYPE_KEYWORD; }
 inline bool is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
+         c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD;
 }
 inline bool is_builtin(const cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
@@ -183,6 +184,7 @@ bool is_num(const cell *c);
 bool is_str(const cell *c);
 bool is_cons(const cell *c);
 bool is_sym(const cell *c);
+bool is_keyword(const cell *c);
 bool is_builtin(const cell *c);
 bool is_builtin_lambda(const cell *c);
 bool is_builtin_macro(const cell *c);

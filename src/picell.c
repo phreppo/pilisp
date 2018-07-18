@@ -129,13 +129,14 @@ cell *copy_cell(const cell *c) {
     case TYPE_STR:
       copy = mk_str(c->str);
       break;
+    case TYPE_KEYWORD:
     case TYPE_BUILTINLAMBDA:
     case TYPE_BUILTINMACRO:
     case TYPE_SYM:
       copy = mk_sym(c->sym);
       break;
     default:
-      break;
+      pi_lisp_error("Unknown cell type: can't copy");
     }
   } else if (is_cons(c))
     copy = mk_cons(copy_cell(car(c)), copy_cell(cdr(c)));
@@ -568,9 +569,10 @@ cell *mk_cons(cell *car, cell *cdr) {
 bool is_num(const cell *c) { return c->type == TYPE_NUM; }
 bool is_str(const cell *c) { return c->type == TYPE_STR; }
 bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
+bool is_keyword(const cell *c) { return c->type == TYPE_KEYWORD; }
 bool is_sym(const cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
-         c->type == TYPE_BUILTINMACRO;
+         c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD;
 }
 bool is_builtin(const cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;

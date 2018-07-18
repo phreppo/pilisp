@@ -95,7 +95,7 @@ inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 inline int atom(const cell *c) {
   return (c == NULL) ||
          (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO);
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD);
 }
 
 inline bool eq(const cell *v1, const cell *v2) {

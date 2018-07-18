@@ -337,6 +337,30 @@ test('[LISP] reverse test 2', lisp_program_test, args : [
     'LREVERSE2'
 ])
 
+test('[LISP] keyword test 1', lisp_program_test, args : [
+    ':imakeyword',
+    ':imakeyword',
+    'LKEYW1'
+])
+
+test('[LISP] keyword test 2', lisp_program_test, args : [
+    '(atom :imakeyword)',
+    'T',
+    'LKEYW2'
+])
+
+test('[LISP] keyword test 3', lisp_program_test, args : [
+    '(eq :imakeyword :imakeyword)',
+    'T',
+    'LKEYW3'
+])
+
+test('[LISP] keyword test 3', lisp_program_test, args : [
+    '(eq :imakeyword :13)',
+    'NIL',
+    'LKEYW3'
+])
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',

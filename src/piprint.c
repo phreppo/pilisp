@@ -22,6 +22,7 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
     case TYPE_STR:
       printf("\"%s\"", c->str);
       break;
+    case TYPE_KEYWORD:
     case TYPE_BUILTINLAMBDA:
     case TYPE_BUILTINMACRO:
     case TYPE_SYM:
@@ -61,6 +62,7 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
     case TYPE_STR:
       printf("\"%s\"", c->str);
       break;
+    case TYPE_KEYWORD:
     case TYPE_BUILTINMACRO:
     case TYPE_BUILTINLAMBDA:
       printf("%s", c->sym);
@@ -258,6 +260,9 @@ void print_cell(const cell *cell) {
       break;
     case TYPE_STR:
       printf("STR" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->str);
+      break;
+    case TYPE_KEYWORD:
+      printf("KEYW" ANSI_COLOR_LIGHT_BLUE "\t%s" ANSI_COLOR_RESET, cell->sym);
       break;
     case TYPE_BUILTINLAMBDA:
     case TYPE_BUILTINMACRO:

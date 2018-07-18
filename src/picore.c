@@ -193,7 +193,7 @@ cell *eval(cell *e, cell *a) {
       // NIL
       evaulated = NULL;
     else {
-      if (is_num(e) || is_str(e))
+      if (is_num(e) || is_str(e) || is_keyword(e))
         // VALUE
         evaulated = e;
       else {
