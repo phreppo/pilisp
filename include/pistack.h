@@ -3,6 +3,7 @@
 #include "picell.h"
 
 void stack_push(cell * c);
-void stack_pop();
+cell * stack_pop();
+void stack_car(size_t stack_base);
 
 #endif

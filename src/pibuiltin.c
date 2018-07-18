@@ -1,21 +1,6 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
-static void execute_code(char instruction, cell ** args){
-  
-  switch (instruction)
-  {
-    case '!':
-      stack_push((*args)->car);
-      // go to next arg
-      break;
-  
-    default:
-      pi_lisp_error("unknown machine code");
-      break;
-  }
-}
-
 cell *lap(cell *args) {
   cell *machine_code_cell = args->car;
   args = args->cdr;
@@ -25,13 +10,42 @@ cell *lap(cell *args) {
 #endif
   char *machine_code = machine_code_cell->str;
   size_t i = 0;
+  size_t stack_base = stack_pointer;
+  char instruction;
   for (i = 0; i < strlen(machine_code); i++) {
-    printf("%c", machine_code[i]);
-    execute_code(machine_code[i],&args);
-    print_stack();
+    instruction = machine_code[i];
+    switch (instruction) {
+
+    case '!':
+      // load const
+      stack_push(args->car);
+      args=args->cdr;
+      break;
+      
+    case 'B':
+      // call builtin stack with 1 param
+      stack_push(args->car);
+      args=args->car;
+      stack_pointer--;
+      stack_cdr(stack_base);
+      break;
+
+    default:
+      pi_lisp_error("unknown machine code");
+      break;
+    }
   }
-  puts("");
-  return NULL;
+#if CHECKS
+  if (stack_pointer > (stack_base + 1))
+    pi_lisp_error("stack error: there's something left on the stack");
+  if (stack_pointer < (stack_base + 1))
+    pi_lisp_error(
+        "stack error: something has removed too much args on the stack");
+#endif
+  // cell * ret = stack[stack_pointer-1];
+  // stack_pointer--;
+  // print_stack();
+  return stack_pop();
 }
 
 // handles only strings

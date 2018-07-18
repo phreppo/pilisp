@@ -19,6 +19,7 @@ void init_builtin_macros() {
   symbol_load = mk_builtin_macro("LOAD",load);
   symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
   symbol_cond = mk_builtin_macro("COND",cond);
+  symbol_lap = mk_builtin_macro("LAP",lap);
 }
 
 void init_builtin_lambdas() {
@@ -60,7 +61,6 @@ void init_builtin_lambdas() {
   symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp);
   symbol_write = mk_builtin_lambda("WRITE",write);
   symbol_concatenate = mk_builtin_lambda("CONCATENATE",concatenate);
-  symbol_lap = mk_builtin_lambda("LAP",lap);
 }
 
 void init_stack(){
