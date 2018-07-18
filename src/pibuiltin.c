@@ -19,15 +19,18 @@ cell *lap(cell *args) {
     case '!':
       // load const
       stack_push(args->car);
-      args=args->cdr;
+      args = args->cdr;
       break;
-      
-    case 'B':
-      // call builtin stack with 1 param
+
+    case '$': // call builtin stack
       stack_push(args->car);
-      args=args->car;
+      // (lap "!$" ((a)) car)
+      unsigned char nargs =  (unsigned char) machine_code[i+1] - 'A';
+      i++;
+      cell * fun = args->car;
+      args = args->cdr;
       stack_pointer--;
-      stack_cdr(stack_base);
+      fun->bs(stack_base, nargs);
       break;
 
     default:
