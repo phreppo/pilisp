@@ -47,6 +47,8 @@
 
 (defun compile_atom (x)
     (cond
+        (( null x)
+            (cons :loadconst x))
         ((symbolp x)    
             (cons :loadsymbol x)) 
         (( else)              
