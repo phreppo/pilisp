@@ -74,9 +74,12 @@ void init_env() {
 
       "(setq d \"./test/lisp_programs/diff.lisp\")"
 
+      "(defun null (arg) (not arg))"
+
       "(setq p \"./examples/a.lisp\")"
 
-      "(setq compiler \"./lc.l\")"
+      "(setq compiler \"./src/compiler/compiler.lisp\")"
+      "(load compiler)"
 
       "(setq b \"./examples/bench.lisp\")"
 

@@ -16,8 +16,8 @@ cell *concatenate(const cell *list) {
     pi_lisp_error("second arg must be a string");
   if (!is_str(second_string))
     pi_lisp_error("third arg must be a string");
-  if (symbol_type != symbol_string)
-    pi_lisp_error("you can concatenate only strings");
+  // if (symbol_type != symbol_string)
+  //   pi_lisp_error("you can concatenate only strings");
 #endif
   char *first = first_string->str;
   char *second = second_string->str;
