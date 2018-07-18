@@ -1,5 +1,5 @@
-(load "instructions_generator.lisp")
-(load "machine_code_generator.lisp")
+(load "./compiler/instructions_generator.lisp")
+(load "./compiler/machine_code_generator.lisp")
 
 ; (cc '[EXPRESSION]) -> (lap [LAP_STRING] {ARGS_LIST})
 (defun cc (not_evaluated_expression)

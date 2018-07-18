@@ -68,6 +68,8 @@ void init_env() {
 
       "(setq p \"./examples/a.lisp\")"
 
+      "(setq compiler \"./lc.l\")"
+
       "(setq b \"./examples/bench.lisp\")"
 
       "(setq f \"./examples/functions.lisp\")"
