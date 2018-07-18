@@ -47,3 +47,12 @@
 (write "-- Compiled --")
 (terpri )
 (terpri )
+
+((#lambdalap (1 . 0) ("11C" cons) 100)
+((#lambda (2 . 0) (#lap "12C" cons) 100 200)
+((#lambdalap(4 . 0)("1230DAE" list)) 1 2 3 4)
+
+(setq ll '(#lambdalap (2.0) ("12C" cons)))
+(#lap "!!c" 100 100 ll) ; questo non va ma dovrebbe andare
+; questo non va bene
+; quando compilo il lap sia per lambdalap ho bisogno di una symbol table
