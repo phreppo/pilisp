@@ -1,7 +1,7 @@
 ; compiler cases
 ; (#lap "!B" (a b c) cdr)
 
-(load "./compiler/compiler.lisp")
+(load "compiler.lisp")
 
 (terpri )
 (terpri )
@@ -31,7 +31,7 @@
 (terpri)
 
 (write 
-    ( get_interpretable_code '((:LOADCONST . 1) (:CBS1 . CAR))))
+    ( get_interpretable_code '((:LOADCONST . 1) (:CBS . CAR))))
 (terpri)
 
 (write 

@@ -5,7 +5,7 @@
 ; (plc '[EXPRESSION]) -> (lap [LAP_STRING] {ARGS_LIST})
 (defun plc (not_evaluated_expression)
     ( get_interpretable_code 
-        ( first_compile not_evaluated_expression)))
+        ( _compile not_evaluated_expression)))
 
 ;; ****************************************************************
 ;; *=================== Instructions Generator ===================*
@@ -24,31 +24,19 @@
 
 ; why not directly compile? because (plc '1) would give back 
 ; (:loadconst 1) instead of ((:loadconst 1)) 
-(defun first_compile (expr)
+(defun _compile (expr)
     (cond 
         ((atom expr) 
             (list ( compile_atom expr)))
         
         (( is_quoted_expression expr)
             (list ( compile_quote expr)))
-            
-        (( else)
-            ( _compile expr))))
-
-(defun _compile (expr)
-    (cond
-        ((atom expr)
-            ( compile_atom expr))
         
-        (( is_quoted_expression expr)
-            ( compile_quote expr))
-
         ((atom (car expr))
             ( compile_atom_function expr)) 
 
         (( else )
-            "_ERROR:UNRECOGNIZED_FUNCTION_") 
-    ))
+            "_ERROR:UNRECOGNIZED_FUNCTION_")))
 
 ;; ==================== Atom or Quote Compiling ====================
 
@@ -99,7 +87,7 @@
         ((null args_list) 
             ( create_builtin_stack_trailer fun initial_args_number))
         (( else)  
-            (cons 
+            (append 
             ( compile_first_arg args_list)
             ( compile_remaining_list_and_append_builtin_stack fun args_list initial_args_number)))))
 
