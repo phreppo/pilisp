@@ -398,49 +398,6 @@ test('[LISP] append test 3', lisp_program_test, args : [
     'LAPPEND4'
 ])
 
-# ==================== ASM ====================
-test('[ASM] load const 1', lisp_program_test, args : [
-    '(ASM "!" 1)',
-    '1',
-    'ASMLCONST1'
-])
-
-test('[ASM] load const 2', lisp_program_test, args : [
-    '(ASM "!" "hi")',
-    '"hi"',
-    'ASMLCONST2'
-])
-
-test('[ASM] builtin stack call car', lisp_program_test, args : [
-    '(ASM "!$B" (A B) CAR)',
-    'A',
-    'ASMLCBS1'
-])
-
-test('[ASM] builtin stack call cdr', lisp_program_test, args : [
-    '(ASM "!$B" (A B) CDR)',
-    '(B)',
-    'ASMLCBS2'
-])
-
-test('[ASM] (car (cdr \'(a b)))', lisp_program_test, args : [
-    '(ASM "!$B$B" (A B) CDR CAR)',
-    'B',
-    'ASMLCBS3'
-])
-
-test('[ASM] (list 1 2 3 4)', lisp_program_test, args : [
-    '(ASM "!!!!$E" 1 2 3 4 LIST)',
-    '(1 2 3 4)',
-    'ASMLCBS4'
-])
-
-test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
-    '(ASM "!!!!$B$E" 1 2 3 (4) CAR LIST)',
-    '(1 2 3 4)',
-    'ASMLCBS4'
-])
-
 # ==================== MACROS ====================
 
 test('[MACRO] simple macro test', lisp_program_test, args : [
@@ -679,10 +636,68 @@ test('[COMP] nested car and cdr stack 1', lisp_program_test, args : [
     'CNESTEDBS1'
 ])
 
-test('[COMP] nested lsit and car stack 2', lisp_program_test, args : [
+test('[COMP] nested list and car stack 2', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 (car \'(a))))',
 
     '(ASM "!!!!$B$E" 1 2 3 (a) CAR LIST)',
     'CNESTEDBS2'
+])
+
+test('[COMP] nested list, car and cdr stack 2', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(list 1 (car \'(2)) 3 (car (cdr \'(a b)))))',
+
+    '(ASM "!!$B!!$B$B$E" 1 (2) CAR 3 (A B) CDR CAR LIST)',
+    'CNESTEDBS3'
+])
+
+
+# ==================== ASM ====================
+test('[ASM] load const 1', lisp_program_test, args : [
+    '(ASM "!" 1)',
+    '1',
+    'ASMLCONST1'
+])
+
+test('[ASM] load const 2', lisp_program_test, args : [
+    '(ASM "!" "hi")',
+    '"hi"',
+    'ASMLCONST2'
+])
+
+test('[ASM] builtin stack call car', lisp_program_test, args : [
+    '(ASM "!$B" (A B) CAR)',
+    'A',
+    'ASMLCBS1'
+])
+
+test('[ASM] builtin stack call cdr', lisp_program_test, args : [
+    '(ASM "!$B" (A B) CDR)',
+    '(B)',
+    'ASMLCBS2'
+])
+
+test('[ASM] (car (cdr \'(a b)))', lisp_program_test, args : [
+    '(ASM "!$B$B" (A B) CDR CAR)',
+    'B',
+    'ASMLCBS3'
+])
+
+test('[ASM] (list 1 2 3 4)', lisp_program_test, args : [
+    '(ASM "!!!!$E" 1 2 3 4 LIST)',
+    '(1 2 3 4)',
+    'ASMLCBS4'
+])
+
+test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
+    '(ASM "!!!!$B$E" 1 2 3 (4) CAR LIST)',
+    '(1 2 3 4)',
+    'ASMLCBS4'
+])
+
+test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
+    '(ASM "!!$B!!$B$B$E" 1 (2) CAR 3 (A B) CDR CAR LIST)',
+    '(1 2 3 B)',
+    'ASMLCBS5'
 ])
