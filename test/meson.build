@@ -398,6 +398,51 @@ test('[LISP] append test 3', lisp_program_test, args : [
     'LAPPEND4'
 ])
 
+# ==================== ASM ====================
+test('[ASM] load const 1', lisp_program_test, args : [
+    '(ASM "!" 1)',
+    '1',
+    'ASMLCONST1'
+])
+
+test('[ASM] load const 2', lisp_program_test, args : [
+    '(ASM "!" "hi")',
+    '"hi"',
+    'ASMLCONST2'
+])
+
+test('[ASM] builtin stack call car', lisp_program_test, args : [
+    '(ASM "!$B" (A B) CAR)',
+    'A',
+    'ASMLCBS1'
+])
+
+test('[ASM] builtin stack call cdr', lisp_program_test, args : [
+    '(ASM "!$B" (A B) CDR)',
+    '(B)',
+    'ASMLCBS2'
+])
+
+test('[ASM] (car (cdr \'(a b)))', lisp_program_test, args : [
+    '(ASM "!$B$B" (A B) CDR CAR)',
+    'B',
+    'ASMLCBS3'
+])
+
+test('[ASM] (list 1 2 3 4)', lisp_program_test, args : [
+    '(ASM "!!!!$E" 1 2 3 4 LIST)',
+    '(1 2 3 4)',
+    'ASMLCBS4'
+])
+
+test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
+    '(ASM "!!!!$B$E" 1 2 3 (4) CAR LIST)',
+    '(1 2 3 4)',
+    'ASMLCBS4'
+])
+
+# ==================== MACROS ====================
+
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
     '1',
@@ -561,19 +606,19 @@ test('[COMP] load compiler', lisp_program_test, args : [
 
 test('[COMP] number const', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp") (plc \'1)',
-    '(LAP "!" 1)',
+    '(ASM "!" 1)',
     'CCONSTNUM'
 ])
 
 test('[COMP] string const', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp") (plc \'"hi")',
-    '(LAP "!" "hi")',
+    '(ASM "!" "hi")',
     'CCONSTSTR'
 ])
 
 test('[COMP] symbol', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp") (plc \'x)',
-    '(LAP "?" x)',
+    '(ASM "?" x)',
     'CSYM'
 ])
 
@@ -582,7 +627,7 @@ test('[COMP] 0 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car))',
 
-    '(LAP "$A" CAR)',
+    '(ASM "$A" CAR)',
     'CBSPAR0'
 ])
 
@@ -590,7 +635,7 @@ test('[COMP] 1 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car \'(a)))',
 
-    '(LAP "!$B" (a) CAR)',
+    '(ASM "!$B" (a) CAR)',
     'CBSPAR1'
 ])
 
@@ -598,7 +643,7 @@ test('[COMP] 2 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(cons 1 x))',
 
-    '(LAP "!?$C" 1 X CONS)',
+    '(ASM "!?$C" 1 X CONS)',
     'CBSPAR2'
 ])
 
@@ -606,7 +651,7 @@ test('[COMP] 3 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3))',
 
-    '(LAP "!!!$D" 1 2 3 LIST)',
+    '(ASM "!!!$D" 1 2 3 LIST)',
     'CBSPAR3'
 ])
 
@@ -614,7 +659,7 @@ test('[COMP] 4 par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4))',
 
-    '(LAP "!!!!$E" 1 2 3 4 LIST)',
+    '(ASM "!!!!$E" 1 2 3 4 LIST)',
     'CBSPAR4'
 ])
 
@@ -622,6 +667,22 @@ test('[COMP] N par BS', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4 5 6 7))',
 
-    '(LAP "!!!!!!!$H" 1 2 3 4 5 6 7 LIST)',
+    '(ASM "!!!!!!!$H" 1 2 3 4 5 6 7 LIST)',
     'CBSPARN'
+])
+
+test('[COMP] nested car and cdr stack 1', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(car (cdr \'(a))))',
+
+    '(ASM "!$B$B" (a) CDR CAR)',
+    'CNESTEDBS1'
+])
+
+test('[COMP] nested lsit and car stack 2', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(list 1 2 3 (car \'(a))))',
+
+    '(ASM "!!!!$B$E" 1 2 3 (a) CAR LIST)',
+    'CNESTEDBS2'
 ])

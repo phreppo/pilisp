@@ -19,7 +19,7 @@ void init_builtin_macros() {
   symbol_load = mk_builtin_macro("LOAD",load);
   symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
   symbol_cond = mk_builtin_macro("COND",cond);
-  symbol_lap = mk_builtin_macro("LAP",lap);
+  symbol_asm = mk_builtin_macro("ASM",asm_call);
 }
 
 void init_builtin_lambdas() {

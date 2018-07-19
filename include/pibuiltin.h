@@ -89,7 +89,7 @@ cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
 
 // ==================== COMPILER FUNCTIONS ====================
-cell * lap(cell * args);
+cell * asm_call(cell * args);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower

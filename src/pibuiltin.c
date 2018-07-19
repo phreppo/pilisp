@@ -23,12 +23,12 @@ cell *append(cell *list) {
   return first_list;
 }
 
-cell *lap(cell *args) {
+cell * asm_call(cell *args) {
   cell *machine_code_cell = args->car;
   args = args->cdr;
 #if CHECKS
   if (!is_str(machine_code_cell))
-    pi_lisp_error("first arg of lap must be a machine code string");
+    pi_lisp_error("first arg of asm must be a machine code string");
 #endif
   char *machine_code = machine_code_cell->str;
   size_t i = 0;
@@ -45,14 +45,15 @@ cell *lap(cell *args) {
       break;
 
     case '$': // call builtin stack
+      // (asm "!$" ((a)) car)
       stack_push(args->car);
-      // (lap "!$" ((a)) car)
+      // get the next machine code: it will be the number of params
       unsigned char nargs = (unsigned char)machine_code[i + 1] - 'A';
       i++;
       cell *fun = args->car;
       args = args->cdr;
       stack_pointer--;
-      fun->bs(stack_base, nargs);
+      fun->bs(stack_pointer - nargs, nargs);
       break;
 
     default:

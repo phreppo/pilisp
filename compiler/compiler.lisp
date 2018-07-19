@@ -2,7 +2,7 @@
 ;; *====================== Pilisp Compiler =======================*
 ;; **************************************************************** 
 
-; (plc '[EXPRESSION]) -> (lap [LAP_STRING] {ARGS_LIST})
+; (plc '[EXPRESSION]) -> (asm [ASM_STRING] {ARGS_LIST})
 (defun plc (not_evaluated_expression)
     ( get_interpretable_code 
         ( _compile not_evaluated_expression)))
@@ -116,9 +116,9 @@
 ;; *****************************************************************
 
 ; ((:[INSTRUCTION] . [PARAM]) {(:[INSTRUCTION] . [PARAM])} ) 
-;           -> (LAP "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
+;           -> (ASM "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
 (defun get_interpretable_code (compiled_expression)
-    (cons 'lap 
+    (cons 'asm 
         (cons 
         ( extract_machine_code_string compiled_expression ) 
         ( extract_args compiled_expression))))

@@ -97,7 +97,7 @@ cell *symbol_defun;
 cell *symbol_map;
 cell *symbol_cond;
 cell *symbol_quote;
-cell *symbol_lap;
+cell *symbol_asm;
 
 #endif // !PIINIT_H
 cell *symbol_concatenate;

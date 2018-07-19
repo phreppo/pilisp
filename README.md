@@ -35,7 +35,7 @@ To produce bytecode run:
 
 The result will be something like:
 ```
-(lap "{byte code}" {args})
+(asm "{byte code}" {args})
 ```
 
 that can be executed.
