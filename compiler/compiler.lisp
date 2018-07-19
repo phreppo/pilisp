@@ -30,48 +30,61 @@
 
 ; why not directly compile? because (plc '1) would give back 
 ; (:loadconst 1) instead of ((:loadconst 1)) 
-(defun _compile (expr)
+(defun _compile (expr symbol_table)
     (cond 
         ((atom expr) 
-            (list ( compile_atom expr)))
+            (list ( compile_atom expr symbol_table)))
         
         (( is_quoted_expression expr)
             (list ( compile_quote expr)))
         
         ((atom (car expr))
-            ( compile_atom_function expr)) 
+            ( compile_atom_function expr symbol_table)) 
 
         (( else )
             "_ERROR:UNRECOGNIZED_FUNCTION_")))
 
 ;; ==================== Atom or Quote Compiling ====================
 
-(defun compile_atom (x)
+(defun compile_atom (ato symbol_table)
     (cond
-        (( null x)
-            (cons :loadconst x))
-        ((symbolp x)    
-            (cons :loadsymbol x)) 
+        (( null ato)
+            (cons :loadconst ato))
+        (( has_value_in_stack ato symbol_table)
+            ;; ALLORA QUALCOSA DI MANGICO CHE CARICHI DALLO STACK CON DOPO LA POSIZIONE)
+            (cons :loadstack ato))
+        ((symbolp ato)    
+            ;; qui cerca nella symbol table
+            (cons :loadsymbol ato)) 
         (( else)              
-            (cons :loadconst x))))
+            (cons :loadconst ato))))
+
+(defun has_value_in_stack (name symbol_table)
+    (cond 
+        ((null symbol_table) nil)
+        ((eq name ( extract_first_symbol symbol_table)) t)
+        (( else) ( has_value_in_stack name ( next symbol_table)))))
+
+(defun extract_first_symbol (symbol_table)
+    (car (car symbol_table)))
 
 (defun compile_quote (quote_expression)
-    (cons :loadconst ( cons_cell quote_expression)))
+    (cons :loadconst ( extract_cons_cell quote_expression)))
 
-(defun cons_cell (quote_expression)
+(defun extract_cons_cell (quote_expression)
      (car (cdr quote_expression)))
 
 ;; ==================== Atom function Compiling ====================
 
-(defun compile_atom_function (expr)
-    ( compile_atom_function_name_args (car expr) (cdr expr)))
+(defun compile_atom_function (expr symbol_table)
+    ( compile_atom_function_name_args (car expr) (cdr expr) symbol_table))
 
-(defun compile_atom_function_name_args (fun args)
+(defun compile_atom_function_name_args (fun args symbol_table)
     (cond 
         (( is_builtin_stack fun) 
-            ( compile_builtin_stack fun args))
+            ( compile_builtin_stack fun args symbol_table))
         (( is_lambda fun)
-            ( compile_lambda fun args))
+            ( compile_lambda fun args symbol_table))
         (( else) 
             nil)))
 
@@ -81,27 +94,27 @@
 (defun is_lambda (fun)
     (eq fun 'lambda))
 
-;; Builtin stack compiling
+;; ==================== Builtin stack compiling ====================
 
-(defun compile_builtin_stack (fun args_list)
-    ( compile_args_and_append_builtin_stack fun args_list ( count_args args_list)))
+(defun compile_builtin_stack (fun args_list symbol_table)
+    ( compile_args_and_append_builtin_stack fun args_list ( count_args args_list) symbol_table))
 
 ; why keep passing fun? -> no list surgery, but when found the botton
 ; naturally append the function apply
-(defun compile_args_and_append_builtin_stack (fun args_list initial_args_number)
+(defun compile_args_and_append_builtin_stack (fun args_list initial_args_number symbol_table)
     (cond 
         ((null args_list) 
             ( create_builtin_stack_trailer fun initial_args_number))
         (( else)  
             (append 
-            ( compile_first_arg args_list)
-            ( compile_remaining_list_and_append_builtin_stack fun args_list initial_args_number)))))
+            ( compile_first_arg args_list symbol_table)
+            ( compile_remaining_list_and_append_builtin_stack fun args_list initial_args_number symbol_table)))))
 
-(defun compile_first_arg (args_list)
-    ( _compile (car args_list)))
+(defun compile_first_arg (args_list symbol_table)
+    ( _compile (car args_list) symbol_table))
 
-(defun compile_remaining_list_and_append_builtin_stack (fun args_list initial_args_number)
-    ( compile_args_and_append_builtin_stack fun ( next args_list) initial_args_number))
+(defun compile_remaining_list_and_append_builtin_stack (fun args_list initial_args_number symbol_table)
+    ( compile_args_and_append_builtin_stack fun ( next args_list) initial_args_number symbol_table))
 
 (defun create_builtin_stack_trailer (fun initial_args_number)
     (list 
@@ -111,24 +124,35 @@
 (defun get_params_trailer (args_number)
     (cons :argsnum args_number))
 
-;; TODO: Compile Lambda
-(defun compile_lambda (fun args)
+;; ==================== Lambda Compiling ====================
+
+(defun compile_lambda (fun args symbol_table)
     (let (
         (lambda_args  ( extract_lambda_args args))
         (lambda_body  ( extract_lambda_body args))
-        (symbol_table ( build_symbol_table ( extract_lambda_args args))))
-    (list ; maybe cons here
+        (new_symbol_table ( build_symbol_table ( extract_lambda_args args) symbol_table)))
+    (cons ; maybe cons here
         ( build_lambda_args_number_instruction lambda_args)
-        ( build_lambda_body_instruction_list lambda_body symbol_table)))
-)
+        ( build_lambda_body_instruction_list lambda_body new_symbol_table))))
 
-(defun build_symbol_table (lambda_args)
-    ( build_symbol_table_with_position lambda_args 0))
+;; @ BUILD LAMBDA BODY
+(defun build_lambda_body_instruction_list (lambda_body symbol_table) 
+    ( _compile lambda_body symbol_table))
+
+;; @ SYMBOL TABLE
+;; pushes on the top of the old symbol table the new symbols
+(defun build_symbol_table (lambda_args old_symbol_table)
+    (let 
+        ((new_symbol_table_head 
+            (reverse ( build_symbol_table_with_position lambda_args 0)))) 
+    (append 
+        new_symbol_table_head
+        old_symbol_table)))
 
 ; we need the position to set that number in the pair (x . 0)
 (defun build_symbol_table_with_position (lambda_args actual_position)
     (cond 
-        ((null lambda_args) NIL)
+        ((null lambda_args) nil)
         (( else) ( build_one_symbol_and_the_rest_of_the_list lambda_args actual_position))))
 
 (defun build_one_symbol_and_the_rest_of_the_list (lambda_args actual_position)
@@ -141,16 +165,6 @@
 
 (defun build_lambda_args_number_instruction (lambda_args)
     (cons :lambdanargs ( count_args lambda_args)))
-
-; TODO HERE
-(defun build_lambda_body_instruction_list (lambda_body symbol_table) 
-    (cons :HEYHEY :WOWO )
-)
-
-(defun compile_with_symbol_table (lambda_body symbol_table)
-    
-)
-
 
 ; @param lambda cons -> ((x y z) (+ x y z))
 (defun extract_lambda_args (lambda_cons)

@@ -89,6 +89,8 @@ void init_env() {
       "(setq b \"./examples/bench.lisp\")"
 
       "(setq f \"./examples/functions.lisp\")"
+
+      "(setq c compiler)"
       );
   parse_file(".piinit");
   collect_garbage(memory);
