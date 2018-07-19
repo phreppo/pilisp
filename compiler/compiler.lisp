@@ -11,7 +11,7 @@
 ; (plc '[EXPRESSION]) -> (asm [ASM_STRING] {ARGS_LIST})
 (defun plc (not_evaluated_expression)
     ( get_interpretable_code 
-        ( _compile not_evaluated_expression)))
+        ( _compile not_evaluated_expression nil)))
 
 ;; ****************************************************************
 ;; *=================== Instructions Generator ===================*
@@ -26,7 +26,7 @@
 ;      :cbsn -> call builtin stack with n > 3 params
 
 (setq builtin_stack_lambdas 
-    '( car cdr cons atom eq list))
+    '( car cdr cons atom eq list +))
 
 ; why not directly compile? because (plc '1) would give back 
 ; (:loadconst 1) instead of ((:loadconst 1)) 
@@ -51,9 +51,8 @@
         (( null ato)
             (cons :loadconst ato))
         (( has_value_in_stack ato symbol_table)
-            ;; ALLORA QUALCOSA DI MANGICO CHE CARICHI DALLO STACK CON DOPO LA POSIZIONE)
-            (cons :loadstack ato))
-        ((symbolp ato)    
+            (cons :loadstack ( get_stack_index ato symbol_table)))
+        ((symbolp ato)
             ;; qui cerca nella symbol table
             (cons :loadsymbol ato)) 
         (( else)              
@@ -65,8 +64,19 @@
         ((eq name ( extract_first_symbol symbol_table)) t)
         (( else) ( has_value_in_stack name ( next symbol_table)))))
 
+(defun get_stack_index (name symbol_table)
+    (cond 
+        ((null symbol_table) nil) ; ERROR
+        ((eq name ( extract_first_symbol symbol_table))
+            ( extract_first_index symbol_table))
+        (( else)
+            ( get_stack_index name ( next symbol_table)))))
+
 (defun extract_first_symbol (symbol_table)
     (car (car symbol_table)))
+
+(defun extract_first_index (symbol_table)
+    (cdr (car symbol_table)))
 
 (defun compile_quote (quote_expression)
     (cons :loadconst ( extract_cons_cell quote_expression)))
@@ -182,10 +192,22 @@
 ; ((:[INSTRUCTION] . [PARAM]) {(:[INSTRUCTION] . [PARAM])} ) 
 ;           -> (ASM "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
 (defun get_interpretable_code (compiled_expression)
-    (cons 'asm 
-        (cons 
-        ( extract_machine_code_string compiled_expression ) 
-        ( extract_args compiled_expression))))
+    (cond 
+    ((not (eq :lambdanargs (car (car compiled_expression))))
+        ; asm
+        (cons 'asm 
+            ( build_interpretable_string_and_args compiled_expression)))
+    (( else)
+        ; lambdaasm
+        (cons 'lasm
+            (cons 
+                (cdr (car compiled_expression))
+                ( build_interpretable_string_and_args ( next compiled_expression)))))))
+
+(defun build_interpretable_string_and_args (compiled_expression)
+    (cons 
+    ( extract_machine_code_string compiled_expression ) 
+    ( extract_args compiled_expression)))
 
 (defun extract_instruction_code (compiled_expression)
     (car (car compiled_expression)))
@@ -214,7 +236,10 @@
 ;   (:LOADCONST . 4) (:CBS0 . LIST) (:ARGSNUM . 4))
 ; -> must not append the last 4 to the list
 (defun must_ignore_arg (compiled_expression)
-    (eq :argsnum ( extract_instruction_code compiled_expression)))
+    (cond
+        ((eq :argsnum ( extract_instruction_code compiled_expression)) t)
+        ((eq :loadstack ( extract_instruction_code compiled_expression)) t)
+        (( else) nil)))
 
 ;; ==================== Machine code string generation ====================
 
@@ -233,16 +258,21 @@
         ( extract_instruction_code compiled_expression)
         ( extract_arg compiled_expression)))
 
-; :[keyword] -> "[MACHINE_CODE]"
+; ( :[keyword] argument ) -> "[MACHINE_CODE]{OPTIONAL_NUM}"
 (defun translate_instruction_code (code arg)
     (cond 
         ((eq code :loadconst) "!")
         ((eq code :loadsymbol) "?")
         ((eq code :cbs) "$")
-        ((eq code :argsnum) ( get_instruction_code_for_n_args arg))
+        ((eq code :loadstack) ( get_instruction_code_for_stack_load arg)) ; arg will be the index in the stack
+        ((eq code :argsnum) ( translate_num_to_digit arg))
         (( else) "__ERROR:UNKNOWN_INSTRUCTION_CODE__")))
 
-(defun get_instruction_code_for_n_args (args_number)
+; this will be a pair
+(defun get_instruction_code_for_stack_load (stack_index)
+    (concatenate 'string "#" ( translate_num_to_digit stack_index)))
+
+(defun translate_num_to_digit (args_number)
     (cond
         ((eq args_number 0) "A")
         ((eq args_number 1) "B")

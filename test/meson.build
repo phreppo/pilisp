@@ -652,6 +652,48 @@ test('[COMP] nested list, car and cdr stack 2', lisp_program_test, args : [
     'CNESTEDBS3'
 ])
 
+test('[COMP] (lambda (x) x)', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(lambda (x) x))',
+
+    '(LASM 1 "#A")',
+    'CLASM1'
+])
+
+test('[COMP] (lambda (x y) (+ x y))', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(lambda (x y) (+ x y)))',
+
+    '(LASM 2 "#A#B$C" +)',
+    'CLASM2'
+])
+
+
+test('[COMP] (lambda (x y) 11)', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(lambda (x y) 11))',
+
+    '(LASM 2 "!" 11)',
+    'CLASM3'
+])
+
+test('[COMP] (lambda () (list 1 2))', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(lambda () (list 1 2)))',
+
+    '(LASM 0 "!!$C" 1 2 LIST)',
+    'CLASM4'
+])
+
+test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(plc \'(lambda (x y z) (list (car \'(A)) 2 x y x ext)))',
+
+    '(LASM 3 "!$B!#A#B#A?$G" (A) CAR 2 EXT LIST)',
+    'CLASM5'
+])
+
+
 
 # ==================== ASM ====================
 test('[ASM] load const 1', lisp_program_test, args : [
@@ -696,7 +738,7 @@ test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
     'ASMLCBS4'
 ])
 
-test('[ASM] (list 1 2 3 (car \'(4))', lisp_program_test, args : [
+test('[ASM] (list 1 (car \'(2)) 3 (car (cdr \'(A B)))', lisp_program_test, args : [
     '(ASM "!!$B!!$B$B$E" 1 (2) CAR 3 (A B) CDR CAR LIST)',
     '(1 2 3 B)',
     'ASMLCBS5'
