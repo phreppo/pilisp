@@ -113,14 +113,14 @@
 
 ;; TODO: Compile Lambda
 (defun compile_lambda (fun args)
+    (let (
+        (lambda_args  ( extract_lambda_args args))
+        (lambda_body  ( extract_lambda_body args))
+        (symbol_table ( build_symbol_table ( extract_lambda_args args))))
     (list ; maybe cons here
-        ( build_lambda_args_number_instruction ( extract_lambda_args args))
-        ;; (QUALCOSA DI MAGICO CHE BUILDA LA LISTA DI ISTRUZIONI, SALVANDO ANCHE LE ASSOCIAZIONI GRAZIE ALLA SYMBOL TABLE)
-    )
+        ( build_lambda_args_number_instruction lambda_args)
+        ( build_lambda_body_instruction_list lambda_body symbol_table)))
 )
-
-(defun build_lambda_args_number_instruction (lambda_args)
-    (cons :lambdanargs ( count_args lambda_args)))
 
 (defun build_symbol_table (lambda_args)
     ( build_symbol_table_with_position lambda_args 0))
@@ -139,7 +139,16 @@
 (defun build_one_symbol (lambda_args actual_position)
     (cons (car lambda_args) actual_position))
 
-(defun build_lambda_instructions (lambda_body symbol_table) nil
+(defun build_lambda_args_number_instruction (lambda_args)
+    (cons :lambdanargs ( count_args lambda_args)))
+
+; TODO HERE
+(defun build_lambda_body_instruction_list (lambda_body symbol_table) 
+    (cons :HEYHEY :WOWO )
+)
+
+(defun compile_with_symbol_table (lambda_body symbol_table)
+    
 )
 
 
