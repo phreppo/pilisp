@@ -76,6 +76,7 @@ cell *list(const cell *list);
 cell *subseq(const cell *list); // substr
 cell *reverse(const cell *list);
 cell *concatenate(const cell *list); // works only on strings
+cell *append(cell * list);
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);

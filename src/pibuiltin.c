@@ -1,6 +1,28 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
+cell *append(cell *list) {
+#if CHECKS
+  check_two_args(list);
+#endif
+  cell *first_list = car(list);
+  cell *second_list = cadr(list);
+#if CHECKS
+  if (first_list && !is_cons(first_list))
+    pi_lisp_error("first arg must be a list");
+#endif
+  cell *act = first_list;
+  while (act && cdr(act)) {
+    act = cdr(act);
+  }
+  if (act)
+    act->cdr = second_list;
+  else 
+    first_list = second_list;
+  cell_remove_args(list);
+  return first_list;
+}
+
 cell *lap(cell *args) {
   cell *machine_code_cell = args->car;
   args = args->cdr;
@@ -25,9 +47,9 @@ cell *lap(cell *args) {
     case '$': // call builtin stack
       stack_push(args->car);
       // (lap "!$" ((a)) car)
-      unsigned char nargs =  (unsigned char) machine_code[i+1] - 'A';
+      unsigned char nargs = (unsigned char)machine_code[i + 1] - 'A';
       i++;
-      cell * fun = args->car;
+      cell *fun = args->car;
       args = args->cdr;
       stack_pointer--;
       fun->bs(stack_base, nargs);

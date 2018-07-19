@@ -61,6 +61,7 @@ void init_builtin_lambdas() {
   symbol_symbolp = mk_builtin_lambda("SYMBOLP",symbolp,NULL);
   symbol_write = mk_builtin_lambda("WRITE",write,NULL);
   symbol_concatenate = mk_builtin_lambda("CONCATENATE",concatenate,NULL);
+  symbol_append = mk_builtin_lambda("APPEND",append,NULL);
 }
 
 void init_stack(){

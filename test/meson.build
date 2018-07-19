@@ -374,6 +374,29 @@ test('[LISP] concatenate test 2', lisp_program_test, args : [
     'LCONCAT2'
 ])
 
+test('[LISP] append test 1', lisp_program_test, args : [
+    '(APPEND \'( 1 2 3 ) \'(4 5 6))',
+    '(1 2 3 4 5 6)',
+    'LAPPEND1'
+])
+
+test('[LISP] append test 2', lisp_program_test, args : [
+    '(APPEND \'() \'(4 5 6))',
+    '(4 5 6)',
+    'LAPPEND2'
+])
+
+test('[LISP] append test 3', lisp_program_test, args : [
+    '(APPEND \'() \'1)',
+    '1',
+    'LAPPEND3'
+])
+
+test('[LISP] append test 3', lisp_program_test, args : [
+    '(APPEND \'(1 2 3 ) \'4)',
+    '(1 2 3 . 4)',
+    'LAPPEND4'
+])
 
 test('[MACRO] simple macro test', lisp_program_test, args : [
     '((macro (name val) (set name val)) hi 1) hi',
