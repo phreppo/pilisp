@@ -44,8 +44,8 @@ cell * asm_call(cell *args) {
       args = args->cdr;
       break;
 
-    case '$': // call builtin stack
-      // (asm "!$" ((a)) car)
+    case '$': 
+      // call builtin stack
       stack_push(args->car);
       // get the next machine code: it will be the number of params
       unsigned char nargs = (unsigned char)machine_code[i + 1] - 'A';

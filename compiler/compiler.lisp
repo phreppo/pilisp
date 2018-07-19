@@ -1,6 +1,12 @@
-;; ****************************************************************
-;; *====================== Pilisp Compiler =======================*
-;; **************************************************************** 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                                                               ;;
+;; 88""Yb 88 88     88 .dP"Y8 88""Yb      dP""b8  dP"Yb  8b    d8 88""Yb 88 88     888888 88""Yb ;;
+;; 88__dP 88 88     88 `Ybo." 88__dP     dP   `" dP   Yb 88b  d88 88__dP 88 88     88__   88__dP ;;
+;; 88"""  88 88  .o 88 o.`Y8b 88"""      Yb      Yb   dP 88YbdP88 88"""  88 88  .o 88""   88"Yb  ;;
+;; 88     88 88ood8 88 8bodP' 88          YboodP  YbodP  88 YY 88 88     88 88ood8 888888 88  Yb ;;
+;;                                                                                               ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ; (plc '[EXPRESSION]) -> (asm [ASM_STRING] {ARGS_LIST})
 (defun plc (not_evaluated_expression)
@@ -107,9 +113,44 @@
 
 ;; TODO: Compile Lambda
 (defun compile_lambda (fun args)
-    (list 
-        (cons 1 0) ; param number 
-        'x))       ; ap body
+    (list ; maybe cons here
+        ( build_lambda_args_number_instruction ( extract_lambda_args args))
+        ;; (QUALCOSA DI MAGICO CHE BUILDA LA LISTA DI ISTRUZIONI, SALVANDO ANCHE LE ASSOCIAZIONI GRAZIE ALLA SYMBOL TABLE)
+    )
+)
+
+(defun build_lambda_args_number_instruction (lambda_args)
+    (cons :lambdanargs ( count_args lambda_args)))
+
+(defun build_symbol_table (lambda_args)
+    ( build_symbol_table_with_position lambda_args 0))
+
+; we need the position to set that number in the pair (x . 0)
+(defun build_symbol_table_with_position (lambda_args actual_position)
+    (cond 
+        ((null lambda_args) NIL)
+        (( else) ( build_one_symbol_and_the_rest_of_the_list lambda_args actual_position))))
+
+(defun build_one_symbol_and_the_rest_of_the_list (lambda_args actual_position)
+    (cons 
+        ( build_one_symbol lambda_args actual_position)
+        ( build_symbol_table_with_position ( next lambda_args) (1+ actual_position))))
+
+(defun build_one_symbol (lambda_args actual_position)
+    (cons (car lambda_args) actual_position))
+
+(defun build_lambda_instructions (lambda_body symbol_table) nil
+)
+
+
+; @param lambda cons -> ((x y z) (+ x y z))
+(defun extract_lambda_args (lambda_cons)
+    (car lambda_cons))
+
+(defun extract_lambda_body (lambda_cons)
+    (car (cdr lambda_cons)))
+
+
 
 ;; *****************************************************************
 ;; *=================== Machine Code Generation ===================*

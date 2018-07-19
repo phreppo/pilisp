@@ -28,7 +28,7 @@ void stack_list(size_t stack_base, unsigned char nargs) {
   cell *last_created = NULL;
   size_t i=0;
   for (i = 0; i < nargs; i++) {
-    stack_pointer--;
+    // stack_pointer--;
     if (i == 0) {
       last_created = head = mk_cons(stack[stack_base + i], NULL);
     } else {
@@ -36,5 +36,6 @@ void stack_list(size_t stack_base, unsigned char nargs) {
       last_created = last_created->cdr;
     }
   }
+  stack_pointer -= nargs;
   stack_push(head);
 }
