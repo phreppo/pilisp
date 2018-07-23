@@ -80,10 +80,10 @@ cell *eval_macro(cell *expression, cell *env) {
   cell *evaluated = NULL;
   cell *old_env = env;
   cell *body = car(expression);
-  cell *prm = cdr(expression);
-
-  env = pairlis(cadr(body), prm, env);
+  cell *params = cdr(expression);
   cell *fn_body = caddr(body);
+
+  env = pairlis(cadr(body), params, env);
   evaluated = eval(fn_body, env);
   cell_remove_eval_macro(env, old_env, expression);
   return evaluated;
