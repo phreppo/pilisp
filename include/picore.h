@@ -20,6 +20,10 @@ cell *evlis(cell *m, cell *a);
 cell *evcon(cell *c, cell *a);
 
 // ==================== Support functions ====================
+cell *eval_atom(cell * expression, cell * env);
+cell *eval_atom_function(cell * expression, cell * env);
+cell *eval_composed_function(cell * expression, cell * env);
+
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args);
 cell *apply_composed_function(cell *fn, cell *args, cell *env, bool eval_args);
 cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args);

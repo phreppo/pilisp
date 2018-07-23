@@ -198,6 +198,94 @@ cell *assoc(cell *symbol, cell *env) {
 }
 
 // ==================== Support functions ====================
+cell *eval_atom(cell *expression, cell *env) {
+  cell *evaluated = NULL;
+  if (!expression)
+    // NIL
+    evaluated = NULL;
+  else {
+    if (is_num(expression) || is_str(expression) || is_keyword(expression))
+      // VALUE
+      evaluated = expression;
+    else {
+      // it's a symbol: we have to search for that
+      if (expression == symbol_true)
+        evaluated = symbol_true;
+      else {
+        cell *pair = assoc(expression, env);
+        cell *symbol_value = cdr(assoc(expression, env));
+#if CHECKS
+        if (!pair) {
+          // the symbol has no value in the env
+          char *err = "unknown symbol ";
+          // char *sym_name = dio->sym;
+          char *sym_name = NULL;
+          char result[ERROR_MESSAGE_LEN];
+          strcpy(result, err);
+          strcat(result, sym_name);
+          pi_error(LISP_ERROR, result);
+        } else
+#endif
+          // the symbol has a value in the env
+          evaluated = symbol_value;
+      }
+    }
+  }
+  return evaluated;
+}
+cell *eval_atom_function(cell *expression, cell *env) {
+  cell *evaluated = NULL;
+  if (is_builtin_macro(car(expression))) {
+    // ==================== BUILTIN MACRO ====================
+    evaluated = car(expression)->bm(cdr(expression), env);
+    unsafe_cell_remove(expression); // cons of the expression
+  }
+  // ==================== SPECIAL FORMS ====================
+  else {
+    if (car(expression) == symbol_lambda || car(expression) == symbol_macro ||
+        car(expression) == symbol_lasm)
+      // lambda and macro "autoquote"
+      evaluated = expression;
+    else {
+      // apply atom function to evaluated list of parameters
+      cell *args = cdr(expression);
+      evaluated = apply(car(expression), args, env, true);
+      unsafe_cell_remove(expression);    // remove cons of the expression
+      cell_remove_args(cdr(expression)); // remove list of args
+    }
+  }
+  return evaluated;
+}
+
+cell *eval_composed_function(cell *expression, cell *env) {
+  cell *evaluated = NULL;
+
+  if (caar(expression) == symbol_macro) {
+    // MACRO
+    cell *old_env = env;
+    cell *body = car(expression);
+    cell *prm = cdr(expression);
+    env = pairlis(cadr(body), prm, env);
+    cell *fn_body = caddr(body);
+    evaluated = eval(fn_body, env);
+
+    cell_remove_pairlis(env, old_env);
+    cell_remove_recursive(cdr(expression));    // params tree
+    unsafe_cell_remove(cdr(cdar(expression))); // cons of the body
+    cell_remove_recursive(cadar(expression));  // formal params
+    unsafe_cell_remove(cdar(expression));      // cons of params
+    cell_remove(caar(expression));             // symbol macro
+    unsafe_cell_remove(car(expression));       // cons of macro
+    unsafe_cell_remove(expression);            // head of everything
+  } else {
+    // ==================== COMPOSED FUNCTION ====================
+    evaluated = apply(car(expression), cdr(expression), env, true);
+    unsafe_cell_remove(expression); // remove function
+    cell_remove_args(cdr(expression));
+  }
+
+  return evaluated;
+}
 
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
   if (fn->type == TYPE_BUILTINLAMBDA) {
