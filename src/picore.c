@@ -1,161 +1,5 @@
 #include "picore.h"
 
-cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
-  cell *result = a;
-  cell *symbol;
-  cell *value;
-  cell *new_pair;
-  while (symbols_list) {
-    symbol = car(symbols_list);
-    value = car(values_list);
-    new_pair = mk_cons(symbol, value);
-    result = mk_cons(new_pair, result);
-
-    symbols_list = cdr(symbols_list);
-    values_list = cdr(values_list);
-  }
-  return result;
-}
-
-cell *assoc(const cell *symbol, cell *env) {
-  cell *actual_symbol;
-  cell *result = NULL;
-  while (env && !result) {
-    actual_symbol = caar(env);
-    if (eq(symbol, actual_symbol)) {
-      // protect the value of the symbol
-      cell_push_recursive(cdar(env));
-      // symbol was used
-      unsafe_cell_remove(symbol);
-      result = env->car;
-    }
-    env = env->cdr;
-  }
-  return result;
-}
-
-cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
-
-#if DEBUG_EVAL_MODE
-  printf("Applying:\t" ANSI_COLOR_GREEN);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_BLUE);
-  print_sexpr(x);
-#if DEBUG_EVAL_PRINT_ENV_MODE
-  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
-  print_sexpr(a);
-#endif
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-  if (fn) {
-    if (atom(fn)) {
-      return apply_atom_function(fn, x, a, eval_args);
-    } else {
-      //========================= COMPOSED FUNCTION =========================//
-      //================= ( (lambda (x y z) (....)) param) ==================//
-      if (car(fn) == symbol_lambda) {
-        // direct lambda
-#if DEBUG_EVAL_MODE
-        printf("LAMBDA:\t\t" ANSI_COLOR_RED);
-        print_sexpr(fn);
-        printf(ANSI_COLOR_RESET "\n");
-#endif
-        if (eval_args)
-          x = evlis(x, a);
-        cell *old_env = a;
-        a = pairlis(cadr(fn), x, a);
-        cell *fn_body = caddr(fn);
-        cell *res = eval(fn_body, a);
-        // FREE THINGS
-        cell_remove_recursive(a->car->cdr);
-        cell_remove_cars(x);                  // deep remove cars
-        cell_remove_args(x);                  // remove args cons
-        cell_remove_pairlis_deep(a, old_env); // remove associations
-        unsafe_cell_remove(car(fn));          // function name
-        cell_remove_recursive(cadr(fn));      // params
-        unsafe_cell_remove(cddr(fn));         // cons pointing to body
-        unsafe_cell_remove(cdr(fn));          // cons poining to param
-        unsafe_cell_remove(fn);               // cons pointing to lambda sym
-        return res;
-      }
-      // LASM
-      if (car(fn) == symbol_lasm) {
-        // CALL LASM
-        if (eval_args)
-          x = evlis(x, a);
-        cell *act_arg = x;
-        // we save the base of our stack
-        size_t stack_base = stack_pointer;
-        while (act_arg) {
-          // put everything on the stack
-          stack_push(act_arg->car);
-          act_arg = act_arg->cdr;
-        }
-        return asm_call_with_stack_base(cddr(fn), stack_base);
-      }
-      // LABEL
-      if (eq(car(fn), symbol_label)) {
-        if (eval_args)
-          x = evlis(x, a);
-        cell *new_env = cons(cons(cadr(fn), caddr(fn)), a);
-        cell *res = apply(caddr(fn), x, new_env, false);
-        unsafe_cell_remove(cddr(fn));     // cons of the body
-        unsafe_cell_remove(cadr(fn));     // symbol to bind
-        unsafe_cell_remove(cdr(fn));      // cons of the top level
-        unsafe_cell_remove(car(fn));      // symbol label
-        unsafe_cell_remove(fn);           // cons of everything
-        unsafe_cell_remove(car(new_env)); // new cons of the pair of the new env
-        cell_remove(new_env);             // head of new env
-        return res;
-      }
-
-      if (car(fn) == symbol_macro) {
-        // ==================== (MACRO ...) ====================
-#if DEBUG_EVAL_MODE
-        printf("MACRO:\t\t" ANSI_COLOR_RED);
-        print_sexpr(fn);
-        printf(ANSI_COLOR_RESET "\n");
-#endif
-        cell *old_env = a;
-        a = pairlis(cadr(fn), x, a);
-        cell *fn_body = caddr(fn);
-        cell *res = eval(fn_body, a);
-        res = eval(res, a); // raises a buggerino
-        // FREE THINGS
-        cell_remove_cars(x);                  // deep remove cars
-        cell_remove_pairlis_deep(a, old_env); // remove associations
-        unsafe_cell_remove(car(fn));          // function name
-        cell_remove_recursive(cadr(fn));      // params
-        unsafe_cell_remove(cddr(fn));         // cons pointing to body
-        unsafe_cell_remove(cdr(fn));          // cons poining to param
-        unsafe_cell_remove(fn);               // cons pointing to lambda sym
-        return res;
-      }
-
-#if DEBUG_EVAL_MODE
-      printf("Resolving fun: \t" ANSI_COLOR_RED);
-      print_sexpr(fn);
-      printf(ANSI_COLOR_RESET "\n");
-#endif
-      // function is not an atomic function: something like (lambda (x) (lambda
-      // (y) y))
-      if (eval_args)
-        x = evlis(x, a);
-
-      cell *function_body = eval(fn, a);
-#if CHECKS
-      if (function_body == NULL)
-        pi_error(LISP_ERROR, "unknown function ");
-      if (!is_cons(function_body))
-        pi_error(LISP_ERROR, "trying to apply a non-lambda");
-#endif
-      // the env knows the lambda
-      return apply(function_body, x, a, false);
-    }
-  }
-  return NULL; // error?
-}
-
 cell *eval(cell *e, cell *a) {
 #if DEBUG_EVAL_MODE
   printf("Evaluating: \t" ANSI_COLOR_GREEN);
@@ -262,6 +106,17 @@ cell *eval(cell *e, cell *a) {
   return evaulated;
 }
 
+cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
+  if (fn) {
+    if (atom(fn)) {
+      return apply_atom_function(fn, x, a, eval_args);
+    } else {
+      return apply_composed_function(fn, x, a, eval_args);
+    }
+  }
+  return NULL; // error?
+}
+
 cell *evlis(cell *m, cell *a) {
 #if DEBUG_EVAL_MODE
   printf("Evlis: \t\t" ANSI_COLOR_GREEN);
@@ -307,10 +162,45 @@ cell *evcon(cell *c, cell *a) {
   return ret;
 }
 
+cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
+  cell *result = a;
+  cell *symbol;
+  cell *value;
+  cell *new_pair;
+  
+  while (symbols_list) {
+    symbol = car(symbols_list);
+    value = car(values_list);
+    new_pair = mk_cons(symbol, value);
+    result = mk_cons(new_pair, result);
+
+    symbols_list = cdr(symbols_list);
+    values_list = cdr(values_list);
+  }
+  return result;
+}
+
+cell *assoc(cell *symbol, cell *env) {
+  cell *actual_symbol;
+  cell *result = NULL;
+  while (env && !result) {
+    actual_symbol = caar(env);
+    if (eq(symbol, actual_symbol)) {
+      // protect the value of the symbol
+      cell_push_recursive(cdar(env));
+      // symbol was used
+      unsafe_cell_remove(symbol);
+      result = env->car;
+    }
+    env = env->cdr;
+  }
+  return result;
+}
+
 // ==================== Support functions ====================
 
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
-  if (fn->type == TYPE_BUILTINLAMBDA) { 
+  if (fn->type == TYPE_BUILTINLAMBDA) {
     // BASIC OPERATIONS
     if (eval_args)
       args = evlis(args, env);
@@ -330,4 +220,119 @@ cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
     // the env knows the lambda
     return apply(function_body, args, env, false);
   }
+}
+
+cell *apply_composed_function(cell *fn, cell *args, cell *env, bool eval_args) {
+  if (car(fn) == symbol_lambda)
+    return apply_lambda(fn, args, env, eval_args);
+
+  if (car(fn) == symbol_lasm)
+    return apply_lasm(fn, args, env, eval_args);
+
+  if (eq(car(fn), symbol_label))
+    return apply_label(fn, args, env, eval_args);
+
+  if (car(fn) == symbol_macro)
+    return apply_macro(fn, args, env, eval_args);
+
+  return eval_lambda_and_apply(fn, args, env, eval_args);
+}
+
+cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args) {
+  // direct lambda
+#if DEBUG_EVAL_MODE
+  printf("LAMBDA:\t\t" ANSI_COLOR_RED);
+  print_sexpr(fn);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+  if (eval_args)
+    args = evlis(args, env);
+  cell *old_env = env;
+  env = pairlis(cadr(fn), args, env);
+  cell *fn_body = caddr(fn);
+  cell *res = eval(fn_body, env);
+  // FREE THINGS
+  cell_remove_recursive(env->car->cdr);
+  cell_remove_cars(args);                 // deep remove cars
+  cell_remove_args(args);                 // remove args cons
+  cell_remove_pairlis_deep(env, old_env); // remove associations
+  unsafe_cell_remove(car(fn));            // function name
+  cell_remove_recursive(cadr(fn));        // params
+  unsafe_cell_remove(cddr(fn));           // cons pointing to body
+  unsafe_cell_remove(cdr(fn));            // cons poining to param
+  unsafe_cell_remove(fn);                 // cons pointing to lambda sym
+  return res;
+}
+
+cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args) {
+  // CALL LASM
+  if (eval_args)
+    args = evlis(args, env);
+  cell *act_arg = args;
+  // we save the base of our stack
+  size_t stack_base = stack_pointer;
+  while (act_arg) {
+    // put everything on the stack
+    stack_push(act_arg->car);
+    act_arg = act_arg->cdr;
+  }
+  return asm_call_with_stack_base(cddr(fn), stack_base);
+}
+
+cell *apply_label(cell *fn, cell *args, cell *env, bool eval_args) {
+  if (eval_args)
+    args = evlis(args, env);
+  cell *new_env = cons(cons(cadr(fn), caddr(fn)), env);
+  cell *res = apply(caddr(fn), args, new_env, false);
+  unsafe_cell_remove(cddr(fn));     // cons of the body
+  unsafe_cell_remove(cadr(fn));     // symbol to bind
+  unsafe_cell_remove(cdr(fn));      // cons of the top level
+  unsafe_cell_remove(car(fn));      // symbol label
+  unsafe_cell_remove(fn);           // cons of everything
+  unsafe_cell_remove(car(new_env)); // new cons of the pair of the new env
+  cell_remove(new_env);             // head of new env
+  return res;
+}
+
+cell *apply_macro(cell *fn, cell *args, cell *env, bool eval_args) {
+#if DEBUG_EVAL_MODE
+  printf("MACRO:\t\t" ANSI_COLOR_RED);
+  print_sexpr(fn);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+  cell *old_env = env;
+  env = pairlis(cadr(fn), args, env);
+  cell *fn_body = caddr(fn);
+  cell *res = eval(fn_body, env);
+  res = eval(res, env);
+  // FREE THINGS
+  cell_remove_cars(args);                 // deep remove cars
+  cell_remove_pairlis_deep(env, old_env); // remove associations
+  unsafe_cell_remove(car(fn));            // function name
+  cell_remove_recursive(cadr(fn));        // params
+  unsafe_cell_remove(cddr(fn));           // cons pointing to body
+  unsafe_cell_remove(cdr(fn));            // cons poining to param
+  unsafe_cell_remove(fn);                 // cons pointing to lambda sym
+  return res;
+}
+
+cell *eval_lambda_and_apply(cell *fn, cell *args, cell *env, bool eval_args) {
+#if DEBUG_EVAL_MODE 
+  printf("Resolving fun: \t" ANSI_COLOR_RED);
+  print_sexpr(fn);
+  printf(ANSI_COLOR_RESET "\n");
+#endif
+
+  if (eval_args)
+    args = evlis(args, env);
+
+  cell *function_body = eval(fn, env);
+#if CHECKS
+  if (function_body == NULL)
+    pi_error(LISP_ERROR, "unknown function ");
+  if (!is_cons(function_body))
+    pi_error(LISP_ERROR, "trying to apply env non-lambda");
+#endif
+  // the env knows the lambda
+  return apply(function_body, args, env, false);
 }

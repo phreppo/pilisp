@@ -15,12 +15,18 @@
 cell *eval(cell *e, cell *a);
 cell *apply(cell *fn, cell *x, cell *a, bool eval_args);
 cell *pairlis(cell *x, cell *y, cell *a);
-cell *assoc(const cell *x, cell *l);
+cell *assoc(cell *x, cell *l);
 cell *evlis(cell *m, cell *a);
 cell *evcon(cell *c, cell *a);
 
 // ==================== Support functions ====================
-cell *apply_atom_function(cell *fn, cell *x, cell *a, bool eval_args);
+cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args);
+cell *apply_composed_function(cell *fn, cell *args, cell *env, bool eval_args);
+cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args);
+cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args);
+cell *apply_label(cell *fn, cell *args, cell *env, bool eval_args);
+cell *apply_macro(cell *fn, cell *args, cell *env, bool eval_args);
+cell *eval_lambda_and_apply(cell *fn, cell *args, cell *env, bool eval_args);
 
 #endif // !PICORE_H
        /*@}*/
