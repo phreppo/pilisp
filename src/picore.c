@@ -1,109 +1,14 @@
 #include "picore.h"
 
-cell *eval(cell *e, cell *a) {
-#if DEBUG_EVAL_MODE
-  printf("Evaluating: \t" ANSI_COLOR_GREEN);
-  print_sexpr(e);
-#if DEBUG_EVAL_PRINT_ENV_MODE
-  printf(ANSI_COLOR_RESET " in the env: " ANSI_COLOR_DARK_GRAY);
-  print_sexpr(a);
-#endif
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-  cell *evaulated = NULL;
-  //========================= ATOM EVAL =========================//
-  // ** every used cells released **
-  if (atom(e)) {
-    if (!e)
-      // NIL
-      evaulated = NULL;
-    else {
-      if (is_num(e) || is_str(e) || is_keyword(e))
-        // VALUE
-        evaulated = e;
-      else {
-        // it's a symbol: we have to search for that
-        if (e == symbol_true)
-          evaulated = symbol_true;
-        else {
-          cell *pair = assoc(e, a);
-          cell *symbol_value = cdr(assoc(e, a));
-#if CHECKS
-          if (!pair) {
-            // the symbol has no value in the env
-            char *err = "unknown symbol ";
-            char *sym_name = e->sym;
-            char result[ERROR_MESSAGE_LEN];
-            strcpy(result, err);
-            strcat(result, sym_name);
-            pi_error(LISP_ERROR, result);
-          } else
-#endif
-            // the symbol has a value in the env
-            evaulated = symbol_value;
-        }
-      }
-    }
-  }
-  //========================= ATOM FUNCTION EVAL =========================//
-  else if (atom(car(e))) {
-    if (is_builtin_macro(car(e))) {
-      // ==================== BUILTIN MACRO ====================
-      evaulated = car(e)->bm(cdr(e), a);
-      unsafe_cell_remove(e); // cons of the expression
-    }
-    // ==================== SPECIAL FORMS ====================
-    else {
-      if (car(e) == symbol_lambda || car(e) == symbol_macro ||
-          car(e) == symbol_lasm)
-        // lambda and macro "autoquote"
-        evaulated = e;
-      else {
-        // apply atom function to evaluated list of parameters
-        cell *args = cdr(e);
-        evaulated = apply(car(e), args, a, true);
-        unsafe_cell_remove(e);    // remove cons of the expression
-        cell_remove_args(cdr(e)); // remove list of args
-      }
-    }
-  }
+cell *eval(cell *expression, cell *env) {
 
-  //========================= COMPOSED FUNCTION EVAL =========================//
-  //=========================   ((lambda (x) x) 1)   =========================//
+  if (atom(expression))
+    return eval_atom(expression, env);
 
-  else {
-    if (caar(e) == symbol_macro) {
-      // MACRO
-      cell *old_env = a;
-      cell *body = car(e);
-      cell *prm = cdr(e);
-      a = pairlis(cadr(body), prm, a);
-      cell *fn_body = caddr(body);
-      evaulated = eval(fn_body, a);
+  if (atom(car(expression)))
+    return eval_atom_function(expression, env);
 
-      cell_remove_pairlis(a, old_env);
-      cell_remove_recursive(cdr(e));    // params tree
-      unsafe_cell_remove(cdr(cdar(e))); // cons of the body
-      cell_remove_recursive(cadar(e));  // formal params
-      unsafe_cell_remove(cdar(e));      // cons of params
-      cell_remove(caar(e));             // symbol macro
-      unsafe_cell_remove(car(e));       // cons of macro
-      unsafe_cell_remove(e);            // head of everything
-    } else {
-      // ==================== COMPOSED FUNCTION ====================
-      evaulated = apply(car(e), cdr(e), a, true);
-      unsafe_cell_remove(e); // remove function
-      cell_remove_args(cdr(e));
-    }
-  }
-#if DEBUG_EVAL_MODE
-  printf("Evaluated: \t" ANSI_COLOR_GREEN);
-  print_sexpr(e);
-  printf(ANSI_COLOR_RESET " to: " ANSI_COLOR_LIGHT_BLUE);
-  print_sexpr(evaulated);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-  return evaulated;
+  return eval_composed_function(expression, env);
 }
 
 cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
@@ -167,7 +72,7 @@ cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
   cell *symbol;
   cell *value;
   cell *new_pair;
-  
+
   while (symbols_list) {
     symbol = car(symbols_list);
     value = car(values_list);
@@ -199,18 +104,17 @@ cell *assoc(cell *symbol, cell *env) {
 
 // ==================== Support functions ====================
 cell *eval_atom(cell *expression, cell *env) {
-  cell *evaluated = NULL;
   if (!expression)
     // NIL
-    evaluated = NULL;
+    return NULL;
   else {
     if (is_num(expression) || is_str(expression) || is_keyword(expression))
       // VALUE
-      evaluated = expression;
+      return expression;
     else {
       // it's a symbol: we have to search for that
       if (expression == symbol_true)
-        evaluated = symbol_true;
+        return symbol_true;
       else {
         cell *pair = assoc(expression, env);
         cell *symbol_value = cdr(assoc(expression, env));
@@ -218,8 +122,7 @@ cell *eval_atom(cell *expression, cell *env) {
         if (!pair) {
           // the symbol has no value in the env
           char *err = "unknown symbol ";
-          // char *sym_name = dio->sym;
-          char *sym_name = NULL;
+          char *sym_name = expression->sym;
           char result[ERROR_MESSAGE_LEN];
           strcpy(result, err);
           strcat(result, sym_name);
@@ -227,11 +130,10 @@ cell *eval_atom(cell *expression, cell *env) {
         } else
 #endif
           // the symbol has a value in the env
-          evaluated = symbol_value;
+          return symbol_value;
       }
     }
   }
-  return evaluated;
 }
 cell *eval_atom_function(cell *expression, cell *env) {
   cell *evaluated = NULL;
@@ -405,7 +307,7 @@ cell *apply_macro(cell *fn, cell *args, cell *env, bool eval_args) {
 }
 
 cell *eval_lambda_and_apply(cell *fn, cell *args, cell *env, bool eval_args) {
-#if DEBUG_EVAL_MODE 
+#if DEBUG_EVAL_MODE
   printf("Resolving fun: \t" ANSI_COLOR_RED);
   print_sexpr(fn);
   printf(ANSI_COLOR_RESET "\n");
