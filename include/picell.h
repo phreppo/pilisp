@@ -39,8 +39,11 @@ typedef struct cell {
     struct {
       char *sym;
       union {
-        struct cell *(*bl)(
-            struct cell *args); // pointer to builtin lambda function
+        struct { // struct for builtin lambda: pointer to builtin function and pointer to builtin stack version
+          struct cell *(*bl)(
+              struct cell *args); // pointer to builtin lambda function
+          void *(*bs)(size_t stack_base, unsigned char nargs);
+        };
         struct cell *(*bm)(
             struct cell *args,
             struct cell *env); // pointer to builtin macro function
@@ -61,6 +64,13 @@ void unsafe_cell_remove(cell *c);
 #endif
 
 /********************************************************************************
+ *                                     STACK DEFINITION
+ ********************************************************************************/
+
+size_t stack_pointer;
+cell *stack[STACK_LIMIT];
+
+/********************************************************************************
  *                                  GARBAGE COLLECTOR
  ********************************************************************************/
 
@@ -73,8 +83,8 @@ typedef struct {
 cell_block *cell_block_create(size_t s);
 void cell_block_free(cell_block *cb);
 
-// cells space: array of cell blocks. Just one of this will be instantiated: the
-// pointer "memory" that represents the allocated cells in the interpreter
+// cells space: array of cell blocks. Just one of this will be instantiated:
+// the pointer "memory" that represents the allocated cells in the interpreter
 typedef struct {
   size_t cell_space_size;
   size_t cell_space_capacity;
@@ -152,7 +162,7 @@ cell *mk_cons(cell *car, cell *cdr);
 #endif
 
 cell *mk_sym(const char *symbol);
-cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *));
+cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *), void *(*builtin_stack)(size_t,unsigned char));
 cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(const cell *c);

@@ -1,6 +1,32 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
+cell *append(cell *list) {
+#if CHECKS
+  check_two_args(list);
+#endif
+  cell *first_list = car(list);
+  cell *second_list = cadr(list);
+#if CHECKS
+  if (first_list && !is_cons(first_list))
+    pi_lisp_error("first arg must be a list");
+#endif
+  cell *act = first_list;
+  while (act && cdr(act)) {
+    act = cdr(act);
+  }
+  if (act)
+    act->cdr = second_list;
+  else 
+    first_list = second_list;
+  cell_remove_args(list);
+  return first_list;
+}
+
+cell * asm_call(cell *args) {
+  return asm_call_with_stack_base(args,stack_pointer);
+}
+
 // handles only strings
 cell *concatenate(const cell *list) {
 #if CHECKS
@@ -16,8 +42,8 @@ cell *concatenate(const cell *list) {
     pi_lisp_error("second arg must be a string");
   if (!is_str(second_string))
     pi_lisp_error("third arg must be a string");
-  // if (symbol_type != symbol_string)
-  //   pi_lisp_error("you can concatenate only strings");
+    // if (symbol_type != symbol_string)
+    //   pi_lisp_error("you can concatenate only strings");
 #endif
   char *first = first_string->str;
   char *second = second_string->str;

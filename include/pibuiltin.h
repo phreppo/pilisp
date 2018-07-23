@@ -9,6 +9,7 @@
 #define PIBUILTIN_H
 #include "picell.h"
 #include "pilisp.h"
+#include "pistack.h"
 #include <stdbool.h>
 #include <time.h>
 
@@ -75,6 +76,7 @@ cell *list(const cell *list);
 cell *subseq(const cell *list); // substr
 cell *reverse(const cell *list);
 cell *concatenate(const cell *list); // works only on strings
+cell *append(cell * list);
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);
@@ -85,6 +87,9 @@ cell *quote(const cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
 cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
+
+// ==================== COMPILER FUNCTIONS ====================
+cell * asm_call(cell * args);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower

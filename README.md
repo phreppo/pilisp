@@ -16,6 +16,30 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 * **Garbage Collector**: Mark & Sweep garbage collector
 * **Memory dump builtin**: (md) prints the structure of the allocated memory
 
+#### Bytecode instruction set ####
+
+You can optionally produce one mid-representation for _some_ expression, loading the LISP module `compile`. The bytecode will run faster than normal LISP code. 
+Here's the instruction set:
+| Code        | Meaning         |
+| :-------------: |:-------------:|
+| !      | load constant |
+| ?      | load symbol      |
+| $ | apply builtin lambda      |
+| [A-Z] | number 0 to 25 (to pass the unmber of args to lambdas)      |
+
+To produce bytecode run: 
+```
+(load compiler)
+(cc '_your expression})
+```
+
+The result will be something like:
+```
+(asm "{byte code}" {args})
+```
+
+that can be executed.
+
 ## Documentation ##
 
 Full code documentation can be found on [github pages](https://parof.github.io/pilisp/). It is automatically generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen/), with [Bootstrap](https://getbootstrap.com/) CSS (using [this](https://github.com/Velron/doxygen-bootstrapped) guide). The code documentation is generated every push with [Travis CI](https://travis-ci.org/), so it should be always up to date.

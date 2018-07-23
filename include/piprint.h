@@ -29,6 +29,7 @@ void print_cell_space(const cell_space *cs);
 void print_free_cells(const cell_space *cs);
 void print_global_env(const cell *env);
 void pi_message(const char *);
+void print_stack();
 
 #endif // !PIPRINT_H
        /*@}*/

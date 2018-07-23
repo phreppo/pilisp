@@ -68,7 +68,7 @@
 #define COLLECT_GARBAGE 1
 #endif
 
-#define MARKS_LIMIT 100000
+#define STACK_LIMIT 1000000
 
 /********************************************************************************
  *                                 DEBUGGING
