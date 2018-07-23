@@ -24,54 +24,7 @@ cell *append(cell *list) {
 }
 
 cell * asm_call(cell *args) {
-  cell *machine_code_cell = args->car;
-  args = args->cdr;
-#if CHECKS
-  if (!is_str(machine_code_cell))
-    pi_lisp_error("first arg of asm must be a machine code string");
-#endif
-  char *machine_code = machine_code_cell->str;
-  size_t i = 0;
-  size_t stack_base = stack_pointer;
-  char instruction;
-  for (i = 0; i < strlen(machine_code); i++) {
-    instruction = machine_code[i];
-    switch (instruction) {
-
-    case '!':
-      // load const
-      stack_push(args->car);
-      args = args->cdr;
-      break;
-
-    case '$': 
-      // call builtin stack
-      stack_push(args->car);
-      // get the next machine code: it will be the number of params
-      unsigned char nargs = (unsigned char)machine_code[i + 1] - 'A';
-      i++;
-      cell *fun = args->car;
-      args = args->cdr;
-      stack_pointer--;
-      fun->bs(stack_pointer - nargs, nargs);
-      break;
-
-    default:
-      pi_lisp_error("unknown machine code");
-      break;
-    }
-  }
-#if CHECKS
-  if (stack_pointer > (stack_base + 1))
-    pi_lisp_error("stack error: there's something left on the stack");
-  if (stack_pointer < (stack_base + 1))
-    pi_lisp_error(
-        "stack error: something has removed too much args on the stack");
-#endif
-  // cell * ret = stack[stack_pointer-1];
-  // stack_pointer--;
-  // print_stack();
-  return stack_pop();
+  return asm_call_with_stack_base(args,stack_pointer);
 }
 
 // handles only strings

@@ -656,7 +656,7 @@ test('[COMP] (lambda (x) x)', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x) x))',
 
-    '(LASM 1 "#A")',
+    '(LASM 1 "@A")',
     'CLASM1'
 ])
 
@@ -664,7 +664,7 @@ test('[COMP] (lambda (x y) (+ x y))', lisp_program_test, args : [
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x y) (+ x y)))',
 
-    '(LASM 2 "#A#B$C" +)',
+    '(LASM 2 "@A@B$C" +)',
     'CLASM2'
 ])
 
@@ -689,7 +689,7 @@ test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test
     '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x y z) (list (car \'(A)) 2 x y x ext)))',
 
-    '(LASM 3 "!$B!#A#B#A?$G" (A) CAR 2 EXT LIST)',
+    '(LASM 3 "!$B!@A@B@A?$G" (A) CAR 2 EXT LIST)',
     'CLASM5'
 ])
 

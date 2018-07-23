@@ -28,8 +28,6 @@
 (setq builtin_stack_lambdas 
     '( car cdr cons atom eq list +))
 
-; why not directly compile? because (plc '1) would give back 
-; (:loadconst 1) instead of ((:loadconst 1)) 
 (defun _compile (expr symbol_table)
     (cond 
         ((atom expr) 
@@ -198,11 +196,12 @@
         (cons 'asm 
             ( build_interpretable_string_and_args compiled_expression)))
     (( else)
-        ; lambdaasm
+        ; lambda asm
         (cons 'lasm
             (cons 
                 (cdr (car compiled_expression))
                 ( build_interpretable_string_and_args ( next compiled_expression)))))))
+            ;; ((lambda (x) (+ x ((lambda (y) y) 2))) 1 )
 
 (defun build_interpretable_string_and_args (compiled_expression)
     (cons 
@@ -270,7 +269,7 @@
 
 ; this will be a pair
 (defun get_instruction_code_for_stack_load (stack_index)
-    (concatenate 'string "#" ( translate_num_to_digit stack_index)))
+    (concatenate 'string "@" ( translate_num_to_digit stack_index)))
 
 (defun translate_num_to_digit (args_number)
     (cond
@@ -316,4 +315,5 @@
     (length args_list))
 
 (defun else () t)
+
 (defun next (l) (cdr l))

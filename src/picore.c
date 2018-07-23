@@ -102,15 +102,28 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *res = eval(fn_body, a);
         // FREE THINGS
         cell_remove_recursive(a->car->cdr);
-        cell_remove_cars(x); // deep remove cars
-        cell_remove_args(x); // remove args cons
+        cell_remove_cars(x);                  // deep remove cars
+        cell_remove_args(x);                  // remove args cons
         cell_remove_pairlis_deep(a, old_env); // remove associations
-        unsafe_cell_remove(car(fn));     // function name
-        cell_remove_recursive(cadr(fn)); // params
-        unsafe_cell_remove(cddr(fn));    // cons pointing to body
-        unsafe_cell_remove(cdr(fn));     // cons poining to param
-        unsafe_cell_remove(fn);          // cons pointing to lambda sym
+        unsafe_cell_remove(car(fn));          // function name
+        cell_remove_recursive(cadr(fn));      // params
+        unsafe_cell_remove(cddr(fn));         // cons pointing to body
+        unsafe_cell_remove(cdr(fn));          // cons poining to param
+        unsafe_cell_remove(fn);               // cons pointing to lambda sym
         return res;
+      }
+      // LASM
+      if (car(fn) == symbol_lasm) {
+        // CALL LASM
+        cell *act_arg = x;
+        // we save the base of our stack
+        size_t stack_base = stack_pointer;
+        while (act_arg) {
+          // put everything on the stack
+          stack_push(act_arg->car);
+          act_arg = act_arg->cdr;
+        }
+        return asm_call_with_stack_base(cddr(fn),stack_base);
       }
       // LABEL
       if (eq(car(fn), symbol_label)) {
@@ -141,13 +154,13 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
         cell *res = eval(fn_body, a);
         res = eval(res, a); // raises a buggerino
         // FREE THINGS
-        cell_remove_cars(x);             // deep remove cars
+        cell_remove_cars(x);                  // deep remove cars
         cell_remove_pairlis_deep(a, old_env); // remove associations
-        unsafe_cell_remove(car(fn));     // function name
-        cell_remove_recursive(cadr(fn)); // params
-        unsafe_cell_remove(cddr(fn));    // cons pointing to body
-        unsafe_cell_remove(cdr(fn));     // cons poining to param
-        unsafe_cell_remove(fn);          // cons pointing to lambda sym
+        unsafe_cell_remove(car(fn));          // function name
+        cell_remove_recursive(cadr(fn));      // params
+        unsafe_cell_remove(cddr(fn));         // cons pointing to body
+        unsafe_cell_remove(cdr(fn));          // cons poining to param
+        unsafe_cell_remove(fn);               // cons pointing to lambda sym
         return res;
       }
 
@@ -229,7 +242,7 @@ cell *eval(cell *e, cell *a) {
     }
     // ==================== SPECIAL FORMS ====================
     else {
-      if (car(e) == symbol_lambda || car(e) == symbol_macro)
+      if (car(e) == symbol_lambda || car(e) == symbol_macro || car(e) == symbol_lasm)
         // lambda and macro "autoquote"
         evaulated = e;
       else {
