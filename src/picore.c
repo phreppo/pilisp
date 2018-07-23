@@ -11,98 +11,6 @@ cell *eval(cell *expression, cell *env) {
   return eval_composed_function(expression, env);
 }
 
-cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
-  if (fn) {
-    if (atom(fn)) {
-      return apply_atom_function(fn, x, a, eval_args);
-    } else {
-      return apply_composed_function(fn, x, a, eval_args);
-    }
-  }
-  return NULL; // error?
-}
-
-cell *evlis(cell *m, cell *a) {
-#if DEBUG_EVAL_MODE
-  printf("Evlis: \t\t" ANSI_COLOR_GREEN);
-  print_sexpr(m);
-  printf(ANSI_COLOR_RESET);
-  puts("");
-#endif
-  if (!m)
-    // empty par list
-    return NULL;
-  cell *valued_car = eval(car(m), a);
-  cell *valued_cdr = evlis(cdr(m), a);
-  return mk_cons(valued_car, valued_cdr);
-}
-
-cell *evcon(cell *c, cell *a) {
-
-  cell *res = eval(caar(c), a);
-  cell *ret;
-  if (res != NULL) {
-    ret = eval(cadar(c), a);
-    // result of the last eval
-    cell_remove_recursive(res);
-    // eval the bod of the cond
-    // cut off the rest of the sexpressions
-    cell_remove_recursive(cdr(c));
-
-  } else {
-    ret = evcon(cdr(c), a);
-
-    // result of the last eval
-    cell_remove_recursive(res);
-    // remove the unevaluated body
-    cell_remove_recursive(cadar(c));
-  }
-  // cons of the body
-  unsafe_cell_remove(cdar(c));
-  // cons of the pair (cond [body])
-  unsafe_cell_remove(car(c));
-  // head of the list
-  unsafe_cell_remove(c);
-
-  return ret;
-}
-
-cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
-  cell *result = a;
-  cell *symbol;
-  cell *value;
-  cell *new_pair;
-
-  while (symbols_list) {
-    symbol = car(symbols_list);
-    value = car(values_list);
-    new_pair = mk_cons(symbol, value);
-    result = mk_cons(new_pair, result);
-
-    symbols_list = cdr(symbols_list);
-    values_list = cdr(values_list);
-  }
-  return result;
-}
-
-cell *assoc(cell *symbol, cell *env) {
-  cell *actual_symbol;
-  cell *result = NULL;
-  while (env && !result) {
-    actual_symbol = caar(env);
-    if (eq(symbol, actual_symbol)) {
-      // protect the value of the symbol
-      cell_push_recursive(cdar(env));
-      // symbol was used
-      unsafe_cell_remove(symbol);
-      result = env->car;
-    }
-    env = env->cdr;
-  }
-  return result;
-}
-
-// ==================== Support functions ====================
 cell *eval_atom(cell *expression, cell *env) {
   if (!expression)
     // NIL
@@ -135,6 +43,7 @@ cell *eval_atom(cell *expression, cell *env) {
     }
   }
 }
+
 cell *eval_atom_function(cell *expression, cell *env) {
   cell *evaluated = NULL;
   if (is_builtin_macro(car(expression))) {
@@ -189,6 +98,90 @@ cell *eval_composed_function(cell *expression, cell *env) {
   return evaluated;
 }
 
+cell *apply(cell *fn, cell *args, cell *env, bool eval_args) {
+  if (atom(fn)) 
+    return apply_atom_function(fn, args, env, eval_args);
+  else 
+    return apply_composed_function(fn, args, env, eval_args);
+}
+
+cell *evlis(cell *args_list, cell *env) {
+  if (!args_list)
+    return NULL;
+  cell *valued_car = eval(car(args_list), env);
+  cell *valued_cdr = evlis(cdr(args_list), env);
+  return mk_cons(valued_car, valued_cdr);
+}
+
+cell *evcon(cell *args, cell *env) {
+
+  cell *res = eval(caar(args), env);
+  cell *ret;
+
+  if (res != NULL) {
+    ret = eval(cadar(args), env);
+    // result of the last eval
+    cell_remove_recursive(res);
+    // cut off the rest of the sexpressions
+    cell_remove_recursive(cdr(args));
+
+  } else {
+    ret = evcon(cdr(args), env);
+
+    // result of the last eval
+    cell_remove_recursive(res);
+    // remove the unevaluated body
+    cell_remove_recursive(cadar(args));
+  }
+
+  // cons of the body
+  unsafe_cell_remove(cdar(args));
+  // cons of the pair (cond [body])
+  unsafe_cell_remove(car(args));
+  // head of the list
+  unsafe_cell_remove(args);
+
+  return ret;
+}
+
+cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
+  cell *result = a;
+  cell *symbol;
+  cell *value;
+  cell *new_pair;
+
+  while (symbols_list) {
+    symbol = car(symbols_list);
+    value = car(values_list);
+    new_pair = mk_cons(symbol, value);
+    result = mk_cons(new_pair, result);
+
+    symbols_list = cdr(symbols_list);
+    values_list = cdr(values_list);
+  }
+  return result;
+}
+
+cell *assoc(cell *symbol, cell *env) {
+  cell *actual_symbol;
+  cell *result = NULL;
+
+  while (env && !result) {
+    actual_symbol = caar(env);
+    if (eq(symbol, actual_symbol)) {
+      // protect the value of the symbol
+      cell_push_recursive(cdar(env));
+      // symbol was used
+      unsafe_cell_remove(symbol);
+      result = env->car;
+    }
+    env = env->cdr;
+  }
+
+  return result;
+}
+
+
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
   if (fn->type == TYPE_BUILTINLAMBDA) {
     // BASIC OPERATIONS
@@ -229,12 +222,6 @@ cell *apply_composed_function(cell *fn, cell *args, cell *env, bool eval_args) {
 }
 
 cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args) {
-  // direct lambda
-#if DEBUG_EVAL_MODE
-  printf("LAMBDA:\t\t" ANSI_COLOR_RED);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
   if (eval_args)
     args = evlis(args, env);
   cell *old_env = env;
@@ -255,7 +242,6 @@ cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args) {
 }
 
 cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args) {
-  // CALL LASM
   if (eval_args)
     args = evlis(args, env);
   cell *act_arg = args;

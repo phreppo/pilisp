@@ -356,10 +356,10 @@ test('[LISP] keyword test 3', lisp_program_test, args : [
     'LKEYW3'
 ])
 
-test('[LISP] keyword test 3', lisp_program_test, args : [
+test('[LISP] keyword test 4', lisp_program_test, args : [
     '(eq :imakeyword :13)',
     'NIL',
-    'LKEYW3'
+    'LKEYW4'
 ])
 
 test('[LISP] concatenate test 1', lisp_program_test, args : [

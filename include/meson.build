@@ -13,6 +13,7 @@ headers = [
         'piparser.h',
         'piprint.h',
         'pisettings.h',
+        'piremove.h',
         'pistack.h',
         'pitestutils.h',
 ]
