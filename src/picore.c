@@ -1,47 +1,37 @@
 #include "picore.h"
 
-cell *pairlis(cell *x, cell *y, cell *a) {
-#if DEBUG_EVAL_MODE
-  printf("Pairlis:\t" ANSI_COLOR_GREEN);
-  print_sexpr(x);
-  printf(ANSI_COLOR_RESET " wiht: " ANSI_COLOR_GREEN);
-  print_sexpr(y);
-#if DEBUG_EVAL_PRINT_ENV_MODE
-  printf(ANSI_COLOR_RESET " in the env " ANSI_COLOR_DARK_GRAY);
-  print_sexpr(a);
-#endif
-  printf(ANSI_COLOR_RESET "\n");
-#endif
+cell *pairlis(cell *symbols_list, cell *values_list, cell *a) {
   cell *result = a;
-  while (x) {
-    cell *left = car(x);
-    cell *right = car(y);
-    cell *new_pair = mk_cons(left, right);
+  cell *symbol;
+  cell *value;
+  cell *new_pair;
+  while (symbols_list) {
+    symbol = car(symbols_list);
+    value = car(values_list);
+    new_pair = mk_cons(symbol, value);
     result = mk_cons(new_pair, result);
-    x = cdr(x);
-    y = cdr(y);
+
+    symbols_list = cdr(symbols_list);
+    values_list = cdr(values_list);
   }
-#if DEBUG_EVAL_MODE
-  printf("Parilis res:\t" ANSI_COLOR_BLUE);
-  print_sexpr(result);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
   return result;
 }
 
-cell *assoc(const cell *x, cell *l) {
-  while (l) {
-    // we extract the first element in the pair
-    if (eq(x, car(car(l)))) {
-      // right pair
-      cell_push_recursive(cdar(l)); // protect the value. if it s a list
-                                    // protect all the members
-      unsafe_cell_remove(x); // don't need no more the symbol: we have the value
-      return l->car;
+cell *assoc(const cell *symbol, cell *env) {
+  cell *actual_symbol;
+  cell *result = NULL;
+  while (env && !result) {
+    actual_symbol = caar(env);
+    if (eq(symbol, actual_symbol)) {
+      // protect the value of the symbol
+      cell_push_recursive(cdar(env));
+      // symbol was used
+      unsafe_cell_remove(symbol);
+      result = env->car;
     }
-    l = l->cdr;
+    env = env->cdr;
   }
-  return NULL;
+  return result;
 }
 
 cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
@@ -59,31 +49,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
 #endif
   if (fn) {
     if (atom(fn)) {
-      //========================= ATOM FUNCTION =========================//
-      //=========================    (fun x)    =========================//
-
-      if (fn->type == TYPE_BUILTINLAMBDA) { // BASIC OPERATIONS
-        if (eval_args)
-          x = evlis(x, a);
-        return fn->bl(x);
-      } else {
-        // CUSTOM FUNCTION
-        // does lambda exists?
-        cell *function_body = eval(fn, a);
-#if CHECKS
-        if (function_body == NULL)
-          pi_error(LISP_ERROR, "unknown function ");
-        if (!is_cons(function_body))
-          pi_error(LISP_ERROR, "trying to apply a non-lambda");
-#endif
-        if ((car(function_body) != symbol_macro) && eval_args)
-          // eval args only if it s not a macro
-          x = evlis(x, a);
-        // the env knows the lambda
-        cell *ret = apply(function_body, x, a, false);
-        return ret;
-      }
-
+      return apply_atom_function(fn, x, a, eval_args);
     } else {
       //========================= COMPOSED FUNCTION =========================//
       //================= ( (lambda (x y z) (....)) param) ==================//
@@ -339,4 +305,29 @@ cell *evcon(cell *c, cell *a) {
   unsafe_cell_remove(c);
 
   return ret;
+}
+
+// ==================== Support functions ====================
+
+cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
+  if (fn->type == TYPE_BUILTINLAMBDA) { 
+    // BASIC OPERATIONS
+    if (eval_args)
+      args = evlis(args, env);
+    return fn->bl(args);
+  } else {
+    // CUSTOM FUNCTION
+    cell *function_body = eval(fn, env);
+#if CHECKS
+    if (function_body == NULL)
+      pi_error(LISP_ERROR, "unknown function ");
+    if (!is_cons(function_body))
+      pi_error(LISP_ERROR, "trying to apply a non-lambda");
+#endif
+    if ((car(function_body) != symbol_macro) && eval_args)
+      // eval args only if it s not a macro
+      args = evlis(args, env);
+    // the env knows the lambda
+    return apply(function_body, args, env, false);
+  }
 }
