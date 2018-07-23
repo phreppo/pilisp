@@ -743,3 +743,27 @@ test('[ASM] (list 1 (car \'(2)) 3 (car (cdr \'(A B)))', lisp_program_test, args 
     '(1 2 3 B)',
     'ASMLCBS5'
 ])
+
+test('[LASM] ((lambda (x) 1))', lisp_program_test, args : [
+    '((LASM 0 "!" 1))',
+    '1',
+    'LASM1'
+])
+
+test('[LASM] ((lambda (x) x) 1)', lisp_program_test, args : [
+    '((LASM 1 "@A") 1)',
+    '1',
+    'LASM2'
+])
+
+test('[LASM] ((lambda (x) (car x)) \'(a))', lisp_program_test, args : [
+    '((LASM 1 "@A$B" CAR) \'(A))',
+    'A',
+    'LASM3'
+])
+
+test('[LASM] ((lambda (x y z) (list x y z 1 2)) 1 2 3)', lisp_program_test, args : [
+    '((LASM 3 "@A@B@C!!$F" 1 2 LIST) 1 2 3)',
+    '(1 2 3 1 2)',
+    'LASM4'
+])

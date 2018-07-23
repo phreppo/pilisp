@@ -40,7 +40,7 @@ void stack_list(size_t stack_base, unsigned char nargs) {
   stack_push(head);
 }
 
-cell * asm_call_with_stack_base(cell *args, size_t stack_base) {
+cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
   cell *machine_code_cell = args->car;
   args = args->cdr;
 #if CHECKS
@@ -51,6 +51,7 @@ cell * asm_call_with_stack_base(cell *args, size_t stack_base) {
   size_t i = 0;
   size_t initial_stack_pointer = stack_pointer;
   char instruction;
+  unsigned char nargs;
   for (i = 0; i < strlen(machine_code); i++) {
     instruction = machine_code[i];
     switch (instruction) {
@@ -63,18 +64,20 @@ cell * asm_call_with_stack_base(cell *args, size_t stack_base) {
 
     case '@':
       // load from stack
-      // have to pass a pointer base
+      nargs = (unsigned char)machine_code[i + 1] - 'A';
+      i++;
+      size_t cell_index_in_stack = stack_base + nargs;
+      cell *val = stack[cell_index_in_stack]; // calcola dove sta nello stack
+      stack_push(val);
       break;
 
     case '$':
       // call builtin stack
-      stack_push(args->car);
       // get the next machine code: it will be the number of params
-      unsigned char nargs = (unsigned char)machine_code[i + 1] - 'A';
+      nargs = (unsigned char)machine_code[i + 1] - 'A';
       i++;
       cell *fun = args->car;
       args = args->cdr;
-      stack_pointer--;
       fun->bs(stack_pointer - nargs, nargs);
       break;
 

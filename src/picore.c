@@ -115,6 +115,8 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
       // LASM
       if (car(fn) == symbol_lasm) {
         // CALL LASM
+        if (eval_args)
+          x = evlis(x, a);
         cell *act_arg = x;
         // we save the base of our stack
         size_t stack_base = stack_pointer;
@@ -123,7 +125,7 @@ cell *apply(cell *fn, cell *x, cell *a, bool eval_args) {
           stack_push(act_arg->car);
           act_arg = act_arg->cdr;
         }
-        return asm_call_with_stack_base(cddr(fn),stack_base);
+        return asm_call_with_stack_base(cddr(fn), stack_base);
       }
       // LABEL
       if (eq(car(fn), symbol_label)) {
@@ -242,7 +244,8 @@ cell *eval(cell *e, cell *a) {
     }
     // ==================== SPECIAL FORMS ====================
     else {
-      if (car(e) == symbol_lambda || car(e) == symbol_macro || car(e) == symbol_lasm)
+      if (car(e) == symbol_lambda || car(e) == symbol_macro ||
+          car(e) == symbol_lasm)
         // lambda and macro "autoquote"
         evaulated = e;
       else {
