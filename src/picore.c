@@ -42,25 +42,23 @@ cell *eval_atom(cell *expression, cell *env) {
 
 cell *eval_atom_function(cell *expression, cell *env) {
   cell *evaluated = NULL;
-  if (is_builtin_macro(car(expression))) {
-    // ==================== BUILTIN MACRO ====================
-    evaluated = car(expression)->bm(cdr(expression), env);
-    unsafe_cell_remove(expression); // cons of the expression
-  }
-  // ==================== SPECIAL FORMS ====================
+  cell *function_symbol = car(expression);
+  cell *args = cdr(expression);
+
+  if (is_builtin_macro(function_symbol))
+    evaluated = function_symbol->bm(args, env);
   else {
-    if (car(expression) == symbol_lambda || car(expression) == symbol_macro ||
-        car(expression) == symbol_lasm)
-      // lambda and macro "autoquote"
+    if (function_symbol == symbol_lambda || function_symbol == symbol_macro ||
+        function_symbol == symbol_lasm)
+      // "autoquote"
       evaluated = expression;
     else {
       // apply atom function to evaluated list of parameters
-      cell *args = cdr(expression);
-      evaluated = apply(car(expression), args, env, true);
-      unsafe_cell_remove(expression);    // remove cons of the expression
-      cell_remove_args(cdr(expression)); // remove list of args
+      evaluated = apply(function_symbol, args, env, true);
+      cell_remove_args(args); // remove list of args
     }
   }
+  unsafe_cell_remove(expression); // cons of the expression
   return evaluated;
 }
 
@@ -68,7 +66,7 @@ cell *eval_composed_function(cell *expression, cell *env) {
   cell *evaluated = NULL;
 
   if (caar(expression) == symbol_macro)
-    evaluated = eval_macro(expression,env);
+    evaluated = eval_macro(expression, env);
   else {
     evaluated = apply(car(expression), cdr(expression), env, true);
     cell_remove_args(cdr(expression));
@@ -87,7 +85,7 @@ cell *eval_macro(cell *expression, cell *env) {
   env = pairlis(cadr(body), prm, env);
   cell *fn_body = caddr(body);
   evaluated = eval(fn_body, env);
-  cell_remove_macro(env, old_env, expression);
+  cell_remove_eval_macro(env, old_env, expression);
   return evaluated;
 }
 
@@ -107,32 +105,22 @@ cell *evlis(cell *args_list, cell *env) {
 }
 
 cell *evcon(cell *args, cell *env) {
-
   cell *res = eval(caar(args), env);
   cell *ret;
 
   if (res != NULL) {
     ret = eval(cadar(args), env);
-    // result of the last eval
-    cell_remove_recursive(res);
-    // cut off the rest of the sexpressions
-    cell_remove_recursive(cdr(args));
-
+    cell_remove_recursive(res);       // result of the last eval
+    cell_remove_recursive(cdr(args)); // cut off the rest of the sexpressions
   } else {
     ret = evcon(cdr(args), env);
-
-    // result of the last eval
-    cell_remove_recursive(res);
-    // remove the unevaluated body
-    cell_remove_recursive(cadar(args));
+    cell_remove_recursive(res);         // result of the last eval
+    cell_remove_recursive(cadar(args)); // remove the unevaluated body
   }
 
-  // cons of the body
-  unsafe_cell_remove(cdar(args));
-  // cons of the pair (cond [body])
-  unsafe_cell_remove(car(args));
-  // head of the list
-  unsafe_cell_remove(args);
+  unsafe_cell_remove(cdar(args)); // cons of the body
+  unsafe_cell_remove(car(args));  // cons of the pair (cond [body])
+  unsafe_cell_remove(args);       // head of the list
 
   return ret;
 }
@@ -162,10 +150,8 @@ cell *assoc(cell *symbol, cell *env) {
   while (env && !result) {
     actual_symbol = caar(env);
     if (eq(symbol, actual_symbol)) {
-      // protect the value of the symbol
-      cell_push_recursive(cdar(env));
-      // symbol was used
-      unsafe_cell_remove(symbol);
+      cell_push_recursive(cdar(env)); // protect the value of the symbol
+      unsafe_cell_remove(symbol);     // symbol was used
       result = env->car;
     }
     env = env->cdr;
@@ -220,16 +206,6 @@ cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args) {
   env = pairlis(cadr(fn), args, env);
   cell *fn_body = caddr(fn);
   cell *res = eval(fn_body, env);
-  // FREE THINGS
-  // cell_remove_recursive(env->car->cdr);
-  // cell_remove_cars(args);                 // deep remove cars
-  // cell_remove_args(args);                 // remove args cons
-  // cell_remove_pairlis_deep(env, old_env); // remove associations
-  // unsafe_cell_remove(car(fn));            // function name
-  // cell_remove_recursive(cadr(fn));        // params
-  // unsafe_cell_remove(cddr(fn));           // cons pointing to body
-  // unsafe_cell_remove(cdr(fn));            // cons poining to param
-  // unsafe_cell_remove(fn);                 // cons pointing to lambda sym
   cell_remove_lambda(env, old_env, args, fn);
   return res;
 }
@@ -253,48 +229,23 @@ cell *apply_label(cell *fn, cell *args, cell *env, bool eval_args) {
     args = evlis(args, env);
   cell *new_env = cons(cons(cadr(fn), caddr(fn)), env);
   cell *res = apply(caddr(fn), args, new_env, false);
-  unsafe_cell_remove(cddr(fn));     // cons of the body
-  unsafe_cell_remove(cadr(fn));     // symbol to bind
-  unsafe_cell_remove(cdr(fn));      // cons of the top level
-  unsafe_cell_remove(car(fn));      // symbol label
-  unsafe_cell_remove(fn);           // cons of everything
-  unsafe_cell_remove(car(new_env)); // new cons of the pair of the new env
-  cell_remove(new_env);             // head of new env
+  cell_remove_label(new_env, fn);
   return res;
 }
 
 cell *apply_macro(cell *fn, cell *args, cell *env, bool eval_args) {
-#if DEBUG_EVAL_MODE
-  printf("MACRO:\t\t" ANSI_COLOR_RED);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
   cell *old_env = env;
   env = pairlis(cadr(fn), args, env);
   cell *fn_body = caddr(fn);
   cell *res = eval(fn_body, env);
   res = eval(res, env);
-  // FREE THINGS
-  cell_remove_cars(args);                 // deep remove cars
-  cell_remove_pairlis_deep(env, old_env); // remove associations
-  unsafe_cell_remove(car(fn));            // function name
-  cell_remove_recursive(cadr(fn));        // params
-  unsafe_cell_remove(cddr(fn));           // cons pointing to body
-  unsafe_cell_remove(cdr(fn));            // cons poining to param
-  unsafe_cell_remove(fn);                 // cons pointing to lambda sym
+  cell_remove_apply_macro(env, old_env, args, fn);
   return res;
 }
 
 cell *eval_lambda_and_apply(cell *fn, cell *args, cell *env, bool eval_args) {
-#if DEBUG_EVAL_MODE
-  printf("Resolving fun: \t" ANSI_COLOR_RED);
-  print_sexpr(fn);
-  printf(ANSI_COLOR_RESET "\n");
-#endif
-
   if (eval_args)
     args = evlis(args, env);
-
   cell *function_body = eval(fn, env);
 #if CHECKS
   if (function_body == NULL)
