@@ -1,4 +1,5 @@
 #include "picore.h"
+#include "piremove.h"
 
 cell *eval(cell *expression, cell *env) {
 
@@ -13,35 +14,30 @@ cell *eval(cell *expression, cell *env) {
 
 cell *eval_atom(cell *expression, cell *env) {
   if (!expression)
-    // NIL
     return NULL;
-  else {
-    if (is_num(expression) || is_str(expression) || is_keyword(expression))
-      // VALUE
-      return expression;
-    else {
-      // it's a symbol: we have to search for that
-      if (expression == symbol_true)
-        return symbol_true;
-      else {
-        cell *pair = assoc(expression, env);
-        cell *symbol_value = cdr(assoc(expression, env));
+
+  if (is_num(expression) || is_str(expression) || is_keyword(expression))
+    return expression;
+
+  if (expression == symbol_true)
+    return symbol_true;
+
+  // it's a symbol: we have to search for that
+  cell *pair = assoc(expression, env);
+  cell *symbol_value = cdr(assoc(expression, env));
 #if CHECKS
-        if (!pair) {
-          // the symbol has no value in the env
-          char *err = "unknown symbol ";
-          char *sym_name = expression->sym;
-          char result[ERROR_MESSAGE_LEN];
-          strcpy(result, err);
-          strcat(result, sym_name);
-          pi_error(LISP_ERROR, result);
-        } else
+  if (!pair) {
+    // the symbol has no value in the env
+    char *err = "unknown symbol ";
+    char *sym_name = expression->sym;
+    char result[ERROR_MESSAGE_LEN];
+    strcpy(result, err);
+    strcat(result, sym_name);
+    pi_error(LISP_ERROR, result);
+  } else
 #endif
-          // the symbol has a value in the env
-          return symbol_value;
-      }
-    }
-  }
+    // the symbol has a value in the env
+    return symbol_value;
 }
 
 cell *eval_atom_function(cell *expression, cell *env) {
@@ -71,37 +67,34 @@ cell *eval_atom_function(cell *expression, cell *env) {
 cell *eval_composed_function(cell *expression, cell *env) {
   cell *evaluated = NULL;
 
-  if (caar(expression) == symbol_macro) {
-    // MACRO
-    cell *old_env = env;
-    cell *body = car(expression);
-    cell *prm = cdr(expression);
-    env = pairlis(cadr(body), prm, env);
-    cell *fn_body = caddr(body);
-    evaluated = eval(fn_body, env);
-
-    cell_remove_pairlis(env, old_env);
-    cell_remove_recursive(cdr(expression));    // params tree
-    unsafe_cell_remove(cdr(cdar(expression))); // cons of the body
-    cell_remove_recursive(cadar(expression));  // formal params
-    unsafe_cell_remove(cdar(expression));      // cons of params
-    cell_remove(caar(expression));             // symbol macro
-    unsafe_cell_remove(car(expression));       // cons of macro
-    unsafe_cell_remove(expression);            // head of everything
-  } else {
-    // ==================== COMPOSED FUNCTION ====================
+  if (caar(expression) == symbol_macro)
+    evaluated = eval_macro(expression,env);
+  else {
     evaluated = apply(car(expression), cdr(expression), env, true);
-    unsafe_cell_remove(expression); // remove function
     cell_remove_args(cdr(expression));
+    unsafe_cell_remove(expression); // remove function
   }
 
   return evaluated;
 }
 
+cell *eval_macro(cell *expression, cell *env) {
+  cell *evaluated = NULL;
+  cell *old_env = env;
+  cell *body = car(expression);
+  cell *prm = cdr(expression);
+
+  env = pairlis(cadr(body), prm, env);
+  cell *fn_body = caddr(body);
+  evaluated = eval(fn_body, env);
+  cell_remove_macro(env, old_env, expression);
+  return evaluated;
+}
+
 cell *apply(cell *fn, cell *args, cell *env, bool eval_args) {
-  if (atom(fn)) 
+  if (atom(fn))
     return apply_atom_function(fn, args, env, eval_args);
-  else 
+  else
     return apply_composed_function(fn, args, env, eval_args);
 }
 
@@ -181,7 +174,6 @@ cell *assoc(cell *symbol, cell *env) {
   return result;
 }
 
-
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
   if (fn->type == TYPE_BUILTINLAMBDA) {
     // BASIC OPERATIONS
@@ -229,15 +221,16 @@ cell *apply_lambda(cell *fn, cell *args, cell *env, bool eval_args) {
   cell *fn_body = caddr(fn);
   cell *res = eval(fn_body, env);
   // FREE THINGS
-  cell_remove_recursive(env->car->cdr);
-  cell_remove_cars(args);                 // deep remove cars
-  cell_remove_args(args);                 // remove args cons
-  cell_remove_pairlis_deep(env, old_env); // remove associations
-  unsafe_cell_remove(car(fn));            // function name
-  cell_remove_recursive(cadr(fn));        // params
-  unsafe_cell_remove(cddr(fn));           // cons pointing to body
-  unsafe_cell_remove(cdr(fn));            // cons poining to param
-  unsafe_cell_remove(fn);                 // cons pointing to lambda sym
+  // cell_remove_recursive(env->car->cdr);
+  // cell_remove_cars(args);                 // deep remove cars
+  // cell_remove_args(args);                 // remove args cons
+  // cell_remove_pairlis_deep(env, old_env); // remove associations
+  // unsafe_cell_remove(car(fn));            // function name
+  // cell_remove_recursive(cadr(fn));        // params
+  // unsafe_cell_remove(cddr(fn));           // cons pointing to body
+  // unsafe_cell_remove(cdr(fn));            // cons poining to param
+  // unsafe_cell_remove(fn);                 // cons pointing to lambda sym
+  cell_remove_lambda(env, old_env, args, fn);
   return res;
 }
 
