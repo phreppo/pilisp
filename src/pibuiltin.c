@@ -867,11 +867,11 @@ cell *dotimes(const cell *arg, cell *env) {
   return NULL;
 }
 
-// ! needs the compiler to be loaded
+// ! the compiler needs to be loaded
 cell *compile(cell *c, cell * env) {
   cell * name = c->car;
   cell * to_compilate = eval(name,env);
-  
+
   FILE *program_file_write = fopen(".picompile", "w");
   int results = fputs("(plc '", program_file_write);
   if (results == EOF)

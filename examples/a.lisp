@@ -1,4 +1,5 @@
 (load "./examples/functions.lisp")
+(load "./compiler/compiler.lisp")
 (set 'n 789)               
 (set 'n2 2)                        
 NIL 
@@ -116,5 +117,17 @@ n
 (check "zombie")
 
 (LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST)
-(time (dotimes (n 10000000) ( (LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST) 1 2 3 )))
+(defun mylist (x y z) (list z y x x y z  1 2))
+
+(write "Invoking trough name")
+(time (dotimes ( n 10000000) (mylist 1 2 3)))
+
+(write "invoking through lambda")
 (time (dotimes (n 10000000) ( (lambda (x y z) (list z y x x x y z 1 2 )) 1 2 3 )))
+
+(write "invoking through compiled code")
+(compile mylist)
+(time (dotimes ( n 10000000) (mylist 1 2 3)))
+
+(write "invoking direct compiled code")
+(time (dotimes (n 10000000) ( (LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST) 1 2 3 )))
