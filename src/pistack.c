@@ -105,7 +105,7 @@ cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
       break;
 
     case '?':
-      // have to resolve a name
+      // extern name
       mutable_cell = assoc(args->car,env);
       stack_push( mutable_cell ? mutable_cell->cdr : NULL);
       args = args->cdr;

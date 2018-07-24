@@ -334,12 +334,67 @@ void print_global_env(const cell *env) {
   }
 }
 
-void print_stack(){
+void print_stack() {
   printf(ANSI_COLOR_GREEN "** Stack **\n" ANSI_COLOR_RESET);
-  size_t i =0;
-  for(i=0;i<stack_pointer;i++){
-    printf("%lu \t",i);
-    print_sexpr(*(stack+i));
+  size_t i = 0;
+  for (i = 0; i < stack_pointer; i++) {
+    printf("%lu \t", i);
+    print_sexpr(*(stack + i));
     puts("");
   }
+}
+
+static void print_sexpr_to_file_rec_default(const cell *c,
+                                            const cell **printed_cons_cells,
+                                            unsigned long level, FILE *f) {
+  if (c) {
+    switch (c->type) {
+    case TYPE_NUM:
+      fprintf(f, "%i", c->value);
+      break;
+    case TYPE_STR:
+      fprintf(f, "\"%s\"", c->str);
+      break;
+    case TYPE_KEYWORD:
+    case TYPE_BUILTINMACRO:
+    case TYPE_BUILTINLAMBDA:
+      fprintf(f, "%s", c->sym);
+      break;
+    case TYPE_SYM:
+      fprintf(f, "%s", c->sym);
+      break;
+    case TYPE_CONS:
+      if (!cell_was_printed(c, printed_cons_cells, level)) {
+        printed_cons_cells[level++] = c;
+        fprintf(f, "(");
+        while (c->cdr && c->cdr->type == TYPE_CONS) {
+          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          fprintf(f, " ");
+          c = c->cdr;
+        }
+        print_sexpr_rec_list(c->car, printed_cons_cells, level);
+        if (c->cdr) {
+          fprintf(f, " . ");
+          print_sexpr_rec_list(c->cdr, printed_cons_cells, level);
+        }
+        fprintf(f, ")");
+      }
+      break;
+    case TYPE_FREE:
+      fprintf(f, "FREE");
+      break;
+    default:
+      pi_error(MODE_ERROR, "unknown cell type");
+      break;
+    }
+  } else {
+    fprintf(f, "NIL");
+  }
+}
+
+// file must be opened
+void print_sexpr_to_file(const cell *c, FILE *f) {
+  const cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
+  unsigned long level = 0;
+  print_sexpr_to_file_rec_default(c, printed_cons_cells, level, f);
 }

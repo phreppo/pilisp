@@ -114,3 +114,7 @@ n
 (solveMaze maze1)
 
 (check "zombie")
+
+(LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST)
+(time (dotimes (n 10000000) ( (LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST) 1 2 3 )))
+(time (dotimes (n 10000000) ( (lambda (x y z) (list z y x x x y z 1 2 )) 1 2 3 )))

@@ -189,6 +189,22 @@ cell *set(cell *args) {
 #endif
   cell *name = car(args);
   cell *val = cadr(args);
+
+  /*
+  
+  if (is_lambda(val)){
+    val = compile(val);
+  }
+
+  cell * compile(val){
+    scrivi in un file il programma: 
+      "(plc '[val])"
+    esegui il programma e ritorna il risultato
+    ritorna quello che ha tornato il risultato
+  }
+  
+  */
+  
 #if CHECKS
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");

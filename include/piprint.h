@@ -22,6 +22,7 @@ enum sexpr_print_mode {
 
 void print_sexpr_mode(const cell *c, unsigned char mode);
 void print_sexpr(const cell *c);
+void print_sexpr_to_file(const cell *c, FILE *f);
 void print_token(int tok);
 void print_cell_block(const cell_block *block);
 void print_cell(const cell *cell);
