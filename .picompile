@@ -1,1 +1,1 @@
-(plc '(LAMBDA (X) X))
+(plc '(LAMBDA (X Y Z) (LIST X Y Z Z Y X 1 2)))

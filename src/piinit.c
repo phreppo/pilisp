@@ -20,6 +20,7 @@ void init_builtin_macros() {
   symbol_dotimes = mk_builtin_macro("DOTIMES",dotimes);
   symbol_cond = mk_builtin_macro("COND",cond);
   symbol_asm = mk_builtin_macro("ASM",asm_call);
+  symbol_compile = mk_builtin_macro("COMPILE",compile);
 }
 
 void init_builtin_lambdas() {
@@ -64,7 +65,6 @@ void init_builtin_lambdas() {
   symbol_append = mk_builtin_lambda("APPEND",append,NULL);
   symbol_lasm = mk_builtin_lambda("LASM",NULL,NULL);
   symbol_string = mk_builtin_lambda("STRING",NULL,NULL);
-  symbol_compile = mk_builtin_lambda("COMPILE",compile,NULL);
 }
 
 void init_stack(){

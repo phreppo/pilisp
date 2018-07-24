@@ -869,11 +869,9 @@ cell *dotimes(const cell *arg, cell *env) {
 
 // ! needs the compiler to be loaded
 cell *compile(cell *c, cell * env) {
-  // cell * name = c->car;
-  // print_sexpr(name);
-
-  cell * to_compilate = c->car;
-  // c->car = eval(c->car,env);
+  cell * name = c->car;
+  cell * to_compilate = eval(name,env);
+  
   FILE *program_file_write = fopen(".picompile", "w");
   int results = fputs("(plc '", program_file_write);
   if (results == EOF)
@@ -888,7 +886,7 @@ cell *compile(cell *c, cell * env) {
   fclose(program_file_write);
   
   cell * compiled = load(mk_cons(mk_str(".picompile"),NULL),memory->global_env);
-  // set(mk_cons(to_compilate,mk_cons(compiled, NULL)));
+  set(mk_cons(name,mk_cons(compiled, NULL)));
   return compiled; 
 }
 
