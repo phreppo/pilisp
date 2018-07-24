@@ -53,6 +53,8 @@
     (cond
         (( null ato)
             (cons :loadconst ato))
+        ((eq ato t)
+            (cons :loadconst ato))
         (( has_value_in_stack ato symbol_table)
             (cons :loadstack ( get_stack_index ato symbol_table)))
         ((symbolp ato)
