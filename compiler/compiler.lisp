@@ -11,7 +11,8 @@
 ; (plc '[EXPRESSION]) -> (asm [ASM_STRING] {ARGS_LIST})
 (defun plc (not_evaluated_expression)
     ( get_interpretable_code 
-        ( _compile not_evaluated_expression nil)))
+        ( _compile not_evaluated_expression nil)
+         not_evaluated_expression))
 
 ;; ****************************************************************
 ;; *=================== Instructions Generator ===================*
@@ -19,11 +20,15 @@
 
 
 ; Instructions:
-;      :loadconst
-;      :loadsymbol
-;      :argsnum
-;      :cbs[0-3] -> call builtin stack with 0-3 params
-;      :cbsn -> call builtin stack with n > 3 params
+;       :loadconst  -> load one const followed by the const
+;       :loadstack  -> load one stack parameter followed by the position
+;       :loadsymbol -> load one symbol followed by the symbol
+;       :argsnum    -> start of a lambda with n parameters
+;       :cbs        -> call builtin stack function
+;
+; If the expression is not compilable the result will be:
+;       :notcompilable
+;
 
 (setq builtin_stack_lambdas 
     '( car cdr cons atom eq list +))
@@ -40,7 +45,7 @@
             ( compile_atom_function expr symbol_table)) 
 
         (( else)
-            "_ERROR:UNRECOGNIZED_FUNCTION_")))
+            :notcompilable )))
 
 ;; ==================== Atom or Quote Compiling ====================
 
@@ -64,7 +69,7 @@
 
 (defun get_stack_index (name symbol_table)
     (cond 
-        ((null symbol_table) nil) ; ERROR
+        ((null symbol_table) nil) ; unreachable
         ((eq name ( extract_first_symbol symbol_table))
             ( extract_first_index symbol_table))
         (( else)
@@ -94,7 +99,7 @@
         (( is_lambda fun)
             ( compile_lambda fun args symbol_table))
         (( else) 
-            nil)))
+            :notcompilable )))
 
 (defun is_builtin_stack (fun)
     (member fun builtin_stack_lambdas))
@@ -114,9 +119,20 @@
         ((null args_list) 
             ( create_builtin_stack_trailer fun initial_args_number))
         (( else)  
-            (append 
-            ( compile_first_arg args_list symbol_table)
-            ( compile_remaining_list_and_append_builtin_stack fun args_list initial_args_number symbol_table)))))
+            ( let
+                ((first_arg_compiled 
+                    ( compile_first_arg args_list symbol_table))
+                 (rest_of_the_args_compiled 
+                    ( compile_remaining_list_and_append_builtin_stack fun args_list initial_args_number symbol_table)))
+                ( compile_only_if_everything_is_compilable first_arg_compiled rest_of_the_args_compiled)))))
+
+(defun compile_only_if_everything_is_compilable (first_arg_compiled rest_of_the_args_compiled)
+    (cond 
+        ((and ( is_compilable first_arg_compiled) 
+              ( is_compilable rest_of_the_args_compiled))
+            (append first_arg_compiled rest_of_the_args_compiled))
+        (( else)
+            :notcompilable)))
 
 (defun compile_first_arg (args_list symbol_table)
     ( _compile (car args_list) symbol_table))
@@ -139,7 +155,7 @@
         (lambda_args  ( extract_lambda_args args))
         (lambda_body  ( extract_lambda_body args))
         (new_symbol_table ( build_symbol_table ( extract_lambda_args args) symbol_table)))
-    (cons ; maybe cons here
+    (cons
         ( build_lambda_args_number_instruction lambda_args)
         ( build_lambda_body_instruction_list lambda_body new_symbol_table))))
 
@@ -189,8 +205,10 @@
 
 ; ((:[INSTRUCTION] . [PARAM]) {(:[INSTRUCTION] . [PARAM])} ) 
 ;           -> (ASM "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
-(defun get_interpretable_code (compiled_expression)
+(defun get_interpretable_code (compiled_expression original_expression)
     (cond 
+    ((eq compiled_expression :notcompilable) 
+        original_expression )
     ((not ( is_lasm compiled_expression))
         ; asm
         (cons 'asm 
@@ -313,6 +331,9 @@
 
 (defun is_quoted_expression (expr)
     (and (atom (car expr)) (eq 'quote (car expr))))
+
+(defun is_compilable (expression)
+    (not (eq expression :notcompilable)))
 
 (defun count_args (args_list) 
     (length args_list))
