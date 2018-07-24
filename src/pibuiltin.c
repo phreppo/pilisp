@@ -820,18 +820,19 @@ cell *load(cell *arg, cell *env) {
   FILE *file = fopen(((name) ? name->str : ""), "r");
   if (!file)
     pi_error(LISP_ERROR, "can't find file");
-  cell *last_result;
+  cell *last_result = NULL;
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);
     if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
       last_result = eval(sexpr, env);
-      cell_remove_recursive(last_result);
+      if(!feof(file))
+        cell_remove_recursive(last_result);
     }
   }
   unsafe_cell_remove(name);
   cell_remove_args(arg);
-  return symbol_true;
+  return last_result;
 }
 
 cell *dotimes(const cell *arg, cell *env) {

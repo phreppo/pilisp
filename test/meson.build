@@ -625,7 +625,7 @@ test('[COMP] N par BS', lisp_program_test, args : [
     '(plc \'(list 1 2 3 4 5 6 7))',
 
     '(ASM "!!!!!!!$H" 1 2 3 4 5 6 7 LIST)',
-    'CBSPARN'
+    'CBSPARN5'
 ])
 
 test('[COMP] nested car and cdr stack 1', lisp_program_test, args : [
