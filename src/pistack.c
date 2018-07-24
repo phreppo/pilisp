@@ -15,12 +15,26 @@ cell *stack_pop() {
 
 void stack_car(size_t stack_base, unsigned char nargs) {
   stack_pointer--;
-  stack_push(stack[stack_base]->car);
+  if (stack[stack_base]) {
+    cell *res = stack[stack_base]->car;
+    cell_remove(stack[stack_base]);
+    cell_remove_recursive(stack[stack_base]->cdr);
+    stack_push(res);
+  } else{
+    stack_push(NULL);
+  }
 }
 
 void stack_cdr(size_t stack_base, unsigned char nargs) {
   stack_pointer--;
-  stack_push(stack[stack_base]->cdr);
+  if (stack[stack_base]) {
+    cell *res = stack[stack_base]->cdr;
+    cell_remove(stack[stack_base]);
+    cell_remove_recursive(stack[stack_base]->car);
+    stack_push(res);
+  } else{
+    stack_push(NULL);
+  }
 }
 
 void stack_list(size_t stack_base, unsigned char nargs) {
@@ -42,6 +56,7 @@ void stack_list(size_t stack_base, unsigned char nargs) {
 
 cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
   cell *machine_code_cell = args->car;
+  cell *initial_args = args;
   args = args->cdr;
 #if CHECKS
   if (!is_str(machine_code_cell))
@@ -88,10 +103,11 @@ cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
   }
 #if CHECKS
   if (stack_pointer > (initial_stack_pointer + 1))
-    pi_lisp_error("stack error: there's something left on the stack");
+    pi_error_stack_overflow();
   if (stack_pointer < (initial_stack_pointer + 1))
-    pi_lisp_error(
-        "stack error: something has removed too much args on the stack");
+    pi_error_stack_undeflow();
 #endif
+  unsafe_cell_remove(machine_code_cell);
+  cell_remove_args(initial_args);
   return stack_pop();
 }

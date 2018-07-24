@@ -221,7 +221,17 @@ cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args) {
     stack_push(act_arg->car);
     act_arg = act_arg->cdr;
   }
-  return asm_call_with_stack_base(cddr(fn), stack_base);
+  cell *res = asm_call_with_stack_base(cddr(fn), stack_base);
+  stack_pointer = stack_pointer - cadr(fn)->value;
+#if CHECKS
+  if (stack_pointer != stack_base)
+    pi_error_stack();
+#endif
+  unsafe_cell_remove(cadr(fn));
+  unsafe_cell_remove(cdr(fn));
+  cell_remove_args(args);
+  unsafe_cell_remove(fn); // cons of the lasm
+  return res;
 }
 
 cell *apply_label(cell *fn, cell *args, cell *env, bool eval_args) {

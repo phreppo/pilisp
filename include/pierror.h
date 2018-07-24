@@ -25,6 +25,9 @@ void pi_error(int CODE, char *message);
 void pi_lisp_error(char *message); // throws LISP_ERROR
 void pi_error_few_args();          // throws "too few args"
 void pi_error_many_args();         // throws "too many args"
+void pi_error_stack();
+void pi_error_stack_overflow();
+void pi_error_stack_undeflow();
 
 // ==================== CHECKS ====================
 

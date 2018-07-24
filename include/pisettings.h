@@ -67,8 +67,9 @@
 #else
 #define COLLECT_GARBAGE 1
 #endif
-
-#define STACK_LIMIT 1000000
+// (dotimes (n 999999990) (asm "!$B" (A) list ))
+// (time (dotimes ( n 1000000) ( (lasm 2 "@A@B@A@B!$F" 1 list) "we" "we")))
+#define STACK_LIMIT 100
 
 /********************************************************************************
  *                                 DEBUGGING
