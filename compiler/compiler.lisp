@@ -155,9 +155,19 @@
         (lambda_args  ( extract_lambda_args args))
         (lambda_body  ( extract_lambda_body args))
         (new_symbol_table ( build_symbol_table ( extract_lambda_args args) symbol_table)))
-    (cons
-        ( build_lambda_args_number_instruction lambda_args)
-        ( build_lambda_body_instruction_list lambda_body new_symbol_table))))
+        (let (
+            (lambda_args_number_instruction ( build_lambda_args_number_instruction lambda_args))
+            (lambda_body_instruction_list ( build_lambda_body_instruction_list lambda_body new_symbol_table))) 
+            ( compile_lambda_only_if_compilable lambda_args_number_instruction lambda_body_instruction_list))))
+
+(defun compile_lambda_only_if_compilable (lambda_args_number_instruction lambda_body_instructions_list)
+    (cond 
+        (( is_compilable lambda_body_instructions_list)
+            (cons
+                lambda_args_number_instruction
+                lambda_body_instructions_list))
+        (( else)
+            :notcompilable)))
 
 ;; @ BUILD LAMBDA BODY
 (defun build_lambda_body_instruction_list (lambda_body symbol_table) 
