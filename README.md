@@ -26,8 +26,9 @@ Here's the instruction set:
 | :---:       | :---:           |
 | !           | load constant   |
 | ?           | load symbol     |
+| @           | load name from stack     |
 | $           | apply builtin lambda      |
-| \[A-Z\]     | number 0 to 25 (to pass the unmber of args to lambdas)      |
+| \[A-Z\]     | numbers from 0 to 25     |
 
 
 To produce bytecode run: 
