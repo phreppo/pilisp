@@ -64,6 +64,7 @@ void init_builtin_lambdas() {
   symbol_append = mk_builtin_lambda("APPEND",append,NULL);
   symbol_lasm = mk_builtin_lambda("LASM",NULL,NULL);
   symbol_string = mk_builtin_lambda("STRING",NULL,NULL);
+  symbol_compile = mk_builtin_lambda("COMPILE",compile,NULL);
 }
 
 void init_stack(){
@@ -75,6 +76,7 @@ void init_env() {
   // write the basic functions to one file, then load them
   write_program_to_file(
       ".piinit",
+
       "(set 'defmacro (macro (name param body) " // check this
       "(list 'set (list 'quote name) (list 'macro param body))))"
 

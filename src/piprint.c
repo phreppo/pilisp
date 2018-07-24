@@ -368,14 +368,14 @@ static void print_sexpr_to_file_rec_default(const cell *c,
         printed_cons_cells[level++] = c;
         fprintf(f, "(");
         while (c->cdr && c->cdr->type == TYPE_CONS) {
-          print_sexpr_rec_list(c->car, printed_cons_cells, level);
+          print_sexpr_to_file_rec_default(c->car, printed_cons_cells, level,f);
           fprintf(f, " ");
           c = c->cdr;
         }
-        print_sexpr_rec_list(c->car, printed_cons_cells, level);
+        print_sexpr_to_file_rec_default(c->car, printed_cons_cells, level,f);
         if (c->cdr) {
           fprintf(f, " . ");
-          print_sexpr_rec_list(c->cdr, printed_cons_cells, level);
+          print_sexpr_to_file_rec_default(c->cdr, printed_cons_cells, level,f);
         }
         fprintf(f, ")");
       }

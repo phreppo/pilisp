@@ -76,7 +76,7 @@ cell *list(const cell *list);
 cell *subseq(const cell *list); // substr
 cell *reverse(const cell *list);
 cell *concatenate(const cell *list); // works only on strings
-cell *append(cell * list);
+cell *append(cell *list);
 
 // ==================== MACROS ====================
 cell *setq(const cell *args, cell *env);
@@ -89,7 +89,8 @@ cell *cond(const cell *arg, cell *env);
 cell *dotimes(const cell *arg, cell *env);
 
 // ==================== COMPILER FUNCTIONS ====================
-cell * asm_call(cell * args, cell * env);
+cell *asm_call(cell *args, cell *env);
+cell *compile(cell *c, cell *env);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower
@@ -101,7 +102,8 @@ inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 inline int atom(const cell *c) {
   return (c == NULL) ||
          (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
-          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD);
+          c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO ||
+          c->type == TYPE_KEYWORD);
 }
 
 inline bool eq(const cell *v1, const cell *v2) {

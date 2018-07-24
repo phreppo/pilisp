@@ -22,7 +22,8 @@
         "chrono": "c",
         "functional": "c",
         "ratio": "c",
-        "tuple": "c"
+        "tuple": "c",
+        "pifile.h": "c"
     },
     "python.linting.pylintEnabled": false,
     "cSpell.enabledLanguageIds": [

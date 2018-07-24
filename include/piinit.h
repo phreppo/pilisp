@@ -86,6 +86,7 @@ cell *symbol_reverse;
 cell *symbol_concatenate;
 cell *symbol_append;
 cell *symbol_lasm;
+cell *symbol_compile;
 
 // ==================== KEYWORD SYMBOLS ====================
 cell *symbol_string;

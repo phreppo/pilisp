@@ -17,14 +17,14 @@ cell *append(cell *list) {
   }
   if (act)
     act->cdr = second_list;
-  else 
+  else
     first_list = second_list;
   cell_remove_args(list);
   return first_list;
 }
 
-cell * asm_call(cell *args, cell * env) {
-  return asm_call_with_stack_base(args,env,stack_pointer);
+cell *asm_call(cell *args, cell *env) {
+  return asm_call_with_stack_base(args, env, stack_pointer);
 }
 
 // handles only strings
@@ -57,8 +57,6 @@ cell *concatenate(const cell *list) {
   cell_remove_args(list);
   return mk_str(new_str);
 }
-
-// (concatenate 'string "ciao " "sono pazzo")
 
 cell *addition(const cell *numbers) {
   long result = 0;
@@ -191,20 +189,21 @@ cell *set(cell *args) {
   cell *val = cadr(args);
 
   /*
-  
+
   if (is_lambda(val)){
     val = compile(val);
   }
 
   cell * compile(val){
-    scrivi in un file il programma: 
+    scrivi in un file il programma:
       "(plc '[val])"
     esegui il programma e ritorna il risultato
     ritorna quello che ha tornato il risultato
   }
-  
+
   */
-  
+//  val = compile(val);
+
 #if CHECKS
   if (!is_sym(name))
     pi_error(LISP_ERROR, "first arg must be a symbol");
@@ -826,7 +825,7 @@ cell *load(cell *arg, cell *env) {
     if (sexpr != symbol_file_ended) {
       // eval only if you didn't read an empty fragment
       last_result = eval(sexpr, env);
-      if(!feof(file))
+      if (!feof(file))
         cell_remove_recursive(last_result);
     }
   }
@@ -867,6 +866,32 @@ cell *dotimes(const cell *arg, cell *env) {
   cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
   return NULL;
 }
+
+// ! needs the compiler to be loaded
+cell *compile(cell *c, cell * env) {
+  // cell * name = c->car;
+  // print_sexpr(name);
+
+  cell * to_compilate = c->car;
+  // c->car = eval(c->car,env);
+  FILE *program_file_write = fopen(".picompile", "w");
+  int results = fputs("(plc '", program_file_write);
+  if (results == EOF)
+    pi_error(MEMORY_ERROR, "error writing program file");
+
+  print_sexpr_to_file(to_compilate,program_file_write);
+
+  results = fputs(")", program_file_write);
+  if (results == EOF)
+    pi_error(MEMORY_ERROR, "error writing program file");
+
+  fclose(program_file_write);
+  
+  cell * compiled = load(mk_cons(mk_str(".picompile"),NULL),memory->global_env);
+  // set(mk_cons(to_compilate,mk_cons(compiled, NULL)));
+  return compiled; 
+}
+
 #if !INLINE_FUNCTIONS
 cell *caar(const cell *c) { return c->car->car; }
 cell *cddr(const cell *c) { return c->cdr->cdr; }
