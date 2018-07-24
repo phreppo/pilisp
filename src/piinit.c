@@ -63,6 +63,7 @@ void init_builtin_lambdas() {
   symbol_concatenate = mk_builtin_lambda("CONCATENATE",concatenate,NULL);
   symbol_append = mk_builtin_lambda("APPEND",append,NULL);
   symbol_lasm = mk_builtin_lambda("LASM",NULL,NULL);
+  symbol_string = mk_builtin_lambda("STRING",NULL,NULL);
 }
 
 void init_stack(){
@@ -79,6 +80,8 @@ void init_env() {
 
       "(defun 1+ (num) (+ num 1))"
 
+      "(defun id (x) x)"
+
       "(setq d \"./test/lisp_programs/diff.lisp\")"
 
       "(defun null (arg) (not arg))"
@@ -91,6 +94,8 @@ void init_env() {
 
       "(setq f \"./examples/functions.lisp\")"
 
+      // "(load compiler)"
+
       "(setq c compiler)"
 
       );
@@ -99,7 +104,7 @@ void init_env() {
 }
 
 void init_symbols(){
-  symbol_string = mk_sym("string");
+
 }
 
 void free_pi() {

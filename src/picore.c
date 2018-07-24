@@ -96,11 +96,11 @@ cell *apply(cell *fn, cell *args, cell *env, bool eval_args) {
     return apply_composed_function(fn, args, env, eval_args);
 }
 
-cell *evlis(cell *args_list, cell *env) {
-  if (!args_list)
+cell *evlis(cell *args, cell *env) {
+  if (!args)
     return NULL;
-  cell *valued_car = eval(car(args_list), env);
-  cell *valued_cdr = evlis(cdr(args_list), env);
+  cell *valued_car = eval(car(args), env);
+  cell *valued_cdr = evlis(cdr(args), env);
   return mk_cons(valued_car, valued_cdr);
 }
 
@@ -221,7 +221,7 @@ cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args) {
     stack_push(act_arg->car);
     act_arg = act_arg->cdr;
   }
-  cell *res = asm_call_with_stack_base(cddr(fn), stack_base);
+  cell *res = asm_call_with_stack_base(cddr(fn),env, stack_base);
   stack_pointer = stack_pointer - cadr(fn)->value;
 #if CHECKS
   if (stack_pointer != stack_base)

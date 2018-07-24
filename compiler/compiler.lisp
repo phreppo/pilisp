@@ -39,7 +39,7 @@
         ((atom (car expr))
             ( compile_atom_function expr symbol_table)) 
 
-        (( else )
+        (( else)
             "_ERROR:UNRECOGNIZED_FUNCTION_")))
 
 ;; ==================== Atom or Quote Compiling ====================
@@ -51,7 +51,7 @@
         (( has_value_in_stack ato symbol_table)
             (cons :loadstack ( get_stack_index ato symbol_table)))
         ((symbolp ato)
-            ;; qui cerca nella symbol table
+            ;; here search in the symbol table
             (cons :loadsymbol ato)) 
         (( else)              
             (cons :loadconst ato))))
@@ -191,7 +191,7 @@
 ;           -> (ASM "{MACHINE_CODE_OPERATIONS}" {PARAMETERS})
 (defun get_interpretable_code (compiled_expression)
     (cond 
-    ((not (eq :lambdanargs (car (car compiled_expression))))
+    ((not ( is_lasm compiled_expression))
         ; asm
         (cons 'asm 
             ( build_interpretable_string_and_args compiled_expression)))
@@ -202,6 +202,9 @@
                 (cdr (car compiled_expression))
                 ( build_interpretable_string_and_args ( next compiled_expression)))))))
             ;; ((lambda (x) (+ x ((lambda (y) y) 2))) 1 )
+
+(defun is_lasm (compiled_expression)
+    (eq :lambdanargs (car (car compiled_expression))))
 
 (defun build_interpretable_string_and_args (compiled_expression)
     (cons 

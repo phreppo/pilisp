@@ -20,15 +20,20 @@ void pi_error_few_args() { pi_error(LISP_ERROR, "too few arguments"); }
 
 void pi_error_many_args() { pi_error(LISP_ERROR, "too many arguments"); }
 
-void pi_error_stack(){
+void pi_error_stack() {
+  empty_stack();
   pi_lisp_error("stack error: wrong stack pointer");
 }
 
 void pi_error_stack_overflow() {
+  empty_stack();
   pi_error(LISP_ERROR, "stack error: there's something left on the stack");
 }
+
 void pi_error_stack_undeflow() {
-  pi_error(LISP_ERROR, "stack error: something has removed too much args on the stack");
+  empty_stack();
+  pi_error(LISP_ERROR,
+           "stack error: something has removed too much args on the stack");
 }
 
 void check_two_args(const cell *args) {

@@ -23,8 +23,8 @@ cell *append(cell *list) {
   return first_list;
 }
 
-cell * asm_call(cell *args) {
-  return asm_call_with_stack_base(args,stack_pointer);
+cell * asm_call(cell *args, cell * env) {
+  return asm_call_with_stack_base(args,env,stack_pointer);
 }
 
 // handles only strings

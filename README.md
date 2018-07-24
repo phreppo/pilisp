@@ -21,7 +21,6 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 You can optionally produce one mid-representation for _some_ expression, loading the LISP module `compile`. The bytecode will run faster than normal LISP code. 
 Here's the instruction set:
 
-
 | Code        | Meaning         |
 | :---:       | :---:           |
 | !           | load constant   |
@@ -29,7 +28,6 @@ Here's the instruction set:
 | @           | load name from stack     |
 | $           | apply builtin lambda      |
 | \[A-Z\]     | numbers from 0 to 25     |
-
 
 To produce bytecode run: 
 ```

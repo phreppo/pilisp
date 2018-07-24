@@ -1,4 +1,5 @@
 #include "pistack.h"
+#include "picore.h"
 
 // EVERYTHING IS UNSAFE!
 
@@ -13,6 +14,10 @@ cell *stack_pop() {
   return ret;
 }
 
+void empty_stack(){
+  stack_pointer = stack;
+}
+
 void stack_car(size_t stack_base, unsigned char nargs) {
   stack_pointer--;
   if (stack[stack_base]) {
@@ -20,7 +25,7 @@ void stack_car(size_t stack_base, unsigned char nargs) {
     cell_remove(stack[stack_base]);
     cell_remove_recursive(stack[stack_base]->cdr);
     stack_push(res);
-  } else{
+  } else {
     stack_push(NULL);
   }
 }
@@ -32,7 +37,7 @@ void stack_cdr(size_t stack_base, unsigned char nargs) {
     cell_remove(stack[stack_base]);
     cell_remove_recursive(stack[stack_base]->car);
     stack_push(res);
-  } else{
+  } else {
     stack_push(NULL);
   }
 }
@@ -54,7 +59,7 @@ void stack_list(size_t stack_base, unsigned char nargs) {
   stack_push(head);
 }
 
-cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
+cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
   cell *machine_code_cell = args->car;
   cell *initial_args = args;
   args = args->cdr;
@@ -67,6 +72,9 @@ cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
   size_t initial_stack_pointer = stack_pointer;
   char instruction;
   unsigned char nargs;
+  cell *mutable_cell; // why this? beacuse first statement in a switch can' t be
+                      // a declaration, so we need to declare this first when we
+                      // would need a tmp var in the switch
   for (i = 0; i < strlen(machine_code); i++) {
     instruction = machine_code[i];
     switch (instruction) {
@@ -94,6 +102,13 @@ cell *asm_call_with_stack_base(cell *args, size_t stack_base) {
       cell *fun = args->car;
       args = args->cdr;
       fun->bs(stack_pointer - nargs, nargs);
+      break;
+
+    case '?':
+      // have to resolve a name
+      mutable_cell = assoc(args->car,env);
+      stack_push( mutable_cell ? mutable_cell->cdr : NULL);
+      args = args->cdr;
       break;
 
     default:

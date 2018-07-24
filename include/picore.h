@@ -12,12 +12,12 @@
 #include "pilisp.h"
 
 // ==================== Core functions ====================
-cell *eval(cell *e, cell *a);
-cell *apply(cell *fn, cell *x, cell *a, bool eval_args);
-cell *pairlis(cell *x, cell *y, cell *a);
-cell *assoc(cell *x, cell *l);
-cell *evlis(cell *m, cell *a);
-cell *evcon(cell *c, cell *a);
+cell *eval(cell *expression, cell *env);
+cell *apply(cell *fn, cell *args, cell *env, bool eval_args);
+cell *pairlis(cell *symbols_list, cell *values_list, cell *env);
+cell *assoc(cell *symbol, cell *env);
+cell *evlis(cell *args, cell *env);
+cell *evcon(cell *args, cell *env);
 
 // ==================== Support functions ====================
 cell *eval_atom(cell * expression, cell * env);

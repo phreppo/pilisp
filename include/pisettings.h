@@ -69,7 +69,7 @@
 #endif
 // (dotimes (n 999999990) (asm "!$B" (A) list ))
 // (time (dotimes ( n 1000000) ( (lasm 2 "@A@B@A@B!$F" 1 list) "we" "we")))
-#define STACK_LIMIT 100
+#define STACK_LIMIT 10000
 
 /********************************************************************************
  *                                 DEBUGGING

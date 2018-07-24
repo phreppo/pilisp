@@ -693,8 +693,6 @@ test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test
     'CLASM5'
 ])
 
-
-
 # ==================== ASM ====================
 test('[ASM] load const 1', lisp_program_test, args : [
     '(ASM "!" 1)',
@@ -743,6 +741,19 @@ test('[ASM] (list 1 (car \'(2)) 3 (car (cdr \'(A B)))', lisp_program_test, args 
     '(1 2 3 B)',
     'ASMLCBS5'
 ])
+
+test('[ASM] var recognition 1', lisp_program_test, args : [
+    '(SETQ A "hi") (ASM "?" A)',
+    '"hi"',
+    'ASMASSOC1'
+])
+
+test('[ASM] var recognition 2', lisp_program_test, args : [
+    '(SETQ MYLIST \'(A B C)) (ASM "?$B$B" MYLIST CDR CAR)',
+    'B',
+    'ASMASSOC2'
+])
+
 
 test('[LASM] ((lambda (x) 1))', lisp_program_test, args : [
     '((LASM 0 "!" 1))',
