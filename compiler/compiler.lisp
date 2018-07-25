@@ -216,19 +216,19 @@
 
 ;; ==================== Cond Compiling ====================
 
-(defun compile_cond (fun args symbol_table)
-    (cond 
-        ((null args)
-            (list (cons :condend NIL)))
-        (( else)
-            ( compile_one_cond_expression_and_go_on fun args symbol_table))))
-
 ;; (load "compiler.lisp")
 ;; (_compile '(cond (t t) ) nil)
 ;; (_compile '(cond ((car '(a)) :due) ((nil) :due) ) nil)
 ;; (_compile '(cond (t t) (nil nil ) ) nil)
 ;; (_compile '(cond ((car '(a)) :due) ((+ 1 2) :tre) ) nil)
 ;; (_compile '(cond ((car '(a)) :due) ((unknown_function) :tre) ) nil)
+
+(defun compile_cond (fun args symbol_table)
+    (cond 
+        ((null args)
+            (list (cons :condend NIL)))
+        (( else)
+            ( compile_one_cond_expression_and_go_on fun args symbol_table))))
 
 (defun compile_one_cond_expression_and_go_on (fun args symbol_table)
     (let
@@ -326,6 +326,7 @@
     (cond
         ((eq :argsnum ( extract_instruction_code compiled_expression)) t)
         ((eq :loadstack ( extract_instruction_code compiled_expression)) t)
+        ((eq :condend ( extract_instruction_code compiled_expression)) t)
         (( else) nil)))
 
 ;; ==================== Machine code string generation ====================
@@ -351,6 +352,8 @@
         ((eq code :loadconst) "!")
         ((eq code :loadsymbol) "?")
         ((eq code :cbs) "$")
+        ((eq code :condvalue) "*")
+        ((eq code :condend) "&")
         ((eq code :loadstack) ( get_instruction_code_for_stack_load arg)) ; arg will be the index in the stack
         ((eq code :argsnum) ( translate_num_to_digit arg))
         (( else) "__ERROR:UNKNOWN_INSTRUCTION_CODE__")))
@@ -412,3 +415,5 @@
 (defun both_compilables (first_sequence second_sequence)
     (and ( is_compilable first_sequence) 
          ( is_compilable second_sequence)))
+
+T
