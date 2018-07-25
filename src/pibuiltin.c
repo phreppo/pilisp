@@ -894,6 +894,7 @@ cell *compile(cell *c, cell *env) {
     cell *compiled =
         load(mk_cons(mk_str(".picompile"), NULL), memory->global_env);
     set(mk_cons(name, mk_cons(compiled, NULL)));
+    remove(".picompile");
     return compiled;
   } else {
     return to_compilate;

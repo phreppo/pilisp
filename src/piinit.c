@@ -103,6 +103,7 @@ void init_env() {
 
       );
   parse_file(".piinit");
+  // remove(".piinit");
   collect_garbage(memory);
 }
 

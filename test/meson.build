@@ -693,6 +693,7 @@ test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test
     'CLASM5'
 ])
 
+
 # ==================== ASM ====================
 test('[ASM] load const 1', lisp_program_test, args : [
     '(ASM "!" 1)',
@@ -777,4 +778,74 @@ test('[LASM] ((lambda (x y z) (list x y z 1 2)) 1 2 3)', lisp_program_test, args
     '((LASM 3 "@A@B@C!!$F" 1 2 LIST) 1 2 3)',
     '(1 2 3 1 2)',
     'LASM4'
+])
+
+test('[COMPILED] compile my eq', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun myeq (x y) (eq x y))  '+
+    '(compile myeq)' +
+    '(myeq nil 11)',
+
+    'NIL',
+    'COMPILED1'
+])
+
+test('[COMPILED] compile my cons', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun mycons (x y) (cons x y))  '+
+    '(compile mycons)' +
+    '(mycons 1 \'(a b c))',
+
+    '(1 . (a b c))',
+    'COMPILED2'
+])
+
+test('[COMPILED] compile my atom 1', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun myatom (x) (atom x))  '+
+    '(compile myatom)' +
+    '(myatom 1)',
+
+    'T',
+    'COMPILED3'
+])
+
+test('[COMPILED] compile my atom 2', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun myatom (x) (atom x))  '+
+    '(compile myatom)' +
+    '(myatom \'(a b c))',
+
+    'NIL',
+    'COMPILED4'
+])
+
+test('[COMPILED] compile my +', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun mysum (x y) (+ x y))  '+
+    '(compile mysum)' +
+    '(mysum 1 -3)',
+
+    '-2',
+    'COMPILED5'
+])
+
+test('[COMPILED] compile my car', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun mycar (x) (car x))  '+
+    '(compile mycar)' +
+    '(mycar \'(a))',
+
+    'a',
+    'COMPILED6'
+])
+
+test('[COMPILED] compile my list', lisp_program_test, args : [
+    '(load "'+compiler_path+'/compiler.lisp")  '+
+    '(defun mylist (x y z) (list x y z))  '+
+    '(compile mylist)' +
+    '(mylist \'(a) 1 2)',
+
+    '((a) 1 2)',
+    'COMPILED7'
 ])
