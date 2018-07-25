@@ -876,24 +876,28 @@ cell *compile(cell *c, cell *env) {
 #endif
   cell *name = c->car;
   cell *to_compilate = eval(name, env);
+  if (is_cons(to_compilate) && eq(symbol_lambda, car(to_compilate))) {
 
-  FILE *program_file_write = fopen(".picompile", "w");
-  int results = fputs("(plc '", program_file_write);
-  if (results == EOF)
-    pi_error(MEMORY_ERROR, "error writing program file");
+    FILE *program_file_write = fopen(".picompile", "w");
+    int results = fputs("(plc '", program_file_write);
+    if (results == EOF)
+      pi_error(MEMORY_ERROR, "error writing program file");
 
-  print_sexpr_to_file(to_compilate, program_file_write);
+    print_sexpr_to_file(to_compilate, program_file_write);
 
-  results = fputs(")", program_file_write);
-  if (results == EOF)
-    pi_error(MEMORY_ERROR, "error writing program file");
+    results = fputs(")", program_file_write);
+    if (results == EOF)
+      pi_error(MEMORY_ERROR, "error writing program file");
 
-  fclose(program_file_write);
+    fclose(program_file_write);
 
-  cell *compiled =
-      load(mk_cons(mk_str(".picompile"), NULL), memory->global_env);
-  set(mk_cons(name, mk_cons(compiled, NULL)));
-  return compiled;
+    cell *compiled =
+        load(mk_cons(mk_str(".picompile"), NULL), memory->global_env);
+    set(mk_cons(name, mk_cons(compiled, NULL)));
+    return compiled;
+  } else {
+    return to_compilate;
+  }
 }
 
 cell *compile_all(cell *c, cell *env) {
@@ -902,7 +906,7 @@ cell *compile_all(cell *c, cell *env) {
   cell *symbol;
   while (actual_env) {
     symbol = caar(actual_env);
-    compile(mk_cons(symbol,NULL),env);
+    compile(mk_cons(symbol, NULL), env);
     actual_env = cdr(actual_env);
   }
 }

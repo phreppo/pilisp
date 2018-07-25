@@ -14,9 +14,7 @@ cell *stack_pop() {
   return ret;
 }
 
-void empty_stack(){
-  stack_pointer = stack;
-}
+void empty_stack() { stack_pointer = stack; }
 
 void stack_car(size_t stack_base, unsigned char nargs) {
   stack_pointer--;
@@ -45,7 +43,7 @@ void stack_cdr(size_t stack_base, unsigned char nargs) {
 void stack_list(size_t stack_base, unsigned char nargs) {
   cell *head = NULL;
   cell *last_created = NULL;
-  size_t i = 0;
+  unsigned char i = 0;
   for (i = 0; i < nargs; i++) {
     // stack_pointer--;
     if (i == 0) {
@@ -57,6 +55,35 @@ void stack_list(size_t stack_base, unsigned char nargs) {
   }
   stack_pointer -= nargs;
   stack_push(head);
+}
+
+void stack_cons(size_t stack_base, unsigned char nargs) {
+  stack_pointer -= 2;
+  stack_push(cons(stack[stack_base],stack[stack_base+1]));
+}
+
+void stack_atom(size_t stack_base, unsigned char nargs) {
+  stack_pointer--;
+  stack_push( atom(stack[stack_base]) ? symbol_true : NULL);
+  cell_remove(stack[stack_base]);
+}
+
+void stack_eq(size_t stack_base, unsigned char nargs) {
+  stack_pointer -= 2;
+  stack_push(eq(stack[stack_base], stack[stack_base+1]) ?  symbol_true : NULL);
+  cell_remove(stack[stack_base]);
+  cell_remove(stack[stack_base+1]);
+}
+
+void stack_addition(size_t stack_base, unsigned char nargs) {
+  size_t tot = 0;
+  unsigned char i = 0;
+  for (i = 0; i < nargs; i++) {
+    tot += stack[stack_base + i]->value;
+    unsafe_cell_remove(stack[stack_base + i]);
+  }
+  stack_pointer -= nargs;
+  stack_push(mk_num(tot));
 }
 
 cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
@@ -106,8 +133,8 @@ cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
 
     case '?':
       // extern name
-      mutable_cell = assoc(args->car,env);
-      stack_push( mutable_cell ? mutable_cell->cdr : NULL);
+      mutable_cell = assoc(args->car, env);
+      stack_push(mutable_cell ? mutable_cell->cdr : NULL);
       args = args->cdr;
       break;
 
@@ -125,17 +152,4 @@ cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
   unsafe_cell_remove(machine_code_cell);
   cell_remove_args(initial_args);
   return stack_pop();
-}
-
-void stack_cons(size_t stack_base, unsigned char nargs){
-  
-}
-void stack_atom(size_t stack_base, unsigned char nargs){
-  
-}
-void stack_eq(size_t stack_base, unsigned char nargs){
-  
-}
-void stack_addition(size_t stack_base, unsigned char nargs){
-  
 }
