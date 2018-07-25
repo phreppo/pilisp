@@ -100,6 +100,8 @@
             ( compile_builtin_stack fun args symbol_table))
         (( is_lambda fun)
             ( compile_lambda fun args symbol_table))
+        (( is_cond fun)
+            ( compile_cond fun args symbol_table))
         (( else) 
             :notcompilable )))
 
@@ -108,6 +110,9 @@
 
 (defun is_lambda (fun)
     (eq fun 'lambda))
+
+(defun is_cond (fun)
+    (eq fun 'cond))
 
 ;; ==================== Builtin stack compiling ====================
 
@@ -130,8 +135,7 @@
 
 (defun compile_only_if_everything_is_compilable (first_arg_compiled rest_of_the_args_compiled)
     (cond 
-        ((and ( is_compilable first_arg_compiled) 
-              ( is_compilable rest_of_the_args_compiled))
+        (( both_compilables first_arg_compiled rest_of_the_args_compiled)
             (append first_arg_compiled rest_of_the_args_compiled))
         (( else)
             :notcompilable)))
@@ -210,6 +214,58 @@
     (car (cdr lambda_cons)))
 
 
+;; ==================== Cond Compiling ====================
+
+(defun compile_cond (fun args symbol_table)
+    (cond 
+        ((null args)
+            (list (cons :condend NIL)))
+        (( else)
+            ( compile_one_cond_expression_and_go_on fun args symbol_table))))
+
+;; (load "compiler.lisp")
+;; (_compile '(cond (t t) ) nil)
+;; (_compile '(cond ((car '(a)) :due) ((nil) :due) ) nil)
+;; (_compile '(cond (t t) (nil nil ) ) nil)
+;; (_compile '(cond ((car '(a)) :due) ((+ 1 2) :tre) ) nil)
+;; (_compile '(cond ((car '(a)) :due) ((unknown_function) :tre) ) nil)
+
+(defun compile_one_cond_expression_and_go_on (fun args symbol_table)
+    (let
+        ((actual_case_condition ( extract_cond_condition args))
+         (actual_case_body ( extract_cond_body args)))
+        (let 
+            ((actual_case_condition_compiled ( _compile actual_case_condition symbol_table))
+             (conditions_tail_compiled ( compile_cond fun ( next args) symbol_table)))
+            ( compile_one_cond_case_only_if_compilable_and_go_on 
+                actual_case_condition_compiled 
+                actual_case_body 
+                conditions_tail_compiled ))))
+
+(defun compile_one_cond_case_only_if_compilable_and_go_on 
+        (actual_case_condition_compiled actual_case_body conditions_tail_compiled)
+    (cond 
+        (( both_compilables actual_case_condition_compiled conditions_tail_compiled)
+            (append 
+                ( build_cond_case_sequence actual_case_condition_compiled actual_case_body) 
+                  conditions_tail_compiled))
+        (( else)
+            :notcompilable)))
+
+
+(defun build_cond_case_sequence (actual_case_condition_compiled actual_case_body)
+    (append actual_case_condition_compiled 
+        (cons ( build_one_cond_expression_pair actual_case_body) NIL)))
+
+(defun build_one_cond_expression_pair (actual_case_body)
+    (cons :condvalue actual_case_body))
+
+(defun extract_cond_condition (args)
+    (car (car args)))
+
+(defun extract_cond_body (args)
+    (car (cdr (car args))))
+
 
 ;; *****************************************************************
 ;; *=================== Machine Code Generation ===================*
@@ -231,7 +287,6 @@
             (cons 
                 (cdr (car compiled_expression))
                 ( build_interpretable_string_and_args ( next compiled_expression)))))))
-            ;; ((lambda (x) (+ x ((lambda (y) y) 2))) 1 )
 
 (defun is_lasm (compiled_expression)
     (eq :lambdanargs (car (car compiled_expression))))
@@ -353,3 +408,7 @@
 (defun else () t)
 
 (defun next (l) (cdr l))
+
+(defun both_compilables (first_sequence second_sequence)
+    (and ( is_compilable first_sequence) 
+         ( is_compilable second_sequence)))

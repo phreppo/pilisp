@@ -494,8 +494,8 @@ void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   while (act != old_env) {
     // for the head of the pairlis
     tmp = act->cdr;
-    unsafe_cell_remove(act->car); // only not empty cons
-    unsafe_cell_remove(act);      // only not empty cons
+    unsafe_cell_remove(act->car); 
+    unsafe_cell_remove(act);      
     act = tmp;
   }
 }
