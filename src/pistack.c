@@ -126,3 +126,16 @@ cell *asm_call_with_stack_base(cell *args, cell *env, size_t stack_base) {
   cell_remove_args(initial_args);
   return stack_pop();
 }
+
+void stack_cons(size_t stack_base, unsigned char nargs){
+  
+}
+void stack_atom(size_t stack_base, unsigned char nargs){
+  
+}
+void stack_eq(size_t stack_base, unsigned char nargs){
+  
+}
+void stack_addition(size_t stack_base, unsigned char nargs){
+  
+}

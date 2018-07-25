@@ -91,6 +91,7 @@ cell *dotimes(const cell *arg, cell *env);
 // ==================== COMPILER FUNCTIONS ====================
 cell *asm_call(cell *args, cell *env);
 cell *compile(cell *c, cell *env);
+cell *compile_all(cell *c, cell *env);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower

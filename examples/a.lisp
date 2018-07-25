@@ -131,3 +131,19 @@ n
 
 (write "invoking direct compiled code")
 (time (dotimes (n 10000000) ( (LASM 3 "@A@B@C@C@B@A!!$I" 1 2 LIST) 1 2 3 )))
+
+(load c)
+(md)
+;; (compile defmacro)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile 1+)
+(compile id)
+;; 

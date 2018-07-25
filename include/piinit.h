@@ -86,7 +86,6 @@ cell *symbol_reverse;
 cell *symbol_concatenate;
 cell *symbol_append;
 cell *symbol_lasm;
-cell *symbol_compile;
 
 // ==================== KEYWORD SYMBOLS ====================
 cell *symbol_string;
@@ -100,7 +99,10 @@ cell *symbol_map;
 cell *symbol_cond;
 cell *symbol_quote;
 cell *symbol_asm;
+cell *symbol_compile;
+cell *symbol_compile_all;
+cell *symbol_concatenate;
+
 
 #endif // !PIINIT_H
-cell *symbol_concatenate;
 /*@}*/

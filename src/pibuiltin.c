@@ -202,7 +202,7 @@ cell *set(cell *args) {
   }
 
   */
-//  val = compile(val);
+  //  val = compile(val);
 
 #if CHECKS
   if (!is_sym(name))
@@ -868,26 +868,43 @@ cell *dotimes(const cell *arg, cell *env) {
 }
 
 // ! the compiler needs to be loaded
-cell *compile(cell *c, cell * env) {
-  cell * name = c->car;
-  cell * to_compilate = eval(name,env);
+cell *compile(cell *c, cell *env) {
+#if CHECKS
+  check_one_arg(c);
+  if (!is_sym(car(c)))
+    pi_lisp_error("arg in compile must be a symbol");
+#endif
+  cell *name = c->car;
+  cell *to_compilate = eval(name, env);
 
   FILE *program_file_write = fopen(".picompile", "w");
   int results = fputs("(plc '", program_file_write);
   if (results == EOF)
     pi_error(MEMORY_ERROR, "error writing program file");
 
-  print_sexpr_to_file(to_compilate,program_file_write);
+  print_sexpr_to_file(to_compilate, program_file_write);
 
   results = fputs(")", program_file_write);
   if (results == EOF)
     pi_error(MEMORY_ERROR, "error writing program file");
 
   fclose(program_file_write);
-  
-  cell * compiled = load(mk_cons(mk_str(".picompile"),NULL),memory->global_env);
-  set(mk_cons(name,mk_cons(compiled, NULL)));
-  return compiled; 
+
+  cell *compiled =
+      load(mk_cons(mk_str(".picompile"), NULL), memory->global_env);
+  set(mk_cons(name, mk_cons(compiled, NULL)));
+  return compiled;
+}
+
+cell *compile_all(cell *c, cell *env) {
+  cell *actual_env = memory->global_env;
+  cell *pair;
+  cell *symbol;
+  while (actual_env) {
+    symbol = caar(actual_env);
+    compile(mk_cons(symbol,NULL),env);
+    actual_env = cdr(actual_env);
+  }
 }
 
 #if !INLINE_FUNCTIONS

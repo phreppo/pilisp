@@ -21,18 +21,19 @@ void init_builtin_macros() {
   symbol_cond = mk_builtin_macro("COND",cond);
   symbol_asm = mk_builtin_macro("ASM",asm_call);
   symbol_compile = mk_builtin_macro("COMPILE",compile);
+  symbol_compile_all = mk_builtin_macro("COMPILE_ALL", compile_all);
 }
 
 void init_builtin_lambdas() {
   builtin_lambdas_index = 0;
   symbol_car = mk_builtin_lambda("CAR",builtin_car,stack_car);
   symbol_cdr = mk_builtin_lambda("CDR",builtin_cdr,stack_cdr);
-  symbol_cons = mk_builtin_lambda("CONS",builtin_cons,NULL);
-  symbol_atom = mk_builtin_lambda("ATOM",builtin_atom,NULL);
-  symbol_eq = mk_builtin_lambda("EQ",builtin_eq,NULL);
+  symbol_cons = mk_builtin_lambda("CONS",builtin_cons,stack_cons);
+  symbol_atom = mk_builtin_lambda("ATOM",builtin_atom,stack_atom);
+  symbol_eq = mk_builtin_lambda("EQ",builtin_eq,stack_eq);
   symbol_eq_math = mk_builtin_lambda("=",builtin_eq,NULL);
   symbol_true = mk_builtin_lambda("T",symbol_true,NULL);
-  symbol_addition = mk_builtin_lambda("+",addition,NULL);
+  symbol_addition = mk_builtin_lambda("+",addition,stack_addition);
   symbol_subtraction = mk_builtin_lambda("-",subtraction,NULL);
   symbol_multiplication = mk_builtin_lambda("*",multiplication,NULL);
   symbol_division = mk_builtin_lambda("/",division,NULL);
