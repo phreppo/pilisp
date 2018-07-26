@@ -1,6 +1,6 @@
 #include "piprint.h"
 
-static bool cell_was_printed(const cell *c, const cell **printed_cons_cells,
+static bool cell_was_printed(cell *c, cell **printed_cons_cells,
                              unsigned long level) {
   unsigned long i;
   // start from the end
@@ -10,7 +10,7 @@ static bool cell_was_printed(const cell *c, const cell **printed_cons_cells,
   return false;
 }
 
-static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
+static void print_sexpr_rec_dot(cell *c, cell **printed_cons_cells,
                                 unsigned long level) {
   if (c) {
     switch (c->type) {
@@ -52,7 +52,7 @@ static void print_sexpr_rec_dot(const cell *c, const cell **printed_cons_cells,
   }
 }
 
-static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
+static void print_sexpr_rec_list(cell *c, cell **printed_cons_cells,
                                  unsigned long level) {
   if (c) {
     switch (c->type) {
@@ -99,12 +99,12 @@ static void print_sexpr_rec_list(const cell *c, const cell **printed_cons_cells,
   }
 }
 
-void pi_message(const char *message) {
+void pi_message(char *message) {
   printf("%s %s\n", PROMPT_STRING, message);
 }
 
 void print_token(int tok) {
-  const char *token_text = get_token_text();
+  char *token_text = get_token_text();
   switch (tok) {
   case TOK_NONE:
     printf("<NILL>\t\t");
@@ -143,12 +143,12 @@ void print_token(int tok) {
   }
 }
 
-void print_sexpr(const cell *c) {
+void print_sexpr(cell *c) {
   print_sexpr_mode(c, SEXPR_PRINT_DEFAULT); // default mode
 }
 
-void print_sexpr_mode(const cell *c, unsigned char mode) {
-  const cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
+void print_sexpr_mode(cell *c, unsigned char mode) {
+  cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
   unsigned long level = 0;
 
   switch (mode) {
@@ -164,7 +164,7 @@ void print_sexpr_mode(const cell *c, unsigned char mode) {
   free(printed_cons_cells);
 }
 
-void print_cell_block(const cell_block *block) {
+void print_cell_block(cell_block *block) {
   if (block) {
     size_t s = block->block_size;
     cell *arr = block->block;
@@ -216,7 +216,7 @@ void print_cell_block(const cell_block *block) {
   }
 }
 
-void print_cell(const cell *cell) {
+void print_cell(cell *cell) {
   if (cell) {
     printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked,
            cell->marks);
@@ -278,7 +278,7 @@ void print_cell(const cell *cell) {
     printf("NIL");
 }
 
-void print_cell_space(const cell_space *cs) {
+void print_cell_space(cell_space *cs) {
   printf(ANSI_COLOR_BLUE "BUILTIN LAMBDAS\n" ANSI_COLOR_RESET);
   size_t i = 0;
   for (i = 0; i < builtin_lambdas_index; i++) {
@@ -310,7 +310,7 @@ void print_cell_space(const cell_space *cs) {
          cs->first_free);
 }
 
-void print_free_cells(const cell_space *cs) {
+void print_free_cells(cell_space *cs) {
   cell *free = cs->first_free;
   size_t i = 0;
   while (free) {
@@ -322,8 +322,8 @@ void print_free_cells(const cell_space *cs) {
   }
 }
 
-void print_global_env(const cell *env) {
-  const cell *act = env;
+void print_global_env(cell *env) {
+  cell *act = env;
   printf("Head : %p\n", act);
   while (act) {
     cell *pair = car(act);
@@ -344,8 +344,8 @@ void print_stack() {
   }
 }
 
-static void print_sexpr_to_file_rec_default(const cell *c,
-                                            const cell **printed_cons_cells,
+static void print_sexpr_to_file_rec_default(cell *c,
+                                            cell **printed_cons_cells,
                                             unsigned long level, FILE *f) {
   if (c) {
     switch (c->type) {
@@ -393,8 +393,8 @@ static void print_sexpr_to_file_rec_default(const cell *c,
 }
 
 // file must be opened
-void print_sexpr_to_file(const cell *c, FILE *f) {
-  const cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
+void print_sexpr_to_file(cell *c, FILE *f) {
+  cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
   unsigned long level = 0;
   print_sexpr_to_file_rec_default(c, printed_cons_cells, level, f);
 }

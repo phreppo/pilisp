@@ -19,48 +19,48 @@
 // ==================== INLINE FUNCTIONS FOR EVAL ====================
 // not usable in the interpreter: no checks! => use only in the eval
 #if INLINE_FUNCTIONS
-inline cell *caar(const cell *c) { return c->car->car; }
-inline cell *cddr(const cell *c) { return c->cdr->cdr; }
-inline cell *cadr(const cell *c) { return c->cdr->car; }
-inline cell *cdar(const cell *c) { return c->car->cdr; }
-inline cell *cadar(const cell *c) { return c->car->cdr->car; }
-inline cell *caddr(const cell *c) { return c->cdr->cdr->car; }
+inline cell *caar(cell *c) { return c->car->car; }
+inline cell *cddr(cell *c) { return c->cdr->cdr; }
+inline cell *cadr(cell *c) { return c->cdr->car; }
+inline cell *cdar(cell *c) { return c->car->cdr; }
+inline cell *cadar(cell *c) { return c->car->cdr->car; }
+inline cell *caddr(cell *c) { return c->cdr->cdr->car; }
 #else
-cell *caar(const cell *c);
-cell *cddr(const cell *c);
-cell *cadr(const cell *c);
-cell *cdar(const cell *c);
-cell *cadar(const cell *c);
-cell *caddr(const cell *c);
+cell *caar(cell *c);
+cell *cddr(cell *c);
+cell *cadr(cell *c);
+cell *cdar(cell *c);
+cell *cadar(cell *c);
+cell *caddr(cell *c);
 #endif
 
 // ==================== BASIC APPLY ====================
 // differences from the first basic block: these functions can be called from
 // the apply, because they do cell_remove and cell_push and check for args error
-cell *builtin_car(const cell *args);
-cell *builtin_cdr(const cell *args);
-cell *builtin_cons(const cell *args);
-cell *builtin_atom(const cell *args);
-cell *builtin_eq(const cell *args);
+cell *builtin_car(cell *args);
+cell *builtin_cdr(cell *args);
+cell *builtin_cons(cell *args);
+cell *builtin_atom(cell *args);
+cell *builtin_eq(cell *args);
 
 // ==================== LOGIC ====================
-cell * or (const cell *operands);
-cell * and (const cell *operands);
-cell * not(const cell *operands);
+cell * or (cell *operands);
+cell * and (cell *operands);
+cell * not(cell *operands);
 
 // ==================== COMPARISON ====================
-cell *greater(const cell *operands);
-cell *greater_eq(const cell *operands);
-cell *less(const cell *operands);
-cell *less_eq(const cell *operands);
-cell *integerp(const cell *arg);
-cell *symbolp(const cell *arg);
+cell *greater(cell *operands);
+cell *greater_eq(cell *operands);
+cell *less(cell *operands);
+cell *less_eq(cell *operands);
+cell *integerp(cell *arg);
+cell *symbolp(cell *arg);
 
 // ==================== ARITHMETIC ====================
-cell *addition(const cell *numbers);
-cell *subtraction(const cell *numbers);
-cell *multiplication(const cell *numbers);
-cell *division(const cell *numbers);
+cell *addition(cell *numbers);
+cell *subtraction(cell *numbers);
+cell *multiplication(cell *numbers);
+cell *division(cell *numbers);
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
@@ -72,45 +72,44 @@ cell *env(cell *arg);
 cell *collect_garbage_call(cell *arg);
 
 // ==================== LISTS ====================
-cell *length(const cell *list);
-cell *member(const cell *list);
-cell *nth(const cell *list);
-cell *list(const cell *list);
-cell *subseq(const cell *list); // substr
-cell *reverse(const cell *list);
-cell *concatenate(const cell *list); // works only on strings
+cell *length(cell *list);
+cell *member(cell *list);
+cell *nth(cell *list);
+cell *list(cell *list);
+cell *subseq(cell *list); // substr
+cell *reverse(cell *list);
+cell *concatenate(cell *list); // works only on strings
 cell *append(cell *list);
 
 // ==================== MACROS ====================
-cell *setq(const cell *args, cell *env);
-cell *defun(const cell *args, cell *env);
-cell *let(const cell *args, cell *env);
-cell *map(const cell *args, cell *env);
-cell *quote(const cell *args, cell *env);
+cell *setq(cell *args, cell *env);
+cell *defun(cell *args, cell *env);
+cell *let(cell *args, cell *env);
+cell *map(cell *args, cell *env);
+cell *quote(cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
-cell *cond(const cell *arg, cell *env);
-cell *dotimes(const cell *arg, cell *env);
+cell *cond(cell *arg, cell *env);
+cell *dotimes(cell *arg, cell *env);
 
 // ==================== COMPILER FUNCTIONS ====================
 cell *asm_call(cell *args, cell *env);
 cell *compile(cell *c, cell *env);
-cell *compile_all(cell *c, cell *env);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower
-bool total_eq(const cell *c1, const cell *c2);
+bool total_eq(cell *c1, cell *c2);
 
 #if INLINE_FUNCTIONS
 inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
-inline int atom(const cell *c) {
+inline int atom(cell *c) {
   return (c == NULL) ||
          (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
           c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO ||
           c->type == TYPE_KEYWORD);
 }
 
-inline bool eq(const cell *v1, const cell *v2) {
+inline bool eq(cell *v1, cell *v2) {
   if (!v1 || !v2)
     return (v1 == v2);
   if (is_num(v1) && is_num(v2))
@@ -121,9 +120,9 @@ inline bool eq(const cell *v1, const cell *v2) {
 }
 
 // works also on lists: eq does not, but 'it's slower
-bool total_eq(const cell *c1, const cell *c2);
+bool total_eq(cell *c1, cell *c2);
 
-inline cell *car(const cell *c) {
+inline cell *car(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS
@@ -133,7 +132,7 @@ inline cell *car(const cell *c) {
   return c->car;
 }
 
-inline cell *cdr(const cell *c) {
+inline cell *cdr(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS
@@ -145,10 +144,10 @@ inline cell *cdr(const cell *c) {
 #else
 
 cell *cons(cell *car, cell *cdr);
-int atom(const cell *c);
-bool eq(const cell *v1, const cell *v2);
-cell *car(const cell *c);
-cell *cdr(const cell *c);
+int atom(cell *c);
+bool eq(cell *v1, cell *v2);
+cell *car(cell *c);
+cell *cdr(cell *c);
 
 #endif
 

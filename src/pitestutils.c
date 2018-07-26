@@ -99,26 +99,3 @@ void pairlis_prompt() {
     puts("");
   }
 }
-
-void mem_prompt() {
-  int count = 0;
-
-  while (1) {
-    printf("############################## MEMORY "
-           "##############################\n");
-    print_cell_space(memory);
-    printf("> ");
-    int i;
-    scanf("%i", &i);
-    switch (i) {
-    case 1:
-      mk_num(count++);
-      break;
-    case 3:
-      mk_sym("NEW_SYM");
-      break;
-    default:
-      break;
-    }
-  }
-}

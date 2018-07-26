@@ -8,6 +8,10 @@ int fpeek(FILE *const fp) {
 }
 
 char *string_merge(char *str1, char *str2) {
+  if(!str1)
+    str1 = "";
+  if(!str2)
+    str2 = "";
   char *new_str = malloc(strlen(str1) + strlen(str2) + 1);
   new_str[0] = '\0'; // ensures the memory is an empty string
   strcat(new_str, str1);

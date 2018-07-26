@@ -22,8 +22,6 @@ char *string_merge(char *str1, char *str2) {
 int main(int argc, char **argv) {
   char *program = argv[1];
   puts(program);
-  // char * program ="(or NIL NIL NIL NIL)";
-  // char *result = "NIL ";
   char *result = argv[2];
 
   char *file_number = (argc >= 3 ? argv[3] : 0);
@@ -46,6 +44,7 @@ int main(int argc, char **argv) {
     puts("error reading program file");
     return 1;
   }
+  free(program_file_path);
   init_pi();
   cell *res = NULL;
   cell *env = memory->global_env;

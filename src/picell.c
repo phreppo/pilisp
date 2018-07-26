@@ -1,11 +1,11 @@
 #include "picell.h"
 #include "pierror.h"
 
-cell *is_symbol_allocated(const char *symbol) {
+cell *is_symbol_allocated(char *symbol) {
   return cell_space_is_symbol_allocated(memory, symbol);
 }
 
-cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
+cell *cell_space_is_symbol_allocated(cell_space *cs, char *symbol) {
   size_t block_index = 0;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
@@ -23,7 +23,7 @@ cell *cell_space_is_symbol_allocated(cell_space *cs, const char *symbol) {
   return NULL;
 }
 
-cell *is_symbol_builtin_lambda(const char *symbol) {
+cell *is_symbol_builtin_lambda(char *symbol) {
   size_t i = 0;
   for (i = 0; i < builtin_lambdas_index; i++) {
 
@@ -35,7 +35,7 @@ cell *is_symbol_builtin_lambda(const char *symbol) {
   return NULL;
 }
 
-cell *is_symbol_builtin_macro(const char *symbol) {
+cell *is_symbol_builtin_macro(char *symbol) {
   size_t i = 0;
   for (i = 0; i < builtin_macros_index; i++) {
 
@@ -47,7 +47,7 @@ cell *is_symbol_builtin_macro(const char *symbol) {
   return NULL;
 }
 
-cell *mk_sym(const char *symbol) {
+cell *mk_sym(char *symbol) {
   // check if is a builtin lambda
   cell *allocated = is_symbol_builtin_lambda(symbol);
   if (allocated)
@@ -86,7 +86,7 @@ cell *mk_sym(const char *symbol) {
   return c;
 }
 
-cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *), void *(*builtin_stack)(size_t,unsigned char)) {
+cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void *(*builtin_stack)(size_t,unsigned char)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = malloc(strlen(symbol) + 1);
@@ -102,7 +102,7 @@ cell *mk_builtin_lambda(const char *symbol, cell *(*function)(cell *), void *(*b
   return lambda;
 }
 
-cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *)) {
+cell *mk_builtin_macro(char *symbol, cell *(*function)(cell *, cell *)) {
   cell *macro = &BUILTIN_MACROS[builtin_macros_index++];
   macro->type = TYPE_BUILTINMACRO;
   macro->sym = malloc(strlen(symbol) + 1);
@@ -117,7 +117,7 @@ cell *mk_builtin_macro(const char *symbol, cell *(*function)(cell *, cell *)) {
   return macro;
 }
 
-cell *copy_cell(const cell *c) {
+cell *copy_cell(cell *c) {
   if (!c)
     return NULL;
   // there is a cell
@@ -199,7 +199,7 @@ cell_space *cell_space_create() {
   return new_space;
 }
 
-bool cell_space_is_full(const cell_space *cs) {
+bool cell_space_is_full(cell_space *cs) {
   return cs->cell_space_size >= cs->cell_space_capacity;
 }
 
@@ -299,7 +299,6 @@ void mark_memory(cell_space *cs) {
   size_t cell_index;
   for (block_index = 0; block_index < cs->cell_space_size; block_index++) {
 
-    cell_index = 0;
     current_block = cs->blocks + block_index;
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
@@ -350,9 +349,9 @@ void deep_sweep(cell_space *cs) {
 
     for (cell_index = 0; cell_index < current_block->block_size; cell_index++) {
       current_cell = current_block->block + cell_index;
-      if (!current_cell->marked && !(current_cell->type == TYPE_FREE) ||
-          (!cell_is_in_global_env(memory->global_env, current_cell) &&
-           current_cell->marks)) {
+      if ((!current_cell->marked && !(current_cell->type == TYPE_FREE)) ||
+          ((!cell_is_in_global_env(memory->global_env, current_cell) &&
+           current_cell->marks))) {
         cell_space_mark_cell_as_free(cs, current_cell);
         current_cell->marks = 0;
       } else
@@ -465,7 +464,7 @@ void cell_block_free(cell_block *cb) {
 
 void free_memory() { cell_space_free(memory); }
 
-bool cell_is_in_global_env(const cell *global_env, const cell *c) {
+bool cell_is_in_global_env(cell *global_env, cell *c) {
   if (!global_env)
     // no global env
     return false;
@@ -477,7 +476,7 @@ bool cell_is_in_global_env(const cell *global_env, const cell *c) {
          cell_is_in_global_env(cdr(global_env), c);
 }
 
-void cell_remove_args(const cell *args) {
+void cell_remove_args(cell *args) {
   cell *act = args;
   cell *tmp;
   while (act) {
@@ -488,7 +487,7 @@ void cell_remove_args(const cell *args) {
   }
 }
 
-void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
+void cell_remove_pairlis(cell *new_env, cell *old_env) {
   cell *act = new_env;
   cell *tmp;
   while (act != old_env) {
@@ -500,8 +499,8 @@ void cell_remove_pairlis(const cell *new_env, const cell *old_env) {
   }
 }
 
-void cell_remove_cars(const cell *list) {
-  const cell *act = list;
+void cell_remove_cars(cell *list) {
+  cell *act = list;
   cell *tmp;
   while (act) {
     tmp = act->cdr;
@@ -510,7 +509,7 @@ void cell_remove_cars(const cell *list) {
   }
 }
 
-void cell_remove_pairlis_deep(const cell *new_env, const cell *old_env) {
+void cell_remove_pairlis_deep(cell *new_env, cell *old_env) {
   cell *act = new_env;
   cell *tmp;
   while (act != old_env) {
@@ -528,7 +527,7 @@ void unsafe_cell_remove(cell *c) { c->marks--; }
 
 cell *get_cell() { return cell_space_get_cell(memory); }
 
-cell *mk_num(const int n) {
+cell *mk_num(int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
@@ -540,7 +539,7 @@ cell *mk_num(const int n) {
   return c;
 }
 
-cell *mk_str(const char *s) {
+cell *mk_str(char *s) {
   cell *c = get_cell();
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
@@ -567,19 +566,19 @@ cell *mk_cons(cell *car, cell *cdr) {
   return c;
 }
 
-bool is_num(const cell *c) { return c->type == TYPE_NUM; }
-bool is_str(const cell *c) { return c->type == TYPE_STR; }
-bool is_cons(const cell *c) { return c->type == TYPE_CONS; }
-bool is_keyword(const cell *c) { return c->type == TYPE_KEYWORD; }
-bool is_sym(const cell *c) {
+bool is_num(cell *c) { return c->type == TYPE_NUM; }
+bool is_str(cell *c) { return c->type == TYPE_STR; }
+bool is_cons(cell *c) { return c->type == TYPE_CONS; }
+bool is_keyword(cell *c) { return c->type == TYPE_KEYWORD; }
+bool is_sym(cell *c) {
   return c->type == TYPE_SYM || c->type == TYPE_BUILTINLAMBDA ||
          c->type == TYPE_BUILTINMACRO || c->type == TYPE_KEYWORD;
 }
-bool is_builtin(const cell *c) {
+bool is_builtin(cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
 }
-bool is_builtin_lambda(const cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
-bool is_builtin_macro(const cell *c) { return c->type == TYPE_BUILTINMACRO; }
+bool is_builtin_lambda(cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+bool is_builtin_macro(cell *c) { return c->type == TYPE_BUILTINMACRO; }
 
 void cell_push(cell *val) {
 #if COLLECT_GARBAGE

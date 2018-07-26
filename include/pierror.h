@@ -32,11 +32,11 @@ void pi_error_stack_undeflow();
 // ==================== CHECKS ====================
 
 // checks that the list args has exaclty 1 args
-void check_one_arg(const cell *args);
+void check_one_arg(cell *args);
 // checks that the list args has exaclty 2 args
-void check_two_args(const cell *args);
+void check_two_args(cell *args);
 // checks that the list args has exaclty 3 args
-void check_three_args(const cell *args);
+void check_three_args(cell *args);
 
 // ==================== LAST ERROR ====================
 int get_last_error();

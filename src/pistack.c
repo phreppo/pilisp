@@ -14,7 +14,7 @@ cell *stack_pop() {
   return ret;
 }
 
-void empty_stack() { stack_pointer = stack; }
+void empty_stack() { stack_pointer = 0; }
 
 void stack_car(size_t stack_base, unsigned char nargs) {
   stack_pointer--;

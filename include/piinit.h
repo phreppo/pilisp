@@ -12,6 +12,7 @@
 #include "picell.h"
 #include "piparser.h"
 #include "pisettings.h"
+#include "pistack.h"
 #include <stdio.h>
 
 // ==================== BUILTIN LAMBDAS STRUCTURE ====================
@@ -100,7 +101,6 @@ cell *symbol_cond;
 cell *symbol_quote;
 cell *symbol_asm;
 cell *symbol_compile;
-cell *symbol_compile_all;
 cell *symbol_concatenate;
 
 

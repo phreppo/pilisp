@@ -36,21 +36,21 @@ void pi_error_stack_undeflow() {
            "stack error: something has removed too much args on the stack");
 }
 
-void check_two_args(const cell *args) {
+void check_two_args(cell *args) {
   if (!args || !cdr(args))
     pi_error_few_args();
   if (cddr(args))
     pi_error_many_args();
 }
 
-void check_three_args(const cell *args) {
+void check_three_args(cell *args) {
   if (!args || !cdr(args) || !cdr(cdr(args)))
     pi_error_few_args();
   if (cdr(cddr(args)))
     pi_error_many_args();
 }
 
-void check_one_arg(const cell *args) {
+void check_one_arg(cell *args) {
   if (!args)
     pi_error_few_args();
   if (cdr(args))

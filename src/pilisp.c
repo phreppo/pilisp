@@ -16,22 +16,26 @@ int pi_prompt() {
   //               "  | |             | |      " COLOR1 "00\n\t00" COLOR2
   //               "  |_|             |_|      " COLOR1 "00\n\t00" COLOR2
   //               "                           " COLOR1
-  //               "00\n\t0000000000000000000000000000000 \n\n" ANSI_COLOR_RESET);
+  //               "00\n\t0000000000000000000000000000000 \n\n"
+  //               ANSI_COLOR_RESET);
 
   printf(
       COLOR1
       "\n"
       "===============================================================\n" COLOR2
-      COLOR1 "" COLOR2"\t             88  88  88                          \n" 
-      COLOR1 "" COLOR2"\t             \"\"  88  \"\"                          \n" 
-      COLOR1 "" COLOR2"\t                 88                              \n" 
-      COLOR1 "" COLOR2"\t8b,dPPYba,   88  88  88  ,adPPYba,  8b,dPPYba,   \n" 
-      COLOR1 "" COLOR2"\t88P'    \"8a  88  88  88  I8[    \"\"  88P'    \"8a  \n" 
-      COLOR1 "" COLOR2"\t88       d8  88  88  88   `\"Y8ba,   88       d8  \n" 
-      COLOR1 "" COLOR2"\t88b,   ,a8\"  88  88  88  aa    ]8I  88b,   ,a8\"  \n" 
-      COLOR1 "" COLOR2"\t88`YbbdP\"'   88  88  88  `\"YbbdP\"'  88`YbbdP\"'   \n" 
-      COLOR1 "" COLOR2"\t88                                  88           \n" 
-      COLOR1 "" COLOR2"\t88                                  88           \n" COLOR1 
+          COLOR1 "" COLOR2
+      "\t             88  88  88                          \n" COLOR1 "" COLOR2
+      "\t             \"\"  88  \"\"                          \n" COLOR1
+      "" COLOR2 "\t                 88                              \n" COLOR1
+      "" COLOR2 "\t8b,dPPYba,   88  88  88  ,adPPYba,  8b,dPPYba,   \n" COLOR1
+      "" COLOR2
+      "\t88P'    \"8a  88  88  88  I8[    \"\"  88P'    \"8a  \n" COLOR1
+      "" COLOR2 "\t88       d8  88  88  88   `\"Y8ba,   88       d8  \n" COLOR1
+      "" COLOR2 "\t88b,   ,a8\"  88  88  88  aa    ]8I  88b,   ,a8\"  \n" COLOR1
+      "" COLOR2
+      "\t88`YbbdP\"'   88  88  88  `\"YbbdP\"'  88`YbbdP\"'   \n" COLOR1
+      "" COLOR2 "\t88                                  88           \n" COLOR1
+      "" COLOR2 "\t88                                  88           \n" COLOR1
       "===============================================================\n\n"
 
       ANSI_COLOR_RESET);
@@ -45,9 +49,11 @@ int pi_prompt() {
       // skip line: ()))) will print just one error
       reset_error();
       char ch;
-      scanf("%c", &ch);
+      if (!scanf("%c", &ch))
+        pi_lisp_error("failed to read char");
       while (ch != '\n')
-        scanf("%c", &ch);
+        if (!scanf("%c", &ch))
+          pi_lisp_error("failed to read char");
     }
     printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
     cell *sexpression = read_sexpr(stdin);

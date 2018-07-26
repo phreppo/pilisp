@@ -29,7 +29,7 @@ enum {
 
 cell *read_sexpr(FILE *f);
 cell *read_sexpr_tok(FILE *f, int tok);
-const char *get_token_text();
+char *get_token_text();
 int next_token(FILE *f);
 
 #endif // !PIPARSER_H

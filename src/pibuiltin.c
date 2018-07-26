@@ -28,7 +28,7 @@ cell *asm_call(cell *args, cell *env) {
 }
 
 // handles only strings
-cell *concatenate(const cell *list) {
+cell *concatenate(cell *list) {
 #if CHECKS
   check_three_args(list);
 #endif
@@ -58,9 +58,9 @@ cell *concatenate(const cell *list) {
   return mk_str(new_str);
 }
 
-cell *addition(const cell *numbers) {
+cell *addition(cell *numbers) {
   long result = 0;
-  const cell *act = numbers;
+  cell *act = numbers;
   cell *tmp;
   while (act) {
 #if CHECKS
@@ -78,7 +78,7 @@ cell *addition(const cell *numbers) {
   return mk_num(result);
 }
 
-cell *subtraction(const cell *numbers) {
+cell *subtraction(cell *numbers) {
 #if CHECKS
   if (!numbers)
     // we need 1 argument at least
@@ -105,7 +105,7 @@ cell *subtraction(const cell *numbers) {
       pi_error(LISP_ERROR, "subtracted a non-number");
 #endif
     long result = car(numbers)->value;
-    const cell *act = cdr(numbers);
+    cell *act = cdr(numbers);
     unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
     unsafe_cell_remove(numbers);
     cell *tmp;
@@ -126,9 +126,9 @@ cell *subtraction(const cell *numbers) {
   }
 }
 
-cell *multiplication(const cell *numbers) {
+cell *multiplication(cell *numbers) {
   long result = 1;
-  const cell *act = numbers;
+  cell *act = numbers;
   cell *tmp;
   while (act) {
 #if CHECKS
@@ -147,7 +147,7 @@ cell *multiplication(const cell *numbers) {
   return mk_num(result);
 }
 
-cell *division(const cell *numbers) {
+cell *division(cell *numbers) {
 #if CHECKS
   if (!numbers || !cdr(numbers))
     // we need 2 numbers at least
@@ -158,7 +158,7 @@ cell *division(const cell *numbers) {
     pi_error(LISP_ERROR, "divided a non-number");
 #endif
   double result = (double)car(numbers)->value;
-  const cell *act = cdr(numbers);
+  cell *act = cdr(numbers);
   unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
   unsafe_cell_remove(numbers);
   cell *tmp;
@@ -268,13 +268,13 @@ cell *timer(cell *arg, cell *env) {
   return valued;
 }
 
-cell *quote(const cell *args, cell *env) {
+cell *quote(cell *args, cell *env) {
   cell *evaulated = car(args);
   unsafe_cell_remove(args);
   return evaulated;
 }
 
-cell *cond(const cell *arg, cell *env) { return evcon(arg, env); }
+cell *cond(cell *arg, cell *env) { return evcon(arg, env); }
 
 cell *write(cell *arg) {
 #if CHECKS
@@ -290,8 +290,8 @@ cell *write(cell *arg) {
 
 // ==================== LOGIC ====================
 
-cell * or (const cell *operands) {
-  const cell *act = operands;
+cell * or (cell * operands) {
+  cell *act = operands;
   cell *atom = car(act);
   cell *tmp;
   while (act) {
@@ -312,9 +312,9 @@ cell * or (const cell *operands) {
   return NULL;
 }
 
-cell * and (const cell *operands) {
-  const cell *act = operands;
-  const cell *prev = NULL;
+cell * and (cell * operands) {
+  cell *act = operands;
+  cell *prev = NULL;
   cell *atom = car(act);
   cell *tmp;
   while (act) {
@@ -339,7 +339,7 @@ cell * and (const cell *operands) {
   return car(prev);
 }
 
-cell * not(const cell *operands) {
+cell * not(cell * operands) {
 #if CHECKS
   if (!operands)
     pi_error_few_args();
@@ -357,16 +357,20 @@ cell * not(const cell *operands) {
 
 // ==================== COMPARISON ====================
 
-cell *greater(const cell *operands) {
+cell *greater(cell *operands) {
 #if CHECKS
   check_two_args(operands);
 #endif
-  const cell *first = car(operands);
-  const cell *second = cadr(operands);
+  cell *first = car(operands);
+  cell *second = cadr(operands);
 #if CHECKS
-  if (!first || !second)
-    pi_lisp_error("NIL not allowed as arg");
-  if (first->type != second->type)
+  if (!first || !second) {
+    {
+      pi_lisp_error("NIL not allowed as arg");
+      return NULL;
+    }
+  }
+  if ((first && first->type) != (second && second->type))
     pi_error(LISP_ERROR, "incompatible types");
 #endif
   cell *res = NULL;
@@ -380,16 +384,18 @@ cell *greater(const cell *operands) {
   return res;
 }
 
-cell *greater_eq(const cell *operands) {
+cell *greater_eq(cell *operands) {
 #if CHECKS
   check_two_args(operands);
 #endif
-  const cell *first = car(operands);
-  const cell *second = cadr(operands);
+  cell *first = car(operands);
+  cell *second = cadr(operands);
 #if CHECKS
-  if (!first || !second)
+  if (!first || !second) {
     pi_lisp_error("NIL not allowed as arg");
-  if (first->type != second->type)
+    return NULL;
+  }
+  if ((first && first->type) != (second && second->type))
     pi_error(LISP_ERROR, "incompatible types");
 #endif
   cell *res = NULL;
@@ -403,16 +409,18 @@ cell *greater_eq(const cell *operands) {
   return res;
 }
 
-cell *less(const cell *operands) {
+cell *less(cell *operands) {
 #if CHECKS
   check_two_args(operands);
 #endif
-  const cell *first = car(operands);
-  const cell *second = cadr(operands);
+  cell *first = car(operands);
+  cell *second = cadr(operands);
 #if CHECKS
-  if (!first || !second)
+  if (!first || !second) {
     pi_lisp_error("NIL not allowed as arg");
-  if (first->type != second->type)
+    return NULL;
+  }
+  if ((first && first->type) != (second && second->type))
     pi_error(LISP_ERROR, "incompatible types");
 #endif
   cell *res = NULL;
@@ -426,16 +434,18 @@ cell *less(const cell *operands) {
   return res;
 }
 
-cell *less_eq(const cell *operands) {
+cell *less_eq(cell *operands) {
 #if CHECKS
   check_two_args(operands);
 #endif
-  const cell *first = car(operands);
-  const cell *second = cadr(operands);
+  cell *first = car(operands);
+  cell *second = cadr(operands);
 #if CHECKS
-  if (!first || !second)
+  if (!first || !second) {
     pi_lisp_error("NIL not allowed as arg");
-  if (first->type != second->type)
+    return NULL;
+  }
+  if ((first && first->type) != (second && second->type))
     pi_error(LISP_ERROR, "incompatible types");
 #endif
   cell *res = NULL;
@@ -451,12 +461,12 @@ cell *less_eq(const cell *operands) {
 
 // ==================== LISTS ====================
 
-cell *length(const cell *list) {
+cell *length(cell *list) {
 #if CHECKS
   check_one_arg(list);
 #endif
   unsigned long len = 0;
-  const cell *act = car(list);
+  cell *act = car(list);
 #if CHECKS
   if (act && !is_cons(act) && !is_str(act))
     pi_error(LISP_ERROR, "arg is not a list or a string");
@@ -482,13 +492,13 @@ cell *length(const cell *list) {
   return mk_num(len);
 }
 
-cell *member(const cell *list) {
+cell *member(cell *list) {
 #if CHECKS
   check_two_args(
       list); // the first is the member and che second is the true list
 #endif
-  const cell *who = car(list);
-  const cell *l = cadr(list);
+  cell *who = car(list);
+  cell *l = cadr(list);
 #if CHECKS
   if (l && !is_cons(l))
     pi_error(LISP_ERROR, "second arg must be a list");
@@ -525,16 +535,16 @@ cell *member(const cell *list) {
   return head;
 }
 
-cell *nth(const cell *list) {
+cell *nth(cell *list) {
 #if CHECKS
   check_two_args(list);
 #endif
-  const cell *num = car(list);
+  cell *num = car(list);
 #if CHECKS
   if (!is_num(num))
     pi_error(LISP_ERROR, "first arg must be a number");
 #endif
-  const cell *l = cadr(list);
+  cell *l = cadr(list);
 #if CHECKS
   if (l && !is_cons(l))
     pi_error(LISP_ERROR, "second arg must be a list");
@@ -562,7 +572,7 @@ cell *nth(const cell *list) {
   return res;
 }
 
-bool total_eq(const cell *c1, const cell *c2) {
+bool total_eq(cell *c1, cell *c2) {
   if (!c1 && !c2)
     // NILL NILL
     return true;
@@ -583,7 +593,7 @@ bool total_eq(const cell *c1, const cell *c2) {
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
-cell *list(const cell *list) {
+cell *list(cell *list) {
   cell *tmp = copy_cell(list);
   cell_remove_recursive(list);
   return tmp;
@@ -591,7 +601,7 @@ cell *list(const cell *list) {
 
 // ==================== BASIC APPLY ====================
 
-cell *builtin_car(const cell *args) {
+cell *builtin_car(cell *args) {
 #if CHECKS
   check_one_arg(args);
 #endif
@@ -601,7 +611,7 @@ cell *builtin_car(const cell *args) {
   cell_remove_args(args);
   return res;
 }
-cell *builtin_cdr(const cell *args) {
+cell *builtin_cdr(cell *args) {
 #if CHECKS
   check_one_arg(args);
 #endif
@@ -611,7 +621,7 @@ cell *builtin_cdr(const cell *args) {
   cell_remove_args(args);
   return res;
 }
-cell *builtin_cons(const cell *args) {
+cell *builtin_cons(cell *args) {
 #if CHECKS
   check_two_args(args);
 #endif
@@ -620,7 +630,7 @@ cell *builtin_cons(const cell *args) {
   return res;
 }
 
-cell *builtin_atom(const cell *args) {
+cell *builtin_atom(cell *args) {
 #if CHECKS
   check_one_arg(args);
 #endif
@@ -632,7 +642,7 @@ cell *builtin_atom(const cell *args) {
   cell_remove_recursive(args);
   return res;
 }
-cell *builtin_eq(const cell *args) {
+cell *builtin_eq(cell *args) {
 #if CHECKS
   check_two_args(args);
 #endif
@@ -645,7 +655,7 @@ cell *builtin_eq(const cell *args) {
   return res;
 }
 // ==================== MACROS ====================
-cell *setq(const cell *args, cell *env) {
+cell *setq(cell *args, cell *env) {
 #if CHECKS
   check_two_args(args);
 #endif
@@ -660,7 +670,7 @@ cell *setq(const cell *args, cell *env) {
   return ret;
 }
 
-cell *let(const cell *args, cell *env) {
+cell *let(cell *args, cell *env) {
   cell *params = car(args);
   cell *body = cadr(args); // ok
   cell *new_env = env;
@@ -687,7 +697,7 @@ cell *let(const cell *args, cell *env) {
   return res;
 }
 
-cell *defun(const cell *args, cell *env) {
+cell *defun(cell *args, cell *env) {
   cell *fun_name = car(args);
   cell *lambda_struct = (cdr(args));
   cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
@@ -697,7 +707,7 @@ cell *defun(const cell *args, cell *env) {
   return lambda_head;
 }
 
-cell *map(const cell *args, cell *env) {
+cell *map(cell *args, cell *env) {
   cell *func = car(args);
   cell *list = cadr(args);
   list = eval(list, env); // extract quote
@@ -728,7 +738,7 @@ cell *map(const cell *args, cell *env) {
   return result;
 }
 
-cell *subseq(const cell *list) {
+cell *subseq(cell *list) {
   cell *str = car(list);
   cell *start = cadr(list);
   size_t s = start->value;
@@ -758,7 +768,7 @@ cell *subseq(const cell *list) {
   }
 }
 
-cell *reverse(const cell *list) {
+cell *reverse(cell *list) {
 #if CHECKS
   check_one_arg(list);
 #endif
@@ -789,13 +799,13 @@ cell *env(cell *arg) {
   return symbol_true;
 }
 
-cell *integerp(const cell *arg) {
+cell *integerp(cell *arg) {
   bool ret = is_num(car(arg));
   cell_remove_recursive(car(arg));
   unsafe_cell_remove(arg);
   return (ret ? symbol_true : NULL);
 }
-cell *symbolp(const cell *arg) {
+cell *symbolp(cell *arg) {
   bool ret = is_sym(car(arg));
   cell_remove_recursive(car(arg));
   unsafe_cell_remove(arg);
@@ -834,7 +844,7 @@ cell *load(cell *arg, cell *env) {
   return last_result;
 }
 
-cell *dotimes(const cell *arg, cell *env) {
+cell *dotimes(cell *arg, cell *env) {
   // DOTIMES
   size_t n = 0;
   cell *name_list = car(arg);
@@ -892,34 +902,23 @@ cell *compile(cell *c, cell *env) {
   }
 }
 
-cell *compile_all(cell *c, cell *env) {
-  cell *actual_env = memory->global_env;
-  cell *pair;
-  cell *symbol;
-  while (actual_env) {
-    symbol = caar(actual_env);
-    compile(mk_cons(symbol, NULL), env);
-    actual_env = cdr(actual_env);
-  }
-}
-
 #if !INLINE_FUNCTIONS
-cell *caar(const cell *c) { return c->car->car; }
-cell *cddr(const cell *c) { return c->cdr->cdr; }
-cell *cadr(const cell *c) { return c->cdr->car; }
-cell *cdar(const cell *c) { return c->car->cdr; }
-cell *cadar(const cell *c) { return c->car->cdr->car; }
-cell *caddr(const cell *c) { return c->cdr->cdr->car; }
+cell *caar(cell *c) { return c->car->car; }
+cell *cddr(cell *c) { return c->cdr->cdr; }
+cell *cadr(cell *c) { return c->cdr->car; }
+cell *cdar(cell *c) { return c->car->cdr; }
+cell *cadar(cell *c) { return c->car->cdr->car; }
+cell *caddr(cell *c) { return c->cdr->cdr->car; }
 cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
-int atom(const cell *c) {
+int atom(cell *c) {
   return (c == NULL) ||
          (c->type == TYPE_SYM || c->type == TYPE_NUM || c->type == TYPE_STR ||
           c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO ||
           c->type == TYPE_KEYWORD);
 }
 
-bool eq(const cell *v1, const cell *v2) {
+bool eq(cell *v1, cell *v2) {
   if (!v1 || !v2)
     return (v1 == v2);
   if (is_num(v1) && is_num(v2))
@@ -929,7 +928,7 @@ bool eq(const cell *v1, const cell *v2) {
   return (v1 == v2);
 }
 
-cell *car(const cell *c) {
+cell *car(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS
@@ -939,7 +938,7 @@ cell *car(const cell *c) {
   return c->car;
 }
 
-cell *cdr(const cell *c) {
+cell *cdr(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS

@@ -21,7 +21,6 @@ void init_builtin_macros() {
   symbol_cond = mk_builtin_macro("COND",cond);
   symbol_asm = mk_builtin_macro("ASM",asm_call);
   symbol_compile = mk_builtin_macro("COMPILE",compile);
-  symbol_compile_all = mk_builtin_macro("COMPILE_ALL", compile_all);
 }
 
 void init_builtin_lambdas() {
