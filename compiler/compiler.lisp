@@ -100,8 +100,8 @@
             ( compile_builtin_stack fun args symbol_table))
         (( is_lambda fun)
             ( compile_lambda fun args symbol_table))
-        (( is_cond fun)
-            ( compile_cond fun args symbol_table))
+        ;; (( is_cond fun)
+        ;;     ( compile_cond fun args symbol_table))
         (( else) 
             :notcompilable )))
 
@@ -111,8 +111,8 @@
 (defun is_lambda (fun)
     (eq fun 'lambda))
 
-(defun is_cond (fun)
-    (eq fun 'cond))
+;; (defun is_cond (fun)
+;;     (eq fun 'cond))
 
 ;; ==================== Builtin stack compiling ====================
 
@@ -223,48 +223,48 @@
 ;; (_compile '(cond ((car '(a)) :due) ((+ 1 2) :tre) ) nil)
 ;; (_compile '(cond ((car '(a)) :due) ((unknown_function) :tre) ) nil)
 
-(defun compile_cond (fun args symbol_table)
-    (cond 
-        ((null args)
-            (list (cons :condend NIL)))
-        (( else)
-            ( compile_one_cond_expression_and_go_on fun args symbol_table))))
+;; (defun compile_cond (fun args symbol_table)
+;;     (cond 
+;;         ((null args)
+;;             (list (cons :condend NIL)))
+;;         (( else)
+;;             ( compile_one_cond_expression_and_go_on fun args symbol_table))))
 
-(defun compile_one_cond_expression_and_go_on (fun args symbol_table)
-    (let
-        ((actual_case_condition ( extract_cond_condition args))
-         (actual_case_body ( extract_cond_body args)))
-        (let 
-            ((actual_case_condition_compiled ( _compile actual_case_condition symbol_table))
-             (conditions_tail_compiled ( compile_cond fun ( next args) symbol_table)))
-            ( compile_one_cond_case_only_if_compilable_and_go_on 
-                actual_case_condition_compiled 
-                actual_case_body 
-                conditions_tail_compiled ))))
+;; (defun compile_one_cond_expression_and_go_on (fun args symbol_table)
+;;     (let
+;;         ((actual_case_condition ( extract_cond_condition args))
+;;          (actual_case_body ( extract_cond_body args)))
+;;         (let 
+;;             ((actual_case_condition_compiled ( _compile actual_case_condition symbol_table))
+;;              (conditions_tail_compiled ( compile_cond fun ( next args) symbol_table)))
+;;             ( compile_one_cond_case_only_if_compilable_and_go_on 
+;;                 actual_case_condition_compiled 
+;;                 actual_case_body 
+;;                 conditions_tail_compiled ))))
 
-(defun compile_one_cond_case_only_if_compilable_and_go_on 
-        (actual_case_condition_compiled actual_case_body conditions_tail_compiled)
-    (cond 
-        (( both_compilables actual_case_condition_compiled conditions_tail_compiled)
-            (append 
-                ( build_cond_case_sequence actual_case_condition_compiled actual_case_body) 
-                  conditions_tail_compiled))
-        (( else)
-            :notcompilable)))
+;; (defun compile_one_cond_case_only_if_compilable_and_go_on 
+;;         (actual_case_condition_compiled actual_case_body conditions_tail_compiled)
+;;     (cond 
+;;         (( both_compilables actual_case_condition_compiled conditions_tail_compiled)
+;;             (append 
+;;                 ( build_cond_case_sequence actual_case_condition_compiled actual_case_body) 
+;;                   conditions_tail_compiled))
+;;         (( else)
+;;             :notcompilable)))
 
 
-(defun build_cond_case_sequence (actual_case_condition_compiled actual_case_body)
-    (append actual_case_condition_compiled 
-        (cons ( build_one_cond_expression_pair actual_case_body) NIL)))
+;; (defun build_cond_case_sequence (actual_case_condition_compiled actual_case_body)
+;;     (append actual_case_condition_compiled 
+;;         (cons ( build_one_cond_expression_pair actual_case_body) NIL)))
 
-(defun build_one_cond_expression_pair (actual_case_body)
-    (cons :condvalue actual_case_body))
+;; (defun build_one_cond_expression_pair (actual_case_body)
+;;     (cons :condvalue actual_case_body))
 
-(defun extract_cond_condition (args)
-    (car (car args)))
+;; (defun extract_cond_condition (args)
+;;     (car (car args)))
 
-(defun extract_cond_body (args)
-    (car (cdr (car args))))
+;; (defun extract_cond_body (args)
+;;     (car (cdr (car args))))
 
 
 ;; *****************************************************************
@@ -326,7 +326,7 @@
     (cond
         ((eq :argsnum ( extract_instruction_code compiled_expression)) t)
         ((eq :loadstack ( extract_instruction_code compiled_expression)) t)
-        ((eq :condend ( extract_instruction_code compiled_expression)) t)
+        ;; ((eq :condend ( extract_instruction_code compiled_expression)) t)
         (( else) nil)))
 
 ;; ==================== Machine code string generation ====================
@@ -352,8 +352,8 @@
         ((eq code :loadconst) "!")
         ((eq code :loadsymbol) "?")
         ((eq code :cbs) "$")
-        ((eq code :condvalue) "*")
-        ((eq code :condend) "&")
+        ;; ((eq code :condvalue) "*")
+        ;; ((eq code :condend) "&")
         ((eq code :loadstack) ( get_instruction_code_for_stack_load arg)) ; arg will be the index in the stack
         ((eq code :argsnum) ( translate_num_to_digit arg))
         (( else) "__ERROR:UNKNOWN_INSTRUCTION_CODE__")))

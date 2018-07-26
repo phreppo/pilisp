@@ -693,38 +693,6 @@ test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test
     'CLASM5'
 ])
 
-test('[COMP] cond 1', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(plc \'( cond (t t)))',
-
-    '(ASM "!*&" t t)',
-    'CLASMCOND1'
-])
-
-test('[COMP] cond 2', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(plc \'( cond (t x)))',
-
-    '(ASM "!*&" T X)',
-    'CLASMCOND2'
-])
-
-test('[COMP] cond 3', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(plc \'( cond ((car \'(a)) :some) (t :thing) ) )',
-
-    '(ASM "!$B*!*&" (A) CAR :SOME T :THING)',
-    'CLASMCOND3'
-])
-
-test('[COMP] cond 4', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(plc \'( cond ((myfunction \'(a)) :some) (t :thing) ) )',
-
-    '( cond ((myfunction \'(a)) :some) (t :thing) )',
-    'CLASMCOND4'
-])
-
 # ==================== ASM ====================
 test('[ASM] load const 1', lisp_program_test, args : [
     '(ASM "!" 1)',
