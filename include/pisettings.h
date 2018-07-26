@@ -18,15 +18,15 @@
 // many compilers and the builtd directory generated with meson must be
 // generated with: meson build -Dc_args=-Og. The compiler flag -O3 soulh be set
 // to be correctly compiled. Use only for testing performances
-#define INLINE_FUNCTIONS 0
 
 // WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
 // really slow
-#define PERFORMANCES 0
+#define PERFORMANCES 1
 
 #if PERFORMANCES
 // dangerous, will cause segfault
 #define EXTREME_PERF 0
+#define INLINE_FUNCTIONS 1
 #endif
 
 // 0 => the memory will be dirty => segfault

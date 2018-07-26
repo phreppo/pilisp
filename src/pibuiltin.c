@@ -878,7 +878,21 @@ cell *compile(cell *c, cell *env) {
   cell *to_compilate = eval(name, env);
   if (is_cons(to_compilate) && eq(symbol_lambda, car(to_compilate))) {
 
-    FILE *program_file_write = fopen(".picompile", "w");
+    srand(time(NULL));
+    int r = rand();
+
+    char str[(int)((ceil(log10(r)) + 1) * sizeof(char))];
+    sprintf(str, "%d", r); // cast the number to a string
+    char *file_name;
+    if ((file_name = malloc(strlen(".picompile") + strlen(str) + 1)) != NULL) {
+      file_name[0] = '\0'; // ensures the memory is an empty string
+      strcat(file_name, ".picompile");
+      strcat(file_name, str);
+    } else {
+      pi_lisp_error("can't file file");
+    }
+
+    FILE *program_file_write = fopen(file_name, "w");
     int results = fputs("(plc '", program_file_write);
     if (results == EOF)
       pi_error(MEMORY_ERROR, "error writing program file");
@@ -892,9 +906,9 @@ cell *compile(cell *c, cell *env) {
     fclose(program_file_write);
 
     cell *compiled =
-        load(mk_cons(mk_str(".picompile"), NULL), memory->global_env);
+        load(mk_cons(mk_str(file_name), NULL), memory->global_env);
     set(mk_cons(name, mk_cons(compiled, NULL)));
-    remove(".picompile");
+    // remove(file_name);
     return compiled;
   } else {
     return to_compilate;

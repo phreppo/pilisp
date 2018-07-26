@@ -1,6 +1,6 @@
 # Pilisp files
 .piinit
-.picompile
+.picompile*
 
 # Build dir
 build/

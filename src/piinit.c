@@ -87,7 +87,7 @@ void init_env() {
 
       "(setq der \"./test/lisp_programs/diff.lisp\")"
 
-      "(setq cder \"./examples/compilable_diff.lisp\")"
+      "(setq cder \"./test/lisp_programs/compilable_diff.lisp\")"
 
       "(defun null (arg) (not arg))"
 

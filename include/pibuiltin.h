@@ -12,6 +12,8 @@
 #include "pistack.h"
 #include <stdbool.h>
 #include <time.h>
+#include <stdlib.h>
+#include <math.h>
 
 // ==================== INLINE FUNCTIONS FOR EVAL ====================
 // not usable in the interpreter: no checks! => use only in the eval

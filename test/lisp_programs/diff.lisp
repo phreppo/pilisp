@@ -62,3 +62,5 @@
           ( mult ( first_arg func) ( d ( second_arg func))))
         ( expo ( second_arg func) 2)))
     (t NIL)))
+
+t
