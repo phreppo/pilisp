@@ -85,7 +85,9 @@ void init_env() {
 
       "(defun id (x) x)"
 
-      "(setq d \"./test/lisp_programs/diff.lisp\")"
+      "(setq der \"./test/lisp_programs/diff.lisp\")"
+
+      "(setq cder \"./examples/compilable_diff.lisp\")"
 
       "(defun null (arg) (not arg))"
 

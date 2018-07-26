@@ -779,72 +779,97 @@ test('[LASM] ((lambda (x y z) (list x y z 1 2)) 1 2 3)', lisp_program_test, args
     'LASM4'
 ])
 
-test('[COMPILED] compile my eq', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun myeq (x y) (eq x y))  '+
-    '(compile myeq)' +
-    '(myeq nil 11)',
+#test('[COMPILED] compile my eq', lisp_program_test, args : [
+    #'(load "'+compiler_path+'/compiler.lisp")  '+
+    #'(defun myeq (x y) (eq x y))  '+
+    #'(compile myeq)' +
+    #'(myeq nil 11)',
+#
+    #'NIL',
+    #'COMPILED1'
+#])
 
-    'NIL',
-    'COMPILED1'
+# test('[COMPILED] compile my cons', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun mycons (x y) (cons x y))  '+
+    # '(compile mycons)' +
+    # '(mycons 1 \'(a b c))',
+# 
+    # '(1 . (a b c))',
+    # 'COMPILED2'
+# ])
+# 
+# test('[COMPILED] compile my atom 1', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun myatom (x) (atom x))  '+
+    # '(compile myatom)' +
+    # '(myatom 1)',
+# 
+    # 'T',
+    # 'COMPILED3'
+# ])
+# 
+# test('[COMPILED] compile my atom 2', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun myatom (x) (atom x))  '+
+    # '(compile myatom)' +
+    # '(myatom \'(a b c))',
+# 
+    # 'NIL',
+    # 'COMPILED4'
+# ])
+# 
+# test('[COMPILED] compile my +', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun mysum (x y) (+ x y))  '+
+    # '(compile mysum)' +
+    # '(mysum 1 -3)',
+# 
+    # '-2',
+    # 'COMPILED5'
+# ])
+# 
+# test('[COMPILED] compile my car', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun mycar (x) (car x))  '+
+    # '(compile mycar)' +
+    # '(mycar \'(a))',
+# 
+    # 'a',
+    # 'COMPILED6'
+# ])
+# 
+# test('[COMPILED] compile my list', lisp_program_test, args : [
+    # '(load "'+compiler_path+'/compiler.lisp")  '+
+    # '(defun mylist (x y z) (list x y z))  '+
+    # '(compile mylist)' +
+    # '(mylist \'(a) 1 2)',
+# 
+    # '((a) 1 2)',
+    # 'COMPILED7'
+# ])
+
+test('[COMPILED] compiled diff: d(33x)', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(load "'+compiler_path+'/compiler.lisp")   '+
+    '(d \'(* x 33))',
+    '(+ (* 1 33) (* X 0))',
+    'COMPILEDDIFF1'
 ])
 
-test('[COMPILED] compile my cons', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun mycons (x y) (cons x y))  '+
-    '(compile mycons)' +
-    '(mycons 1 \'(a b c))',
 
-    '(1 . (a b c))',
-    'COMPILED2'
+test('[COMPILED] diff calculator: d(x^2)', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(load "'+compiler_path+'/compiler.lisp")   '+
+    '(d \'(expt x 2))',
+    '(* (EXPT X . 1) 2)',
+    'COMPILEDDIFF2'
 ])
 
-test('[COMPILED] compile my atom 1', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun myatom (x) (atom x))  '+
-    '(compile myatom)' +
-    '(myatom 1)',
-
-    'T',
-    'COMPILED3'
-])
-
-test('[COMPILED] compile my atom 2', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun myatom (x) (atom x))  '+
-    '(compile myatom)' +
-    '(myatom \'(a b c))',
-
-    'NIL',
-    'COMPILED4'
-])
-
-test('[COMPILED] compile my +', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun mysum (x y) (+ x y))  '+
-    '(compile mysum)' +
-    '(mysum 1 -3)',
-
-    '-2',
-    'COMPILED5'
-])
-
-test('[COMPILED] compile my car', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun mycar (x) (car x))  '+
-    '(compile mycar)' +
-    '(mycar \'(a))',
-
-    'a',
-    'COMPILED6'
-])
-
-test('[COMPILED] compile my list', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
-    '(defun mylist (x y z) (list x y z))  '+
-    '(compile mylist)' +
-    '(mylist \'(a) 1 2)',
-
-    '((a) 1 2)',
-    'COMPILED7'
+test('[COMPILED] diff calculator: d((x^2+1)/cos(x))', lisp_program_load_test, args : [
+    programs_path+'diff.lisp',
+    '(load "'+compiler_path+'/compiler.lisp")   '+
+    '(d \'(/ (+ (expt x 2) 1) (cos x)))',
+    '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',
+    'COMPILEDDIFF3'
 ])
