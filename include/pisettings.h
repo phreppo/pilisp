@@ -14,19 +14,21 @@
  *                               GENERAL SETTINGS
  ********************************************************************************/
 
+// WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
+// really slow
+#define PERFORMANCES 0
+
+#if PERFORMANCES
+
+// dangerous, will cause segfault
+#define EXTREME_PERF 0
+
 // many functions will be declared inline, however the code won't compile in
 // many compilers and the builtd directory generated with meson must be
 // generated with: meson build -Dc_args=-Og. The compiler flag -O3 soulh be set
 // to be correctly compiled. Use only for testing performances
-
-// WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
-// really slow
-#define PERFORMANCES 1
-
-#if PERFORMANCES
-// dangerous, will cause segfault
-#define EXTREME_PERF 0
 #define INLINE_FUNCTIONS 1
+
 #endif
 
 // 0 => the memory will be dirty => segfault
@@ -106,6 +108,14 @@
 #else
 #define CHECKS 1
 #endif
+
+/********************************************************************************
+ *                                   COMPILING SETTIGNS
+ ********************************************************************************/
+
+#define PI_COMPILE_FILE_NAME_PREFIX ".picompile"
+
+#define REMOVE_COMPILER_FILES 1
 
 /********************************************************************************
  *                                  LIMITS

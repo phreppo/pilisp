@@ -30,3 +30,19 @@ cell *parse_file(char *file_path) {
   fclose(program_file);
   return res;
 }
+
+void write_compiler_expression_to_file(char *file_name, cell *to_compilate) {
+  FILE *program_file_write = fopen(file_name, "w");
+
+  int results = fputs("(plc '", program_file_write);
+  if (results == EOF)
+    pi_error(MEMORY_ERROR, "error writing program file");
+
+  print_sexpr_to_file(to_compilate, program_file_write);
+
+  results = fputs(")", program_file_write);
+  if (results == EOF)
+    pi_error(MEMORY_ERROR, "error writing program file");
+
+  fclose(program_file_write);
+}

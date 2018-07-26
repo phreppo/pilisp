@@ -12,10 +12,11 @@ headers = [
         'pilisp.h',
         'piparser.h',
         'piprint.h',
-        'pisettings.h',
         'piremove.h',
+        'pisettings.h',
         'pistack.h',
         'pitestutils.h',
+        'piutils.h',
 ]
 
 install_headers(headers)

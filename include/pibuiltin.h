@@ -10,6 +10,7 @@
 #include "picell.h"
 #include "pilisp.h"
 #include "pistack.h"
+#include "piutils.h"
 #include <stdbool.h>
 #include <time.h>
 #include <stdlib.h>

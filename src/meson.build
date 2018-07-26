@@ -17,6 +17,7 @@ sources = [
     'piremove.c',
     'pistack.c',
     'pitestutils.c',
+    'piutils.c',
 ]
 
 # Creation of static library for testing
