@@ -52,8 +52,6 @@ cell *concatenate(cell *list) {
   strcat(new_str, second);
   unsafe_cell_remove(first_string);
   unsafe_cell_remove(second_string);
-  // unsafe_cell_remove(symbol_type); // why don t remove? it a global symbol
-  // that is not in one protected zone, so we can t unmark it
   cell_remove_args(list);
   return mk_str(new_str);
 }

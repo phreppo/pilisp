@@ -69,8 +69,7 @@
 #else
 #define COLLECT_GARBAGE 1
 #endif
-// (dotimes (n 999999990) (asm "!$B" (A) list ))
-// (time (dotimes ( n 1000000) ( (lasm 2 "@A@B@A@B!$F" 1 list) "we" "we")))
+
 #define STACK_LIMIT 10000
 
 /********************************************************************************
@@ -79,7 +78,8 @@
 
 // in (md) prints free cells
 #define PRINT_FREE_CELLS 0
-#define PRINT_ONLY_DANGLING_CELLS 1
+
+#define PRINT_ONLY_DANGLING_CELLS 0
 
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0
@@ -96,10 +96,6 @@
 /********************************************************************************
  *                                   INIT
  ********************************************************************************/
-
-// raise an error if trying to remove a cell that is not on the stack
-// (beacuse that cell does not belongs to you)
-#define ERROR_EMPTY_REMOVING 0
 
 // 0 => no checks about types nor errors, just segfaults => use ONLY when
 // testing performances on correct programs

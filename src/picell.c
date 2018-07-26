@@ -417,10 +417,6 @@ void cell_remove_recursive(cell *val) {
     // NEW
     if (val->marks > 0)
       val->marks--;
-#if ERROR_EMPTY_REMOVING
-    else
-      pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
 #if DEBUG_PUSH_REMOVE_MODE
     printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
     print_sexpr(val);
@@ -592,10 +588,6 @@ void cell_remove(cell *val) {
     return;
   if (val->marks > 0)
     val->marks--;
-#if ERROR_EMPTY_REMOVING
-  else
-    pi_error(MEMORY_ERROR, "you have no more access to that cell");
-#endif
 #endif
 }
 #endif // ! INLINE_FUNCTIONS

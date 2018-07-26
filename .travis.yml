@@ -24,6 +24,7 @@ script:
   - meson build -Dc_args=-Og                    # enable coverage
   - ninja -C build                              # build project
   - ninja test -C build                         # run tests
+  - gcov -r .
   - gcovr -r . -e '.*/test/.*'  -e '.*pitestutils*' -e  '.*main*' -e  '.*pilisp.c*'                 # report coverage
   - doxygen                                     # auto generate documentation
   - mv img/ftv2doc.png docs/html/

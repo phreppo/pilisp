@@ -92,6 +92,8 @@ void init_env() {
 
       "(setq p \"./examples/a.lisp\")"
 
+      "(setq k \"./examples/killme.lisp\")"
+
       "(setq compiler \"./compiler/compiler.lisp\")"
 
       "(setq b \"./examples/bench.lisp\")"

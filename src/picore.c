@@ -110,14 +110,13 @@ cell *evcon(cell *args, cell *env) {
 
   if (res != NULL) {
     ret = eval(cadar(args), env);
-    cell_remove_recursive(res);       // result of the last eval
     cell_remove_recursive(cdr(args)); // cut off the rest of the sexpressions
   } else {
     ret = evcon(cdr(args), env);
-    cell_remove_recursive(res);         // result of the last eval
     cell_remove_recursive(cadar(args)); // remove the unevaluated body
   }
 
+  cell_remove_recursive(res);     // result of the cond
   unsafe_cell_remove(cdar(args)); // cons of the body
   unsafe_cell_remove(car(args));  // cons of the pair (cond [body])
   unsafe_cell_remove(args);       // head of the list
