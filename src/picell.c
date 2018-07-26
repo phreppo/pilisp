@@ -86,7 +86,7 @@ cell *mk_sym(char *symbol) {
   return c;
 }
 
-cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void *(*builtin_stack)(size_t,unsigned char)) {
+cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void (*builtin_stack)(size_t,unsigned char)) {
   cell *lambda = &BUILTIN_LAMBDAS[builtin_lambdas_index++];
   lambda->type = TYPE_BUILTINLAMBDA;
   lambda->sym = malloc(strlen(symbol) + 1);

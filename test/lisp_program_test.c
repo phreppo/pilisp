@@ -9,6 +9,10 @@ int fpeek(FILE *const fp) {
 }
 
 char *string_merge(char *str1, char *str2) {
+  if (!str1)
+    str1 = "";
+  if (!str2)
+    str2 = "";
   char *new_str = malloc(strlen(str1) + strlen(str2) + 1);
   new_str[0] = '\0'; // ensures the memory is an empty string
   strcat(new_str, str1);
@@ -27,13 +31,14 @@ int main(int argc, char **argv) {
   char *file_number = (argc >= 3 ? argv[3] : 0);
 
   // write the program in a file
-
-  char *program_file_path =
-      string_merge(string_merge("sourcep", file_number), ".lisp");
+  char *program_file_name_no_ext = string_merge("sourcep", file_number);
+  char *program_file_path = string_merge(program_file_name_no_ext, ".lisp");
   FILE *program_file_write = fopen(program_file_path, "w");
   int results = fputs(program, program_file_write);
   if (results == EOF) {
     puts("error writing program file");
+    free(program_file_path);
+    free(program_file_name_no_ext);
     return 1;
   }
   fclose(program_file_write);
@@ -42,9 +47,13 @@ int main(int argc, char **argv) {
   FILE *program_file_read = fopen(program_file_path, "r");
   if (!program_file_read) {
     puts("error reading program file");
+    free(program_file_path);
+    free(program_file_name_no_ext);
     return 1;
   }
   free(program_file_path);
+  free(program_file_name_no_ext);
+
   init_pi();
   cell *res = NULL;
   cell *env = memory->global_env;
@@ -61,12 +70,14 @@ int main(int argc, char **argv) {
   // printf("%i ", res->value);
 
   // write the raw result to a file
-  char *result_file_path =
-      string_merge(string_merge("resultp", file_number), ".lisp");
+  char *result_file_name_no_ext = string_merge("resultp", file_number);
+  char *result_file_path = string_merge(result_file_name_no_ext, ".lisp");
   FILE *result_file_write = fopen(result_file_path, "w");
   int r1 = fputs(result, result_file_write);
   if (r1 == EOF) {
     puts("error writing result file");
+    free(result_file_path);
+    free(result_file_name_no_ext);
     return 1;
   }
   fclose(result_file_write);
@@ -75,10 +86,14 @@ int main(int argc, char **argv) {
   FILE *result_file_read = fopen(result_file_path, "r");
   if (!result_file_read) {
     puts("error reading result file");
+    free(result_file_path);
+    free(result_file_name_no_ext);
     return 1;
   }
   cell *expected_result = read_sexpr(result_file_read);
   fclose(result_file_read);
+  free(result_file_path);
+  free(result_file_name_no_ext);
   int ret = (total_eq(expected_result, res));
   free_pi();
   return !ret;

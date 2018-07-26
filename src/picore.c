@@ -34,10 +34,10 @@ cell *eval_atom(cell *expression, cell *env) {
     strcpy(result, err);
     strcat(result, sym_name);
     pi_error(LISP_ERROR, result);
-  } else
+  }
 #endif
-    // the symbol has a value in the env
-    return symbol_value;
+  // the symbol has a value in the env
+  return symbol_value;
 }
 
 cell *eval_atom_function(cell *expression, cell *env) {
@@ -161,11 +161,14 @@ cell *assoc(cell *symbol, cell *env) {
 }
 
 cell *apply_atom_function(cell *fn, cell *args, cell *env, bool eval_args) {
-  if (fn->type == TYPE_BUILTINLAMBDA) {
+  if (is_builtin_lambda(fn)) {
     // BASIC OPERATIONS
     if (eval_args)
       args = evlis(args, env);
-    return fn->bl(args);
+    if (fn)
+      return fn->bl(args);
+    else 
+      exit(1);
   } else {
     // CUSTOM FUNCTION
     cell *function_body = eval(fn, env);
@@ -221,7 +224,7 @@ cell *apply_lasm(cell *fn, cell *args, cell *env, bool eval_args) {
     stack_push(act_arg->car);
     act_arg = act_arg->cdr;
   }
-  cell *res = asm_call_with_stack_base(cddr(fn),env, stack_base);
+  cell *res = asm_call_with_stack_base(cddr(fn), env, stack_base);
   stack_pointer = stack_pointer - cadr(fn)->value;
 #if CHECKS
   if (stack_pointer != stack_base)

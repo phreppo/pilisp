@@ -8,9 +8,9 @@ int fpeek(FILE *const fp) {
 }
 
 char *string_merge(char *str1, char *str2) {
-  if(!str1)
+  if (!str1)
     str1 = "";
-  if(!str2)
+  if (!str2)
     str2 = "";
   char *new_str = malloc(strlen(str1) + strlen(str2) + 1);
   new_str[0] = '\0'; // ensures the memory is an empty string
@@ -42,13 +42,14 @@ int main(int argc, char **argv) {
   char *file_number = (argc >= 4 ? argv[4] : 0);
 
   // write the program in a file
-
-  char *program_file_path =
-      string_merge(string_merge("sourcep", file_number), ".lisp");
+  char *program_file_name_no_ext = string_merge("sourcep", file_number);
+  char *program_file_path = string_merge(program_file_name_no_ext, ".lisp");
+  free(program_file_name_no_ext);
   FILE *program_file_write = fopen(program_file_path, "w");
   int results = fputs(program, program_file_write);
   if (results == EOF) {
     puts("error writing program file");
+    free(program_file_path);
     return 1;
   }
   fclose(program_file_write);
@@ -57,6 +58,7 @@ int main(int argc, char **argv) {
   FILE *program_file_read = fopen(program_file_path, "r");
   if (!program_file_read) {
     puts("error reading program file");
+    free(program_file_path);
     return 1;
   }
   cell *res = NULL;
@@ -64,6 +66,7 @@ int main(int argc, char **argv) {
   jmp_destination = setjmp(env_buf);
   if (had_error()) {
     puts("error processing program");
+    free(program_file_path);
     return 1;
   }
   while (!feof(program_file_read) && fpeek(program_file_read)) {
@@ -71,15 +74,18 @@ int main(int argc, char **argv) {
     res = eval(sexpr, env);
   }
   fclose(program_file_read);
-  printf("%i ", res->value);
+  free(program_file_path);
+  printf("%i ", (res ? res->value : 0));
 
   // write the raw result to a file
-  char *result_file_path =
-      string_merge(string_merge("resultp", file_number), ".lisp");
+  char *result_file_name_no_ext = string_merge("resultp", file_number);
+  char *result_file_path = string_merge(result_file_name_no_ext, ".lisp");
   FILE *result_file_write = fopen(result_file_path, "w");
   int r1 = fputs(result, result_file_write);
   if (r1 == EOF) {
     puts("error writing result file");
+    free(result_file_name_no_ext);
+    free(result_file_path);
     return 1;
   }
   fclose(result_file_write);
@@ -88,10 +94,14 @@ int main(int argc, char **argv) {
   FILE *result_file_read = fopen(result_file_path, "r");
   if (!result_file_read) {
     puts("error reading result file");
+    free(result_file_name_no_ext);
+    free(result_file_path);
     return 1;
   }
   cell *expected_result = read_sexpr(result_file_read);
   fclose(result_file_read);
+  free(result_file_name_no_ext);
+  free(result_file_path);
   int ret = (total_eq(expected_result, res));
   free_pi();
   return !(ret);

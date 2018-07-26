@@ -23,7 +23,8 @@
         "functional": "c",
         "ratio": "c",
         "tuple": "c",
-        "pifile.h": "c"
+        "pifile.h": "c",
+        "pistack.h": "c"
     },
     "python.linting.pylintEnabled": false,
     "cSpell.enabledLanguageIds": [

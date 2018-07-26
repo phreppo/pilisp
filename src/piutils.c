@@ -10,4 +10,5 @@ char *generate_pi_compile_tmp_file_name() {
   file_name[0] = '\0'; 
   strcat(file_name, PI_COMPILE_FILE_NAME_PREFIX);
   strcat(file_name, str);
+  return file_name;
 }

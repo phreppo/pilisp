@@ -218,7 +218,7 @@ void print_cell_block(cell_block *block) {
 
 void print_cell(cell *cell) {
   if (cell) {
-    printf(ANSI_COLOR_DARK_GRAY "(%d, %d) " ANSI_COLOR_RESET, cell->marked,
+    printf(ANSI_COLOR_DARK_GRAY "(%d, %lu) " ANSI_COLOR_RESET, cell->marked,
            cell->marks);
     switch (cell->type) {
     case TYPE_CONS:
@@ -397,4 +397,5 @@ void print_sexpr_to_file(cell *c, FILE *f) {
   cell **printed_cons_cells = malloc(sizeof(cell *) * memory->n_cells);
   unsigned long level = 0;
   print_sexpr_to_file_rec_default(c, printed_cons_cells, level, f);
+  free(printed_cons_cells);
 }

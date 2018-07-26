@@ -42,7 +42,7 @@ typedef struct cell {
         struct { // struct for builtin lambda: pointer to builtin function and pointer to builtin stack version
           struct cell *(*bl)(
               struct cell *args); // pointer to builtin lambda function
-          void *(*bs)(size_t stack_base, unsigned char nargs);
+          void (*bs)(size_t stack_base, unsigned char nargs);
         };
         struct cell *(*bm)(
             struct cell *args,
@@ -162,7 +162,7 @@ cell *mk_cons(cell *car, cell *cdr);
 #endif
 
 cell *mk_sym(char *symbol);
-cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void *(*builtin_stack)(size_t,unsigned char));
+cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void (*builtin_stack)(size_t,unsigned char));
 cell *mk_builtin_macro(char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(cell *c);

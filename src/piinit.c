@@ -31,7 +31,7 @@ void init_builtin_lambdas() {
   symbol_atom = mk_builtin_lambda("ATOM",builtin_atom,stack_atom);
   symbol_eq = mk_builtin_lambda("EQ",builtin_eq,stack_eq);
   symbol_eq_math = mk_builtin_lambda("=",builtin_eq,NULL);
-  symbol_true = mk_builtin_lambda("T",symbol_true,NULL);
+  symbol_true = mk_builtin_lambda("T",NULL,NULL);
   symbol_addition = mk_builtin_lambda("+",addition,stack_addition);
   symbol_subtraction = mk_builtin_lambda("-",subtraction,NULL);
   symbol_multiplication = mk_builtin_lambda("*",multiplication,NULL);
