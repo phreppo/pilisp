@@ -39,6 +39,7 @@ jmp_buf env_buf;
  ********************************************************************************/
 
 int pi_prompt();
+int pi_parse_args_files(int argc, char **argv);
 
 #endif // !PILISP_h
        /*@}*/

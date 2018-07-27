@@ -68,3 +68,18 @@ int pi_prompt() {
   }
   return 0;
 }
+
+int pi_parse_args_files(int argc, char **argv) {
+  jmp_destination = setjmp(env_buf);
+  if (had_error()) {
+    exit(1);
+  }
+  // parse one or more files
+  unsigned long i = 1;
+  for (i = 1; i < argc; i++) {
+    cell *res = parse_file(argv[i]);
+    print_sexpr(res); // for every file prints the last result
+    puts("");
+  }
+  return 0;
+}
