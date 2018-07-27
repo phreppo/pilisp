@@ -11,6 +11,7 @@
 #include "pilisp.h"
 #include "pistack.h"
 #include "piutils.h"
+#include "pichecks.h"
 #include <stdbool.h>
 #include <time.h>
 #include <stdlib.h>
@@ -59,6 +60,8 @@ cell *symbolp(cell *arg);
 // ==================== ARITHMETIC ====================
 cell *addition(cell *numbers);
 cell *subtraction(cell *numbers);
+cell *subtraction_invert_result(cell *numbers);
+cell *subtraction_two_or_more_numbers(cell *numbers);
 cell *multiplication(cell *numbers);
 cell *division(cell *numbers);
 
@@ -78,7 +81,7 @@ cell *nth(cell *list);
 cell *list(cell *list);
 cell *subseq(cell *list); // substr
 cell *reverse(cell *list);
-cell *concatenate(cell *list); // works only on strings
+cell *concatenate(cell *list); // ! works only on strings
 cell *append(cell *list);
 
 // ==================== MACROS ====================

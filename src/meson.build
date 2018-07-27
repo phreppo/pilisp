@@ -7,6 +7,7 @@ sources = [
     'main.c',
     'pibuiltin.c',
     'picell.c',
+    'pichecks.c',
     'picore.c',
     'pierror.c',
     'pifile.c',

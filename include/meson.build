@@ -5,6 +5,7 @@
 headers = [ 
         'pibuiltin.h',
         'picell.h',
+        'pichecks.h',
         'picore.h',
         'pierror.h',
         'pifile.h',

@@ -3,22 +3,20 @@
 
 cell *append(cell *list) {
 #if CHECKS
-  check_two_args(list);
+  check_append(list);
 #endif
   cell *first_list = car(list);
   cell *second_list = cadr(list);
-#if CHECKS
-  if (first_list && !is_cons(first_list))
-    pi_lisp_error("first arg must be a list");
-#endif
   cell *act = first_list;
-  while (act && cdr(act)) {
+
+  while (act && cdr(act))
     act = cdr(act);
-  }
+
   if (act)
     act->cdr = second_list;
   else
     first_list = second_list;
+
   cell_remove_args(list);
   return first_list;
 }
@@ -27,32 +25,23 @@ cell *asm_call(cell *args, cell *env) {
   return asm_call_with_stack_base(args, env, stack_pointer);
 }
 
-// handles only strings
 cell *concatenate(cell *list) {
 #if CHECKS
-  check_three_args(list);
+  check_concatenate(list);
 #endif
-  cell *symbol_type = car(list);
   cell *first_string = cadr(list);
   cell *second_string = caddr(list);
-#if CHECKS
-  if (!is_sym(symbol_type))
-    pi_lisp_error("first arg must be a symbol");
-  if (!is_str(first_string))
-    pi_lisp_error("second arg must be a string");
-  if (!is_str(second_string))
-    pi_lisp_error("third arg must be a string");
-    // if (symbol_type != symbol_string)
-    //   pi_lisp_error("you can concatenate only strings");
-#endif
   char *first = first_string->str;
   char *second = second_string->str;
   char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
+
   strcpy(new_str, first);
   strcat(new_str, second);
+
   unsafe_cell_remove(first_string);
   unsafe_cell_remove(second_string);
   cell_remove_args(list);
+
   return mk_str(new_str);
 }
 
@@ -60,122 +49,113 @@ cell *addition(cell *numbers) {
   long result = 0;
   cell *act = numbers;
   cell *tmp;
+
   while (act) {
 #if CHECKS
-    if (!is_cons(act))
-      pi_error(LISP_ERROR, "impossible to perform addition");
-    if (!is_num(car(act)))
-      pi_error(LISP_ERROR, "added a non-number");
+    check_addition_atom(act);
 #endif
     result += car(act)->value;
     tmp = cdr(act);
-    unsafe_cell_remove(car(act)); // num used: we don't need it anymore
+
+    unsafe_cell_remove(car(act));
     unsafe_cell_remove(act);
     act = tmp;
   }
+
   return mk_num(result);
 }
 
 cell *subtraction(cell *numbers) {
 #if CHECKS
-  if (!numbers)
-    // we need 1 argument at least
-    pi_error_few_args();
+  check_subtraction(numbers);
 #endif
 
-  if (!cdr(numbers)) {
-// (- number) => we have to invert the result
+  if (!cdr(numbers))
+    return subtraction_invert_result(numbers);
+  else
+    return subtraction_two_or_more_numbers(numbers);
+}
+
+cell *subtraction_invert_result(cell *numbers) {
 #if CHECKS
-    if (!is_cons(numbers))
-      pi_error(LISP_ERROR, "impossible to perform subtraction");
-    if (!is_num(car(numbers)))
-      pi_error(LISP_ERROR, "changing the number of a non-number");
+  check_subtraction_atom(numbers);
 #endif
-    int ret = -(car(numbers)->value);
-    unsafe_cell_remove(car(numbers));
-    unsafe_cell_remove(numbers);
-    return mk_num(ret);
-  } else {
+  int ret = -(car(numbers)->value);
+  unsafe_cell_remove(car(numbers));
+  unsafe_cell_remove(numbers);
+
+  return mk_num(ret);
+}
+
+cell *subtraction_two_or_more_numbers(cell *numbers) {
 #if CHECKS
-    if (!is_cons(numbers) || !is_cons(cdr(numbers)))
-      pi_error(LISP_ERROR, "impossible to perform subtraction");
-    if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
-      pi_error(LISP_ERROR, "subtracted a non-number");
+  check_subtraction_atom(numbers);
 #endif
-    long result = car(numbers)->value;
-    cell *act = cdr(numbers);
-    unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
-    unsafe_cell_remove(numbers);
-    cell *tmp;
-    while (act) {
+  long result = car(numbers)->value;
+  cell *act = cdr(numbers);
+  cell *tmp;
+
+  unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
+  unsafe_cell_remove(numbers);
+
+  while (act) {
 #if CHECKS
-      if (!is_cons(act))
-        pi_error(LISP_ERROR, "impossible to perform subtraction");
-      if (!is_num(car(act)))
-        pi_error(LISP_ERROR, "subtracted a non-number");
+    check_subtraction_atom(act);
 #endif
-      result -= car(act)->value;
-      tmp = cdr(act);
-      unsafe_cell_remove(car(act)); // num used: we don't need it anymore
-      unsafe_cell_remove(act);
-      act = tmp;
-    }
-    return mk_num(result);
+    result -= car(act)->value;
+    tmp = cdr(act);
+    unsafe_cell_remove(car(act));
+    unsafe_cell_remove(act);
+    act = tmp;
   }
+
+  return mk_num(result);
 }
 
 cell *multiplication(cell *numbers) {
   long result = 1;
   cell *act = numbers;
   cell *tmp;
+
   while (act) {
 #if CHECKS
-    if (!is_cons(act))
-      pi_error(LISP_ERROR, "impossible to perform multiplication");
-    if (!is_num(car(act)))
-      pi_error(LISP_ERROR, "multiplicated a non-number");
+    check_multiplication_atom(act);
 #endif
     result *= car(act)->value;
-
     tmp = cdr(act);
-    unsafe_cell_remove(car(act)); // num used: we don't need it anymore
+    unsafe_cell_remove(car(act));
     unsafe_cell_remove(act);
     act = tmp;
   }
+
   return mk_num(result);
 }
 
 cell *division(cell *numbers) {
 #if CHECKS
-  if (!numbers || !cdr(numbers))
-    // we need 2 numbers at least
-    pi_error_few_args();
-  if (!is_cons(numbers) || !is_cons(cdr(numbers)))
-    pi_error(LISP_ERROR, "impossible to perform division");
-  if (!is_num(car(numbers)) || !is_num(car(cdr(numbers))))
-    pi_error(LISP_ERROR, "divided a non-number");
+  check_division(numbers);
 #endif
   double result = (double)car(numbers)->value;
   cell *act = cdr(numbers);
-  unsafe_cell_remove(car(numbers)); // num used: we don't need it anymore
-  unsafe_cell_remove(numbers);
   cell *tmp;
+
+  unsafe_cell_remove(car(numbers));
+  unsafe_cell_remove(numbers);
+
   while (act) {
 #if CHECKS
-    if (!is_cons(act))
-      pi_error(LISP_ERROR, "impossible to perform division");
-    if (!is_num(car(act)))
-      pi_error(LISP_ERROR, "divided a non-number");
+    check_division_atom(act);
 #endif
     if (car(act)->value == 0)
-      pi_error(LISP_ERROR, "division by 0");
+      pi_lisp_error("division by 0");
     result /= (double)car(act)->value;
 
     tmp = cdr(act);
-    unsafe_cell_remove(car(act)); // num used: we don't need it anymore
+    unsafe_cell_remove(car(act));
     unsafe_cell_remove(act);
     act = tmp;
   }
+
   return mk_num(result);
 }
 
@@ -185,26 +165,9 @@ cell *set(cell *args) {
 #endif
   cell *name = car(args);
   cell *val = cadr(args);
-
-  /*
-
-  if (is_lambda(val)){
-    val = compile(val);
-  }
-
-  cell * compile(val){
-    scrivi in un file il programma:
-      "(plc '[val])"
-    esegui il programma e ritorna il risultato
-    ritorna quello che ha tornato il risultato
-  }
-
-  */
-  //  val = compile(val);
-
 #if CHECKS
   if (!is_sym(name))
-    pi_error(LISP_ERROR, "first arg must be a symbol");
+    pi_lisp_error("first arg must be a symbol");
 #endif
   cell *prec = NULL;
   cell *act = memory->global_env;
@@ -369,7 +332,7 @@ cell *greater(cell *operands) {
     }
   }
   if ((first && first->type) != (second && second->type))
-    pi_error(LISP_ERROR, "incompatible types");
+    pi_lisp_error("incompatible types");
 #endif
   cell *res = NULL;
   if (is_num(first)) {
@@ -377,7 +340,7 @@ cell *greater(cell *operands) {
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
   } else
-    pi_error(LISP_ERROR, "non-comparable args");
+    pi_lisp_error("non-comparable args");
   cell_remove_recursive(operands);
   return res;
 }
@@ -394,7 +357,7 @@ cell *greater_eq(cell *operands) {
     return NULL;
   }
   if ((first && first->type) != (second && second->type))
-    pi_error(LISP_ERROR, "incompatible types");
+    pi_lisp_error("incompatible types");
 #endif
   cell *res = NULL;
   if (is_num(first)) {
@@ -402,7 +365,7 @@ cell *greater_eq(cell *operands) {
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
   } else
-    pi_error(LISP_ERROR, "non-comparable args");
+    pi_lisp_error("non-comparable args");
   cell_remove_recursive(operands);
   return res;
 }
@@ -419,7 +382,7 @@ cell *less(cell *operands) {
     return NULL;
   }
   if ((first && first->type) != (second && second->type))
-    pi_error(LISP_ERROR, "incompatible types");
+    pi_lisp_error("incompatible types");
 #endif
   cell *res = NULL;
   if (is_num(first)) {
@@ -427,7 +390,7 @@ cell *less(cell *operands) {
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
   } else
-    pi_error(LISP_ERROR, "non-comparable args");
+    pi_lisp_error("non-comparable args");
   cell_remove_recursive(operands);
   return res;
 }
@@ -444,7 +407,7 @@ cell *less_eq(cell *operands) {
     return NULL;
   }
   if ((first && first->type) != (second && second->type))
-    pi_error(LISP_ERROR, "incompatible types");
+    pi_lisp_error("incompatible types");
 #endif
   cell *res = NULL;
   if (is_num(first)) {
@@ -452,7 +415,7 @@ cell *less_eq(cell *operands) {
   } else if (is_str(first)) {
     res = ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
   } else
-    pi_error(LISP_ERROR, "non-comparable args");
+    pi_lisp_error("non-comparable args");
   cell_remove_recursive(operands);
   return res;
 }
@@ -467,7 +430,7 @@ cell *length(cell *list) {
   cell *act = car(list);
 #if CHECKS
   if (act && !is_cons(act) && !is_str(act))
-    pi_error(LISP_ERROR, "arg is not a list or a string");
+    pi_lisp_error("arg is not a list or a string");
 #endif
   /********************************************************************************
    *                                  LEAKS MEMORY
@@ -499,7 +462,7 @@ cell *member(cell *list) {
   cell *l = cadr(list);
 #if CHECKS
   if (l && !is_cons(l))
-    pi_error(LISP_ERROR, "second arg must be a list");
+    pi_lisp_error("second arg must be a list");
 #endif
   cell *res = NULL;
   cell *head = NULL;
@@ -540,12 +503,12 @@ cell *nth(cell *list) {
   cell *num = car(list);
 #if CHECKS
   if (!is_num(num))
-    pi_error(LISP_ERROR, "first arg must be a number");
+    pi_lisp_error("first arg must be a number");
 #endif
   cell *l = cadr(list);
 #if CHECKS
   if (l && !is_cons(l))
-    pi_error(LISP_ERROR, "second arg must be a list");
+    pi_lisp_error("second arg must be a list");
 #endif
 
   cell *res = NULL;
@@ -822,11 +785,11 @@ cell *load(cell *arg, cell *env) {
   cell *name = eval(car(arg), env); // extract the name
 #if CHECKS
   if (!name || !is_str(name))
-    pi_error(LISP_ERROR, "first arg must me a string");
+    pi_lisp_error("first arg must me a string");
 #endif
   FILE *file = fopen(((name) ? name->str : ""), "r");
   if (!file)
-    pi_error(LISP_ERROR, "can't find file");
+    pi_lisp_error("can't find file");
   cell *last_result = NULL;
   while (!feof(file)) {
     cell *sexpr = read_sexpr(file);

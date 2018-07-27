@@ -87,11 +87,19 @@ test('[LISP] +', lisp_program_test, args : [
     '3 ',
     'L+'
 ])
-test('[LISP] -', lisp_program_test, args : [
+
+test('[LISP] - 1', lisp_program_test, args : [
     '(- 1 1)',
     '0 ',
-    'L-'
+    'L-1'
 ])
+
+test('[LISP] -2', lisp_program_test, args : [
+    '(- 1)',
+    '-1',
+    'L-2'
+])
+
 test('[LISP] *', lisp_program_test, args : [
     '(* -1 -1)',
     '1 ',
