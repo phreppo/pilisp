@@ -1,49 +1,9 @@
 #include "pibuiltin.h"
 #include "pierror.h"
 
-cell *append(cell *list) {
-#if CHECKS
-  check_append(list);
-#endif
-  cell *first_list = car(list);
-  cell *second_list = cadr(list);
-  cell *act = first_list;
-
-  while (act && cdr(act))
-    act = cdr(act);
-
-  if (act)
-    act->cdr = second_list;
-  else
-    first_list = second_list;
-
-  cell_remove_args(list);
-  return first_list;
-}
-
-cell *asm_call(cell *args, cell *env) {
-  return asm_call_with_stack_base(args, env, stack_pointer);
-}
-
-cell *concatenate(cell *list) {
-#if CHECKS
-  check_concatenate(list);
-#endif
-  cell *first_string = cadr(list);
-  cell *second_string = caddr(list);
-  char *first = first_string->str;
-  char *second = second_string->str;
-  char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
-
-  strcpy(new_str, first);
-  strcat(new_str, second);
-
-  unsafe_cell_remove(first_string);
-  unsafe_cell_remove(second_string);
-  cell_remove_args(list);
-
-  return mk_str(new_str);
-}
+/********************************************************************************
+*                                  Arithmetic
+********************************************************************************/
 
 cell *addition(cell *numbers) {
   long result = 0;
@@ -146,8 +106,6 @@ cell *division(cell *numbers) {
 #if CHECKS
     check_division_atom(act);
 #endif
-    if (car(act)->value == 0)
-      pi_lisp_error("division by 0");
     result /= (double)car(act)->value;
 
     tmp = cdr(act);
@@ -157,6 +115,130 @@ cell *division(cell *numbers) {
   }
 
   return mk_num(result);
+}
+
+/********************************************************************************
+*                                Basic Apply
+********************************************************************************/
+
+cell *builtin_car(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res = caar(args);
+
+  cell_remove_recursive(cdar(args));
+  cell_remove(car(args));
+  cell_remove_args(args);
+  
+  return res;
+}
+
+cell *builtin_cdr(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res = cdar(args);
+  
+  cell_remove_recursive(caar(args));
+  cell_remove(car(args));
+  cell_remove_args(args);
+
+  return res;
+}
+cell *builtin_cons(cell *args) {
+#if CHECKS
+  check_two_args(args);
+#endif
+  cell *res = cons(car(args), cadr(args));
+  cell_remove_args(args);
+  return res;
+}
+
+cell *builtin_atom(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res;
+  if (atom(car(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove_recursive(args);
+  return res;
+}
+
+cell *builtin_eq(cell *args) {
+#if CHECKS
+  check_two_args(args);
+#endif
+  cell *res;
+  if (eq(car(args), cadr(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove_recursive(args);
+  return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cell *append(cell *list) {
+#if CHECKS
+  check_append(list);
+#endif
+  cell *first_list = car(list);
+  cell *second_list = cadr(list);
+  cell *act = first_list;
+
+  while (act && cdr(act))
+    act = cdr(act);
+
+  if (act)
+    act->cdr = second_list;
+  else
+    first_list = second_list;
+
+  cell_remove_args(list);
+  return first_list;
+}
+
+cell *asm_call(cell *args, cell *env) {
+  return asm_call_with_stack_base(args, env, stack_pointer);
+}
+
+cell *concatenate(cell *list) {
+#if CHECKS
+  check_concatenate(list);
+#endif
+  cell *first_string = cadr(list);
+  cell *second_string = caddr(list);
+  char *first = first_string->str;
+  char *second = second_string->str;
+  char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
+
+  strcpy(new_str, first);
+  strcat(new_str, second);
+
+  unsafe_cell_remove(first_string);
+  unsafe_cell_remove(second_string);
+  cell_remove_args(list);
+
+  return mk_str(new_str);
 }
 
 cell *set(cell *args) {
@@ -560,61 +642,6 @@ cell *list(cell *list) {
   return tmp;
 }
 
-// ==================== BASIC APPLY ====================
-
-cell *builtin_car(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res = caar(args);
-  cell_remove_recursive(cdar(args)); // remove the rest of the arg
-  cell_remove(car(args));
-  cell_remove_args(args);
-  return res;
-}
-cell *builtin_cdr(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res = cdar(args);
-  cell_remove_recursive(caar(args)); // remove the car of the lists
-  cell_remove(car(args));
-  cell_remove_args(args);
-  return res;
-}
-cell *builtin_cons(cell *args) {
-#if CHECKS
-  check_two_args(args);
-#endif
-  cell *res = cons(car(args), cadr(args));
-  cell_remove_args(args);
-  return res;
-}
-
-cell *builtin_atom(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res;
-  if (atom(car(args)))
-    res = symbol_true;
-  else
-    res = NULL;
-  cell_remove_recursive(args);
-  return res;
-}
-cell *builtin_eq(cell *args) {
-#if CHECKS
-  check_two_args(args);
-#endif
-  cell *res;
-  if (eq(car(args), cadr(args)))
-    res = symbol_true;
-  else
-    res = NULL;
-  cell_remove_recursive(args);
-  return res;
-}
 // ==================== MACROS ====================
 cell *setq(cell *args, cell *env) {
 #if CHECKS

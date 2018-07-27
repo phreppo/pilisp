@@ -35,7 +35,15 @@ cell *cadar(cell *c);
 cell *caddr(cell *c);
 #endif
 
-// ==================== BASIC APPLY ====================
+// ==================== Arithmetic ====================
+cell *addition(cell *numbers);
+cell *subtraction(cell *numbers);
+cell *subtraction_invert_result(cell *numbers);
+cell *subtraction_two_or_more_numbers(cell *numbers);
+cell *multiplication(cell *numbers);
+cell *division(cell *numbers);
+
+// ==================== Basic Apply ====================
 // differences from the first basic block: these functions can be called from
 // the apply, because they do cell_remove and cell_push and check for args error
 cell *builtin_car(cell *args);
@@ -56,14 +64,6 @@ cell *less(cell *operands);
 cell *less_eq(cell *operands);
 cell *integerp(cell *arg);
 cell *symbolp(cell *arg);
-
-// ==================== ARITHMETIC ====================
-cell *addition(cell *numbers);
-cell *subtraction(cell *numbers);
-cell *subtraction_invert_result(cell *numbers);
-cell *subtraction_two_or_more_numbers(cell *numbers);
-cell *multiplication(cell *numbers);
-cell *division(cell *numbers);
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
