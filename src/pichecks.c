@@ -67,7 +67,40 @@ void check_comparables(cell *args) {
   if (!car(args) || !cadr(args)) {
     pi_lisp_error("NIL not allowed as arg");
   }
-  if ((car(args) && car(args)->type) !=
-      (cadr(args) && cadr(args)->type))
+  if ((car(args) && car(args)->type) != (cadr(args) && cadr(args)->type))
     pi_lisp_error("incompatible types");
+}
+
+/********************************************************************************
+ *                                  Lists
+ ********************************************************************************/
+
+void check_length(cell *args) {
+  check_one_arg(args);
+  if (car(args) && !is_cons(car(args)) && !is_str(car(args)))
+    pi_lisp_error("arg is not a list or a string");
+}
+
+void check_member(cell *args) {
+  check_two_args(args);
+  if (cadr(args) && !is_cons(cadr(args)))
+    pi_lisp_error("second arg must be a list");
+}
+
+void check_nth(cell *args) {
+  check_two_args(args);
+  if (!is_num(car(args)))
+    pi_lisp_error("first arg must be a number");
+  if (cadr(args) && !is_cons(cadr(args)))
+    pi_lisp_error("second arg must be a list");
+}
+
+void check_subseq(cell*args){
+  if(!args || !cdr(args))
+    pi_error_few_args();
+  // if( caddr(cdr(args)))
+    // pi_error_many_args();
+  if(!is_str(car(args)))
+    pi_lisp_error("first arg in subseq must be a string");
+
 }

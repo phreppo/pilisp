@@ -8,14 +8,14 @@
 #ifndef PIBUILTIN_H
 #define PIBUILTIN_H
 #include "picell.h"
+#include "pichecks.h"
 #include "pilisp.h"
 #include "pistack.h"
 #include "piutils.h"
-#include "pichecks.h"
-#include <stdbool.h>
-#include <time.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <time.h>
 
 // ==================== INLINE FUNCTIONS FOR EVAL ====================
 // not usable in the interpreter: no checks! => use only in the eval
@@ -53,30 +53,43 @@ cell *multiplication(cell *numbers);
 cell *division(cell *numbers);
 
 // ==================== Logic ====================
-cell * or (cell *operands);
-cell * and (cell *operands);
-cell * not(cell *operands);
+cell * or (cell * operands);
+cell * and (cell * operands);
+cell * not(cell * operands);
 
 // ==================== Comparison ====================
 cell *greater(cell *operands);
-cell *compare_greater_numbers(cell* first_num, cell* second_num);
-cell *compare_greater_strings(cell* first_str, cell* second_str);
+cell *compare_greater_numbers(cell *first_num, cell *second_num);
+cell *compare_greater_strings(cell *first_str, cell *second_str);
 
 cell *greater_eq(cell *operands);
-cell *compare_greater_eq_numbers(cell* first_num, cell* second_num);
-cell *compare_greater_eq_strings(cell* first_str, cell* second_str);
+cell *compare_greater_eq_numbers(cell *first_num, cell *second_num);
+cell *compare_greater_eq_strings(cell *first_str, cell *second_str);
 
 cell *less(cell *operands);
-cell *compare_less_numbers(cell* first_num, cell* second_num);
-cell *compare_less_strings(cell* first_str, cell* second_str);
+cell *compare_less_numbers(cell *first_num, cell *second_num);
+cell *compare_less_strings(cell *first_str, cell *second_str);
 
 cell *less_eq(cell *operands);
-cell *compare_less_eq_numbers(cell* first_num, cell* second_num);
-cell *compare_less_eq_strings(cell* first_str, cell* second_str);
+cell *compare_less_eq_numbers(cell *first_num, cell *second_num);
+cell *compare_less_eq_strings(cell *first_str, cell *second_str);
 
 cell *integerp(cell *arg);
 cell *symbolp(cell *arg);
 
+// ==================== Lists ====================
+cell *list(cell *args);
+cell *length(cell *args);
+cell *length_string(cell *string);
+cell *length_cons(cell *list);
+cell *reverse(cell *args);
+cell *member(cell *args);
+cell *nth(cell *args);
+cell *subseq(cell *args);      // ! works only with strings
+cell *subseq_one_index(cell *args,int start_index);
+cell *subseq_two_indices(cell *args,int start_index);
+cell *concatenate(cell *args); // ! works only with strings
+cell *append(cell *args);
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
@@ -86,16 +99,6 @@ cell *bye(cell *arg);
 cell *mem_dump(cell *arg);
 cell *env(cell *arg);
 cell *collect_garbage_call(cell *arg);
-
-// ==================== LISTS ====================
-cell *length(cell *list);
-cell *member(cell *list);
-cell *nth(cell *list);
-cell *list(cell *list);
-cell *subseq(cell *list); // substr
-cell *reverse(cell *list);
-cell *concatenate(cell *list); // ! works only on strings
-cell *append(cell *list);
 
 // ==================== MACROS ====================
 cell *setq(cell *args, cell *env);

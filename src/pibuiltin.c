@@ -377,16 +377,214 @@ cell *symbolp(cell *arg) {
   bool ret = is_sym(car(arg));
   cell_remove_recursive(car(arg));
   unsafe_cell_remove(arg);
-  
+
   return (ret ? symbol_true : NULL);
 }
 
-cell *append(cell *list) {
+/********************************************************************************
+ *                                   Lists
+ ********************************************************************************/
+
+cell *list(cell *args) { return args; }
+
+cell *length(cell *args) {
 #if CHECKS
-  check_append(list);
+  check_length(args);
 #endif
-  cell *first_list = car(list);
-  cell *second_list = cadr(list);
+  cell *act = car(args);
+  cell *ret;
+
+  if (act && is_str(act))
+    ret = length_string(act);
+  else
+    ret = length_cons(act);
+
+  unsafe_cell_remove(args);
+  return ret;
+}
+
+cell *length_string(cell *string) {
+  cell *ret = mk_num(strlen(string->str));
+  unsafe_cell_remove(string);
+  return ret;
+}
+
+cell *length_cons(cell *list) {
+  cell *tmp;
+  unsigned long len = 0;
+
+  while (list) {
+    len++;
+    tmp = cdr(list);
+    cell_remove_recursive(car(list)); // remove sublist
+    unsafe_cell_remove(list);         // remove cons of the sublis
+    list = tmp;
+  }
+
+  return mk_num(len);
+}
+
+cell *reverse(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *rest_of_the_list = car(args);
+  cell *reversed_list = NULL;
+  cell *actual_car;
+  cell *tmp;
+
+  while (rest_of_the_list) {
+    actual_car = car(rest_of_the_list);
+    reversed_list = mk_cons(actual_car, reversed_list);
+    tmp = cdr(rest_of_the_list);
+    unsafe_cell_remove(rest_of_the_list);
+    rest_of_the_list = tmp;
+  }
+
+  cell_remove_args(args);
+  return reversed_list;
+}
+
+cell *member(cell *args) {
+#if CHECKS
+  check_member(args);
+#endif
+  cell *wanted = car(args);
+  cell *rest_of_the_list = cadr(args);
+  cell *res = NULL;
+  cell *head = NULL;
+  bool found = false;
+  cell *actual_member;
+  cell *tmp;       // tmp to switch cell
+  cell *next_copy; // start to copy
+
+  while (rest_of_the_list) {
+    actual_member = car(rest_of_the_list);
+    if (!found) {
+      if (eq(actual_member, wanted)) {
+        found = true;
+        res = mk_cons(copy_cell(actual_member), NULL);
+        head = res;
+      }
+    } else {
+      next_copy = mk_cons(copy_cell(actual_member), NULL);
+      res->cdr = next_copy;
+      res = res->cdr;
+    }
+    tmp = cdr(rest_of_the_list);
+    cell_remove_recursive(car(rest_of_the_list));
+    unsafe_cell_remove(rest_of_the_list);
+    rest_of_the_list = tmp;
+  }
+
+  cell_remove_recursive(wanted);
+  cell_remove_args(args);
+  return head;
+}
+
+cell *nth(cell *args) {
+#if CHECKS
+  check_nth(args);
+#endif
+  cell *num = car(args);
+  cell *rest_of_the_list = cadr(args);
+  cell *res = NULL;
+  unsigned long index = num->value;
+  unsigned long act_index = 0;
+  cell *tmp;
+
+  while (rest_of_the_list && act_index < index) {
+    tmp = cdr(rest_of_the_list);
+    cell_remove_recursive(car(rest_of_the_list));
+    unsafe_cell_remove(rest_of_the_list);
+    rest_of_the_list = tmp;
+    act_index++;
+  }
+
+  if (rest_of_the_list) {
+    res = car(rest_of_the_list);
+    cell_remove_recursive(cdr(rest_of_the_list)); // rest of the list
+    unsafe_cell_remove(rest_of_the_list);         // cons of the result
+  }
+
+  unsafe_cell_remove(num);
+  cell_remove_args(args);
+  return res;
+}
+
+cell *subseq(cell *args) {
+#if CHECKS
+  check_subseq(args);
+#endif
+  cell *str = car(args);
+  cell *start = cadr(args);
+  int start_index = start->value;
+
+  if (start_index > strlen(str->str)) {
+    cell_remove_recursive(args);
+    return NULL;
+  }
+
+  if (cddr(args)) 
+    return subseq_one_index(args, start_index);
+  else
+    return subseq_two_indices(args,start_index);
+}
+
+cell *subseq_one_index(cell *args, int start_index) {
+  cell *str = car(args);
+  cell *end = caddr(args);
+  int e = end->value;
+
+  char *substr = malloc(e - start_index + 1);
+  strncpy(substr, str->str + start_index, e - start_index);
+  *(substr + (e - start_index)) = '\0';
+  cell *ret = mk_str(substr);
+  free(substr);
+  cell_remove_recursive(args);
+  
+  return ret;
+}
+
+cell *subseq_two_indices(cell *args, int start_index) {
+  cell *str = car(args);
+  int e = strlen(str->str);
+
+  char *substr = malloc(e - start_index + 1);
+  strncpy(substr, str->str + start_index, e - start_index);
+  *(substr + (e - start_index)) = '\0';
+  cell *ret = mk_str(substr);
+  cell_remove_recursive(args);
+  
+  return ret;
+}
+
+cell *concatenate(cell *args) {
+#if CHECKS
+  check_concatenate(args);
+#endif
+  cell *first_string = cadr(args);
+  cell *second_string = caddr(args);
+  char *first = first_string->str;
+  char *second = second_string->str;
+  char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
+
+  strcpy(new_str, first);
+  strcat(new_str, second);
+
+  unsafe_cell_remove(first_string);
+  unsafe_cell_remove(second_string);
+  cell_remove_args(args);
+
+  return mk_str(new_str);
+}
+
+cell *append(cell *args) {
+#if CHECKS
+  check_append(args);
+#endif
+  cell *first_list = car(args);
+  cell *second_list = cadr(args);
   cell *act = first_list;
 
   while (act && cdr(act))
@@ -397,32 +595,16 @@ cell *append(cell *list) {
   else
     first_list = second_list;
 
-  cell_remove_args(list);
+  cell_remove_args(args);
   return first_list;
 }
 
+/********************************************************************************
+ *                                  NOT CLEAN CODE
+ ********************************************************************************/
+
 cell *asm_call(cell *args, cell *env) {
   return asm_call_with_stack_base(args, env, stack_pointer);
-}
-
-cell *concatenate(cell *list) {
-#if CHECKS
-  check_concatenate(list);
-#endif
-  cell *first_string = cadr(list);
-  cell *second_string = caddr(list);
-  char *first = first_string->str;
-  char *second = second_string->str;
-  char *new_str = malloc(sizeof(first) + sizeof(second) + 1);
-
-  strcpy(new_str, first);
-  strcat(new_str, second);
-
-  unsafe_cell_remove(first_string);
-  unsafe_cell_remove(second_string);
-  cell_remove_args(list);
-
-  return mk_str(new_str);
 }
 
 cell *set(cell *args) {
@@ -515,119 +697,6 @@ cell *write(cell *arg) {
   return target;
 }
 
-// ==================== LISTS ====================
-
-cell *length(cell *list) {
-#if CHECKS
-  check_one_arg(list);
-#endif
-  unsigned long len = 0;
-  cell *act = car(list);
-#if CHECKS
-  if (act && !is_cons(act) && !is_str(act))
-    pi_lisp_error("arg is not a list or a string");
-#endif
-  /********************************************************************************
-   *                                  LEAKS MEMORY
-   ********************************************************************************/
-  if (act && is_str(act)) {
-    cell *ret = mk_num(strlen(act->str));
-    unsafe_cell_remove(list); // cons of the argument
-    unsafe_cell_remove(act);
-    return ret;
-  }
-  cell *tmp;
-  while (act) {
-    len++;
-    tmp = cdr(act);
-    cell_remove_recursive(car(act)); // remove sublist
-    unsafe_cell_remove(act);         // remove cons of the sublis
-    act = tmp;
-  }
-  unsafe_cell_remove(list); // cons of the argument
-  return mk_num(len);
-}
-
-cell *member(cell *list) {
-#if CHECKS
-  check_two_args(
-      list); // the first is the member and che second is the true list
-#endif
-  cell *who = car(list);
-  cell *l = cadr(list);
-#if CHECKS
-  if (l && !is_cons(l))
-    pi_lisp_error("second arg must be a list");
-#endif
-  cell *res = NULL;
-  cell *head = NULL;
-  bool found = false;
-  cell *value;     // actual value
-  cell *tmp;       // tmp to switch cell
-  cell *next_copy; // start to copy
-  while (l) {
-    value = car(l);
-    if (!found) {
-      if (eq(value, who)) { // it's ok not total_eq here
-        // found
-        found = true;
-        res = mk_cons(copy_cell(value), NULL);
-        head = res;
-      }
-    } else {
-      // already found => we have to append this cell to the result
-      next_copy = mk_cons(copy_cell(value), NULL);
-      res->cdr = next_copy;
-      res = res->cdr;
-    }
-    tmp = cdr(l);
-    cell_remove_recursive(car(l));
-    unsafe_cell_remove(l);
-    l = tmp;
-  }
-  cell_remove_recursive(who);
-  cell_remove_args(list); // cons of the two args
-
-  return head;
-}
-
-cell *nth(cell *list) {
-#if CHECKS
-  check_two_args(list);
-#endif
-  cell *num = car(list);
-#if CHECKS
-  if (!is_num(num))
-    pi_lisp_error("first arg must be a number");
-#endif
-  cell *l = cadr(list);
-#if CHECKS
-  if (l && !is_cons(l))
-    pi_lisp_error("second arg must be a list");
-#endif
-
-  cell *res = NULL;
-  unsigned long index = num->value;
-  unsigned long act = 0;
-  cell *tmp;
-  while (l && act < index) {
-    tmp = cdr(l);
-    cell_remove_recursive(car(l));
-    unsafe_cell_remove(l);
-    l = tmp;
-    act++;
-  }
-  if (l) { // cell is in the range: we can return it and free the rest of the
-           // list
-    res = car(l);
-    cell_remove_recursive(cdr(l)); // remove the rest of the list
-    unsafe_cell_remove(l);         // remove the cons of the result
-  }
-  unsafe_cell_remove(num);
-  cell_remove_args(list);
-  return res;
-}
-
 bool total_eq(cell *c1, cell *c2) {
   if (!c1 && !c2)
     // NILL NILL
@@ -647,12 +716,6 @@ bool total_eq(cell *c1, cell *c2) {
     return eq(c1, c2);
   // cons cons
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
-}
-
-cell *list(cell *list) {
-  cell *tmp = copy_cell(list);
-  cell_remove_recursive(list);
-  return tmp;
 }
 
 // ==================== MACROS ====================
@@ -737,56 +800,6 @@ cell *map(cell *args, cell *env) {
   cell_remove_recursive(func);
   cell_remove_args(args);
   return result;
-}
-
-cell *subseq(cell *list) {
-  cell *str = car(list);
-  cell *start = cadr(list);
-  size_t s = start->value;
-  if (s > strlen(str->str)) {
-    cell_remove_recursive(list);
-    return NULL;
-  }
-  if (cddr(list)) {
-    cell *end = caddr(list);
-    size_t e = end->value;
-    char *substr = malloc(e - s + 1);
-    strncpy(substr, str->str + s, e - s);
-    *(substr + (e - s)) = '\0';
-    cell *ret = mk_str(substr);
-    free(substr);
-    cell_remove_recursive(list);
-    return ret;
-  } else {
-    // just one number
-    size_t e = strlen(str->str);
-    char *substr = malloc(e - s + 1);
-    strncpy(substr, str->str + s, e - s);
-    *(substr + (e - s)) = '\0';
-    cell *ret = mk_str(substr);
-    cell_remove_recursive(list);
-    return ret;
-  }
-}
-
-cell *reverse(cell *list) {
-#if CHECKS
-  check_one_arg(list);
-#endif
-  cell *act = car(list);
-  cell *val;
-  cell *tmp;
-  cell *res = NULL;
-  while (act) {
-    tmp = cdr(act);
-    val = car(act);
-    res = mk_cons(val, res);
-    unsafe_cell_remove(act);
-    act = tmp;
-    // (reverse '(1 2 3))
-  }
-  cell_remove_args(list);
-  return res;
 }
 
 cell *env(cell *arg) {

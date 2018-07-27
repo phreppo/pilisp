@@ -14,8 +14,6 @@
  *                               GENERAL SETTINGS
  ********************************************************************************/
 
-// WARNING: performances = 1 is unsafe and startup of pilisp and parsing is
-// really slow
 #define PERFORMANCES 0
 
 #if PERFORMANCES
@@ -79,7 +77,7 @@
 // in (md) prints free cells
 #define PRINT_FREE_CELLS 0
 
-#define PRINT_ONLY_DANGLING_CELLS 0
+#define PRINT_ONLY_DANGLING_CELLS 1
 
 // describes what appens evaluating sexpressions
 #define DEBUG_EVAL_MODE 0
