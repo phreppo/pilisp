@@ -57,3 +57,17 @@ void check_concatenate(cell *args) {
   if (!is_str(caddr(args)))
     pi_lisp_error("third arg must be a string");
 }
+
+/********************************************************************************
+ *                                  Comparison
+ ********************************************************************************/
+
+void check_comparables(cell *args) {
+  check_two_args(args);
+  if (!car(args) || !cadr(args)) {
+    pi_lisp_error("NIL not allowed as arg");
+  }
+  if ((car(args) && car(args)->type) !=
+      (cadr(args) && cadr(args)->type))
+    pi_lisp_error("incompatible types");
+}

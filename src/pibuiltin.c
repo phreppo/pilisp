@@ -250,26 +250,136 @@ cell * not(cell * operands) {
   }
 }
 
+/********************************************************************************
+ *                                  Comparison
+ ********************************************************************************/
 
+cell *greater(cell *operands) {
+#if CHECKS
+  check_comparables(operands);
+#endif
+  cell *first = car(operands);
+  cell *second = cadr(operands);
+  cell *res = NULL;
 
+  if (is_num(first))
+    res = compare_greater_numbers(first, second);
+  else if (is_str(first))
+    res = compare_greater_strings(first, second);
+  else
+    pi_lisp_error("non-comparable args");
 
+  cell_remove_recursive(operands);
+  return res;
+}
 
+cell *compare_greater_numbers(cell *first_num, cell *second_num) {
+  return ((first_num->value > second_num->value) ? symbol_true : NULL);
+}
 
+cell *compare_greater_strings(cell *first_str, cell *second_str) {
+  return ((strcmp(first_str->str, second_str->str) > 0) ? symbol_true : NULL);
+}
 
+cell *greater_eq(cell *operands) {
+#if CHECKS
+  check_comparables(operands);
+#endif
+  cell *first = car(operands);
+  cell *second = cadr(operands);
+  cell *res = NULL;
 
+  if (is_num(first))
+    res = compare_greater_eq_numbers(first, second);
+  else if (is_str(first))
+    res = compare_greater_eq_strings(first, second);
+  else
+    pi_lisp_error("non-comparable args");
 
+  cell_remove_recursive(operands);
+  return res;
+}
 
+cell *compare_greater_eq_numbers(cell *first_num, cell *second_num) {
+  return ((first_num->value >= second_num->value) ? symbol_true : NULL);
+}
 
+cell *compare_greater_eq_strings(cell *first_str, cell *second_str) {
+  return ((strcmp(first_str->str, second_str->str) >= 0) ? symbol_true : NULL);
+}
 
+cell *less(cell *operands) {
+#if CHECKS
+  check_comparables(operands);
+#endif
+  cell *first = car(operands);
+  cell *second = cadr(operands);
+  cell *res = NULL;
 
+  if (is_num(first))
+    res = compare_less_numbers(first, second);
+  else if (is_str(first))
+    res = compare_less_strings(first, second);
+  else
+    pi_lisp_error("non-comparable args");
 
+  cell_remove_recursive(operands);
+  return res;
+}
 
+cell *compare_less_numbers(cell *first_num, cell *second_num) {
+  return ((first_num->value < second_num->value) ? symbol_true : NULL);
+}
+cell *compare_less_strings(cell *first_str, cell *second_str) {
+  return ((strcmp(first_str->str, second_str->str) < 0) ? symbol_true : NULL);
+}
 
+cell *less_eq(cell *operands) {
+#if CHECKS
+  check_comparables(operands);
+#endif
+  cell *first = car(operands);
+  cell *second = cadr(operands);
+  cell *res = NULL;
 
+  if (is_num(first))
+    res = compare_less_eq_numbers(first, second);
+  else if (is_str(first))
+    res = compare_less_eq_strings(first, second);
+  else
+    pi_lisp_error("non-comparable args");
 
+  cell_remove_recursive(operands);
+  return res;
+}
 
+cell *compare_less_eq_numbers(cell *first_num, cell *second_num) {
+  return ((first_num->value <= second_num->value) ? symbol_true : NULL);
+}
+cell *compare_less_eq_strings(cell *first_str, cell *second_str) {
+  return ((strcmp(first_str->str, second_str->str) <= 0) ? symbol_true : NULL);
+}
 
+cell *integerp(cell *arg) {
+#if CHECKS
+  check_one_arg(arg);
+#endif
+  bool ret = is_num(car(arg));
+  cell_remove_recursive(car(arg));
+  unsafe_cell_remove(arg);
 
+  return (ret ? symbol_true : NULL);
+}
+cell *symbolp(cell *arg) {
+#if CHECKS
+  check_one_arg(arg);
+#endif
+  bool ret = is_sym(car(arg));
+  cell_remove_recursive(car(arg));
+  unsafe_cell_remove(arg);
+  
+  return (ret ? symbol_true : NULL);
+}
 
 cell *append(cell *list) {
 #if CHECKS
@@ -403,110 +513,6 @@ cell *write(cell *arg) {
   puts("");
   cell_remove_args(arg);
   return target;
-}
-
-// ==================== COMPARISON ====================
-
-cell *greater(cell *operands) {
-#if CHECKS
-  check_two_args(operands);
-#endif
-  cell *first = car(operands);
-  cell *second = cadr(operands);
-#if CHECKS
-  if (!first || !second) {
-    {
-      pi_lisp_error("NIL not allowed as arg");
-      return NULL;
-    }
-  }
-  if ((first && first->type) != (second && second->type))
-    pi_lisp_error("incompatible types");
-#endif
-  cell *res = NULL;
-  if (is_num(first)) {
-    res = ((first->value > second->value) ? symbol_true : NULL);
-  } else if (is_str(first)) {
-    res = ((strcmp(first->str, second->str) > 0) ? symbol_true : NULL);
-  } else
-    pi_lisp_error("non-comparable args");
-  cell_remove_recursive(operands);
-  return res;
-}
-
-cell *greater_eq(cell *operands) {
-#if CHECKS
-  check_two_args(operands);
-#endif
-  cell *first = car(operands);
-  cell *second = cadr(operands);
-#if CHECKS
-  if (!first || !second) {
-    pi_lisp_error("NIL not allowed as arg");
-    return NULL;
-  }
-  if ((first && first->type) != (second && second->type))
-    pi_lisp_error("incompatible types");
-#endif
-  cell *res = NULL;
-  if (is_num(first)) {
-    res = ((first->value >= second->value) ? symbol_true : NULL);
-  } else if (is_str(first)) {
-    res = ((strcmp(first->str, second->str) >= 0) ? symbol_true : NULL);
-  } else
-    pi_lisp_error("non-comparable args");
-  cell_remove_recursive(operands);
-  return res;
-}
-
-cell *less(cell *operands) {
-#if CHECKS
-  check_two_args(operands);
-#endif
-  cell *first = car(operands);
-  cell *second = cadr(operands);
-#if CHECKS
-  if (!first || !second) {
-    pi_lisp_error("NIL not allowed as arg");
-    return NULL;
-  }
-  if ((first && first->type) != (second && second->type))
-    pi_lisp_error("incompatible types");
-#endif
-  cell *res = NULL;
-  if (is_num(first)) {
-    res = ((first->value < second->value) ? symbol_true : NULL);
-  } else if (is_str(first)) {
-    res = ((strcmp(first->str, second->str) < 0) ? symbol_true : NULL);
-  } else
-    pi_lisp_error("non-comparable args");
-  cell_remove_recursive(operands);
-  return res;
-}
-
-cell *less_eq(cell *operands) {
-#if CHECKS
-  check_two_args(operands);
-#endif
-  cell *first = car(operands);
-  cell *second = cadr(operands);
-#if CHECKS
-  if (!first || !second) {
-    pi_lisp_error("NIL not allowed as arg");
-    return NULL;
-  }
-  if ((first && first->type) != (second && second->type))
-    pi_lisp_error("incompatible types");
-#endif
-  cell *res = NULL;
-  if (is_num(first)) {
-    res = ((first->value <= second->value) ? symbol_true : NULL);
-  } else if (is_str(first)) {
-    res = ((strcmp(first->str, second->str) <= 0) ? symbol_true : NULL);
-  } else
-    pi_lisp_error("non-comparable args");
-  cell_remove_recursive(operands);
-  return res;
 }
 
 // ==================== LISTS ====================
@@ -792,19 +798,6 @@ cell *env(cell *arg) {
   print_sexpr(memory->global_env);
   printf("\n" ANSI_COLOR_RESET);
   return symbol_true;
-}
-
-cell *integerp(cell *arg) {
-  bool ret = is_num(car(arg));
-  cell_remove_recursive(car(arg));
-  unsafe_cell_remove(arg);
-  return (ret ? symbol_true : NULL);
-}
-cell *symbolp(cell *arg) {
-  bool ret = is_sym(car(arg));
-  cell_remove_recursive(car(arg));
-  unsafe_cell_remove(arg);
-  return (ret ? symbol_true : NULL);
 }
 
 cell *collect_garbage_call(cell *arg) {

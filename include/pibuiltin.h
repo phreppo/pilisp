@@ -57,13 +57,26 @@ cell * or (cell *operands);
 cell * and (cell *operands);
 cell * not(cell *operands);
 
-// ==================== COMPARISON ====================
+// ==================== Comparison ====================
 cell *greater(cell *operands);
+cell *compare_greater_numbers(cell* first_num, cell* second_num);
+cell *compare_greater_strings(cell* first_str, cell* second_str);
+
 cell *greater_eq(cell *operands);
+cell *compare_greater_eq_numbers(cell* first_num, cell* second_num);
+cell *compare_greater_eq_strings(cell* first_str, cell* second_str);
+
 cell *less(cell *operands);
+cell *compare_less_numbers(cell* first_num, cell* second_num);
+cell *compare_less_strings(cell* first_str, cell* second_str);
+
 cell *less_eq(cell *operands);
+cell *compare_less_eq_numbers(cell* first_num, cell* second_num);
+cell *compare_less_eq_strings(cell* first_str, cell* second_str);
+
 cell *integerp(cell *arg);
 cell *symbolp(cell *arg);
+
 
 // ==================== UTILITY ====================
 cell *set(cell *args);
