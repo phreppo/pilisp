@@ -111,7 +111,9 @@
 
 #define PI_COMPILE_FILE_NAME_PREFIX ".picompile"
 
-#define REMOVE_COMPILER_FILES 1
+#define PI_COMPILER_FILE_NAME_PREFIX ".picompiler"
+
+#define REMOVE_TMP_FILES 1
 
 /********************************************************************************
  *                                  LIMITS

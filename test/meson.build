@@ -6,7 +6,6 @@ test_path = meson.source_root()+'/test/'
 expressions_path = test_path+'expressions/'
 programs_path = test_path+'lisp_programs/'
 bad_expressions_path = expressions_path+'badexpressions/'
-compiler_path = test_path+'../compiler/'
 
 # Parser test for accepted sexpressions
 parser_accepted_strings_test = executable(
@@ -555,33 +554,26 @@ test('[LOAD] map and maze with variables', lisp_program_load_test, args :  [
     'MAPMAZEVAR'
 ])
 
-test('[COMP] load compiler', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp") t',
-    't',
-    'CLOAD'
-])
-
 test('[COMP] number const', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp") (plc \'1)',
+    '(plc \'1)',
     '(ASM "!" 1)',
     'CCONSTNUM'
 ])
 
 test('[COMP] string const', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp") (plc \'"hi")',
+    ' (plc \'"hi")',
     '(ASM "!" "hi")',
     'CCONSTSTR'
 ])
 
 test('[COMP] symbol', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp") (plc \'x)',
+    '(plc \'x)',
     '(ASM "?" x)',
     'CSYM'
 ])
 
 
 test('[COMP] 0 par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car))',
 
     '(ASM "$A" CAR)',
@@ -589,7 +581,6 @@ test('[COMP] 0 par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] 1 par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car \'(a)))',
 
     '(ASM "!$B" (a) CAR)',
@@ -597,7 +588,6 @@ test('[COMP] 1 par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] 2 par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(cons 1 x))',
 
     '(ASM "!?$C" 1 X CONS)',
@@ -605,7 +595,6 @@ test('[COMP] 2 par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] 3 par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3))',
 
     '(ASM "!!!$D" 1 2 3 LIST)',
@@ -613,7 +602,6 @@ test('[COMP] 3 par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] 4 par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4))',
 
     '(ASM "!!!!$E" 1 2 3 4 LIST)',
@@ -621,7 +609,6 @@ test('[COMP] 4 par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] N par BS', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 4 5 6 7))',
 
     '(ASM "!!!!!!!$H" 1 2 3 4 5 6 7 LIST)',
@@ -629,7 +616,6 @@ test('[COMP] N par BS', lisp_program_test, args : [
 ])
 
 test('[COMP] nested car and cdr stack 1', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(car (cdr \'(a))))',
 
     '(ASM "!$B$B" (a) CDR CAR)',
@@ -637,7 +623,6 @@ test('[COMP] nested car and cdr stack 1', lisp_program_test, args : [
 ])
 
 test('[COMP] nested list and car stack 2', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 2 3 (car \'(a))))',
 
     '(ASM "!!!!$B$E" 1 2 3 (a) CAR LIST)',
@@ -645,7 +630,6 @@ test('[COMP] nested list and car stack 2', lisp_program_test, args : [
 ])
 
 test('[COMP] nested list, car and cdr stack 2', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(list 1 (car \'(2)) 3 (car (cdr \'(a b)))))',
 
     '(ASM "!!$B!!$B$B$E" 1 (2) CAR 3 (A B) CDR CAR LIST)',
@@ -653,7 +637,6 @@ test('[COMP] nested list, car and cdr stack 2', lisp_program_test, args : [
 ])
 
 test('[COMP] (lambda (x) x)', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x) x))',
 
     '(LASM 1 "@A")',
@@ -661,7 +644,6 @@ test('[COMP] (lambda (x) x)', lisp_program_test, args : [
 ])
 
 test('[COMP] (lambda (x y) (+ x y))', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x y) (+ x y)))',
 
     '(LASM 2 "@A@B$C" +)',
@@ -670,7 +652,6 @@ test('[COMP] (lambda (x y) (+ x y))', lisp_program_test, args : [
 
 
 test('[COMP] (lambda (x y) 11)', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x y) 11))',
 
     '(LASM 2 "!" 11)',
@@ -678,7 +659,6 @@ test('[COMP] (lambda (x y) 11)', lisp_program_test, args : [
 ])
 
 test('[COMP] (lambda () (list 1 2))', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda () (list 1 2)))',
 
     '(LASM 0 "!!$C" 1 2 LIST)',
@@ -686,7 +666,6 @@ test('[COMP] (lambda () (list 1 2))', lisp_program_test, args : [
 ])
 
 test('[COMP] (lambda (x y z) (list (car \'(A)) 2 x y x ext))', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(plc \'(lambda (x y z) (list (car \'(A)) 2 x y x ext)))',
 
     '(LASM 3 "!$B!@A@B@A?$G" (A) CAR 2 EXT LIST)',
@@ -780,7 +759,6 @@ test('[LASM] ((lambda (x y z) (list x y z 1 2)) 1 2 3)', lisp_program_test, args
 ])
 
 test('[COMPILED] compile my eq', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun myeq (x y) (eq x y))  '+
     '(compile myeq)' +
     '(myeq nil 11)',
@@ -790,7 +768,6 @@ test('[COMPILED] compile my eq', lisp_program_test, args : [
 ])
 
 test('[COMPILED] compile my cons', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun mycons (x y) (cons x y))  '+
     '(compile mycons)' +
     '(mycons 1 \'(a b c))',
@@ -800,7 +777,6 @@ test('[COMPILED] compile my cons', lisp_program_test, args : [
 ])
  
 test('[COMPILED] compile my atom 1', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun myatom (x) (atom x))  '+
     '(compile myatom)' +
     '(myatom 1)',
@@ -810,7 +786,6 @@ test('[COMPILED] compile my atom 1', lisp_program_test, args : [
 ])
 
 test('[COMPILED] compile my atom 2', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun myatom (x) (atom x))  '+
     '(compile myatom)' +
     '(myatom \'(a b c))',
@@ -820,7 +795,6 @@ test('[COMPILED] compile my atom 2', lisp_program_test, args : [
 ])
 
 test('[COMPILED] compile my +', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun mysum (x y) (+ x y))  '+
     '(compile mysum)' +
     '(mysum 1 -3)',
@@ -830,7 +804,6 @@ test('[COMPILED] compile my +', lisp_program_test, args : [
 ])
 
 test('[COMPILED] compile my car', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun mycar (x) (car x))  '+
     '(compile mycar)' +
     '(mycar \'(a))',
@@ -840,7 +813,6 @@ test('[COMPILED] compile my car', lisp_program_test, args : [
 ])
 
 test('[COMPILED] compile my list', lisp_program_test, args : [
-    '(load "'+compiler_path+'/compiler.lisp")  '+
     '(defun mylist (x y z) (list x y z))  '+
     '(compile mylist)' +
     '(mylist \'(a) 1 2)',
@@ -851,7 +823,7 @@ test('[COMPILED] compile my list', lisp_program_test, args : [
 
 test('[COMPILED] compiled diff: d(33x)', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
-    '(load "'+compiler_path+'/compiler.lisp")   '+
+    '(load "'+programs_path+'compilable_diff.lisp")'+
     '(d \'(* x 33))',
     '(+ (* 1 33) (* X 0))',
     'COMPILEDDIFF1'
@@ -860,7 +832,7 @@ test('[COMPILED] compiled diff: d(33x)', lisp_program_load_test, args : [
 
 test('[COMPILED] diff calculator: d(x^2)', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
-    '(load "'+compiler_path+'/compiler.lisp")   '+
+    '(load "'+programs_path+'compilable_diff.lisp")'+
     '(d \'(expt x 2))',
     '(* (EXPT X . 1) 2)',
     'COMPILEDDIFF2'
@@ -868,7 +840,6 @@ test('[COMPILED] diff calculator: d(x^2)', lisp_program_load_test, args : [
 
 test('[COMPILED] diff calculator: d((x^2+1)/cos(x))', lisp_program_load_test, args : [
     programs_path+'diff.lisp',
-    '(load "'+compiler_path+'/compiler.lisp")   '+
     '(load "'+programs_path+'compilable_diff.lisp")'+
     '(d \'(/ (+ (expt x 2) 1) (cos x)))',
     '(/ (- (* (+ (* (EXPT X . 1) 2) 0) (COS X)) (* (+ (EXPT X 2) 1) (* (* (SIN X) -1) 1))) (EXPT (COS X) 2))',

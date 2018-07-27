@@ -8,5 +8,6 @@
 #include "pisettings.h"
 
 char * generate_pi_compile_tmp_file_name();
+char * generate_pi_compiler_tmp_file_name();
 
 #endif

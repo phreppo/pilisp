@@ -46,3 +46,12 @@ void write_compiler_expression_to_file(char *file_name, cell *to_compilate) {
 
   fclose(program_file_write);
 }
+
+void write_compiler_to_file(char *file_name) {
+  FILE *program_file_write = fopen(file_name, "w");
+
+  int results = fputs(get_compiler_source_hardcoded(), program_file_write);
+  if (results == EOF)
+    pi_error(MEMORY_ERROR, "error writing program file");
+  fclose(program_file_write);
+}

@@ -103,6 +103,8 @@ cell *symbol_asm;
 cell *symbol_compile;
 cell *symbol_concatenate;
 
+char * get_compiler_source_hardcoded();
+
 
 #endif // !PIINIT_H
 /*@}*/

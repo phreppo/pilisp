@@ -70,7 +70,7 @@
             "options": {
                 "cwd": "${workspaceRoot}/build"
             },
-            "command": "ninja && ninja test",
+            "command": "ninja && MESON_TESTTHREADS=1 ninja test",
             "problemMatcher":{
                 "base":"$gcc",
                 "fileLocation" : ["relative", "${workspaceRoot}/build"]

@@ -21,9 +21,9 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) -g '*test*' -g '*main*' -g '*piprint*'
 script:
   - curl --data-binary @codecov.yml https://codecov.io/validate
-  - meson build -Dc_args=-Og                    # enable coverage
+  - meson build -Dc_args=-Og -Db_coverage=true  # enable coverage
   - ninja -C build                              # build project
-  - ninja test -C build                         # run tests
+  - MESON_TESTTHREADS=1 ninja test -C build                         # run tests
   - gcov -r .
   - gcovr -r . -e '.*/test/.*'  -e '.*pitestutils*' -e  '.*main*' -e  '.*pilisp.c*'                 # report coverage
   - doxygen                                     # auto generate documentation
