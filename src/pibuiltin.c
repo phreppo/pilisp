@@ -1,5 +1,6 @@
 #include "pibuiltin.h"
 #include "pierror.h"
+#include "piremove.h"
 
 /********************************************************************************
  *                                Basic Apply
@@ -700,43 +701,13 @@ cell *load(cell *arg, cell *env) {
 cell *bye(cell *arg) { return symbol_bye; }
 
 /********************************************************************************
- *                                  NOT CLEAN CODE
+ *                                     Macros
  ********************************************************************************/
 
-cell *asm_call(cell *args, cell *env) {
-  return asm_call_with_stack_base(args, env, stack_pointer);
-}
-
-cell *mem_dump(cell *arg) {
-#if CHECKS
-  if (arg)
-    pi_error_many_args();
-#endif
-  printf(ANSI_COLOR_YELLOW "============================== MEMORY "
-                           "==============================\n" ANSI_COLOR_RESET);
-  print_cell_space(memory);
-  return symbol_true;
-}
-
-cell *timer(cell *arg, cell *env) {
-#if CHECKS
-  check_one_arg(arg);
-#endif
-  cell *to_execute = car(arg);
-  clock_t t1, t2;
-  long elapsed;
-
-  t1 = clock();
-  cell *valued = eval(to_execute, env);
-  t2 = clock();
-
-  elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
-  printf("time: %ld ms\n", elapsed);
-  cell_remove_args(arg);
-  return valued;
-}
-
 cell *quote(cell *args, cell *env) {
+#if CHECKS
+  check_one_arg(args);
+#endif
   cell *evaulated = car(args);
   unsafe_cell_remove(args);
   return evaulated;
@@ -744,46 +715,35 @@ cell *quote(cell *args, cell *env) {
 
 cell *cond(cell *arg, cell *env) { return evcon(arg, env); }
 
-bool total_eq(cell *c1, cell *c2) {
-  if (!c1 && !c2)
-    // NILL NILL
-    return true;
-  if (!c1 && c2)
-    // NILL something
-    return false;
-  if (c1 && !c2)
-    // something NILL
-    return false;
-  // something something
-  if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
-    // one is an atom and the other is a cons
-    return false;
-  if (atom(c1) && atom(c2))
-    // equality between two atoms
-    return eq(c1, c2);
-  // cons cons
-  return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
-}
-
-// ==================== MACROS ====================
 cell *setq(cell *args, cell *env) {
 #if CHECKS
-  check_two_args(args);
+  check_setq(args);
 #endif
   cell *sym = car(args);
-#if CHECKS
-  if (!is_sym(sym))
-    pi_lisp_error("first arg must be a symbol");
-#endif
   cell *val = eval(cadr(args), env);
   cell *ret = set(mk_cons(sym, mk_cons(val, NULL)));
   cell_remove_args(args);
+
   return ret;
 }
 
+cell *defun(cell *args, cell *env) {
+  cell *fun_name = car(args);
+  cell *lambda_struct = (cdr(args));
+  cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
+  cell *structure_for_set = mk_cons(fun_name, mk_cons(lambda_head, NULL));
+  set(structure_for_set);
+  cell_remove(args);
+
+  return lambda_head;
+}
+
 cell *let(cell *args, cell *env) {
+#if CHECKS
+  check_two_args(args);
+#endif
   cell *params = car(args);
-  cell *body = cadr(args); // ok
+  cell *body = cadr(args);
   cell *new_env = env;
 
   cell *val;
@@ -791,31 +751,54 @@ cell *let(cell *args, cell *env) {
   cell *tmp;
 
   while (params) {
-    val = eval(cadar(params), env);        // give a value to val
-    new_pair = mk_cons(caar(params), val); // (sym . val)
-    new_env = mk_cons(new_pair,
-                      new_env); // add on the head of the new env the new pair
+    val = eval(cadar(params), env);
+    new_pair = mk_cons(caar(params), val);
+    new_env = mk_cons(new_pair, new_env);
+
     tmp = cdr(params);
-    cell_remove(cdr(cdar(params)));
-    cell_remove_recursive(cdar(params)); // maybe null
-    unsafe_cell_remove(car(params));     // cons
-    unsafe_cell_remove(params);
+    cell_remove_let_param(params);
     params = tmp;
   }
   cell *res = eval(body, new_env);
   cell_remove_pairlis_deep(new_env, env);
   cell_remove_args(args);
+
   return res;
 }
 
-cell *defun(cell *args, cell *env) {
-  cell *fun_name = car(args);
-  cell *lambda_struct = (cdr(args));
-  cell *lambda_head = mk_cons(symbol_lambda, lambda_struct);
-  cell *compacted = mk_cons(fun_name, mk_cons(lambda_head, NULL));
-  set(compacted);
-  cell_remove(args);
-  return lambda_head;
+cell *dotimes(cell *arg, cell *env) {
+#if CHECKS
+  check_two_args(arg);
+#endif
+  int n = 0;
+  cell *name_list = car(arg);
+  cell *num = cadar(arg);
+  cell *expr = cadr(arg);
+
+  cell *new_env;
+  cell *actual_n_value;
+  cell *num_list_for_new_env;
+  cell *evaulated;
+
+  for (n = 0; n < num->value; n++) {
+    if (n > 0) {
+      cell_push_recursive(expr);
+    }
+    actual_n_value = mk_num(n);
+    num_list_for_new_env = mk_cons(actual_n_value, NULL);
+    new_env = pairlis(name_list, num_list_for_new_env, env);
+    evaulated = eval(expr, new_env);
+
+    cell_remove_recursive(evaulated);
+    cell_remove_pairlis(new_env, env);
+    cell_remove_recursive(num_list_for_new_env);
+  }
+
+  unsafe_cell_remove(cdr(arg));
+  cell_remove(arg);
+  cell_remove_recursive(car(arg));
+
+  return NULL;
 }
 
 cell *map(cell *args, cell *env) {
@@ -843,10 +826,67 @@ cell *map(cell *args, cell *env) {
     unsafe_cell_remove(list);
     list = tmp;
   }
-  // (map 1+ '(1 2 3))
   cell_remove_recursive(func);
   cell_remove_args(args);
   return result;
+}
+
+cell *timer(cell *arg, cell *env) {
+#if CHECKS
+  check_one_arg(arg);
+#endif
+  cell *to_execute = car(arg);
+  clock_t t1, t2;
+  long elapsed;
+
+  t1 = clock();
+  cell *valued = eval(to_execute, env);
+  t2 = clock();
+
+  elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
+  printf("time: %ld ms\n", elapsed);
+  cell_remove_args(arg);
+  return valued;
+}
+
+/********************************************************************************
+ *                                  NOT CLEAN CODE
+ ********************************************************************************/
+
+cell *asm_call(cell *args, cell *env) {
+  return asm_call_with_stack_base(args, env, stack_pointer);
+}
+
+cell *mem_dump(cell *arg) {
+#if CHECKS
+  if (arg)
+    pi_error_many_args();
+#endif
+  printf(ANSI_COLOR_YELLOW "============================== MEMORY "
+                           "==============================\n" ANSI_COLOR_RESET);
+  print_cell_space(memory);
+  return symbol_true;
+}
+
+bool total_eq(cell *c1, cell *c2) {
+  if (!c1 && !c2)
+    // NILL NILL
+    return true;
+  if (!c1 && c2)
+    // NILL something
+    return false;
+  if (c1 && !c2)
+    // something NILL
+    return false;
+  // something something
+  if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
+    // one is an atom and the other is a cons
+    return false;
+  if (atom(c1) && atom(c2))
+    // equality between two atoms
+    return eq(c1, c2);
+  // cons cons
+  return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
 cell *env(cell *arg) {
@@ -863,39 +903,6 @@ cell *env(cell *arg) {
 cell *collect_garbage_call(cell *arg) {
   deep_collect_garbage(memory);
   return symbol_true;
-}
-
-cell *dotimes(cell *arg, cell *env) {
-  // DOTIMES
-  size_t n = 0;
-  cell *name_list = car(arg);
-  cell *num = car(cdr(car(arg)));
-  cell *expr = cadr(arg);
-  cell *new_env;
-  for (n = 0; n < num->value; n++) {
-    if (n > 0) {
-      // we have to protect the body of the function
-      cell_push_recursive(expr);
-      // cell_push(caar(arg)); // name of the parameter (n)
-    }
-    cell *actual_n_value = mk_num(n);
-    cell *num_list_new = mk_cons(actual_n_value, NULL);
-    new_env = pairlis(name_list, num_list_new, env);
-    cell *evaulated = eval(expr, new_env);
-    // remove the result
-    cell_remove_recursive(evaulated);
-    // remove the pair (n [actual_value])
-    cell_remove_pairlis(new_env, env);
-    // remove the just created cell
-    cell_remove_recursive(num_list_new);
-    // REMOVE THE ACTUAL VALUE OF N
-    // unsafe_cell_remove(actual_n_value);
-  }
-  // cons of the pair
-  unsafe_cell_remove(cdr(arg));
-  cell_remove(arg);
-  cell_remove_recursive(car(arg)); // remove the pair and cons (n [number])
-  return NULL;
 }
 
 // ! the compiler needs to be loaded

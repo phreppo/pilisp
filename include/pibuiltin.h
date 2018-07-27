@@ -102,15 +102,15 @@ cell *write(cell *arg);
 cell *load(cell *arg, cell *env);
 cell *bye(cell *arg);
 
-// ==================== MACROS ====================
+// ==================== Macros ====================
+cell *quote(cell *args, cell *env);
+cell *cond(cell *arg, cell *env);
 cell *setq(cell *args, cell *env);
 cell *defun(cell *args, cell *env);
 cell *let(cell *args, cell *env);
-cell *map(cell *args, cell *env);
-cell *quote(cell *args, cell *env);
-cell *timer(cell *arg, cell *env);
-cell *cond(cell *arg, cell *env);
 cell *dotimes(cell *arg, cell *env);
+cell *map(cell *args, cell *env);
+cell *timer(cell *arg, cell *env);
 
 // ==================== COMPILER FUNCTIONS ====================
 cell *asm_call(cell *args, cell *env);

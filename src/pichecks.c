@@ -102,8 +102,22 @@ void check_subseq(cell *args) {
     pi_lisp_error("first arg in subseq must be a string");
 }
 
+/********************************************************************************
+ *                                  Utility
+ ********************************************************************************/
+
 void check_set(cell *args) {
   check_two_args(args);
   if (!is_sym(car(args)))
     pi_lisp_error("first arg must be a symbol");
+}
+
+/********************************************************************************
+ *                                  Macros
+ ********************************************************************************/
+
+void check_setq(cell *args) {
+  check_two_args(args);
+  if (!is_sym(car(args)))
+    pi_lisp_error("setq: first arg must be a symbol");
 }

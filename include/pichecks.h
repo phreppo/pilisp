@@ -26,4 +26,7 @@ void check_subseq(cell *args);
 // ==================== Utility ====================
 void check_set(cell *args);
 
+// ==================== Macros ====================
+void check_setq(cell *args);
+
 #endif // !PICHECKS_H
