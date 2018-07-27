@@ -2,8 +2,72 @@
 #include "pierror.h"
 
 /********************************************************************************
-*                                  Arithmetic
-********************************************************************************/
+ *                                Basic Apply
+ ********************************************************************************/
+
+cell *builtin_car(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res = caar(args);
+
+  cell_remove_recursive(cdar(args));
+  cell_remove(car(args));
+  cell_remove_args(args);
+
+  return res;
+}
+
+cell *builtin_cdr(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res = cdar(args);
+
+  cell_remove_recursive(caar(args));
+  cell_remove(car(args));
+  cell_remove_args(args);
+
+  return res;
+}
+cell *builtin_cons(cell *args) {
+#if CHECKS
+  check_two_args(args);
+#endif
+  cell *res = cons(car(args), cadr(args));
+  cell_remove_args(args);
+  return res;
+}
+
+cell *builtin_atom(cell *args) {
+#if CHECKS
+  check_one_arg(args);
+#endif
+  cell *res;
+  if (atom(car(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove_recursive(args);
+  return res;
+}
+
+cell *builtin_eq(cell *args) {
+#if CHECKS
+  check_two_args(args);
+#endif
+  cell *res;
+  if (eq(car(args), cadr(args)))
+    res = symbol_true;
+  else
+    res = NULL;
+  cell_remove_recursive(args);
+  return res;
+}
+
+/********************************************************************************
+ *                                  Arithmetic
+ ********************************************************************************/
 
 cell *addition(cell *numbers) {
   long result = 0;
@@ -118,68 +182,78 @@ cell *division(cell *numbers) {
 }
 
 /********************************************************************************
-*                                Basic Apply
-********************************************************************************/
+ *                                     Logic
+ ********************************************************************************/
 
-cell *builtin_car(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res = caar(args);
+cell * or (cell * operands) {
+  cell *act = operands;
+  cell *atom = car(act);
+  cell *tmp;
 
-  cell_remove_recursive(cdar(args));
-  cell_remove(car(args));
-  cell_remove_args(args);
-  
-  return res;
+  while (act) {
+    if (atom) {
+      // found not nil
+      cell_remove_recursive(cdr(act));
+      unsafe_cell_remove(act);
+      return atom;
+    }
+
+    tmp = cdr(act);
+    cell_remove(car(act));
+    unsafe_cell_remove(act);
+    act = tmp;
+    atom = car(act);
+  }
+
+  return NULL;
 }
 
-cell *builtin_cdr(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res = cdar(args);
-  
-  cell_remove_recursive(caar(args));
-  cell_remove(car(args));
-  cell_remove_args(args);
+cell * and (cell * operands) {
+  cell *act = operands;
+  cell *prev = NULL;
+  cell *atom = car(act);
+  cell *tmp;
 
-  return res;
-}
-cell *builtin_cons(cell *args) {
-#if CHECKS
-  check_two_args(args);
-#endif
-  cell *res = cons(car(args), cadr(args));
-  cell_remove_args(args);
-  return res;
-}
+  while (act) {
+    if (!atom) {
+      cell_remove_recursive(car(prev));
+      cell_remove_recursive(cdr(act));
+      unsafe_cell_remove(act);
+      return NULL;
+    }
 
-cell *builtin_atom(cell *args) {
-#if CHECKS
-  check_one_arg(args);
-#endif
-  cell *res;
-  if (atom(car(args)))
-    res = symbol_true;
-  else
-    res = NULL;
-  cell_remove_recursive(args);
-  return res;
+    prev = act;
+    tmp = cdr(act);
+    cell_remove_recursive(car(prev));
+    cell_push_recursive(car(prev)); // protect the last value
+    cell_remove_recursive(car(act));
+    unsafe_cell_remove(act);
+    act = tmp;
+    atom = car(act);
+  }
+
+  if (!prev)
+    return symbol_true;
+  return car(prev);
 }
 
-cell *builtin_eq(cell *args) {
+cell * not(cell * operands) {
 #if CHECKS
-  check_two_args(args);
+  check_one_arg(operands);
 #endif
-  cell *res;
-  if (eq(car(args), cadr(args)))
-    res = symbol_true;
-  else
-    res = NULL;
-  cell_remove_recursive(args);
-  return res;
+  if (car(operands)) {
+    cell_remove_recursive(operands);
+    return NULL;
+  } else {
+    unsafe_cell_remove(operands);
+    return symbol_true;
+  }
 }
+
+
+
+
+
 
 
 
@@ -329,73 +403,6 @@ cell *write(cell *arg) {
   puts("");
   cell_remove_args(arg);
   return target;
-}
-
-// ==================== LOGIC ====================
-
-cell * or (cell * operands) {
-  cell *act = operands;
-  cell *atom = car(act);
-  cell *tmp;
-  while (act) {
-    if (atom) {
-      // found not nil
-      cell_remove_recursive(cdr(act));
-      unsafe_cell_remove(act);
-      return atom;
-    }
-
-    tmp = cdr(act);
-    cell_remove(car(act));
-    // cons
-    unsafe_cell_remove(act);
-    act = tmp;
-    atom = car(act);
-  }
-  return NULL;
-}
-
-cell * and (cell * operands) {
-  cell *act = operands;
-  cell *prev = NULL;
-  cell *atom = car(act);
-  cell *tmp;
-  while (act) {
-    if (!atom) {
-      // NIL found
-      cell_remove_recursive(car(prev)); // release the prev memory
-      cell_remove_recursive(cdr(act));  // release the rest of the list
-      unsafe_cell_remove(act);          // release the act cons
-      return NULL;
-    }
-    cell_remove_recursive(car(prev));
-    prev = act;
-    cell_push_recursive(car(prev)); // protect the last value
-    tmp = cdr(act);
-    cell_remove_recursive(car(act));
-    unsafe_cell_remove(act);
-    act = tmp;
-    atom = car(act);
-  }
-  if (!prev)
-    return symbol_true;
-  return car(prev);
-}
-
-cell * not(cell * operands) {
-#if CHECKS
-  if (!operands)
-    pi_error_few_args();
-  if (cdr(operands))
-    pi_error_many_args();
-#endif
-  if (car(operands)) {
-    cell_remove_recursive(operands);
-    return NULL;
-  } else {
-    unsafe_cell_remove(operands);
-    return symbol_true;
-  }
 }
 
 // ==================== COMPARISON ====================
