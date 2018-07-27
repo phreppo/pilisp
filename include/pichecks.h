@@ -15,12 +15,15 @@ void check_division(cell *args);
 void check_division_atom(cell *arg);
 
 // ==================== Comparison ====================
-void check_comparables(cell * args);
+void check_comparables(cell *args);
 
 // ==================== Lists ====================
-void check_length(cell * args);
+void check_length(cell *args);
 void check_member(cell *args);
 void check_nth(cell *args);
-void check_subseq(cell*args);
+void check_subseq(cell *args);
+
+// ==================== Utility ====================
+void check_set(cell *args);
 
 #endif // !PICHECKS_H

@@ -95,12 +95,15 @@ void check_nth(cell *args) {
     pi_lisp_error("second arg must be a list");
 }
 
-void check_subseq(cell*args){
-  if(!args || !cdr(args))
+void check_subseq(cell *args) {
+  if (!args || !cdr(args))
     pi_error_few_args();
-  // if( caddr(cdr(args)))
-    // pi_error_many_args();
-  if(!is_str(car(args)))
+  if (!is_str(car(args)))
     pi_lisp_error("first arg in subseq must be a string");
+}
 
+void check_set(cell *args) {
+  check_two_args(args);
+  if (!is_sym(car(args)))
+    pi_lisp_error("first arg must be a symbol");
 }

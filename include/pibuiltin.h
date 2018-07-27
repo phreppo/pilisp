@@ -79,26 +79,28 @@ cell *symbolp(cell *arg);
 
 // ==================== Lists ====================
 cell *list(cell *args);
-cell *length(cell *args);
-cell *length_string(cell *string);
-cell *length_cons(cell *list);
 cell *reverse(cell *args);
 cell *member(cell *args);
 cell *nth(cell *args);
-cell *subseq(cell *args);      // ! works only with strings
-cell *subseq_one_index(cell *args,int start_index);
-cell *subseq_two_indices(cell *args,int start_index);
 cell *concatenate(cell *args); // ! works only with strings
 cell *append(cell *args);
 
-// ==================== UTILITY ====================
+cell *length(cell *args);
+cell *length_string(cell *string);
+cell *length_cons(cell *list);
+
+cell *subseq(cell *args); // ! works only with strings
+cell *subseq_one_index(cell *args, int start_index);
+cell *subseq_two_indices(cell *args, int start_index);
+
+// ==================== Utility ====================
 cell *set(cell *args);
-cell *load(cell *arg, cell *env);
+cell *set_change_existing_value(cell *args, cell *pair);
+cell *set_add_new_value(cell *args, cell *prec);
+
 cell *write(cell *arg);
+cell *load(cell *arg, cell *env);
 cell *bye(cell *arg);
-cell *mem_dump(cell *arg);
-cell *env(cell *arg);
-cell *collect_garbage_call(cell *arg);
 
 // ==================== MACROS ====================
 cell *setq(cell *args, cell *env);
@@ -113,6 +115,11 @@ cell *dotimes(cell *arg, cell *env);
 // ==================== COMPILER FUNCTIONS ====================
 cell *asm_call(cell *args, cell *env);
 cell *compile(cell *c, cell *env);
+
+// ==================== PILISP PROPRIETARY FUNCTIONS ====================
+cell *mem_dump(cell *arg);
+cell *env(cell *arg);
+cell *collect_garbage_call(cell *arg);
 
 // ==================== BASIC FUNCTIONS ====================
 // works also on lists: eq does not, but 'it's slower

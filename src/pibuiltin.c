@@ -387,43 +387,6 @@ cell *symbolp(cell *arg) {
 
 cell *list(cell *args) { return args; }
 
-cell *length(cell *args) {
-#if CHECKS
-  check_length(args);
-#endif
-  cell *act = car(args);
-  cell *ret;
-
-  if (act && is_str(act))
-    ret = length_string(act);
-  else
-    ret = length_cons(act);
-
-  unsafe_cell_remove(args);
-  return ret;
-}
-
-cell *length_string(cell *string) {
-  cell *ret = mk_num(strlen(string->str));
-  unsafe_cell_remove(string);
-  return ret;
-}
-
-cell *length_cons(cell *list) {
-  cell *tmp;
-  unsigned long len = 0;
-
-  while (list) {
-    len++;
-    tmp = cdr(list);
-    cell_remove_recursive(car(list)); // remove sublist
-    unsafe_cell_remove(list);         // remove cons of the sublis
-    list = tmp;
-  }
-
-  return mk_num(len);
-}
-
 cell *reverse(cell *args) {
 #if CHECKS
   check_one_arg(args);
@@ -512,53 +475,6 @@ cell *nth(cell *args) {
   return res;
 }
 
-cell *subseq(cell *args) {
-#if CHECKS
-  check_subseq(args);
-#endif
-  cell *str = car(args);
-  cell *start = cadr(args);
-  int start_index = start->value;
-
-  if (start_index > strlen(str->str)) {
-    cell_remove_recursive(args);
-    return NULL;
-  }
-
-  if (cddr(args)) 
-    return subseq_one_index(args, start_index);
-  else
-    return subseq_two_indices(args,start_index);
-}
-
-cell *subseq_one_index(cell *args, int start_index) {
-  cell *str = car(args);
-  cell *end = caddr(args);
-  int e = end->value;
-
-  char *substr = malloc(e - start_index + 1);
-  strncpy(substr, str->str + start_index, e - start_index);
-  *(substr + (e - start_index)) = '\0';
-  cell *ret = mk_str(substr);
-  free(substr);
-  cell_remove_recursive(args);
-  
-  return ret;
-}
-
-cell *subseq_two_indices(cell *args, int start_index) {
-  cell *str = car(args);
-  int e = strlen(str->str);
-
-  char *substr = malloc(e - start_index + 1);
-  strncpy(substr, str->str + start_index, e - start_index);
-  *(substr + (e - start_index)) = '\0';
-  cell *ret = mk_str(substr);
-  cell_remove_recursive(args);
-  
-  return ret;
-}
-
 cell *concatenate(cell *args) {
 #if CHECKS
   check_concatenate(args);
@@ -599,6 +515,190 @@ cell *append(cell *args) {
   return first_list;
 }
 
+cell *length(cell *args) {
+#if CHECKS
+  check_length(args);
+#endif
+  cell *act = car(args);
+  cell *ret;
+
+  if (act && is_str(act))
+    ret = length_string(act);
+  else
+    ret = length_cons(act);
+
+  unsafe_cell_remove(args);
+  return ret;
+}
+
+cell *length_string(cell *string) {
+  cell *ret = mk_num(strlen(string->str));
+  unsafe_cell_remove(string);
+  return ret;
+}
+
+cell *length_cons(cell *list) {
+  cell *tmp;
+  unsigned long len = 0;
+
+  while (list) {
+    len++;
+    tmp = cdr(list);
+    cell_remove_recursive(car(list)); // remove sublist
+    unsafe_cell_remove(list);         // remove cons of the sublis
+    list = tmp;
+  }
+
+  return mk_num(len);
+}
+
+cell *subseq(cell *args) {
+#if CHECKS
+  check_subseq(args);
+#endif
+  cell *str = car(args);
+  cell *start = cadr(args);
+  int start_index = start->value;
+
+  if (start_index > strlen(str->str)) {
+    cell_remove_recursive(args);
+    return NULL;
+  }
+
+  if (cddr(args))
+    return subseq_one_index(args, start_index);
+  else
+    return subseq_two_indices(args, start_index);
+}
+
+cell *subseq_one_index(cell *args, int start_index) {
+  cell *str = car(args);
+  cell *end = caddr(args);
+  int e = end->value;
+
+  char *substr = malloc(e - start_index + 1);
+  strncpy(substr, str->str + start_index, e - start_index);
+  *(substr + (e - start_index)) = '\0';
+  cell *ret = mk_str(substr);
+  free(substr);
+  cell_remove_recursive(args);
+
+  return ret;
+}
+
+cell *subseq_two_indices(cell *args, int start_index) {
+  cell *str = car(args);
+  int e = strlen(str->str);
+
+  char *substr = malloc(e - start_index + 1);
+  strncpy(substr, str->str + start_index, e - start_index);
+  *(substr + (e - start_index)) = '\0';
+  cell *ret = mk_str(substr);
+  cell_remove_recursive(args);
+
+  return ret;
+}
+
+/********************************************************************************
+ *                                    Utility
+ ********************************************************************************/
+
+cell *set(cell *args) {
+#if CHECKS
+  check_set(args);
+#endif
+  cell *name = car(args);
+  cell *act = memory->global_env;
+  cell *prec = NULL;
+
+  while (act) {
+    if (eq(name, caar(act)))
+      return set_change_existing_value(args, act);
+
+    prec = act;
+    act = cdr(act);
+  }
+
+  return set_add_new_value(args, prec);
+}
+
+cell *set_change_existing_value(cell *args, cell *pair) {
+  cell *name = car(args);
+  cell *new_val = cadr(args);
+  cell_remove_recursive(car(pair)->cdr); // remove old val
+  car(pair)->cdr = new_val;
+
+  cell_push_recursive(new_val);
+  unsafe_cell_remove(name);
+  cell_remove_args(args);
+
+  return cdar(pair);
+}
+
+cell *set_add_new_value(cell *args, cell *prec) {
+  cell *name = car(args);
+  cell *new_val = cadr(args);
+  cell *pair = mk_cons(name, new_val);
+
+  cell_push_recursive(pair);
+  cell *new = cons(pair, NULL);
+  if (prec)
+    prec->cdr = new;
+  else
+    memory->global_env = new;
+
+  unsafe_cell_remove(name);
+  unsafe_cell_remove(pair);
+  cell_remove_args(args);
+
+  return new_val;
+}
+
+cell *write(cell *arg) {
+#if CHECKS
+  check_one_arg(arg);
+#endif
+  cell *to_be_printed = car(arg);
+  printf(ANSI_COLOR_GRAY " > " ANSI_COLOR_RESET);
+  print_sexpr(to_be_printed);
+  puts("");
+  cell_remove_args(arg);
+  return to_be_printed;
+}
+
+cell *load(cell *arg, cell *env) {
+#if CHECKS
+  check_one_arg(arg);
+#endif
+  cell *name = eval(car(arg), env); // extract the name
+#if CHECKS
+  if (!name || !is_str(name))
+    pi_lisp_error("first arg must me a string");
+#endif
+  FILE *file = fopen(((name) ? name->str : ""), "r");
+  cell *last_result = NULL;
+
+  if (!file)
+    pi_lisp_error("can't find file");
+
+  while (!feof(file)) {
+    cell *sexpr = read_sexpr(file);
+    if (sexpr != symbol_file_ended) {
+      // eval only if you didn't read an empty fragment
+      last_result = eval(sexpr, env);
+      if (!feof(file))
+        cell_remove_recursive(last_result);
+    }
+  }
+
+  unsafe_cell_remove(name);
+  cell_remove_args(arg);
+
+  return last_result;
+}
+
+cell *bye(cell *arg) { return symbol_bye; }
+
 /********************************************************************************
  *                                  NOT CLEAN CODE
  ********************************************************************************/
@@ -606,47 +706,6 @@ cell *append(cell *args) {
 cell *asm_call(cell *args, cell *env) {
   return asm_call_with_stack_base(args, env, stack_pointer);
 }
-
-cell *set(cell *args) {
-#if CHECKS
-  check_two_args(args);
-#endif
-  cell *name = car(args);
-  cell *val = cadr(args);
-#if CHECKS
-  if (!is_sym(name))
-    pi_lisp_error("first arg must be a symbol");
-#endif
-  cell *prec = NULL;
-  cell *act = memory->global_env;
-  while (act) {
-    if (eq(name, caar(act))) {
-      // found
-      cell_remove_recursive(car(act)->cdr); // remove old val
-      car(act)->cdr = val;
-      cell_push_recursive(val);
-      unsafe_cell_remove(name);
-      cell_remove_args(args);
-      return cdar(act);
-    }
-    // iterate
-    prec = act;
-    act = cdr(act);
-  }
-  cell *pair = cons(name, val);
-  cell_push_recursive(pair);
-  cell *new = cons(pair, NULL);
-  if (prec)
-    prec->cdr = new;
-  else
-    memory->global_env = new;
-  unsafe_cell_remove(name);
-  unsafe_cell_remove(pair);
-  cell_remove_args(args);
-  return val;
-}
-
-cell *bye(cell *arg) { return symbol_bye; }
 
 cell *mem_dump(cell *arg) {
 #if CHECKS
@@ -684,18 +743,6 @@ cell *quote(cell *args, cell *env) {
 }
 
 cell *cond(cell *arg, cell *env) { return evcon(arg, env); }
-
-cell *write(cell *arg) {
-#if CHECKS
-  check_one_arg(arg);
-#endif
-  cell *target = car(arg);
-  printf(ANSI_COLOR_GRAY " > " ANSI_COLOR_RESET);
-  print_sexpr(target);
-  puts("");
-  cell_remove_args(arg);
-  return target;
-}
 
 bool total_eq(cell *c1, cell *c2) {
   if (!c1 && !c2)
@@ -816,33 +863,6 @@ cell *env(cell *arg) {
 cell *collect_garbage_call(cell *arg) {
   deep_collect_garbage(memory);
   return symbol_true;
-}
-
-cell *load(cell *arg, cell *env) {
-#if CHECKS
-  check_one_arg(arg);
-#endif
-  cell *name = eval(car(arg), env); // extract the name
-#if CHECKS
-  if (!name || !is_str(name))
-    pi_lisp_error("first arg must me a string");
-#endif
-  FILE *file = fopen(((name) ? name->str : ""), "r");
-  if (!file)
-    pi_lisp_error("can't find file");
-  cell *last_result = NULL;
-  while (!feof(file)) {
-    cell *sexpr = read_sexpr(file);
-    if (sexpr != symbol_file_ended) {
-      // eval only if you didn't read an empty fragment
-      last_result = eval(sexpr, env);
-      if (!feof(file))
-        cell_remove_recursive(last_result);
-    }
-  }
-  unsafe_cell_remove(name);
-  cell_remove_args(arg);
-  return last_result;
 }
 
 cell *dotimes(cell *arg, cell *env) {
