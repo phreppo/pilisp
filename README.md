@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.com/parof/pilisp.svg?token=tdfVkJVdJvEzUpskJRQE&branch=master)](https://travis-ci.com/parof/pilisp) [![codecov](https://codecov.io/gh/parof/pilisp/branch/master/graph/badge.svg)](https://codecov.io/gh/parof/pilisp) [![Github Pages docs](https://img.shields.io/badge/docs-ghpages-blue.svg)](https://parof.github.io/pilisp/)
 
 * [Introduction](#introduction)
+* [Language](#language)
 * [Documentation](#documentation)
 * [Installation](#installation)
 
@@ -12,15 +13,102 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 
 ### Features ###
 
-* **Lambdas**: (set 'id_func (lambda (x) x) ) permitted
-* **Garbage Collector**: Mark & Sweep garbage collector
+* **Lambdas**: (lambda ({args}) {body}) syntax allowed
+* **Garbage Collector**: mark and sweep garbage collector
+* **Bytecode virtual machine interpreter**: some simple lambdas can be compiled to a bytecode faster version
 * **Memory dump builtin**: (md) prints the structure of the allocated memory
 
-#### Bytecode instruction set ####
+## Language ##
 
-You can optionally produce one mid-representation for _some_ expression, loading the LISP module `compile`. The bytecode will run faster than normal LISP code. 
-Here's the instruction set:
+The language accepted by the interpreter is inspired to the [Common Lisp](https://en.wikipedia.org/wiki/Common_Lisp), but keeps the _homoiconicity_ feature of the original definition of the LISP 1.5: data and code are kept together in the same data structure, the _cons cell_.
 
+### Builtin functions ###
+
+* Lisp basic functions
+    * car
+    * cdr
+    * cons 
+    * atom
+    * eq
+    * quote
+    * cond
+* Arithmetic
+    * \+
+    * \-
+    * \*
+    * \/
+* Logic
+    * or
+    * and 
+    * not
+* Comparison
+    * \>
+    * \>=
+    * \<
+    * \<=
+    * integerp
+    * symbolp
+* Lists operations
+    * list
+    * reverse
+    * member 
+    * nth
+    * concatenate
+    * append
+    * length
+    * subseq
+* Common Lisp inherited functions
+    * set
+    * write
+    * load
+    * bye
+* Macros
+    * setq
+    * defun
+    * let
+    * dotimes
+    * map
+    * time
+* Pilisp spacial functions
+    * md: prints the memory
+    * env: prints the global env
+    * cg: calls the garbage collector
+
+### Bytecode instruction set ###
+
+You can optionally produce one mid-representation for some expression. The bytecode will run faster than normal LISP code. 
+To achieve this goal Pilisp interpreter adds these instructions to the language: 
+
+* **plc**: PiLisp Compiler. Called on one sexpression tries to produce the corresponding bytecode of one quoted expression.
+    
+    ```
+    (plc '(car '(a))) => (ASM "!$B" (A) CAR)
+    ```
+
+* **asm**: c-like notation for assembly. This instruction can be interpreted. The first arg is the machine code. Refer [here](#instructionset) for the list of codes. The other arguments are the parameters.
+
+    ```
+    (ASM "!$B" (A) CAR)
+    ```
+    has to be read as: `load a const -> that const is (A) -> apply a builtin function -> That function is car -> That function has 1 parameter -> Put the result on the top of the stack` . The result of a computation is always the top of the stack.
+
+* **lasm**: lambda-asm. Represents a asm computation that accepts input parameters: it is a compiled lambda. The first parameter represents the number of parameters. The rest of the parameters are the same as asm.
+
+    ```
+    ((LASM 1 "@A!$C" 1 +) 2)
+    ```
+    The last is an example of the 1+ function compiled and  applied to the number 2
+
+* **compile**: tries to compile one function. If this is possible the new definition will be substituted to the old one.
+
+    ```
+    (defun id (x) x)
+    (compile id)
+    ```
+    will produce a new and faster identity function.
+    
+
+#### Instruction set ####
 | Code        | Meaning         |
 | :---:       | :---:           |
 | !           | load constant   |
@@ -29,18 +117,6 @@ Here's the instruction set:
 | $           | apply builtin lambda      |
 | \[A-Z\]     | numbers from 0 to 25     |
 
-To produce bytecode run: 
-```
-(load compiler)
-(cc '_your expression})
-```
-
-The result will be something like:
-```
-(asm "{byte code}" {args})
-```
-
-that can be executed.
 
 ## Documentation ##
 

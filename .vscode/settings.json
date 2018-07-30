@@ -1,5 +1,5 @@
 {
-    "cSpell.enabled": false,
+    "cSpell.enabled": true,
     "files.associations": {
         "exception": "c",
         "type_traits": "c",
@@ -26,7 +26,6 @@
         "pifile.h": "c",
         "pistack.h": "c"
     },
-    "python.linting.pylintEnabled": false,
     "cSpell.enabledLanguageIds": [
         "asciidoc",
         "c",
