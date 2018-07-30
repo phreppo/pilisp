@@ -20,27 +20,22 @@ enum error_types {
   MODE_ERROR = 3    ///< error passing mode to some kind of functions
 };
 
-// ==================== ERRORS THROWING ====================
+// ==================== Errors Throwing ====================
 void pi_error(int CODE, char *message);
 void pi_lisp_error(char *message); // throws LISP_ERROR
 void pi_error_few_args();          // throws "too few args"
 void pi_error_many_args();         // throws "too many args"
-void pi_error_stack();
+void pi_error_stack();             
 void pi_error_stack_overflow();
 void pi_error_stack_undeflow();
 
-// ==================== CHECKS ====================
-
-// checks that the list args has exaclty 0 args
+// ==================== Number of arguments checks ====================
 void check_zero_arg(cell * args);
-// checks that the list args has exaclty 1 args
 void check_one_arg(cell *args);
-// checks that the list args has exaclty 2 args
 void check_two_args(cell *args);
-// checks that the list args has exaclty 3 args
 void check_three_args(cell *args);
 
-// ==================== LAST ERROR ====================
+// ==================== Last error informations ====================
 int get_last_error();
 bool had_error();
 void reset_error();
