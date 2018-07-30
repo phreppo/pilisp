@@ -37,7 +37,11 @@ void check_set(cell *args);
 void check_setq(cell *args);
 
 // ==================== Pilisp special functions ====================
-void check_compile(cell * args);
+void check_compile(cell *args);
+
+// ==================== Basic Lisp functions ====================
+void check_car(cell *args);
+void check_cdr(cell *args);
 
 #endif // !PICHECKS_H
        /*@}*/

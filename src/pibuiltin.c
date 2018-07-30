@@ -921,31 +921,25 @@ cell *collect_garbage_call(cell *arg) {
 }
 
 /********************************************************************************
- *                                  NOT CLEAN CODE
+ *                                  Basic Lisp functions
  ********************************************************************************/
 
 bool total_eq(cell *c1, cell *c2) {
   if (!c1 && !c2)
-    // NILL NILL
     return true;
   if (!c1 && c2)
-    // NILL something
     return false;
   if (c1 && !c2)
-    // something NILL
     return false;
-  // something something
   if ((atom(c1) && !atom(c2)) || (!atom(c1) && atom(c2)))
-    // one is an atom and the other is a cons
     return false;
   if (atom(c1) && atom(c2))
-    // equality between two atoms
     return eq(c1, c2);
-  // cons cons
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
 }
 
 #if !INLINE_FUNCTIONS
+
 cell *caar(cell *c) { return c->car->car; }
 cell *cddr(cell *c) { return c->cdr->cdr; }
 cell *cadr(cell *c) { return c->cdr->car; }
@@ -964,20 +958,24 @@ int atom(cell *c) {
 bool eq(cell *v1, cell *v2) {
   if (!v1 || !v2)
     return (v1 == v2);
+
   if (is_num(v1) && is_num(v2))
     return (v1->value == v2->value);
+
   if (is_str(v1) && is_str(v2))
     return (strcmp(v1->str, v2->str) == 0);
-  return (v1 == v2);
+
+  else
+    return (v1 == v2);
 }
 
 cell *car(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS
-  if (atom(c))
-    pi_lisp_error("car applied to an atom");
+  check_car(c);
 #endif
+
   return c->car;
 }
 
@@ -985,9 +983,10 @@ cell *cdr(cell *c) {
   if (c == NULL)
     return NULL;
 #if CHECKS
-  if (atom(c))
-    pi_lisp_error("cdr applied to an atom");
+  check_cdr(c);
 #endif
+
   return c->cdr;
 }
+
 #endif

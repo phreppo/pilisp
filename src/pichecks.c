@@ -1,8 +1,6 @@
 #include "pichecks.h"
 
-/********************************************************************************
- *                                  Arithmetic
- ********************************************************************************/
+// ============================== Arithmetic ==============================
 
 void check_addition_atom(cell *arg) {
   if (!is_cons(arg))
@@ -58,9 +56,7 @@ void check_concatenate(cell *args) {
     pi_lisp_error("third arg must be a string");
 }
 
-/********************************************************************************
- *                                  Comparison
- ********************************************************************************/
+// ============================== Comparison ==============================
 
 void check_comparables(cell *args) {
   check_two_args(args);
@@ -71,9 +67,7 @@ void check_comparables(cell *args) {
     pi_lisp_error("incompatible types");
 }
 
-/********************************************************************************
- *                                  Lists
- ********************************************************************************/
+// ============================== Lists ==============================
 
 void check_length(cell *args) {
   check_one_arg(args);
@@ -102,9 +96,7 @@ void check_subseq(cell *args) {
     pi_lisp_error("first arg in subseq must be a string");
 }
 
-/********************************************************************************
- *                                  Utility
- ********************************************************************************/
+// ============================== Utility ==============================
 
 void check_set(cell *args) {
   check_two_args(args);
@@ -112,9 +104,7 @@ void check_set(cell *args) {
     pi_lisp_error("first arg must be a symbol");
 }
 
-/********************************************************************************
- *                                  Macros
- ********************************************************************************/
+// ============================== Macros ==============================
 
 void check_setq(cell *args) {
   check_two_args(args);
@@ -122,12 +112,22 @@ void check_setq(cell *args) {
     pi_lisp_error("setq: first arg must be a symbol");
 }
 
-/********************************************************************************
- *                           Pilisp special functions
- ********************************************************************************/
+// ============================== Pilisp special functions
+// ==============================
 
 void check_compile(cell *args) {
   check_one_arg(args);
   if (!is_sym(car(args)))
     pi_lisp_error("arg in compile must be a symbol");
+}
+
+// ==================== Basic Lisp functions ====================
+
+void check_car(cell *args) {
+  if (atom(args))
+    pi_lisp_error("car applied to an atom");
+}
+void check_cdr(cell *args) {
+  if (atom(args))
+    pi_lisp_error("cdr applied to an atom");
 }

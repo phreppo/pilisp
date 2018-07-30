@@ -24,7 +24,7 @@ cell *eval_atom(cell *expression, cell *env) {
 
   // it's a symbol: we have to search for that
   cell *pair = assoc(expression, env);
-  cell *symbol_value = cdr(assoc(expression, env));
+  cell *symbol_value = cdr(pair);
 #if CHECKS
   if (!pair) {
     // the symbol has no value in the env

@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-// ==================== INLINE FUNCTIONS FOR EVAL ====================
+// ==================== Basic inline apply ====================
 // not usable in the interpreter: no checks! => use only in the eval
 #if INLINE_FUNCTIONS
 inline cell *caar(cell *c) { return c->car->car; }
@@ -35,7 +35,7 @@ cell *cadar(cell *c);
 cell *caddr(cell *c);
 #endif
 
-// ==================== Basic Apply ====================
+// ==================== Basic apply ====================
 // differences from the first basic block: these functions can be called from
 // the apply, because they do cell_remove and cell_push and check for args error
 cell *builtin_car(cell *args);
@@ -120,11 +120,20 @@ cell *mem_dump(cell *arg);
 cell *env(cell *arg);
 cell *collect_garbage_call(cell *arg);
 
-// ==================== BASIC FUNCTIONS ====================
+// ==================== Basic Lisp functions ====================
 // works also on lists: eq does not, but 'it's slower
 bool total_eq(cell *c1, cell *c2);
 
-#if INLINE_FUNCTIONS
+#if !INLINE_FUNCTIONS
+
+cell *car(cell *c);
+cell *cdr(cell *c);
+cell *cons(cell *car, cell *cdr);
+int atom(cell *c);
+bool eq(cell *v1, cell *v2);
+
+#else
+
 inline cell *cons(cell *car, cell *cdr) { return mk_cons(car, cdr); }
 
 inline int atom(cell *c) {
@@ -143,9 +152,6 @@ inline bool eq(cell *v1, cell *v2) {
     return (strcmp(v1->str, v2->str) == 0);
   return (v1 == v2);
 }
-
-// works also on lists: eq does not, but 'it's slower
-bool total_eq(cell *c1, cell *c2);
 
 inline cell *car(cell *c) {
   if (c == NULL)
@@ -166,13 +172,6 @@ inline cell *cdr(cell *c) {
 #endif
   return c->cdr;
 }
-#else
-
-cell *cons(cell *car, cell *cdr);
-int atom(cell *c);
-bool eq(cell *v1, cell *v2);
-cell *car(cell *c);
-cell *cdr(cell *c);
 
 #endif
 
