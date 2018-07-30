@@ -121,3 +121,13 @@ void check_setq(cell *args) {
   if (!is_sym(car(args)))
     pi_lisp_error("setq: first arg must be a symbol");
 }
+
+/********************************************************************************
+ *                           Pilisp special functions
+ ********************************************************************************/
+
+void check_compile(cell *args) {
+  check_one_arg(args);
+  if (!is_sym(car(args)))
+    pi_lisp_error("arg in compile must be a symbol");
+}

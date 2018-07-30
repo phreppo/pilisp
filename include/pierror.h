@@ -31,6 +31,8 @@ void pi_error_stack_undeflow();
 
 // ==================== CHECKS ====================
 
+// checks that the list args has exaclty 0 args
+void check_zero_arg(cell * args);
 // checks that the list args has exaclty 1 args
 void check_one_arg(cell *args);
 // checks that the list args has exaclty 2 args

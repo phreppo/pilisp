@@ -781,9 +781,9 @@ cell *dotimes(cell *arg, cell *env) {
   cell *evaulated;
 
   for (n = 0; n < num->value; n++) {
-    if (n > 0) 
+    if (n > 0)
       cell_push_recursive(expr);
-      
+
     actual_n_value = mk_num(n);
     num_list_for_new_env = mk_cons(actual_n_value, NULL);
     new_env = pairlis(name_list, num_list_for_new_env, env);
@@ -828,7 +828,7 @@ cell *map(cell *args, cell *env) {
     unsafe_cell_remove(list);
     list = tmp;
   }
-  
+
   cell_remove_recursive(func);
   cell_remove_args(args);
   return result;
@@ -853,23 +853,76 @@ cell *timer(cell *arg, cell *env) {
 }
 
 /********************************************************************************
- *                                  NOT CLEAN CODE
+ *                              Pilisp special functions
  ********************************************************************************/
 
+cell *compile(cell *c, cell *env) {
+#if CHECKS
+  check_compile(c);
+#endif
+  cell *name = c->car;
+  cell *to_compilate = eval(name, env);
+
+  if (!should_be_compiled(to_compilate))
+    return to_compilate;
+
+  else {
+    char *file_name = generate_pi_compile_tmp_file_name();
+    write_compiler_expression_to_file(file_name, to_compilate);
+
+    cell *compiled = load(mk_cons(mk_str(file_name), NULL), env);
+    cell *new_env_pair = mk_cons(name, mk_cons(compiled, NULL));
+    set(new_env_pair);
+
+#if REMOVE_TMP_FILES
+    remove(file_name);
+#endif
+
+    return compiled;
+  }
+}
+
+bool should_be_compiled(cell *to_compilate) {
+  // we compile only lambdas
+  return is_cons(to_compilate) && eq(symbol_lambda, car(to_compilate));
+}
+
 cell *asm_call(cell *args, cell *env) {
+  // this asm call has no params on the stack => we have to pass stack_pointer
+  // as the base of the stack
   return asm_call_with_stack_base(args, env, stack_pointer);
 }
 
 cell *mem_dump(cell *arg) {
 #if CHECKS
-  if (arg)
-    pi_error_many_args();
+  check_zero_arg(arg);
 #endif
+
   printf(ANSI_COLOR_YELLOW "============================== MEMORY "
                            "==============================\n" ANSI_COLOR_RESET);
   print_cell_space(memory);
   return symbol_true;
 }
+
+cell *env(cell *arg) {
+#if CHECKS
+  check_zero_arg(arg);
+#endif
+
+  printf(" > env: " ANSI_COLOR_BLUE);
+  print_sexpr(memory->global_env);
+  printf("\n" ANSI_COLOR_RESET);
+  return symbol_true;
+}
+
+cell *collect_garbage_call(cell *arg) {
+  deep_collect_garbage(memory);
+  return symbol_true;
+}
+
+/********************************************************************************
+ *                                  NOT CLEAN CODE
+ ********************************************************************************/
 
 bool total_eq(cell *c1, cell *c2) {
   if (!c1 && !c2)
@@ -890,47 +943,6 @@ bool total_eq(cell *c1, cell *c2) {
     return eq(c1, c2);
   // cons cons
   return total_eq(car(c1), car(c2)) && total_eq(cdr(c1), cdr(c2));
-}
-
-cell *env(cell *arg) {
-#if CHECKS
-  if (arg)
-    pi_error_many_args();
-#endif
-  printf(" > env: " ANSI_COLOR_BLUE);
-  print_sexpr(memory->global_env);
-  printf("\n" ANSI_COLOR_RESET);
-  return symbol_true;
-}
-
-cell *collect_garbage_call(cell *arg) {
-  deep_collect_garbage(memory);
-  return symbol_true;
-}
-
-// ! the compiler needs to be loaded
-cell *compile(cell *c, cell *env) {
-#if CHECKS
-  check_one_arg(c);
-  if (!is_sym(car(c)))
-    pi_lisp_error("arg in compile must be a symbol");
-#endif
-  cell *name = c->car;
-  cell *to_compilate = eval(name, env);
-  if (is_cons(to_compilate) && eq(symbol_lambda, car(to_compilate))) {
-
-    char *file_name = generate_pi_compile_tmp_file_name();
-    write_compiler_expression_to_file(file_name, to_compilate);
-
-    cell *compiled = load(mk_cons(mk_str(file_name), NULL), memory->global_env);
-    set(mk_cons(name, mk_cons(compiled, NULL)));
-#if REMOVE_TMP_FILES
-    remove(file_name);
-#endif
-    return compiled;
-  } else {
-    return to_compilate;
-  }
 }
 
 #if !INLINE_FUNCTIONS

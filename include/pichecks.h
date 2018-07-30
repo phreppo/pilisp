@@ -36,5 +36,8 @@ void check_set(cell *args);
 // ==================== Macros ====================
 void check_setq(cell *args);
 
+// ==================== Pilisp special functions ====================
+void check_compile(cell * args);
+
 #endif // !PICHECKS_H
        /*@}*/

@@ -112,11 +112,10 @@ cell *dotimes(cell *arg, cell *env);
 cell *map(cell *args, cell *env);
 cell *timer(cell *arg, cell *env);
 
-// ==================== COMPILER FUNCTIONS ====================
+// ==================== Pilisp special functions ====================
+cell *compile(cell *c, cell *env); // ! the compiler needs to be loaded
+bool should_be_compiled(cell *to_compilate);
 cell *asm_call(cell *args, cell *env);
-cell *compile(cell *c, cell *env);
-
-// ==================== PILISP PROPRIETARY FUNCTIONS ====================
 cell *mem_dump(cell *arg);
 cell *env(cell *arg);
 cell *collect_garbage_call(cell *arg);

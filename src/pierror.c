@@ -57,6 +57,11 @@ void check_one_arg(cell *args) {
     pi_error_many_args();
 }
 
+void check_zero_arg(cell * args){
+  if(args)
+    pi_error_many_args();
+}
+
 int get_last_error() { return last_error; }
 
 void reset_error() { last_error = NO_ERROR; }
