@@ -18,7 +18,7 @@ before_install:
   - "sudo pip install --upgrade pip"            # last version
   - "sudo pip install pydot-ng pyparsing"       # required for drawing dependecy graphs
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -g '*test*' -g '*main*' -g '*piprint*' -g '*pichecks*' -g '*pierror*'
+  - bash <(curl -s https://codecov.io/bash) -g '*test*' -g '*main*' -g '*piprint*' -g '*pichecks*' -g '*pierror*' -g '*pilisp*'
 script:
   - curl --data-binary @codecov.yml https://codecov.io/validate
   - meson build -Dc_args=-Og -Db_coverage=true                      # enable coverage
