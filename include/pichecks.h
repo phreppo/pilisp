@@ -10,8 +10,11 @@
 #include "picell.h"
 #include "pierror.h"
 
-void check_append(cell *args);
-void check_concatenate(cell *args);
+// ==================== Number of arguments checks ====================
+void check_zero_arg(cell * args);
+void check_one_arg(cell *args);
+void check_two_args(cell *args);
+void check_three_args(cell *args);
 
 // ==================== Arithmetic ====================
 void check_addition_atom(cell *arg);
@@ -29,6 +32,8 @@ void check_length(cell *args);
 void check_member(cell *args);
 void check_nth(cell *args);
 void check_subseq(cell *args);
+void check_append(cell *args);
+void check_concatenate(cell *args);
 
 // ==================== Utility ====================
 void check_set(cell *args);

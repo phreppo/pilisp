@@ -29,12 +29,6 @@ void pi_error_stack();
 void pi_error_stack_overflow();
 void pi_error_stack_undeflow();
 
-// ==================== Number of arguments checks ====================
-void check_zero_arg(cell * args);
-void check_one_arg(cell *args);
-void check_two_args(cell *args);
-void check_three_args(cell *args);
-
 // ==================== Last error informations ====================
 int get_last_error();
 bool had_error();

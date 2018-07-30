@@ -1,5 +1,33 @@
 #include "pichecks.h"
 
+// ==================== Number of arguments checks ====================
+
+void check_zero_arg(cell * args){
+  if(args)
+    pi_error_many_args();
+}
+
+void check_one_arg(cell *args) {
+  if (!args)
+    pi_error_few_args();
+  if (cdr(args))
+    pi_error_many_args();
+}
+
+void check_two_args(cell *args) {
+  if (!args || !cdr(args))
+    pi_error_few_args();
+  if (cddr(args))
+    pi_error_many_args();
+}
+
+void check_three_args(cell *args) {
+  if (!args || !cdr(args) || !cdr(cdr(args)))
+    pi_error_few_args();
+  if (cdr(cddr(args)))
+    pi_error_many_args();
+}
+
 // ============================== Arithmetic ==============================
 
 void check_addition_atom(cell *arg) {
@@ -40,22 +68,6 @@ void check_division_atom(cell *arg) {
     pi_lisp_error("division by 0");
 }
 
-void check_append(cell *args) {
-  check_two_args(args);
-  if (car(args) && !is_cons(car(args)))
-    pi_lisp_error("first arg must be a list");
-}
-
-void check_concatenate(cell *args) {
-  check_three_args(args);
-  if (!is_sym(car(args)))
-    pi_lisp_error("first arg must be a symbol");
-  if (!is_str(cadr(args)))
-    pi_lisp_error("second arg must be a string");
-  if (!is_str(caddr(args)))
-    pi_lisp_error("third arg must be a string");
-}
-
 // ============================== Comparison ==============================
 
 void check_comparables(cell *args) {
@@ -94,6 +106,22 @@ void check_subseq(cell *args) {
     pi_error_few_args();
   if (!is_str(car(args)))
     pi_lisp_error("first arg in subseq must be a string");
+}
+
+void check_append(cell *args) {
+  check_two_args(args);
+  if (car(args) && !is_cons(car(args)))
+    pi_lisp_error("first arg must be a list");
+}
+
+void check_concatenate(cell *args) {
+  check_three_args(args);
+  if (!is_sym(car(args)))
+    pi_lisp_error("first arg must be a symbol");
+  if (!is_str(cadr(args)))
+    pi_lisp_error("second arg must be a string");
+  if (!is_str(caddr(args)))
+    pi_lisp_error("third arg must be a string");
 }
 
 // ============================== Utility ==============================
