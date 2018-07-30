@@ -405,6 +405,15 @@ test('[LISP] append test 3', lisp_program_test, args : [
     'LAPPEND4'
 ])
 
+test('[LISP] called cg', lisp_program_test, args : [
+    '(APPEND \'(1 2 3 ) \'4)'+
+    '(+ 1 2)'+
+    '(CG)'+
+    'T',
+    'T',
+    'LCG'
+])
+
 # ==================== MACROS ====================
 
 test('[MACRO] simple macro test', lisp_program_test, args : [
