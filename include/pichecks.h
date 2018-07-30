@@ -1,3 +1,10 @@
+/** @defgroup pichecks
+ *
+ *  @brief Provides checks shortcuts for builtin functions
+ *
+ */
+/** @addtogroup pibuiltin */
+/*@{*/
 #ifndef PICHECKS_H
 #define PICHECKS_H
 #include "picell.h"
@@ -30,3 +37,4 @@ void check_set(cell *args);
 void check_setq(cell *args);
 
 #endif // !PICHECKS_H
+       /*@}*/

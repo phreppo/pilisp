@@ -781,9 +781,9 @@ cell *dotimes(cell *arg, cell *env) {
   cell *evaulated;
 
   for (n = 0; n < num->value; n++) {
-    if (n > 0) {
+    if (n > 0) 
       cell_push_recursive(expr);
-    }
+      
     actual_n_value = mk_num(n);
     num_list_for_new_env = mk_cons(actual_n_value, NULL);
     new_env = pairlis(name_list, num_list_for_new_env, env);
@@ -804,16 +804,18 @@ cell *dotimes(cell *arg, cell *env) {
 cell *map(cell *args, cell *env) {
   cell *func = car(args);
   cell *list = cadr(args);
-  list = eval(list, env); // extract quote
+  list = eval(list, env);
   cell *result = NULL;
   cell *last_added = NULL;
   cell *val;
   cell *element;
   cell *tmp;
+
   while (list) {
-    cell_push_recursive(func); // protect the function
+    cell_push_recursive(func);
     element = car(list);
     val = apply(func, mk_cons(eval(element, env), NULL), env, false);
+
     if (!result) {
       // we're creating the head
       result = last_added = mk_cons(val, NULL);
@@ -826,6 +828,7 @@ cell *map(cell *args, cell *env) {
     unsafe_cell_remove(list);
     list = tmp;
   }
+  
   cell_remove_recursive(func);
   cell_remove_args(args);
   return result;

@@ -1,3 +1,10 @@
+/** @defgroup piremove
+ *
+ *  @brief Provides shortcuts to remove cells from used memory
+ *
+ */
+/** @addtogroup piremove */
+/*@{*/
 #ifndef PIREMOVE_H
 #define PIREMOVE_H
 #include "picell.h"
@@ -10,3 +17,4 @@ void cell_remove_apply_macro(cell * env, cell *old_env, cell *args, cell * fn);
 void cell_remove_let_param(cell *params);
 
 #endif // !PIREMOVE_H
+       /*@}*/
