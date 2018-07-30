@@ -75,32 +75,26 @@ void init_env() {
   write_program_to_file(
       ".piinit",
 
-      "(set 'defmacro (macro (name param body) " // check this
+      "(set 'defmacro (macro (name param body) "
       "(list 'set (list 'quote name) (list 'macro param body))))"
 
       "(defun 1+ (num) (+ num 1))"
 
+      "(defun 1- (num) (- num 1))"
+
       "(defun id (x) x)"
-
-      "(setq der \"./test/lisp_programs/diff.lisp\")"
-
-      "(setq cder \"./test/lisp_programs/compilable_diff.lisp\")"
 
       "(defun null (arg) (not arg))"
 
-      "(setq p \"./examples/a.lisp\")"
+      "(setq diff  \"./test/lisp_programs/diff.lisp\")"
 
-      "(setq k \"./examples/killme.lisp\")"
-
-      "(setq compiler \"./compiler/compiler.lisp\")"
+      "(setq cdiff \"./test/lisp_programs/compilable_diff.lisp\")"
 
       "(setq b \"./examples/bench.lisp\")"
 
       "(setq f \"./examples/functions.lisp\")"
-
-      "(setq c compiler)"
-
   );
+  
   parse_file(".piinit");
 #if REMOVE_TMP_FILES
   remove(".piinit");
