@@ -29,13 +29,13 @@
 #include <string.h>
 
 /********************************************************************************
-*                            VARIABLES FOR HANDLING ERRORS
+*                            Variables for Handling Errors
 ********************************************************************************/
 int jmp_destination;
 jmp_buf env_buf;
 
 /********************************************************************************
- *                           BASIC INTERPRETER FUNCTIONS
+ *                           Basic Interpreter Functions
  ********************************************************************************/
 
 int pi_prompt();

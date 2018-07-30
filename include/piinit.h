@@ -15,37 +15,38 @@
 #include "pistack.h"
 #include <stdio.h>
 
-// ==================== BUILTIN LAMBDAS STRUCTURE ====================
+// ==================== Builtin Lambdas Structure ====================
 cell BUILTIN_LAMBDAS[N_BUILTIN_LAMBDA];
 size_t builtin_lambdas_index; // first free cell
 
-// ==================== BUILTIN MACRO STRUCTURE ====================
+// ==================== Builtin Macro Structure ====================
 cell BUILTIN_MACROS[N_BUILTIN_MACRO];
 size_t builtin_macros_index; // first free cell
 
 /********************************************************************************
- *                                 INIT FUNCTIONS
+ *                                 Init Functions
  ********************************************************************************/
 
 void init_pi(); // always call this before using pilisp
 void init_builtin_macros();
+char * get_compiler_source_hardcoded();
 void init_builtin_lambdas();
 void init_stack();
 void init_env(); // inits the global env
 void init_symbols();
 
 /********************************************************************************
- *                                 FREE FUNCTIONS
+ *                                 Free Functions
  ********************************************************************************/
 
 void free_pi();
 void free_builtin_symbols();
 
 /********************************************************************************
- *                                 BUILTIN SYMBOLS
+ *                                 Builtin Symbols
  ********************************************************************************/
 
-// ==================== LAMBDAS ====================
+// ==================== Lambdas ====================
 cell *symbol_car;
 cell *symbol_cdr;
 cell *symbol_cons;
@@ -88,10 +89,10 @@ cell *symbol_concatenate;
 cell *symbol_append;
 cell *symbol_lasm;
 
-// ==================== KEYWORD SYMBOLS ====================
+// ==================== Keyword Symbols ====================
 cell *symbol_string;
 
-// ==================== MACROS ====================
+// ==================== Macros ====================
 cell *symbol_setq;
 cell *symbol_let;
 cell *symbol_timer;
@@ -102,9 +103,6 @@ cell *symbol_quote;
 cell *symbol_asm;
 cell *symbol_compile;
 cell *symbol_concatenate;
-
-char * get_compiler_source_hardcoded();
-
 
 #endif // !PIINIT_H
 /*@}*/
