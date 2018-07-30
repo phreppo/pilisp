@@ -17,41 +17,62 @@
  *                                  CELL DEFINITION
  ********************************************************************************/
 
+/**
+ * @brief Identifies the type of a cell
+ *
+ */
 enum {
-  TYPE_CONS = 0,
-  TYPE_SYM,
-  TYPE_NUM,
-  TYPE_STR,
-  TYPE_FREE,
-  TYPE_BUILTINLAMBDA,
-  TYPE_BUILTINMACRO,
-  TYPE_KEYWORD,
+  TYPE_CONS = 0, // is a cell with a car and a cdr
+  TYPE_SYM,      // symbol cell
+  TYPE_NUM,      // integer cell
+  TYPE_STR,      // string cell
+  TYPE_FREE, // free cell: can be allocated from the memory manager to another
+             // cell
+  TYPE_BUILTINLAMBDA, /// represents a builtin lisp function (e.g. car, cdr...)
+  TYPE_BUILTINMACRO,  /// represents a builtin lisp macro (e.g. dotimes,
+                      /// defun...)
+  TYPE_KEYWORD,       /// keyword cell (e.g. :mykeyword...)
 };
 
+/**
+ * @brief Basic Lisp entity
+ *
+ * Every cell has a type identifier (referred to the type enum). It identifies
+ * the type of the cell. `marked` and `marks` are fields used to collect garbage. 
+ *
+ */
 typedef struct cell {
-  unsigned char type, marked;
-  unsigned long marks;
+  unsigned char type;   /// type of the cell referred to the type enum
+  unsigned char marked; /// 1 if marked in the "mark" phase of the gc
+  unsigned long marks;  /// number of cells that refer to this cell
   union {
+    int value; /// value of the num cell
+    char *str; /// string of the string cell
+    struct cell *
+        next_free_cell; /// pointer to the next free cell for cells of type free
     struct {
-      struct cell *car;
-      struct cell *cdr;
+      struct cell *car; /// car of the cons cell
+      struct cell *cdr; /// cdr of the cons cell
     };
     struct {
-      char *sym;
+      char *sym; // symbol for symbol cells
       union {
-        struct { // struct for builtin lambda: pointer to builtin function and pointer to builtin stack version
+        struct {
           struct cell *(*bl)(
-              struct cell *args); // pointer to builtin lambda function
-          void (*bs)(size_t stack_base, unsigned char nargs);
+              struct cell *args); /// pointer to builtin lambda function for
+                                  /// builtin lambdas
+          void (*bs)(
+              size_t stack_base,
+              unsigned char
+                  nargs); /// pointer to builtin stack lambdas function for
+                          /// functions that have a stack implementation that
+                          /// can be interpreted by the virtual machine
         };
         struct cell *(*bm)(
             struct cell *args,
-            struct cell *env); // pointer to builtin macro function
+            struct cell *env); /// pointer to builtin macro function
       };
     };
-    int value;
-    char *str;
-    struct cell *next_free_cell;
   };
 } cell;
 
@@ -162,7 +183,8 @@ cell *mk_cons(cell *car, cell *cdr);
 #endif
 
 cell *mk_sym(char *symbol);
-cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *), void (*builtin_stack)(size_t,unsigned char));
+cell *mk_builtin_lambda(char *symbol, cell *(*function)(cell *),
+                        void (*builtin_stack)(size_t, unsigned char));
 cell *mk_builtin_macro(char *symbol, cell *(*function)(cell *, cell *));
 
 cell *copy_cell(cell *c);
@@ -183,12 +205,8 @@ inline bool is_sym(cell *c) {
 inline bool is_builtin(cell *c) {
   return c->type == TYPE_BUILTINLAMBDA || c->type == TYPE_BUILTINMACRO;
 }
-inline bool is_builtin_lambda(cell *c) {
-  return c->type == TYPE_BUILTINLAMBDA;
-}
-inline bool is_builtin_macro(cell *c) {
-  return c->type == TYPE_BUILTINMACRO;
-}
+inline bool is_builtin_lambda(cell *c) { return c->type == TYPE_BUILTINLAMBDA; }
+inline bool is_builtin_macro(cell *c) { return c->type == TYPE_BUILTINMACRO; }
 #else
 bool is_num(cell *c);
 bool is_str(cell *c);
@@ -232,6 +250,7 @@ void cell_remove_args(cell *args);
 void cell_remove_pairlis(cell *new_env, cell *old_env);
 void cell_remove_cars(cell *list);
 void cell_remove_pairlis_deep(cell *new_env, cell *old_env);
+
 /********************************************************************************
  *                                 CORE OF THE GC
  ********************************************************************************/
