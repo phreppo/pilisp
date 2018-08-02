@@ -55,10 +55,10 @@ int pi_prompt() {
         if (!scanf("%c", &ch))
           pi_lisp_error("failed to read char");
     }
-    printf(ANSI_COLOR_BLUE " > " ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_BLUE "-> " ANSI_COLOR_RESET);
     cell *sexpression = read_sexpr(stdin);
     cell *result = eval(sexpression, memory->global_env);
-    printf(ANSI_COLOR_GREEN ":) " ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_GREEN "   " ANSI_COLOR_RESET);
     print_sexpr(result);
     puts("");
     if (result == symbol_bye)
