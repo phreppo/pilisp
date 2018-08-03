@@ -27,13 +27,46 @@ size_t builtin_macros_index; // first free cell
  *                                 Init Functions
  ********************************************************************************/
 
+/**
+ * @brief Initializes the variables and the structures that pilisp needs in
+ * order to properly work. Always call this function before using pilisp core
+ * functions
+ *
+ */
 void init_pi(); // always call this before using pilisp
+
+/**
+ * @brief Initializes the array of builtin macros
+ * 
+ */
 void init_builtin_macros();
-char * get_compiler_source_hardcoded();
+
+/**
+ * @brief Initializes the array of builtin lambdas
+ * 
+ */
 void init_builtin_lambdas();
+
+/**
+ * @brief Initializes the variables to handle the stack
+ * 
+ */
 void init_stack();
+
+
+/**
+ * @brief Provides some non-builtin definitions, like 1+
+ * 
+ */
 void init_env(); // inits the global env
-void init_symbols();
+
+/**
+ * @brief Get the compiler source hardcoded
+ * 
+ * @return char* string representing the compiler source code
+ */
+char *get_compiler_source_hardcoded();
+
 
 /********************************************************************************
  *                                 Free Functions
@@ -105,4 +138,4 @@ cell *symbol_compile;
 cell *symbol_concatenate;
 
 #endif // !PIINIT_H
-/*@}*/
+       /*@}*/

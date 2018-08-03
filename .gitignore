@@ -3,6 +3,9 @@
 .picompile*
 .picompiler*
 
+# CLion
+.idea/
+
 # Build dir
 build/
 

@@ -108,8 +108,6 @@ void init_env() {
   collect_garbage(memory);
 }
 
-void init_symbols() {}
-
 void free_pi() {
   free_memory();
   free_builtin_symbols();
