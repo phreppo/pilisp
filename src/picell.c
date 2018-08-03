@@ -78,11 +78,6 @@ cell *mk_sym(char *symbol) {
     c->str[i] = toupper(c->str[i]);
     i++;
   }
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a sym: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -394,11 +389,6 @@ void cell_push_recursive(cell *val) {
 void cell_remove_recursive(cell *val) {
 #if DEEP_REMOVE
 #if COLLECT_GARBAGE
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_YELLOW " > Removing from the stack: " ANSI_COLOR_RESET);
-  print_sexpr(val);
-  puts("");
-#endif
   if (!val)
     return;
   if (!is_builtin(val)) {
@@ -417,20 +407,7 @@ void cell_remove_recursive(cell *val) {
     // NEW
     if (val->marks > 0)
       val->marks--;
-#if DEBUG_PUSH_REMOVE_MODE
-    printf(ANSI_COLOR_GREEN " > Removed from the stack:  " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-#endif
   }
-#if DEBUG_PUSH_REMOVE_MODE
-  else {
-    printf(ANSI_COLOR_DARK_GRAY
-           " > Trying to remove a builtin symbol: " ANSI_COLOR_RESET);
-    print_sexpr(val);
-    puts("");
-  }
-#endif
 #endif
 #else
   cell_remove(val);
@@ -527,11 +504,6 @@ cell *mk_num(int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -540,11 +512,6 @@ cell *mk_str(char *s) {
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
   strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -553,12 +520,6 @@ cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 

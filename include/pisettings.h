@@ -1,4 +1,4 @@
-/** @defgroup pisesttings
+/** @defgroup pisettings
  *
  * @brief Provides definitions for pilisp settings
  *
@@ -14,47 +14,81 @@
  *                               GENERAL SETTINGS
  ********************************************************************************/
 
+/**
+ * @brief 1 will imply better performances: about 4 times faster programs
+ * execution, but you will lose checks (then segmentation fault will appear if
+ * programs aren't correct) and the size of executable will grow because some
+ * small functions will be inlined
+ *
+ */
 #define PERFORMANCES 0
 
 #if PERFORMANCES
 
-// dangerous, will cause segfault
+/**
+ * @brief Disables garbage collection. This will make programs run faster but
+ * after some time a segmentation fault will occur due to memory leaks
+ *
+ */
 #define EXTREME_PERF 0
 
-// many functions will be declared inline, however the code won't compile in
-// many compilers and the builtd directory generated with meson must be
-// generated with: meson build -Dc_args=-Og. The compiler flag -O3 soulh be set
-// to be correctly compiled. Use only for testing performances
+/**
+ * @brief
+ *  many functions will be declared inline, however the code won't compile in
+ * many compilers and the build directory generated with meson must be
+ * generated with: meson build -Dc_args=-Og. The compiler flag -O3 should be set
+ * to be correctly compiled. Use only for testing performances
+ *
+ */
 #define INLINE_FUNCTIONS 1
 
 #endif
 
-// 0 => the memory will be dirty => segfault
-// anyway a good amount of programs could run anyway
-// in the middle between gc and no gc. 1 suggested.
+/**
+ * @brief 0 => the memory will be dirty => segfault
+ * anyway a good amount of programs could run anyway
+ * in the middle between gc and no gc. 1 suggested.
+ *
+ */
 #define DEEP_REMOVE 1
 
 /********************************************************************************
  *                              MEMORY SETTINGS
  ********************************************************************************/
 
-// size of the first created block of cells: must be greater than the init
-// size, or will fail tests
 #if PERFORMANCES
 #if EXTREME_PERF
+/**
+ * @brief Size of the first created block in the memory
+ *
+ */
 #define INITIAL_BLOCK_SIZE 134217728
 #else
-#define INITIAL_BLOCK_SIZE 40000
+/**
+ * @brief Size of the first created block in the memory
+ *
+ */
+#define INITIAL_BLOCK_SIZE 65536
 #endif
 #else
+/**
+ * @brief Size of the first created block in the memory
+ *
+ */
 #define INITIAL_BLOCK_SIZE 8
 #endif
 
-// number of blocks initially allocated
+/**
+ * @brief Dimension of the array pointing to cell blocks
+ *
+ */
 #define INITIAL_BLOCKS 10000
 
-// (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
-// block
+/**
+ * @brief (n_free_cells/n_tot_cells) <= NEW_BLOCK_THRESHOLD => allocate a new
+ * block
+ *
+ */
 #define NEW_BLOCK_THRESHOLD 0.8
 
 // WARNING: if 0 the memory will always be dirty
@@ -68,27 +102,33 @@
 #define COLLECT_GARBAGE 1
 #endif
 
+/**
+ * @brief Max dimension of the stack
+ *
+ */
 #define STACK_LIMIT 10000
 
 /********************************************************************************
  *                                 DEBUGGING
  ********************************************************************************/
 
-// in (md) prints free cells
-#define PRINT_FREE_CELLS 0
+/**
+ * @brief Print free cells in the (md) function
+ *
+ */
+#define PRINT_FREE_CELLS 1
 
+/**
+ * @brief Prints only the dangling cells in the (md) command . Use for debug
+ * purposes
+ *
+ */
 #define PRINT_ONLY_DANGLING_CELLS 1
 
-// describes what appens evaluating sexpressions
-#define DEBUG_EVAL_MODE 0
-
-// gives an output when pushing or removing things in the stack
-#define DEBUG_PUSH_REMOVE_MODE 0
-
-// prints the env while in debug eval mode
-#define DEBUG_EVAL_PRINT_ENV_MODE 0
-
-// when performing gargabe collection prints messages
+/**
+ * @brief If set to 1 will display debug informations while running the gc
+ *
+ */
 #define DEBUG_GARBAGE_COLLECTOR_MODE 0
 
 /********************************************************************************
@@ -98,35 +138,70 @@
 // 0 => no checks about types nor errors, just segfaults => use ONLY when
 // testing performances on correct programs
 #if PERFORMANCES
+/**
+ * @brief If set to 0 will remove the checks about errors during the execution
+ * of a program. This will make run faster correct programs.
+ *
+ */
 #define CHECKS 0
 #else
+/**
+ * @brief If set to 0 will remove the checks about errors during the execution
+ * of a program. This will make run faster correct programs.
+ *
+ */
 #define CHECKS 1
 #endif
 
 /********************************************************************************
- *                                   COMPILING SETTIGNS
+ *                                   FILES SETTINGS
  ********************************************************************************/
 
+/**
+ * @brief Prefix of the temporary file used to compile one expression
+ *
+ */
 #define PI_COMPILE_FILE_NAME_PREFIX ".picompile"
 
+/**
+ * @brief Prefix of the temporary file used to load the Pilisp compiler
+ *
+ */
 #define PI_COMPILER_FILE_NAME_PREFIX ".picompiler"
 
+/**
+ * @brief If set to 1 will remove temporary files. 1 suggested.
+ *
+ */
 #define REMOVE_TMP_FILES 1
 
 /********************************************************************************
  *                                  LIMITS
  ********************************************************************************/
 
-// max length of a token
+/**
+ * @brief Max length of a LISP token
+ *
+ */
 #define MAX_TOK_LEN 512
 
-// max length of a error message
+/**
+ * @brief Max length of a error message
+ *
+ */
 #define ERROR_MESSAGE_LEN 512
 
-// EXACT number of builtin lambdas
+/**
+ * @brief Number of builtin lambdas. It's used to create the array to store
+ * them.
+ *
+ */
 #define N_BUILTIN_LAMBDA 50
 
-// EXACT number of builtin lambdas
+/**
+ * @brief Number of builtin macros. It's used to create the array to store them.
+ *
+ */
 #define N_BUILTIN_MACRO 50
 
 /********************************************************************************

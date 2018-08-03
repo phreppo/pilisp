@@ -141,11 +141,6 @@ inline cell *mk_num(int n) {
   cell *c = get_cell();
   c->type = TYPE_NUM;
   c->value = n;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a num: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 
@@ -154,11 +149,7 @@ inline cell *mk_str(char *s) {
   c->type = TYPE_STR;
   c->str = malloc(strlen(s) + 1);
   strcpy(c->str, s);
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_BLUE " > Pushing to the stack a str: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
+
   return c;
 }
 
@@ -167,12 +158,6 @@ inline cell *mk_cons(cell *car, cell *cdr) {
   c->type = TYPE_CONS;
   c->car = car;
   c->cdr = cdr;
-#if DEBUG_PUSH_REMOVE_MODE
-  printf(ANSI_COLOR_LIGHT_BLUE
-         " > Pushing to the stack a cons: " ANSI_COLOR_RESET);
-  print_sexpr(c);
-  puts("");
-#endif
   return c;
 }
 #else

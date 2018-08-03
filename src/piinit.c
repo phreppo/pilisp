@@ -5,7 +5,6 @@ void init_pi() {
   init_builtin_lambdas();
   init_memory();
   init_env();
-  init_symbols();
 }
 
 void init_builtin_macros() {

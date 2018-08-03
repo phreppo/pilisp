@@ -20,7 +20,7 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 
 ## Language ##
 
-The language accepted by the interpreter is inspired to the [Common Lisp](https://en.wikipedia.org/wiki/Common_Lisp), but keeps the _homoiconicity_ feature of the original definition of the LISP 1.5: data and code are kept together in the same data structure, the _cons cell_.
+The language accepted by the interpreter is inspired to the [Common Lisp](https://en.wikipedia.org/wiki/Common_Lisp), but keeps the _homoiconicity_ feature of the original definition of the LISP 1.5: data and instructions are kept together in the same data structure, the _cons cell_.
 
 ### Builtin functions ###
 
