@@ -69,7 +69,6 @@ The language accepted by the interpreter is inspired to the [Common Lisp](https:
     * dotimes
     * map
     * time
-    * defun
     * defmacro
 * Pilisp spacial functions
     * md: prints the memory
