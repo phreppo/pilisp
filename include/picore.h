@@ -23,7 +23,7 @@
 cell *eval(cell *expression, cell *env);
 
 /**
- * @brief Applyes the function to the args in the environment
+ * @brief Applies the function to the args in the environment
  *
  * @param fn sexpression representing the function. Can be non-atomic
  * @param args list of arguments
