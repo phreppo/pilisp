@@ -1,0 +1,15 @@
+<map id="include/piremove.h" name="include/piremove.h">
+<area shape="rect" id="node2" href="$picell_8h.html" title="picell.h" alt="" coords="597,379,659,405"/>
+<area shape="rect" id="node7" href="$picore_8h.html" title="picore.h" alt="" coords="811,80,879,107"/>
+<area shape="rect" id="node3" href="$pisettings_8h.html" title="pisettings.h" alt="" coords="634,453,723,480"/>
+<area shape="rect" id="node8" href="$pilisp_8h.html" title="pilisp.h" alt="" coords="814,155,876,181"/>
+<area shape="rect" id="node9" href="$pibuiltin_8h.html" title="pibuiltin.h" alt="" coords="187,229,263,256"/>
+<area shape="rect" id="node11" href="$pierror_8h.html" title="pierror.h" alt="" coords="497,379,567,405"/>
+<area shape="rect" id="node17" href="$pifile_8h.html" title="pifile.h" alt="" coords="1435,229,1495,256"/>
+<area shape="rect" id="node18" href="$piinit_8h.html" title="piinit.h" alt="" coords="675,229,735,256"/>
+<area shape="rect" id="node19" href="$piparser_8h.html" title="piparser.h" alt="" coords="1127,304,1205,331"/>
+<area shape="rect" id="node20" href="$piprint_8h.html" title="piprint.h" alt="" coords="811,229,879,256"/>
+<area shape="rect" id="node10" href="$pichecks_8h.html" title="pichecks.h" alt="" coords="364,304,449,331"/>
+<area shape="rect" id="node13" href="$pistack_8h.html" title="pistack.h" alt="" coords="700,304,773,331"/>
+<area shape="rect" id="node14" href="$piutils_8h.html" title="piutils.h" alt="" coords="212,379,279,405"/>
+</map>

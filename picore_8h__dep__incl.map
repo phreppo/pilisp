@@ -1,0 +1,35 @@
+<map id="include/picore.h" name="include/picore.h">
+<area shape="rect" id="node2" href="$pilisp_8h.html" title="include/pilisp.h" alt="" coords="1294,80,1401,107"/>
+<area shape="rect" id="node31" href="$piremove_8h.html" title="include/piremove.h" alt="" coords="127,80,256,107"/>
+<area shape="rect" id="node32" href="$picore_8c.html" title="src/picore.c" alt="" coords="188,163,279,189"/>
+<area shape="rect" id="node34" href="$pistack_8c.html" title="src/pistack.c" alt="" coords="1426,80,1523,107"/>
+<area shape="rect" id="node3" href="$pierror_8h.html" title="include/pierror.h" alt="" coords="1737,163,1852,189"/>
+<area shape="rect" id="node5" href="$pibuiltin_8h.html" title="include/pibuiltin.h" alt="" coords="223,336,345,363"/>
+<area shape="rect" id="node10" href="$pifile_8h.html" title="include/pifile.h" alt="" coords="1877,163,1981,189"/>
+<area shape="rect" id="node12" href="$piparser_8h.html" title="include/piparser.h" alt="" coords="2058,163,2181,189"/>
+<area shape="rect" id="node16" href="$piprint_8h.html" title="include/piprint.h" alt="" coords="2206,163,2319,189"/>
+<area shape="rect" id="node18" href="$pitestutils_8h.html" title="include/pitestutils.h" alt="" coords="794,163,928,189"/>
+<area shape="rect" id="node20" href="$bad__prints__test_8c.html" title="test/bad_prints_test.c" alt="" coords="1302,253,1449,280"/>
+<area shape="rect" id="node21" href="$parser__accepted__strings__test_8c.html" title="test/parser_accepted\l_strings_test.c" alt="" coords="1475,246,1619,287"/>
+<area shape="rect" id="node22" href="$parser__rejected__strings__test_8c.html" title="test/parser_rejected\l_strings_test.c" alt="" coords="334,246,471,287"/>
+<area shape="rect" id="node23" href="$print__lexer__test_8c.html" title="test/print_lexer_test.c" alt="" coords="495,253,643,280"/>
+<area shape="rect" id="node24" href="$print__test_8c.html" title="test/print_test.c" alt="" coords="667,253,780,280"/>
+<area shape="rect" id="node25" href="$recursive__structure__print__test_8c.html" title="test/recursive_structure\l_print_test.c" alt="" coords="939,246,1097,287"/>
+<area shape="rect" id="node26" href="$sexpr__copy__test_8c.html" title="test/sexpr_copy_test.c" alt="" coords="1123,253,1276,280"/>
+<area shape="rect" id="node27" href="$main_8c.html" title="src/main.c" alt="" coords="1055,163,1136,189"/>
+<area shape="rect" id="node28" href="$pilisp_8c.html" title="src/pilisp.c" alt="" coords="1161,163,1247,189"/>
+<area shape="rect" id="node29" href="$lisp__program__load__test_8c.html" title="test/lisp_program_load\l_test.c" alt="" coords="1271,155,1424,197"/>
+<area shape="rect" id="node30" href="$lisp__program__test_8c.html" title="test/lisp_program_test.c" alt="" coords="1449,163,1612,189"/>
+<area shape="rect" id="node4" href="$pichecks_8h.html" title="include/pichecks.h" alt="" coords="1867,253,1996,280"/>
+<area shape="rect" id="node6" href="$pibuiltin_8c.html" title="src/pibuiltin.c" alt="" coords="235,411,333,437"/>
+<area shape="rect" id="node8" href="$picell_8c.html" title="src/picell.c" alt="" coords="1643,253,1728,280"/>
+<area shape="rect" id="node9" href="$pierror_8c.html" title="src/pierror.c" alt="" coords="1752,253,1843,280"/>
+<area shape="rect" id="node7" href="$pichecks_8c.html" title="src/pichecks.c" alt="" coords="1879,336,1985,363"/>
+<area shape="rect" id="node11" href="$pifile_8c.html" title="src/pifile.c" alt="" coords="2072,253,2153,280"/>
+<area shape="rect" id="node13" href="$piinit_8h.html" title="include/piinit.h" alt="" coords="2178,253,2283,280"/>
+<area shape="rect" id="node15" href="$piparser_8c.html" title="src/piparser.c" alt="" coords="2308,253,2409,280"/>
+<area shape="rect" id="node14" href="$piinit_8c.html" title="src/piinit.c" alt="" coords="2189,336,2271,363"/>
+<area shape="rect" id="node17" href="$piprint_8c.html" title="src/piprint.c" alt="" coords="2433,253,2524,280"/>
+<area shape="rect" id="node19" href="$pitestutils_8c.html" title="src/pitestutils.c" alt="" coords="805,253,915,280"/>
+<area shape="rect" id="node33" href="$piremove_8c.html" title="src/piremove.c" alt="" coords="5,163,112,189"/>
+</map>
