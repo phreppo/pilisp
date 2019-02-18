@@ -20,7 +20,7 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 
 ### Performances ###
 
-![alt text](./images./performances.png "Logo Title Text 1")
+![alt text](img/performances.png "Logo Title Text 1")
 
 
 ## Language ##
