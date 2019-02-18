@@ -20,6 +20,9 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 
 ### Performances ###
 
+These are the performances compared to other Lisp interpreters: [CLisp](https://clisp.sourceforge.io/), Yoctolisp (similar performances to [Femtolisp](https://github.com/JeffBezanson/femtolisp)) and [SBCL](http://www.sbcl.org/).
+
+
 ![alt text](img/performances.png "Logo Title Text 1")
 
 
