@@ -18,6 +18,11 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 * **Bytecode virtual machine interpreter**: some simple lambdas can be compiled to a bytecode faster version
 * **Memory dump builtin**: (md) prints the structure of the allocated memory
 
+### Performances ###
+
+![alt text](./images./performances.png "Logo Title Text 1")
+
+
 ## Language ##
 
 The language accepted by the interpreter is inspired to the [Common Lisp](https://en.wikipedia.org/wiki/Common_Lisp), but keeps the _homoiconicity_ feature of the original definition of the LISP 1.5: data and instructions are kept together in the same data structure, the _cons cell_.
