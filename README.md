@@ -18,7 +18,7 @@ Pilisp aims to be a small LISP interpreter for the 1.5 version of the language d
 * **Bytecode virtual machine interpreter**: some simple lambdas can be compiled to a bytecode faster version
 * **Memory dump builtin**: (md) prints the structure of the allocated memory
 
-### Performances ###
+### Performance ###
 
 These are the performances compared to other Lisp interpreters: [CLisp](https://clisp.sourceforge.io/), Yoctolisp (similar performances to [Femtolisp](https://github.com/JeffBezanson/femtolisp)) and [SBCL](http://www.sbcl.org/).
 
@@ -78,7 +78,7 @@ The language accepted by the interpreter is inspired to the [Common Lisp](https:
     * map
     * time
     * defmacro
-* Pilisp spacial functions
+* Pilisp special functions
     * md: prints the memory
     * env: prints the global env
     * cg: calls the garbage collector
